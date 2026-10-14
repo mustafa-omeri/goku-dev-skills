@@ -1,0 +1,38 @@
+# Environment & Credentials
+.env
+*.env
+.env.*
+!.env.example
+
+# Local Backups & Archival
+yedekler/
+backups/
+
+# Raw Source Components (already migrated into .agent/skills/frontend-design/component-themes/)
+silsil-css-components-main/
+
+# Python Cache & Testing
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# IDE & OS Metadata
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Workstation & Internal Session Docs
+HANDOFF.md
+knowledge-base.md
+delivery.md
+DEV_BRIEF.md
+readme-help.md
+raporlar/

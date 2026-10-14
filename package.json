@@ -1,0 +1,45 @@
+{
+  "name": "goku-dev-skills",
+  "version": "1.0.0",
+  "description": "Install battle-tested skills, rules, and component themes into any AI coding workspace (Antigravity, Cursor, Claude Code, Windsurf).",
+  "main": "bin/cli.js",
+  "bin": {
+    "goku-dev-skills": "./bin/cli.js",
+    "goku-skills": "./bin/cli.js"
+  },
+  "files": [
+    "bin",
+    ".agent",
+    "README.md",
+    "delivery.md",
+    "delivery.py"
+  ],
+  "keywords": [
+    "ai",
+    "agent",
+    "skills",
+    "antigravity",
+    "cursor",
+    "claude-code",
+    "windsurf",
+    "coding-assistant",
+    "developer-tools",
+    "ui-ux",
+    "design-system",
+    "frontend",
+    "backend"
+  ],
+  "author": "Mustafa Ömeri",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mustafa-omeri/goku-dev-skills.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mustafa-omeri/goku-dev-skills/issues"
+  },
+  "homepage": "https://github.com/mustafa-omeri/goku-dev-skills#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
