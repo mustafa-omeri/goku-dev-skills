@@ -66,6 +66,7 @@ front matter `sinif:` / `kapi:` alanları.
 | Java / Spring derleme | `mvn clean compile -DskipTests` | [`no-unused-code.md`](./no-unused-code.md) |
 | Java / kullanılmayan kod | `pwsh -NoProfile -File .agent/skills/musgoku/scripts/check-unused.ps1` | [`no-unused-code.md`](./no-unused-code.md) |
 | Skill sözleşmesi / tetikleyici sözlüğü | `cd .agent/skills/ui-ux-pro-max/scripts/tests && python -m unittest test_skill_contracts` | [`skill-trigger-routing.md`](./skill-trigger-routing.md) |
+| Sprint / kanban / MVP | `python .agent/skills/musgoku/scripts/check_sprint_board.py` | [`sprint-delivery-workflow.md`](./sprint-delivery-workflow.md) |
 | Frontend / Vite SPA | `python .agent/skills/musgoku/scripts/check_vite_spa.py` | [`vite-spa-enforcement.md`](./vite-spa-enforcement.md) |
 <!-- GATE-TABLE:END -->
 

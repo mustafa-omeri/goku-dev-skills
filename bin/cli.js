@@ -336,9 +336,41 @@ function cmdInit(options) {
   }
 
   console.log(`\n${c.green}${c.bold}Goku Dev Skills architecture successfully initialized!${c.reset}`);
+  // Sayilar diskten olculur; elle yazilan sayi kural eklendikce bayatlar
+  // (16 -> 17 oldugunda ekranda yanlis bilgi gosterdi).
+  const countRules = () => {
+    try {
+      return fs.readdirSync(path.join(LOCAL_AGENT_DIR, 'rules'))
+        .filter((f) => f.endsWith('.md')).length;
+    } catch (_) { return '?'; }
+  };
+  // Biri tema = bir HTML bileseni. Klasor sayisi degil, dosya sayilir:
+  // 8 klasor icinde 55 bilesen var (neden: tek klasorde birden fazla tema).
+  const countThemes = () => {
+    const base = path.join(LOCAL_AGENT_DIR, 'skills', 'frontend-design', 'component-themes');
+    let total = 0;
+    try {
+      for (const entry of fs.readdirSync(base, { withFileTypes: true })) {
+        if (entry.isDirectory()) {
+          const stack = [path.join(base, entry.name)];
+          while (stack.length) {
+            const dir = stack.pop();
+            for (const child of fs.readdirSync(dir, { withFileTypes: true })) {
+              if (child.isDirectory()) stack.push(path.join(dir, child.name));
+              else if (child.name.endsWith('.html')) total++;
+            }
+          }
+        } else if (entry.name.endsWith('.html')) {
+          total++;
+        }
+      }
+    } catch (_) { return '?'; }
+    return total;
+  };
+
   console.log(`- 18 Production Skills available under ${c.cyan}.agent/skills/${c.reset}`);
-  console.log(`- 16 Quality Rules & Validation Gates available under ${c.cyan}.agent/rules/${c.reset}`);
-  console.log(`- 55 Component Themes under ${c.cyan}.agent/skills/frontend-design/component-themes/${c.reset}`);
+  console.log(`- ${countRules()} Quality Rules & Validation Gates available under ${c.cyan}.agent/rules/${c.reset}`);
+  console.log(`- ${countThemes()} Component Themes under ${c.cyan}.agent/skills/frontend-design/component-themes/${c.reset}`);
 }
 
 // Main CLI Router

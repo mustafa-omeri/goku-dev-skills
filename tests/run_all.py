@@ -20,6 +20,7 @@ TEST_SCRIPTS = [
     ("Test Root Files", HERE / "test_root_files.py"),
     ("Test Rule Gates", HERE / "test_rule_gates.py"),
     ("Test Backup Policy", HERE / "test_backup_policy.py"),
+    ("Test Sprint Board", HERE / "test_sprint_board.py"),
     ("Check AGENTS Parity", HERE / "check_agents_parity.py"),
 ]
 

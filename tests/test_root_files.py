@@ -42,9 +42,16 @@ def run_tests():
         proj = Path(tmp)
         (proj / ".agent").mkdir()
         written, skipped = delivery.distribute_root_files(config, AGENT, proj)
-        check("1 dosya yazildi", written == 1, f"written={written}")
+        # rootFiles sayisi config'den okunur; listeye dosya eklenince bu
+        # kontrol kirilmamalidir (sabit sayi yazmak sessiz bayatlik olurdu).
+        expected = len(config.get("rootFiles", []))
+        check("tum kok dosyalar yazildi", written == expected,
+              f"written={written}, beklenen={expected}")
         check("atlanan yok", skipped == 0)
-        check("readme-help.md hedefte var", (proj / "readme-help.md").is_file())
+        for name in config.get("rootFiles", []):
+            check(f"{name} hedefte var", (proj / name).is_file())
+            check(f"{name} icerigi birebir ayni",
+                  (proj / name).read_bytes() == (SRC / name).read_bytes())
         src_bytes = (SRC / "readme-help.md").read_bytes()
         check("icerik birebir ayni", (proj / "readme-help.md").read_bytes() == src_bytes)
         check(".agent/ icine koyulmadi", not (proj / ".agent" / "readme-help.md").exists())

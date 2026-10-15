@@ -36,3 +36,13 @@ delivery.md
 DEV_BRIEF.md
 readme-help.md
 raporlar/
+
+# Sprint working set (proje-özel durum — 2026-10-15 gizlilik kararı)
+# Bunlar delivery.py ile dağıtılmaz ve npm paketine girmez; yalnız bu
+# deponun çalışma yüzeyidir. Kapsam/sıra bilgisi herkese açık depoya
+# yazılmamalıdır.
+SPRINT_PLAN.md
+KANBAN.md
+RELEASE_PLAN.md
+KULLANICI_TEST_REHBERI.md
+specs/
