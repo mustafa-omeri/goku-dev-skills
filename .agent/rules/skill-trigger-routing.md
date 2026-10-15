@@ -88,6 +88,7 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 | oturum devri, handoff, nerede kaldık / session handoff, where we left off | `rules/handoff-session-continuity.md` | — |
 | overcomplication, gereksiz karmaşıklık, kapsam kayması, varsayımı belirt / overengineering, scope creep, state assumptions | `karpathy-guidelines` | — |
 | tasarım becerisi, daha iyi yaz, amatör mü / better code, improve quality | `karpathy-guidelines` + tasarım üçlüsü | — |
+| gözlem kaydet, skill geliştir, süreç analizi, yeni skill öner / log observation, improve skill, observe task | `task-observer` | `skills/task-observer/SKILL.md` |
 
 ---
 

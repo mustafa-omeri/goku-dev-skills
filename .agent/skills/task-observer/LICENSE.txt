@@ -1,0 +1,13 @@
+This skill ("One Skill to Rule Them All" / task-observer) is third-party work,
+redistributed here under its original license.
+
+  Original author: Eoghan Henn (rebelytics.com)
+  Source:          https://github.com/rebelytics/one-skill-to-rule-them-all
+  License:         Creative Commons Attribution 4.0 International (CC BY 4.0)
+  Full license:    https://creativecommons.org/licenses/by/4.0/legalcode
+
+Under CC BY 4.0 you are free to share and adapt this material for any purpose,
+including commercially, provided you give appropriate credit, link to the
+license, and indicate if changes were made. See SOURCE.md for provenance
+details. Adapted for tool-agnostic .agent/ structure (frontmatter trigger
+contracts, tool-neutral references).

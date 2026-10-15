@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
-const VERSION = '1.0.0';
+const VERSION = '1.2.0';
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 const RAW_URL_BASE = `https://raw.githubusercontent.com/${GITHUB_REPO}/main`;
 
@@ -129,6 +129,11 @@ const SKILLS_MANIFEST = {
     category: 'Creative Direction',
     desc: 'Creative brief formulation, logo & corporate identity direction, visual asset routing.',
     triggers: 'tasarim yonu, logo briefi, visual brief, creative direction',
+  },
+  'task-observer': {
+    category: 'Meta / Self-Improvement',
+    desc: 'Continuous task observation, silent methodology capture, cross-cutting principles & skill refinement.',
+    triggers: 'gozlem kaydet, skill gelistir, surec analizi, log observation, improve skill, observe task',
   },
 };
 
