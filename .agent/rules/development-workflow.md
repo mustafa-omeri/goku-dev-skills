@@ -39,6 +39,29 @@ Tetikleyici tablosu ve sınırlar: [mcp-usage-enforcement.md](./mcp-usage-enforc
 
 ---
 
+## Adım 2.1 — Uygulama Planı, 3. Parti Açık Kaynak Araştırması ve Kullanıcı İnceleme/Onay Kapısı
+
+⛔ **KESİN VE NET KURAL:** İster bir sprint planı dahilinde olsun, ister sprint dışı küçük dilimlere (slice'lara) veya task listesine bölünmüş olsun:
+**"Ne yapılacağı" (what) bilinse dahi, "nasıl yapılacağı" (how) planlanmadan DOĞRUDAN KODA BAŞLAMAK KESİNLİKLE YASAKTIR.**
+
+Geliştirmeye başlamadan önce ajan sırasıyla şu 4 adımı işletmek zorundadır:
+
+1. **Detaylı Uygulama Planı ("Nasıl Yapılacak?"):**
+   - Değişecek, oluşturulacak veya silinecek dosyalar,
+   - Mimari yaklaşım, tasarım desenleri ve bileşen sınırları,
+   - Varsa state yönetimi, veri akışı ve endpoint bağlantı adımları çıkarılır.
+2. **Kabul Kriterleri (Acceptance Criteria):**
+   - İşin bittiğini kanıtlayan gözlemlenebilir kabul kriterleri (Given/When/Then veya somut test adımları) belirlenir.
+3. **3. Parti Araç ve Kütüphane Araştırması:**
+   - Görevde harici bir kütüphane, araç, servis veya paket kullanılacaksa önceden araştırılır.
+   - ⛔ **Açık Kaynak (Open-Source) Önceliği Zorunludur:** Kapalı kaynak veya tescilli araçlar yerine öncelikle aktif geliştirilen, güvenilir lisanslı (MIT, Apache 2.0, BSD) açık kaynaklı alternatifler tercih edilir ve gerekçesi plana eklenir.
+4. **Kullanıcıya Sunum, Değişiklik/Review Şansı ve Açık Onay:**
+   - Hazırlanan plan kullanıcıya sunulur.
+   - Kullanıcıya planı inceleme, revize etme veya değişiklik talep etme fırsatı verilir.
+   - ⛔ **Kullanıcıdan açık onay ("onay", "başla", "uygun" vb.) alınmadan Adım 3 (Geliştir) aşamasına KESİNLİKLE GEÇİLEMEZ.**
+
+---
+
 ## Adım 3 — Geliştir
 
 1. İlgili skill'leri oku ve kurallarına uy.

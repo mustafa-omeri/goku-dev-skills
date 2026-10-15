@@ -68,20 +68,53 @@ Boş bırakmak yerine kapının seni uyarmasını tercih et.
 
 ---
 
-## 2. Akış (her yeni işte bu sıra)
+---
+
+## 2. Akış (her yeni sprint ve işte zorunlu sıra)
 
 ```
-1. Sprint aç      -> SPRINT_PLAN.md: Hedef + MVP Kapsam + Kapsam Dışı
-2. Kart yaz       -> KANBAN.md: id + Gherkin dosyası + kapi + kullanıcı test adımı
-3. Taşı           -> Yapılıyor → Sınırdı → Yapıldı  (WIP limiti 3)
-4. Kapat          -> kapı yeşil değilse Yapıldı olmaz
-5. Devret         -> RELEASE_PLAN.md: kapanmayan her kart ID'si burada
+1. Planla & Araştır -> Nasıl yapılacak? (Detaylı plan) + Kabul Kriterleri (Gherkin) + 3. Parti Araştırması (AÇIK KAYNAK ÖNCELİKLİ)
+2. Sun & Onay Al    -> Planı kullanıcıya sun, inceleme/değişiklik şansı ver; KULLANICI ONAYI OLMADAN KODA BAŞLAMA
+3. Sprint Aç & Kart -> SPRINT_PLAN.md + KANBAN.md (id + Gherkin + kapi + kullanıcı test adımı)
+4. Taşı             -> Yapılıyor → Sınırdı → Yapıldı (WIP limiti 3)
+5. Kapat & Doğrula  -> Kapı yeşil değilse ve kullanıcı test adımı yoksa Yapıldı olamaz
+6. Devret           -> RELEASE_PLAN.md: kapanmayan her kart ID'si burada
 ```
 
-⛔ **Sıra atlanmaz.** Gherkin yazılmadan kart `Yapılıyor`'a girmez;
-kullanıcı test adımı yazılmadan kart `Yapıldı` olamaz.
+⛔ **Sıra atlanmaz.** Detaylı uygulama planı çıkarılmadan, acceptance criteria belirlenmeden, 3. parti araçlar araştırılmadan ve kullanıcıdan açık onay alınmadan kart `Yapılıyor`'a alınamaz ve koda başlanamaz!
+
+### 2.1 Sprint Öncesi Detaylı Uygulama Planı ve 3. Parti Araç Araştırması (Açık Kaynak Önceliği)
+
+1. **"Ne" Değil, "Nasıl Yapılacak?" Planı:**
+   Sadece bir iş veya başlık listesi ("ne yapılacağı") bir plan değildir. Her yeni sprinte veya iş parçasına başlamadan önce:
+   - Mimari yaklaşım,
+   - Değişecek/oluşturulacak dosyalar ve modül sınırları,
+   - Veri modelleri, arayüzler ve entegrasyon adımları detaylı olarak planlanmalıdır.
+2. **Kabul Kriterleri (Acceptance Criteria):**
+   Her bir teslimat için test edilebilir, somut ve gözlenebilir kabul kriterleri (`Given / When / Then` formatında Gherkin senaryoları) önceden çıkarılmalıdır.
+3. **Üçüncü Parti Araç ve Kütüphane Araştırması:**
+   Uygulama içinde veya altyapısında kullanılacak herhangi bir 3. parti araç, paket, kütüphane veya servis varsa, doğrudan plana eklenmeden önce detaylıca araştırılmalıdır:
+   - ⛔ **Açık Kaynak (Open-Source) Önceliği Kesin Kuraldır:** Tescilli, kapalı veya ücretli araçlar yerine daima aktif bakımı yapılan, geniş topluluk desteği ve güvenilir lisansı (MIT, Apache 2.0, BSD) olan açık kaynaklı çözümler önceliklendirilmelidir.
+   - Planda kütüphanenin adı, lisansı, dokümantasyon linki, neden seçildiği ve açık kaynak gerekçesi belirtilmelidir.
+
+### 2.2 Kullanıcı İnceleme (Review), Değişiklik ve Açık Onay Kapısı
+
+1. **Kullanıcıya Sunum:** Ajan hazırladığı detaylı uygulama planını, kabul kriterlerini ve 3. parti araç seçimlerini kullanıcıya şeffaf bir şekilde sunar.
+2. **Review ve Değişiklik Şansı:** Kullanıcıya plan üzerinde inceleme (review) yapma, kapsamı daraltma/genişletme veya alternatif araç/yöntem talep etme fırsatı verilir.
+3. ⛔ **Kullanıcı Onayı Olmadan Koda Başlanamaz:** Kullanıcıdan açık ve net onay ("onay", "başla", "plan uygun" vb.) alınmadan kartlar `Yapılıyor` sütununa taşınamaz ve tek bir satır dahi kod yazılamaz.
+
+### 2.3 Sprint Dışı Dilimlenmiş (Sliced/Task) İşlerde de Aynı Sistemin İşletilmesi Zorunluluğu
+
+⛔ **KURAL NET:** Geliştirme ister resmi bir sprint kapsamında olsun, ister sprint dışı küçük dilimlere (slice'lara) veya task listesine bölünmüş olsun:
+- Eğer işin yalnızca "ne yapılacağı" (what) biliniyor ama "nasıl yapılacağı" (how) detaylandırılmamışsa, ajanın "nasılsa küçük iş, hemen kodlayayım" diyerek doğrudan koda dalması **KESİNLİKLE YASAKTIR.**
+- Sprint dışındaki her task/slice için de:
+  1. Detaylı nasıl yapılacak planı çıkarılır,
+  2. Kabul kriterleri belirlenir,
+  3. Gerekli 3. parti bağımlılıklar açık kaynak önceliğiyle araştırılır,
+  4. Plan kullanıcıya sunulup review/değişiklik şansı verilir ve **kullanıcıdan açık onay alınır.** Onay geldikten sonra geliştirmeye geçilir.
 
 ---
+
 
 ## 3. Kanban sözleşmesi
 

@@ -31,7 +31,37 @@ Bilerek bu sprintte **yapılmayacaklar** — gerekçesiyle:
 ⛔ Bir kart ne `MVP Kapsam`'da ne `Kapsam Dışı`'nda geçmiyorsa kapı uyarır
 (W3). Kapsam sürüklenmesi ilk gün görünür olsun diye bu liste boş bırakılmaz.
 
-## Önceki Sprintfen Taşınan İşler
+## Uygulama Planı (Nasıl Yapılacak? - Mimari & Teknik Adımlar)
+
+Her kart ve iş için koda başlamadan önce teknik yaklaşım ve adım adım uygulama planı:
+
+- **S<n>-01:** <etkilenecek dosyalar, kullanılacak mimari desenler, veri modelleri, adım adım nasıl yapılacağı>
+- **S<n>-02:** <etkilenecek dosyalar, bileşen sınırları, entegrasyon adımları>
+
+## 3. Parti Araç ve Kütüphane Araştırması (Açık Kaynak Öncelikli)
+
+Uygulama içinde veya altyapıda kullanılacak harici bağımlılıklar:
+
+| Araç / Paket | Lisans | Açık Kaynak mı? | Tercih Gerekçesi & Dokümantasyon |
+|---|---|---|---|
+| `<paket-adi>` | MIT / Apache 2.0 | Evet | <neden bu paket seçildi, popülerlik, aktif bakım, repo linki> |
+
+⛔ **Öncelik kesinlikle açık kaynak (open-source) olmalıdır.** Tescilli/kapalı araçlar ancak açık kaynak dengi yoksa ve kullanıcı onaylarsa kullanılabilir.
+
+## Kabul Kriterleri (Acceptance Criteria / Gherkin Referansları)
+
+- **S<n>-01:** `specs/S<n>-01.feature` (<Senaryo: Given/When/Then>)
+- **S<n>-02:** `specs/S<n>-02.feature` (<Senaryo: Given/When/Then>)
+
+## Kullanıcı İnceleme ve Onay Durumu
+
+- **Plan Sunum Tarihi:** <YYYY-MM-DD HH:MM>
+- **Kullanıcı Geri Bildirimi / Değişiklik Talepleri:** <kullanıcının revizyonları veya "değişiklik yok">
+- **Kullanıcı Onayı:** [ ] Bekliyor / [ ] Onaylandı (Onay tarihi: <YYYY-MM-DD>)
+
+⛔ **Kullanıcı onayı alınmadan koda BAŞLANAMAZ.**
+
+## Önceki Sprintten Taşınan İşler
 
 `RELEASE_PLAN.md`'deki her açık kart buraya taşınır; kart id'si **korunur**,
 yalnızca `KANBAN.md` içindeki `sprint` alanı değişir.

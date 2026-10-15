@@ -254,6 +254,21 @@ Aşağıdaki şablonla PRD'yi üret.
 - **Zorunlu Devir Protokolü (HANDOFF.md):** PRD üretildikten sonra, geliştiriciye veya yeni bir kod ajanına aktarımı sağlamak için projenin kök dizininde `HANDOFF.md` oluşturulması veya mevcut `HANDOFF.md` dosyasının güncellenmesi **zorunludur**. PRD "ne yapılacağını" tanımlar; `HANDOFF.md` ise "nerede kaldık, hangi tuzaklara düşme, ilk hangi komutla başla" operasyonel oturum köprüsüdür (bkz. §5.1).
 - Üretimden sonra "hangi bölüme derinleşelim, kapsam değişsin mi?" diye sor.
 
+### Adım 6.1 — Sprint ve Dilimlenmiş Görev Planlama Protokolü (Nasıl Yapılacak? & Açık Kaynak Önceliği)
+
+⛔ **KESİN KURAL:** PRD sonrası ister resmi bir sprint planlansın, ister işler bağımsız task veya dilimlere (slice'lara) bölünmüş olsun:
+**"Ne yapılacağı" (what) listesi tek başına koda başlama izni vermez; "nasıl yapılacağı" (how) planlanmadan koda girilemez.**
+
+Ajan geliştirmeye başlamadan önce mutlaka şu 4 aşamalı protokolü tamamlamalıdır:
+1. **Detaylı Uygulama Planı ("Nasıl Yapılacak?"):** Mimari yaklaşım, etkilenecek dosyalar/bileşenler ve teknik uygulama adımları belirlenir.
+2. **Kabul Kriterleri (Acceptance Criteria):** Doğrulanabilir Given/When/Then (Gherkin) senaryoları çıkarılır.
+3. **3. Parti Araç ve Kütüphane Araştırması (Açık Kaynak Önceliği):**
+   - Kullanılacak harici araç, kütüphane veya servisler plana detaylıca araştırılarak eklenir.
+   - ⛔ **Öncelik kesinlikle açık kaynak (open-source) olmalıdır.** Tescilli/kapalı çözümler yerine geniş topluluk destekli, güvenli lisanslı (MIT, Apache 2.0 vb.) kütüphaneler tercih edilir.
+4. **Kullanıcıya Sunum, Değişiklik/Review Şansı ve Açık Onay:**
+   - Plan kullanıcıya sunulur. Kullanıcıya inceleme ve planda değişiklik yapma imkanı tanınır.
+   - **Kullanıcıdan açık onay alınmadan koda BAŞLANAMAZ.**
+
 ---
 
 ## 3. Eskime Karşıtı Kurallar
