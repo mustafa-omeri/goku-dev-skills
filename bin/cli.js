@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
-const VERSION = '1.3.0';
+const VERSION = '1.3.1';
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 const RAW_URL_BASE = `https://raw.githubusercontent.com/${GITHUB_REPO}/main`;
 
@@ -195,7 +195,7 @@ function detectTargetDir(targetAgent, customDest) {
 // Command: list
 function cmdList() {
   console.log(`\n${c.bold}${c.cyan}Goku Dev Skills${c.reset} v${VERSION} — Available Skills & Themes\n`);
-  console.log(`${c.bold}Available Skills (18):${c.reset}`);
+  console.log(`${c.bold}Available Skills (${Object.keys(SKILLS_MANIFEST).length}):${c.reset}`);
   console.log(`${c.dim}${'─'.repeat(78)}${c.reset}`);
 
   for (const [name, meta] of Object.entries(SKILLS_MANIFEST)) {
@@ -378,7 +378,7 @@ function cmdInit(options) {
     return total;
   };
 
-  console.log(`- 18 Production Skills available under ${c.cyan}.agent/skills/${c.reset}`);
+  console.log(`- ${Object.keys(SKILLS_MANIFEST).length} Production Skills available under ${c.cyan}.agent/skills/${c.reset}`);
   console.log(`- ${countRules()} Quality Rules & Validation Gates available under ${c.cyan}.agent/rules/${c.reset}`);
   console.log(`- ${countThemes()} Component Themes under ${c.cyan}.agent/skills/frontend-design/component-themes/${c.reset}`);
 }

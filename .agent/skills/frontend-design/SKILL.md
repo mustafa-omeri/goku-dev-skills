@@ -91,30 +91,52 @@ Consider written content carefully. Often a design brief may not contain real co
 
 ## Process: plan, review against the brief, build, critique
 
-For calibration, AI-generated design right now clusters around some traits:
+### The Three Waves of AI Slop & The "Avoidance Aesthetic" Trap
 
-1. a warm cream background (near #F4F1EA) with a high-contrast serif display and a terracotta or warm-clay accent (often near #D97757 — Anthropic's own Claude-interaction accent, so on a user's brief it reads as a tell);
-2. a near-black background with a single bright acid-green or vermilion accent;
-3. a broadsheet-style layout with hairline rules, zero border-radius, and dense newspaper-like columns;
-4. the SaaS-card kit: content chopped into identical rounded cards, one border-radius on everything regardless of hierarchy, the same soft grey shadow (rgba(0,0,0,.1)) under each, and gradient washes as decoration;
-5. template chrome that appears whatever the subject: a tracked-out ALL-CAPS eyebrow label above every heading; meta strings joined with middle dots ('A · B · C'); labels built as 'WORD — fragment' with a spaced em dash; tinted near-black (#0B0B0B, #111) standing in for black; a monospace face for small data labels; a '→' appended to link and button text.
+AI-generated design clusters around recurring defaults that read as generic or synthetic:
 
-All traits are legitimate for some briefs, but they are defaults rather than choices, and they appear regardless of subject. Where the brief pins down a visual direction, follow it exactly — the brief's own words always win, including when it asks for one of these looks. Where it leaves an axis free, don't spend that freedom on one of these defaults. As with a hired human designer, there's often a careful balance between doing what you're good at and taking each project as a chance to experiment and learn.
+1. **First Wave (2023–2024):** Violet/indigo gradients on buttons and hero glows, gradient-filled text, glassmorphism panels (backdrop-blur), emoji bullets, and rows of three identical icon-topped cards.
+2. **Second Wave (2025):** Tiny tracked uppercase eyebrow labels above every heading, pill badges ("New", "Beta"), bento grids with uniform border-radius, near-black backgrounds with neon accents, and floating pill navigations.
+3. **Third Wave (2025–2026 — The "Editorial Cosplay" Trap):** The remedy published for earlier waves was "warm it up and make it editorial." This became the newest tell:
+   - Yellow-cream background (near `#F4F1EA`) paired with terracotta/rust/clay accents (near `#D97757` — the AI assistant brand look).
+   - Oversized italic serif display text used as an artificial shortcut to "premium."
+   - Broadsheet cosplay: hairline rules (1px borders everywhere), zero border-radius, and dense newspaper-like columns.
+   - Performative micro-labels: "Field notes", "Quietly trusted by", "On our desks", coordinates, or local time widgets.
 
-Work in two passes. First, brainstorm a short design plan based on the client's design brief: create a compact token system with color, type, layout, and principles.
+> **⛔ The "Avoidance Aesthetic" Danger:** Removing ornaments, cards, and rules is only half the job. A page that has lost its cards and gained nothing in return reads as empty, cold, and underbuilt. Never fill empty space with another ornament; fill it with **scale** (type set larger), **flat fields of tone**, **real cultural pictures of the subject's world**, and **complete, uncompressed content**.
 
-- Color: describe the core base palette as 4–6 named hex values.
-- Type: the typefaces and their roles.
-- Layout: a layout concept, using one-sentence prose descriptions and ASCII wireframes to ideate and compare. Include alignment guidance; should the content be left aligned, center aligned, justified?
-- Principles: the high-level guidance for what makes this page unique.
+### Laws of Visual Craft & Copywriting
 
-Then review that plan against the brief before building: if any part of it reads like the generic default you would produce for any similar page (work through a similar prompt to see if you arrive somewhere similar) rather than a choice made for this specific brief — revise that part, say what you changed and why. Only after you've confirmed the relative uniqueness of your design plan should you start to write the code, following the revised plan.
+1. **Two-Line Headline Rule:** Every headline (`h1`–`h6` and the main hero line) must fit in **two lines or fewer at every viewport width** (desktop, tablet, mobile). Median headline length on top-tier gallery sites is ~5 words and ~32 characters. Cut words first; widen measure second; reduce font size only as a last resort.
+2. **Statements vs. Headlines:** Large intro sentences or quotes are marked up as `<p>` or `<blockquote>`, stay at statement size (desktop ≤36px, mobile ≤24px), and run to about 25–30 words (3 lines). Larger than that, it reads as a bloated headline.
+3. **Typeface Ceiling:** Two font families at most (one display, one body); often one family is enough. **Monospace is strictly forbidden outside real code blocks** (`<pre>/<code>`).
+4. **Surfaces & Separation:** No box-shadows on elements at rest (shadows belong only on floating layers: dialogs, menus, sticky bars). No hairline divider lines; separate sections using generous vertical space (120–220px on desktop), filled shapes, or subtle tone steps.
+5. **Section Variety & Claim-Proof Flow:** Break the stock template sequence (*hero → logos → 3 feature cards → testimonial → pricing → CTA*). Order sections by claims with their proof. Neighbouring sections must not share the same layout geometry.
+6. **No Eyebrows or Gimmicks:** Do not place small uppercase labels or pill chips above titles. Say the message directly in the headline or the supporting sentence.
 
-When writing the code, be careful of structuring your CSS selector specificities. It's easy to generate CSS classes that cancel each other out (especially with a type-based selector like .section and an element-based selector like .cta). This can happen often with padding/margin between sections.
+### Real Cultural Imagery & Open Collections (`assets.mjs`)
+
+Real pictures of the subject's world beat generic placeholders, icon cards, or abstract blobs. When a project lacks its own photography, do not default to empty boxes or stock photos of smiling people at laptops. Use open museum and archival collections (Openverse, Wikimedia Commons, The Met Museum, Art Institute of Chicago, NASA, Prelinger Archives).
+
+Use the integrated zero-dependency asset discovery engine:
+
+```bash
+# Search open collections for commercial-safe (CC0, Public Domain, CC BY, CC BY-SA) imagery:
+node .agent/skills/frontend-design/scripts/assets.mjs "<sorgu>" [--orientation landscape|portrait|square] [--limit 5]
+
+# Download selected asset into project and record attribution:
+node .agent/skills/frontend-design/scripts/assets.mjs --get <ref> --to assets
+
+# Print required credit lines for the page footer and handoff report:
+node .agent/skills/frontend-design/scripts/assets.mjs --credits --to assets
+```
+
+- **Quality floor for public pages:** At least 4 real pictures or genuine interface fragments (`data-ui`). Archival maps, architectural photos, engravings, material textures, or historical postcards ground the page in reality.
+- All found pictures must carry transparent attribution in the footer via `--credits`.
 
 ## Restraint and self-critique
 
-Spend your boldness in one place. Let one element be the memorable thing, keep everything around it quiet and disciplined, and cut any decoration that does not serve the brief. Build to a quality floor without announcing it: responsive down to mobile, visible keyboard focus, reduced motion respected, visually accessible, harmonious color palettes. Critique your own work as you build, taking screenshots to review if your environment supports it — a picture is worth 1000 tokens. Consider Chanel's advice: before leaving the house, take a look in the mirror and remove one accessory. Human creatives have memory and always try to do something new, so if you have a space to quickly jot down notes about what you've tried, it can help you in future passes.
+Spend your boldness in one place. Let one element be the memorable thing, keep everything around it quiet and disciplined, and cut any decoration that does not serve the brief. Build to a quality floor without announcing it: responsive down to mobile, visible keyboard focus, reduced motion respected, visually accessible, harmonious color palettes. Critique your own work as you build, taking screenshots to review if your environment supports it — a picture is worth 1000 tokens. Consider Chanel's advice: before leaving the house, take a look in the mirror and remove one accessory.
 
 ## More on writing in design
 
