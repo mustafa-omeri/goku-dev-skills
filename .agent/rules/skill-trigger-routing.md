@@ -68,6 +68,7 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 | güvenlik, yetki, jwt, auth, loglama / security, authorization, audit log | `musgoku` → `references/security-logging.md` | aynı |
 | refactoring, hata düzelt, clean code, sadeleştir / refactor, fix bug, simplify | `musgoku` + `karpathy-guidelines` | `skills/karpathy-guidelines/SKILL.md` |
 | react bileşen, component oluştur, props, state / react component, create component | `musgoku` → `skills/musgoku-react-component.md` | — |
+| react performans, re-render, waterfall engelleme, compound component, react kodlama / react best practices, react performance, eliminate waterfalls, composition patterns | `react-best-practices` | `skills/react-best-practices/SKILL.md` |
 | form, validasyon, zod, şema / form, validation, zod schema | `musgoku` → `skills/musgoku-forms-validation.md` | — |
 | route, korumalı sayfa, yetkilendirme, guard / route, protected page, guard | `musgoku` → `skills/musgoku-routing-auth.md` | — |
 | veri çekme, cache, liste tazeleme, query / fetch data, caching, invalidate | `musgoku` → `skills/musgoku-api-data-layer.md` | — |

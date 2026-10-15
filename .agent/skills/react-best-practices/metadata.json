@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "organization": "Vercel Engineering & skillSetWorks",
+  "date": "October 2026",
+  "abstract": "Comprehensive performance optimization and component composition guide for React and Next.js applications, tailored for AI coding agents. Contains 78 rules across 9 categories, prioritized by impact from critical (eliminating waterfalls, reducing bundle size) to architecture (compound components, state decoupling) and micro-optimizations.",
+  "references": [
+    "https://react.dev",
+    "https://nextjs.org",
+    "https://swr.vercel.app",
+    "https://github.com/shuding/better-all",
+    "https://github.com/isaacs/node-lru-cache"
+  ]
+}

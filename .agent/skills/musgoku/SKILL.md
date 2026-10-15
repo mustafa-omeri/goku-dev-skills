@@ -64,6 +64,7 @@ Tespit yapamazsan **kullanıcıya sor.** Tahmin yürütme.
 | Stil / Tailwind / Shadcn / dark mode | [skills/musgoku-styling-ui.md](./skills/musgoku-styling-ui.md) → shadcn/Tailwind referans kataloğu için [`skills/ui-styling/`](../ui-styling/SKILL.md) |
 | TypeScript tip kalitesi / build uyumu | [skills/musgoku-typescript-quality.md](./skills/musgoku-typescript-quality.md) |
 | i18n / çeviri | [`skills/i18n-localization/`](../i18n-localization/SKILL.md) |
+| React performans / re-render / bileşen kompozisyonu / kodlama standartları | [`skills/react-best-practices/`](../react-best-practices/SKILL.md) |
 | Bundle / chunk / performans | [`rules/frontend-bundle-limits.md`](../../rules/frontend-bundle-limits.md) |
 | Docker / prod kurulum | [`skills/production-docker-architect/`](../production-docker-architect/SKILL.md) |
 
