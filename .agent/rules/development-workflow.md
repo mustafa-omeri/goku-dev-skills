@@ -82,6 +82,22 @@ Ayrıntı: [no-unused-code.md](./no-unused-code.md) ·
 
 ---
 
+## Adım 4.1 — Kullanıcı Test Edilebilirliği ve Test Rehberi (KULLANICI_TEST_REHBERI.md)
+
+1. **Her çıktı test edilebilir olmalı:** Her geliştirme, düzeltme veya sprint teslimatında
+   çıktı kullanıcı tarafından test edilebilir olmalıdır.
+2. **Rehber güncellemesi:** Proje kökündeki `KULLANICI_TEST_REHBERI.md` dosyası yoksa
+   `.agent/templates/KULLANICI_TEST_REHBERI.template.md` şablonundan oluşturulur; varsa
+   bu adımda yapılan işin tarayıcıda veya konsolda nasıl adım adım test edileceği rehbere eklenir.
+3. ⛔ **Otomasyon Yeşilliği Yanılgısına Düşme (Kritik Ders):**
+   Otomasyon testlerinin (`pnpm test`, `typecheck`, `test:e2e`, `mvn test`) yeşil olması,
+   kodun syntax ve birim düzeyinde çalıştığını kanıtlar; ancak kullanıcının kendi gözüyle
+   tarayıcıda bu özellikleri adım adım nasıl doğrulayacağını göstermez.
+   `KULLANICI_TEST_REHBERI.md` güncellenmeden veya kullanıcıya adım adım test yöntemi
+   sunulmadan teslimat tamamlanmış sayılamaz ve commit onayına geçilemez!
+
+---
+
 ## Adım 5 — Devir ve bilgi tabanı güncellemesi
 
 1. `knowledge-base.md`'ye bu adımda alınan kararlar
@@ -89,7 +105,7 @@ Ayrıntı: [no-unused-code.md](./no-unused-code.md) ·
    (`Problem / Root Cause / Solution`) yaz.
 2. `HANDOFF.md`'yi güncelle:
    §1 güncellik kanıtı · §2 nerede kaldık · §3 sıradaki iş ·
-   §4 yeni ders · §5 yeni karar · §6 ortam bilgisi
+   §3.1 nasıl test edilir (kullanıcı) · §4 yeni ders · §5 yeni karar · §6 ortam bilgisi
 3. Yanıtta `### 📝 OTURUM DEVİR & BİLGİ TABANI GÜNCELLEMESİ` bloğunu göster.
 4. Açık iş kalmadıysa bunu açıkça yaz.
 
@@ -99,8 +115,10 @@ Ayrıntı: [knowledge-base-management.md](./knowledge-base-management.md)
 
 ## Adım 6 — Kullanıcı onayı
 
-- Değişiklikleri listele.
-- Commit mesajı ve tag öner.
+- Değişiklikleri listele (`git status`).
+- Önerilen commit mesajı ve yeni semantik tag'i göster.
+- **Kullanıcı test adımlarını sun:** Kullanıcının teslimatı bizzat gözüyle test edebilmesi için
+  `KULLANICI_TEST_REHBERI.md` dosyasındaki ilgili adımları ve test komutlarını göster.
 - ⛔ Onay olmadan commit yapma.
 - ✅ Onay verilirse `git-release-workflow` skill'iyle **kesintisiz** yürüt.
 

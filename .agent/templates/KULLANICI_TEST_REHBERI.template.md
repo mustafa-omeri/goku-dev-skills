@@ -1,0 +1,102 @@
+# KULLANICI_TEST_REHBERI.md — Çıktıları Nasıl Test Edersiniz
+
+> Bu dosya her proje kökünde tutulur ve `.agent/templates/KULLANICI_TEST_REHBERI.template.md`
+> şablonundan oluşturulur.
+> Kurallar: `.agent/rules/sprint-delivery-workflow.md` · `.agent/rules/development-workflow.md`
+> Amacı: ajanın "yaptım / test edildi / tüm testler yeşil" demesini, kullanıcının
+> **kendi gözüyle tarayıcıda veya konsolda doğrulayabileceği** somut adımlara çevirmektir.
+
+---
+
+## 1. Temel yöntem — 5 adım
+
+| # | Adım | Soru |
+|---|---|---|
+| 1 | **Ne değişti?** | Dosya listesini okuyun. Beklediğiniz dosya listede mi? |
+| 2 | **Kanıt komutu çalıştırın** | Ajan hangi komutu gösterdiyse **onu siz** çalıştırın. |
+| 3 | **Sayıyı karşılaştırın** | "0 hata", "4/4", "[OK]" — sayı yoksa kanıt yoktur. |
+| 4 | **Bir adımı bozun** | Kontrollü olarak bir şeyi kırın; kapı gerçekten kırmızıya dönüyor mu? |
+| 5 | **Geri alınabilir mi?** | Geri alma yolu var mı (yedek, geri commit, geri alma komutu)? |
+
+⛔ **4. adım atlanırsa kapının çalıştığını bilemezsiniz.** Hep yeşil gören bir
+denetleyici, hiç çalışmayan bir denetleyiciden ayırt edilemez.
+
+---
+
+## 2. Sözlük: kanıt hangi kelimeye karşılık gelir
+
+| Ajanın dediği | Kanıt mı? | Doğrulaması |
+|---|---|---|
+| "uyguladım" | ⛔ hayır | sayı yok |
+| "test edildi" | ⛔ hayır | hangi komut? |
+| "çalışıyor" | ⛔ hayır | neyi gördün? |
+| "tüm testler yeşil" | ⚠️ kısmi | otomasyon geçti, kullanıcı gözüyle ne değişti? |
+| "0 hata · 34 test" | ✅ evet | tekrar koşun |
+| "doğrulanamadı" | ✅ evet | dürüst beyan — en iyisi |
+
+---
+
+## 3. Bu Projenin Çıktıları için Test ve Doğrulama Adımları
+
+_(Bu bölüm projeye özeldir. Her yeni özellikte/sprintte ajan bu bölümü günceller.)_
+
+### 3.1 Otomatik Doğrulama Kapıları (Terminal Testi)
+
+```bash
+# Projenin tip, derleme ve test komutları
+[komut 1 — ör: npm run typecheck / mvn test-compile]
+[komut 2 — ör: npm test / mvn test]
+```
+
+### 3.2 Canlı Önizleme / Tarayıcı Testi (Varsa)
+
+```bash
+# Uygulama sunucusu / dev / preview komutları
+[sunucu başlatma komutu]
+# Açılacak yerel URL: http://localhost:PORT
+```
+
+### 3.3 Özellik Bazlı Kullanıcı Kabul Senaryoları (Manuel Test)
+
+* **Özellik / Senaryo 1:**
+  1. Tarayıcıda `URL` adresine gidin.
+  2. `[Buton/Form]` bileşenine tıklayın.
+  3. Ekranda `[Beklenen Sonuç]` çıktısını gözlemleyin.
+* **Özellik / Senaryo 2:**
+  ...
+
+---
+
+## 4. Sprint kuralıyla üretilen çıktıları nasıl test edersiniz
+
+Her `Yapıldı` kartı bir `test:` alanı taşır. `KANBAN.md`'de o satırı okuyun ve
+**o adımı birebir uygulayın.**
+
+| Kart durumu | Sizin testiniz |
+|---|---|
+| `Bekliyor` | henüz test yoktur — kart kapanmadan da test edilmez |
+| `Yapılıyor` | ara çıktıyı inceleyin, Gherkin dosyası gerçekten var mı? |
+| `Sınırdı` | komutu çalıştırın, gerçekten geçiyor mu? |
+| `Yapıldı` | `test:` alanındaki adımı uygulayın, ölçülebilir sonucu görün |
+
+**Bir kartın `test:` alanı şunlarsa test edilmemiş sayılır:**
+
+- "test edildi" · "çalışıyor" · "doğrulandı"
+- "yazılacak" · "TBD" · "?"
+- Ölçülebilir sonuç içermeyen her cümle
+
+---
+
+## 5. Test edilemeyen çıktı — dürüst beyan
+
+Bazı işler kullanıcı tarafından doğrudan test edilemez (ör. bir refactoring, arka plan temizliği).
+Bu durumda ajan **"bu çıktı doğrudan kullanıcı tarafından gözlemlenemez,
+şu teknik ölçümle destekliyorum"** demelidir. Uydurma test adımı yazmaz.
+
+---
+
+## 6. Tek cümlelik onay şablonu
+
+Bir çıktıyı onaylarken şunu yazabilirsiniz:
+
+> "Test ettim: `<komut/ekran>` → `<sonuç>`, `<bozma testi>` → `<beklenen kırmızı>`."

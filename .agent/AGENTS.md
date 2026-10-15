@@ -50,14 +50,20 @@ ve [`.agent\rules\handoff-session-continuity.md`](rules/handoff-session-continui
 ## 2. Her oturumun sonunda zorunlu adımlar
 
 1. Doğrulama kapılarını çalıştır (aşağıdaki kapılar).
-2. `knowledge-base.md`'ye bu adımda çözülen hataları ve verilen kararları **yaz**.
-3. `HANDOFF.md`'yi güncelle: kanıt metrikleri, nerede kaldık, **sıradaki iş**,
-   varsa yeni düşülen hata.
-4. Kullanıcıya şeffaf rapor ver — aşağıdaki blok **zorunludur**.
-5. Commit istenmedikçe `git commit` / `push` / `tag` **yapma**.
+2. `KULLANICI_TEST_REHBERI.md` dosyasını güncelle (yoksa `.agent/templates/KULLANICI_TEST_REHBERI.template.md` şablonundan oluştur).
+   Kullanıcının bizzat gözüyle tarayıcıda veya konsolda özellikleri adım adım nasıl doğrulayacağını yaz.
+   ⛔ **Otomasyon Yeşilliği Yanılgısına Düşme:** Otomasyon testlerinin (unit, typecheck, e2e, lint, build) yeşil
+   olması kodun çalıştığını kanıtlar; kullanıcının çıktıyı gözüyle nasıl doğrulayacağını göstermez.
+   Kullanıcı test adımları sunulmadan iş bitti sayılamaz ve commit onayına geçilemez.
+3. `knowledge-base.md`'ye bu adımda çözülen hataları ve verilen kararları **yaz**.
+4. `HANDOFF.md`'yi güncelle: kanıt metrikleri, nerede kaldık, **sıradaki iş**,
+   varsa yeni düşülen hata ve "Nasıl Test Edilir (kullanıcı)" bölümü.
+5. Kullanıcıya şeffaf rapor ver — aşağıdaki blok **zorunludur**.
+6. Commit istenmedikçe `git commit` / `push` / `tag` **yapma**.
 
 ```markdown
 ### 📝 OTURUM DEVİR & BİLGİ TABANI GÜNCELLEMESİ (HANDOFF & KB RAPORU)
+- **Kullanıcı Test Rehberi:** [KULLANICI_TEST_REHBERI.md güncellendi mi? Eklenen test senaryoları/adımları]
 - **knowledge-base.md:** [Eklenen hata/karar başlıkları ve kısa özeti (yoksa "yeni yok")]
 - **HANDOFF.md:**
   * Güncellik Kanıtı: [Ölçülen gerçek sayılar — test, assert, derleme, chunk boyutları]

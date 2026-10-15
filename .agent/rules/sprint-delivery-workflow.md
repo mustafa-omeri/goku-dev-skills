@@ -35,7 +35,7 @@ ve kapı sağlar. Sözleşmeye uymayan ajan "yaptım" diyemez.
 | `KANBAN.md` | proje kökü | **dağıtılmaz** |
 | `RELEASE_PLAN.md` | proje kökü | **dağıtılmaz** |
 | `specs/<kart-id>.feature` | proje kökü `specs/` | **dağıtılmaz** |
-| `KULLANICI_TEST_REHBERI.md` | proje kökü | **dağıtılır** (`delivery.md` → `rootFiles`) |
+| `KULLANICI_TEST_REHBERI.md` | proje kökü | **dağıtılmaz** — proje-özel durum (şablon: `templates/KULLANICI_TEST_REHBERI.template.md`) |
 
 ⛔ Bu adları değiştirme, çoğulize etme (`SPRINT_PLANS.md`) veya başka bir klasöre
 koyma. Kapı bu adlara bakar; ad değişirse kapı susar ve kural ölü kalır.
@@ -47,7 +47,8 @@ içeriği sen doldurursun:
 
 [`.agent/templates/SPRINT_PLAN.template.md`](../templates/SPRINT_PLAN.template.md) ·
 [`.agent/templates/KANBAN.template.md`](../templates/KANBAN.template.md) ·
-[`.agent/templates/RELEASE_PLAN.template.md`](../templates/RELEASE_PLAN.template.md)
+[`.agent/templates/RELEASE_PLAN.template.md`](../templates/RELEASE_PLAN.template.md) ·
+[`.agent/templates/KULLANICI_TEST_REHBERI.template.md`](../templates/KULLANICI_TEST_REHBERI.template.md)
 
 ⛔ **Şablonu olduğu gibi kopyalayıp boş bırakma.** Projeye göre uyarla:
 
@@ -175,15 +176,25 @@ bilinçli olarak `sprint: S<n+1>` ile taşınmış olmalıdır. Üçüncü yol
 ---
 
 ## 6. Kullanıcı tarafından test edilebilirlik
-
-Her `Yapıldı` kartının `test:` alanı, kullanıcının **tarayıcıyı/terminali açıp
-yapacağı** adım olmalıdır. Genel yöntem ve örnekler:
-`KULLANICI_TEST_REHBERI.md` (proje kökünde, `delivery.md` → `rootFiles` ile
-dağıtılır).
-
-⛔ "Test edildi", "çalışıyor", "doğrulandı" bir test adımı **değildir**.
-Ölçülebilir sonuç içermeli: `178 test, 0 hata` · `4/4 proje doğrulandı` ·
-`[OK]` · `süre: 0:08`.
+ 
+ Her bir çıktı kullanıcı tarafından test edilebilir olmalı ve nasıl test edeceğine
+ dair proje kökündeki `KULLANICI_TEST_REHBERI.md` dosyası yoksa şablondan oluşturulmalı,
+ varsa güncellenmelidir.
+ 
+ Her `Yapıldı` kartının `test:` alanı, kullanıcının **tarayıcıyı/terminali açıp
+ yapacağı** adım olmalıdır. Proje genel rehberi: `KULLANICI_TEST_REHBERI.md` (proje kökünde,
+ şablondan türetilir).
+ 
+ ⛔ **Otomasyon Yeşilliği Yanılgısı (Kritik Tuzak):**
+ Otomasyon testlerinin (`pnpm test`, `typecheck`, `test:e2e`, `mvn test`) yeşil olması,
+ kodun syntax ve birim seviyesinde çalıştığını kanıtlar; ancak kullanıcının kendi gözüyle
+ tarayıcıda bu özellikleri adım adım nasıl doğrulayacağını göstermez.
+ `KULLANICI_TEST_REHBERI.md` güncellenmeden veya kullanıcıya adım adım test yöntemi
+ sunulmadan kart `Yapıldı` sütununa taşınamaz ve commit onayı istenemez!
+ 
+ ⛔ "Test edildi", "çalışıyor", "doğrulandı" bir test adımı **değildir**.
+ Ölçülebilir sonuç içermeli: `178 test, 0 hata` · `4/4 proje doğrulandı` ·
+ `[OK]` · `süre: 0:08`.
 
 ---
 

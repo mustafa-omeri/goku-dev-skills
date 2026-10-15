@@ -83,7 +83,7 @@ def good_card(card_id="S1-01", column="Yapıldı", spec="specs/S1-01.feature",
 
 
 def make_project(tmp: Path, cards: dict, sprint=GOOD_SPRINT, release=None,
-                 write_sprint=True, write_board=True):
+                 write_sprint=True, write_board=True, write_guide=True):
     (tmp / "specs").mkdir(parents=True, exist_ok=True)
     (tmp / "specs" / "S1-01.feature").write_text(GOOD_FEATURE, encoding="utf-8")
     if write_sprint:
@@ -92,6 +92,8 @@ def make_project(tmp: Path, cards: dict, sprint=GOOD_SPRINT, release=None,
         body = "\n".join(f"## {name}\n\n{cards.get(name, '')}\n"
                          for name in gate.COLUMNS)
         (tmp / "KANBAN.md").write_text(body, encoding="utf-8")
+    if write_guide:
+        (tmp / "KULLANICI_TEST_REHBERI.md").write_text("# KULLANICI_TEST_REHBERI.md\n", encoding="utf-8")
     if release is not None:
         (tmp / "RELEASE_PLAN.md").write_text(release, encoding="utf-8")
     return tmp
@@ -126,6 +128,12 @@ def test_invalid_is_caught():
         tmp = make_project(Path(d), {}, write_sprint=False)
         errors, _w, _s = run(tmp)
         check("E1 plan dosyasi eksik", "E1" in codes(errors), str(sorted(codes(errors))))
+
+    # E1 kullanici test rehberi eksik
+    with tempfile.TemporaryDirectory() as d:
+        tmp = make_project(Path(d), {"Yapıldı": good_card()}, write_guide=False)
+        errors, _w, _s = run(tmp)
+        check("E1 test rehberi eksik", "E1" in codes(errors), str(sorted(codes(errors))))
 
     # E2 sprint plani bicimi bozuk
     with tempfile.TemporaryDirectory() as d:

@@ -25,7 +25,7 @@ sinif: SUREC
 1. `git status` — değişiklik yoksa dur ve bildir.
 2. `git tag -l` — en son semantik tag'ı bul, sonraki sürümü hesapla.
 3. `git add .`
-4. Dosya listesi + önerilen mesaj + önerilen tag'ı kullanıcıya göster, onay al.
+4. Dosya listesi + önerilen mesaj + önerilen tag + kullanıcının bizzat gözüyle test edeceği adımları (`KULLANICI_TEST_REHBERI.md`) kullanıcıya göster, onay al.
 5. `git commit -m "<mesaj>"`
 6. `git tag <yeni_tag>`
 7. `git push origin HEAD` ve `git push --tags`

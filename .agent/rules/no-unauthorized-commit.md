@@ -12,6 +12,9 @@ sinif: SUREC
    - `git status --short` çıktısı veya değişen dosya listesi
    - Önerilen commit mesajı
    - Önerilen yeni semantik tag
+   - **Kullanıcı Test Adımları:** Kullanıcının teslimatı bizzat gözüyle test edebilmesi için
+     `KULLANICI_TEST_REHBERI.md` dosyasındaki ilgili adımlar ve test komutları.
+     ⛔ Test adımları sunulmadan ve rehber güncellenmeden commit onayı istenemez.
 3. Aşağıdakiler açık onay sayılır: "commit yap", "onaylıyorum", "evet",
    "commitleyebilirsin", "gönder".
    "devam et", "bak", "bir de şunu düzelt" onay **sayılmaz**.

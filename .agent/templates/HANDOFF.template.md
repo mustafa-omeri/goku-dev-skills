@@ -69,6 +69,13 @@
 
 - [Kırılgan dosya / sahte geçen test riski / bekleyen karar]
 
+### Nasıl Test Edilir (kullanıcı)
+
+> Her oturum ve teslimat sonunda kullanıcının çıktıyı nasıl test edeceği
+> adım adım yazılır (ve `KULLANICI_TEST_REHBERI.md` güncellenir).
+1. `[kullanıcı komutu veya tarayıcı URL'si]` → `[beklenen sonuç]`
+2. `[bozma veya sınır testi]` → `[beklenen hata veya davranış]`
+
 ---
 
 ## 4. Bu Projede Alınan Kararlar

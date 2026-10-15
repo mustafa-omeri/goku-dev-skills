@@ -17,7 +17,7 @@ burada **tek kere** denetlenir; sapma exit 1 doner.
 
 Kontroller
 ----------
-E1 zorunlu dosya eksik      SPRINT_PLAN.md veya KANBAN.md yok
+E1 zorunlu dosya eksik      SPRINT_PLAN.md, KANBAN.md veya KULLANICI_TEST_REHBERI.md yok
 E2 sprint plani bicimi      `## Sprint N` + Hedef + MVP Kapsam + Kapsam Disi
 E3 sutun kumesi             tam olarak 4 sabit sutun, baska sutun yok
 E4 kart basligi             `### S<n>-<nn> · baslik`, id yinelenemez
@@ -222,6 +222,11 @@ def check(root: Path, wip_limit: int = 3):
         errors.append(("E1", "SPRINT_PLAN.md", "dosya yok (kanban varsa plan da olmali)"))
     if not board_path.is_file():
         errors.append(("E1", "KANBAN.md", "dosya yok (plan varsa kanban da olmali)"))
+    guide_path = root / "KULLANICI_TEST_REHBERI.md"
+    if not guide_path.is_file():
+        errors.append(("E1", "KULLANICI_TEST_REHBERI.md",
+                       "dosya yok (sprint planı açılmışsa kullanıcı test rehberi de olmalı, "
+                       "şablon: .agent/templates/KULLANICI_TEST_REHBERI.template.md)"))
 
     # --- E2 sprint plani bicimi
     sprint_text = ""
