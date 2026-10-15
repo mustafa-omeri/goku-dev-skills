@@ -45,6 +45,9 @@
 - Migration aracı projedeki Flyway/Liquibase hangisiyse odur
 - Büyük tabloda index online/concurrent oluşturulur
 - Geri alma notu migration açıklamasına yazılır
+- ⛔ **DB_MIGRATIONS.md Güncelleme Zorunluluğu:** Her şema, tablo, kolon, indeks veya entity revizyonunda
+  repo kökündeki `DB_MIGRATIONS.md` dosyası aynı değişiklikte güncellenir.
+  Ayrıntı: [db-migration-enforcement.md](../../../rules/db-migration-enforcement.md).
 
 ---
 
@@ -84,7 +87,7 @@ Ayrıntılı desenler ve veritabanına göre çözümler:
 | N+1 | Sorgu sayısı testte assert edilir |
 | Tembel yükleme | Görünüm katmanında erişim yok |
 | Index | Sıralama ve filtre alanlarının index'i var mı, sorgu planı kontrol edildi mi |
-| Migration | Şema değişikliği migration dosyasında mı |
+| Migration | Şema değişikliği migration dosyasında ve `DB_MIGRATIONS.md` içinde belgelendi mi |
 
 ---
 

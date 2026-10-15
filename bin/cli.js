@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
-const VERSION = '1.3.1';
+const VERSION = '1.4.0';
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 const RAW_URL_BASE = `https://raw.githubusercontent.com/${GITHUB_REPO}/main`;
 

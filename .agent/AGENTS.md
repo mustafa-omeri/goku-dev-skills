@@ -31,19 +31,22 @@
 | Çözdüğün kalıcı hata | `<repo-kök>\knowledge-base.md` |
 | Verdiğin kalıcı karar | `<repo-kök>\knowledge-base.md` |
 | Durum, sıradaki iş, tuzaklar | `<repo-kök>\HANDOFF.md` |
+| DB revizyonu (şema, tablo, kolon) | `<repo-kök>\DB_MIGRATIONS.md` |
 
-- ⛔ Başka hiçbir yere yazma. Bu iki dosyanın **tek ve zorunlu yeri repo köküdür.**
+- ⛔ Başka hiçbir yere yazma. Bu dosyaların **tek ve zorunlu yeri repo köküdür** (veya DB dokümantasyonu için `docs/database/DB_MIGRATIONS.md`).
 - ⛔ `knowledge-base.md`'yi baştan sona okuma; yalnız yaz (append). Boyutu büyüyebilir.
 - ⛔ Vault'a hiçbir şey yazma. Vault salt okunur; kalıcı kararları Kütüphaneci taşır.
 - ⛔ "Dosyada zaten var" dediğin kuralı ikinci kez yazma — terfi öner.
 
 Formatlar ve "ne yazılır / ne yazılmaz" listesi:
-[`.agent\rules\knowledge-base-management.md`](rules/knowledge-base-management.md)
-ve [`.agent\rules\handoff-session-continuity.md`](rules/handoff-session-continuity.md).
+[`.agent\rules\knowledge-base-management.md`](rules/knowledge-base-management.md),
+[`.agent\rules\handoff-session-continuity.md`](rules/handoff-session-continuity.md)
+ve [`.agent\rules\db-migration-enforcement.md`](rules/db-migration-enforcement.md).
 
 Şablonlar (ilk kez oluşturulurken kopyalanır, sonra dosyanın kendisi güncellenir):
 [`templates\HANDOFF.template.md`](templates/HANDOFF.template.md) ·
-[`templates\knowledge-base.template.md`](templates/knowledge-base.template.md)
+[`templates\knowledge-base.template.md`](templates/knowledge-base.template.md) ·
+[`templates\DB_MIGRATIONS.template.md`](templates/DB_MIGRATIONS.template.md)
 
 ---
 
@@ -55,16 +58,18 @@ ve [`.agent\rules\handoff-session-continuity.md`](rules/handoff-session-continui
    ⛔ **Otomasyon Yeşilliği Yanılgısına Düşme:** Otomasyon testlerinin (unit, typecheck, e2e, lint, build) yeşil
    olması kodun çalıştığını kanıtlar; kullanıcının çıktıyı gözüyle nasıl doğrulayacağını göstermez.
    Kullanıcı test adımları sunulmadan iş bitti sayılamaz ve commit onayına geçilemez.
-3. `knowledge-base.md`'ye bu adımda çözülen hataları ve verilen kararları **yaz**.
-4. `HANDOFF.md`'yi güncelle: kanıt metrikleri, nerede kaldık, **sıradaki iş**,
+3. Veritabanı revizyonu (tablo, kolon, indeks, entity) yapıldıysa `DB_MIGRATIONS.md` dosyasını güncelle (yoksa `.agent/templates/DB_MIGRATIONS.template.md` şablonundan oluştur).
+4. `knowledge-base.md`'ye bu adımda çözülen hataları ve verilen kararları **yaz**.
+5. `HANDOFF.md`'yi güncelle: kanıt metrikleri, nerede kaldık, **sıradaki iş**,
    varsa yeni düşülen hata ve "Nasıl Test Edilir (kullanıcı)" bölümü.
-5. Kullanıcıya şeffaf rapor ver — aşağıdaki blok **zorunludur**.
-6. Commit istenmedikçe `git commit` / `push` / `tag` **yapma**.
+6. Kullanıcıya şeffaf rapor ver — aşağıdaki blok **zorunludur**.
+7. Commit istenmedikçe `git commit` / `push` / `tag` **yapma**.
 
 ```markdown
 ### 📝 OTURUM DEVİR & BİLGİ TABANI GÜNCELLEMESİ (HANDOFF & KB RAPORU)
 - **Kullanıcı Test Rehberi:** [KULLANICI_TEST_REHBERI.md güncellendi mi? Eklenen test senaryoları/adımları]
 - **knowledge-base.md:** [Eklenen hata/karar başlıkları ve kısa özeti (yoksa "yeni yok")]
+- **DB Migrations:** [DB_MIGRATIONS.md güncellendi mi? Eklenen revizyonlar veya "DB değişikliği yok / kapsam dışı"]
 - **HANDOFF.md:**
   * Güncellik Kanıtı: [Ölçülen gerçek sayılar — test, assert, derleme, chunk boyutları]
   * Nerede Kaldık: [Tamamlanan adım ve durum]
@@ -107,6 +112,7 @@ kanıtlayamazsın — sadece beyan edersin.** Bu ayrım gizli değildir.
 | Yığın | Zorunlu komut | Ayrıntı |
 |---|---|---|
 | Backend / API dokümantasyonu | `python .agent/skills/musgoku/scripts/check_api_docs.py` | [`api-documentation-enforcement.md`](rules/api-documentation-enforcement.md) |
+| Backend / Veritabanı migration | `python .agent/skills/musgoku/scripts/check_db_migrations.py` | [`db-migration-enforcement.md`](rules/db-migration-enforcement.md) |
 | Tasarım / skill sahipliği | `python .agent/skills/musgoku/scripts/check_design_skills.py` | [`design-skills-enforcement.md`](rules/design-skills-enforcement.md) |
 | Frontend / bundle bütçesi | `npm run build` | [`frontend-bundle-limits.md`](rules/frontend-bundle-limits.md) |
 | Frontend / i18n | `python .agent/skills/i18n-localization/scripts/i18n_checker.py` | [`i18n-enforcement.md`](rules/i18n-enforcement.md) |

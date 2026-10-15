@@ -68,7 +68,8 @@ Geliştirmeye başlamadan önce ajan sırasıyla şu 4 adımı işletmek zorunda
 2. Kodu yaz — DRY, guard clauses, erken return, tip güvenliği.
 3. Frontend projesi ise i18n anahtarlarını **her iki dil dosyasına** ekle.
 4. Backend projesi ise API dokümantasyon dosyasını aynı değişiklikte güncelle.
-5. Mevcut kodun akışını ve iş mantığını bozma; refactor'ı ayrı adımda yap.
+5. Veritabanı şeması, tablo, kolon veya entity revizyonu yapıldıysa `DB_MIGRATIONS.md` dosyasını aynı değişiklikte güncelle.
+6. Mevcut kodun akışını ve iş mantığını bozma; refactor'ı ayrı adımda yap.
 
 ---
 
@@ -82,6 +83,7 @@ front matter `sinif:` / `kapi:` alanları.
 | Yığın | Zorunlu komut | Ayrıntı |
 |---|---|---|
 | Backend / API dokümantasyonu | `python .agent/skills/musgoku/scripts/check_api_docs.py` | [`api-documentation-enforcement.md`](./api-documentation-enforcement.md) |
+| Backend / Veritabanı migration | `python .agent/skills/musgoku/scripts/check_db_migrations.py` | [`db-migration-enforcement.md`](./db-migration-enforcement.md) |
 | Tasarım / skill sahipliği | `python .agent/skills/musgoku/scripts/check_design_skills.py` | [`design-skills-enforcement.md`](./design-skills-enforcement.md) |
 | Frontend / bundle bütçesi | `npm run build` | [`frontend-bundle-limits.md`](./frontend-bundle-limits.md) |
 | Frontend / i18n | `python .agent/skills/i18n-localization/scripts/i18n_checker.py` | [`i18n-enforcement.md`](./i18n-enforcement.md) |

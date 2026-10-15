@@ -51,6 +51,7 @@ Tespit yapamazsan **kullanıcıya sor.** Tahmin yürütme.
 | WebSocket / gerçek zamanlı iletişim | [references/websocket.md](./references/websocket.md) |
 | Refactoring / clean code / kod kalitesi | [references/clean-code-conventions.md](./references/clean-code-conventions.md) |
 | **API dokümantasyonu** | [`rules/api-documentation-enforcement.md`](../../rules/api-documentation-enforcement.md) |
+| **Veritabanı revizyonu & migration** | [`rules/db-migration-enforcement.md`](../../rules/db-migration-enforcement.md) |
 
 ### Frontend (Vite SPA)
 

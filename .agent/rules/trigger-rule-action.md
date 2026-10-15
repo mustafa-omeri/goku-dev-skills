@@ -59,11 +59,12 @@ Yönlendirme tek yerden yapılır:
 `references\clean-code-conventions.md` · `references\search-strategies.md` ·
 `references\pagination-checklists.md`
 
-## G. Dokümantasyon kuralları
+## G. Dokümantasyon ve Veritabanı kuralları
 
 | Konu | Kural |
 |---|---|
 | API dokümantasyonu zorunluluğu | [api-documentation-enforcement.md](./api-documentation-enforcement.md) |
+| Veritabanı migration ve revizyon zorunluluğu | [db-migration-enforcement.md](./db-migration-enforcement.md) |
 
 ---
 
