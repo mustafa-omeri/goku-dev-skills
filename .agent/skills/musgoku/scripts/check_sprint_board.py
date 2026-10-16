@@ -224,8 +224,11 @@ def check(root: Path, wip_limit: int = 3):
         errors.append(("E1", "KANBAN.md", "dosya yok (plan varsa kanban da olmali)"))
     guide_path = root / "KULLANICI_TEST_REHBERI.md"
     if not guide_path.is_file():
+        guide_path = root / "docs" / "KULLANICI_TEST_REHBERI.md"
+    if not guide_path.is_file():
         errors.append(("E1", "KULLANICI_TEST_REHBERI.md",
-                       "dosya yok (sprint planı açılmışsa kullanıcı test rehberi de olmalı, "
+                       "dosya yok (sprint planı açılmışsa kullanıcı test rehberi de olmalı: "
+                       "proje kökü veya docs/KULLANICI_TEST_REHBERI.md, "
                        "şablon: .agent/templates/KULLANICI_TEST_REHBERI.template.md)"))
 
     # --- E2 sprint plani bicimi

@@ -35,10 +35,9 @@ ve kapı sağlar. Sözleşmeye uymayan ajan "yaptım" diyemez.
 | `KANBAN.md` | proje kökü | **dağıtılmaz** |
 | `RELEASE_PLAN.md` | proje kökü | **dağıtılmaz** |
 | `specs/<kart-id>.feature` | proje kökü `specs/` | **dağıtılmaz** |
-| `KULLANICI_TEST_REHBERI.md` | proje kökü | **dağıtılmaz** — proje-özel durum (şablon: `templates/KULLANICI_TEST_REHBERI.template.md`) |
+| `KULLANICI_TEST_REHBERI.md` | proje kökü (Birincil) veya `docs/KULLANICI_TEST_REHBERI.md` (Alternatif) | **dağıtılmaz** — proje-özel durum (şablon: `templates/KULLANICI_TEST_REHBERI.template.md`) |
 
-⛔ Bu adları değiştirme, çoğulize etme (`SPRINT_PLANS.md`) veya başka bir klasöre
-koyma. Kapı bu adlara bakar; ad değişirse kapı susar ve kural ölü kalır.
+⛔ Bu adları değiştirme veya çoğulize etme (`SPRINT_PLANS.md`). `KULLANICI_TEST_REHBERI.md` için proje kökü (birincil) veya `docs/KULLANICI_TEST_REHBERI.md` (kabul edilen alternatif) geçerlidir; kapı her iki konumu da tanır. Ad değişirse kapı susar ve kural ölü kalır.
 
 ### Şablon nasıl kullanılır
 
