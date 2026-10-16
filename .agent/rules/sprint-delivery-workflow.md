@@ -225,6 +225,11 @@ bilinçli olarak `sprint: S<n+1>` ile taşınmış olmalıdır. Üçüncü yol
  `KULLANICI_TEST_REHBERI.md` güncellenmeden veya kullanıcıya adım adım test yöntemi
  sunulmadan kart `Yapıldı` sütununa taşınamaz ve commit onayı istenemez!
  
+ 💡 **İstisna (Minor Rötüş & Dahili İyileştirmeler):**
+ Mevcut kullanıcı akışını, ekran bileşenlerini veya kabul senaryolarını değiştirmeyen minor
+ rötüşlarda (küçük CSS/boşluk ayarı, dahili refactoring, tip düzeltmesi, typo) rehbere yapay
+ satır eklenmez; mevcut senaryoların geçerli olduğu beyan edilir.
+ 
  ⛔ "Test edildi", "çalışıyor", "doğrulandı" bir test adımı **değildir**.
  Ölçülebilir sonuç içermeli: `178 test, 0 hata` · `4/4 proje doğrulandı` ·
  `[OK]` · `süre: 0:08`.

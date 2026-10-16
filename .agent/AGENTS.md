@@ -58,6 +58,7 @@ ve [`.agent\rules\db-migration-enforcement.md`](rules/db-migration-enforcement.m
    ⛔ **Otomasyon Yeşilliği Yanılgısına Düşme:** Otomasyon testlerinin (unit, typecheck, e2e, lint, build) yeşil
    olması kodun çalıştığını kanıtlar; kullanıcının çıktıyı gözüyle nasıl doğrulayacağını göstermez.
    Kullanıcı test adımları sunulmadan iş bitti sayılamaz ve commit onayına geçilemez.
+   💡 **İstisna (Minor Rötüş & Dahili Değişiklikler):** Mevcut kullanıcı akışını, ekran bileşenlerini veya kabul senaryolarını değiştirmeyen minor rötüşlar (CSS boşluk/renk ince ayarı, dahili refactoring, tip düzeltmesi, typo) için rehbere gereksiz satır ekleme/dosya işlemi yapılmaz; raporda *"Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"* beyan edilir.
 3. Veritabanı revizyonu (tablo, kolon, indeks, entity) yapıldıysa `DB_MIGRATIONS.md` dosyasını güncelle (yoksa `.agent/templates/DB_MIGRATIONS.template.md` şablonundan oluştur).
 4. `knowledge-base.md`'ye bu adımda çözülen hataları ve verilen kararları **yaz**.
 5. `HANDOFF.md`'yi güncelle: kanıt metrikleri, nerede kaldık, **sıradaki iş**,
@@ -67,7 +68,7 @@ ve [`.agent\rules\db-migration-enforcement.md`](rules/db-migration-enforcement.m
 
 ```markdown
 ### 📝 OTURUM DEVİR & BİLGİ TABANI GÜNCELLEMESİ (HANDOFF & KB RAPORU)
-- **Kullanıcı Test Rehberi:** [KULLANICI_TEST_REHBERI.md güncellendi mi? Eklenen test senaryoları/adımları]
+- **Kullanıcı Test Rehberi:** [KULLANICI_TEST_REHBERI.md güncellendi mi? Eklenen test senaryoları/adımları veya "Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"]
 - **knowledge-base.md:** [Eklenen hata/karar başlıkları ve kısa özeti (yoksa "yeni yok")]
 - **DB Migrations:** [DB_MIGRATIONS.md güncellendi mi? Eklenen revizyonlar veya "DB değişikliği yok / kapsam dışı"]
 - **HANDOFF.md:**

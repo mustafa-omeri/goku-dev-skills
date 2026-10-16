@@ -120,6 +120,13 @@ Ayrıntı: [no-unused-code.md](./no-unused-code.md) ·
    tarayıcıda bu özellikleri adım adım nasıl doğrulayacağını göstermez.
    `KULLANICI_TEST_REHBERI.md` güncellenmeden veya kullanıcıya adım adım test yöntemi
    sunulmadan teslimat tamamlanmış sayılamaz ve commit onayına geçilemez!
+4. 💡 **İstisna (Minor Rötüş & Dahili Değişiklikler):**
+   Mevcut kullanıcı akışını, ekran bileşenlerini veya kabul senaryolarını değiştirmeyen minor rötüşlar
+   (CSS boşluk/renk ince ayarı, dahili refactoring, tip güvenliği/düzeltmesi, typo, kod içi yorum)
+   için rehbere gereksiz satır eklenmez ve dosya işlemi yapılmaz.
+   Bu durumda commit onayında ve devir raporunda:
+   *"Kullanıcı Test Rehberi: Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"*
+   olarak beyan edilir ve gerekiyorsa rehberdeki hangi mevcut adımın geçerli olduğu belirtilir.
 
 ---
 
@@ -143,7 +150,8 @@ Ayrıntı: [knowledge-base-management.md](./knowledge-base-management.md)
 - Değişiklikleri listele (`git status`).
 - Önerilen commit mesajı ve yeni semantik tag'i göster.
 - **Kullanıcı test adımlarını sun:** Kullanıcının teslimatı bizzat gözüyle test edebilmesi için
-  `KULLANICI_TEST_REHBERI.md` dosyasındaki ilgili adımları ve test komutlarını göster.
+  `KULLANICI_TEST_REHBERI.md` dosyasındaki ilgili adımları ve test komutlarını göster
+  (minor rötüş ise güncelleme gerekmediğini ve geçerli mevcut senaryoyu belirt).
 - ⛔ Onay olmadan commit yapma.
 - ✅ Onay verilirse `git-release-workflow` skill'iyle **kesintisiz** yürüt.
 
