@@ -175,6 +175,15 @@ Feature: Kullanıcı test rehberi
 - **Tek davranış = tek `Scenario`.** "Ve" ile bağlanmış iki davranış iki
   `Scenario`'dur.
 - `Then` adımı gözlenebilir olmalı: *"ekran açılır"* değil, *"hata mesajı görünür"*.
+- ⛔ **Yüzeysel Gherkin Yasağı (No Shallow Gherkin):** Veri toplayan/üreten (form, bildirim, geri bildirim vb.) özelliklerde kabul kriteri yalnızca arayüzdeki toast/modal mesajıyla bitemez. Ağ yanıtı ve veritabanı kalıcılığı senaryoda açıkça yer almalıdır:
+  ```gherkin
+  Scenario: Düzeltme bildiriminin uçtan uca kaydedilmesi
+    Given kullanıcı geçerli bildirim alanlarını doldurur
+    When gönder butonuna tıklar
+    Then ağ isteği HTTP 201 Created döner
+    And veritabanında "content_corrections" tablosuna yeni kayıt eklenir
+    And RLS kuralı gereği anonim kullanıcı bu kaydı SELECT ile okuyamaz
+  ```
 - Kartta `gherkin:` alanı dosya yolunu **ve** senaryo adını taşır
   (`#senaryo-adi`). Senaryo adı dosyada yoksa kapı kızar (E7).
 
@@ -230,6 +239,12 @@ bilinçli olarak `sprint: S<n+1>` ile taşınmış olmalıdır. Üçüncü yol
  rötüşlarda (küçük CSS/boşluk ayarı, dahili refactoring, tip düzeltmesi, typo) rehbere yapay
  satır eklenmez; mevcut senaryoların geçerli olduğu beyan edilir.
  
+ ⛔ **Veri Toplayan/Üreten Çıktılarda 3 Katmanlı Doğrulama:**
+ Bir form veya veri akışı içeren kartın `test:` alanı ve rehber adımı yalnızca ekrandaki başarı mesajıyla (toast/modal) yetinemez; 3 katmanlı olmalıdır:
+ 1. Görsel UX: Formu doldur, gönder, başarı toast'unu ve formun sıfırlandığını gör.
+ 2. Ağ (Network): F12 Ağ sekmesinde giden API isteğinin `201 Created` / `200 OK` olduğunu ve giden payload'u doğrula.
+ 3. Veritabanı (DB): Veritabanı sorgusu (`SELECT ...`) veya Admin panelinde yeni satırın oluştuğunu doğrula. DB kanıtı olmadan veri toplama işi "Yapıldı" yapılamaz.
+
  ⛔ "Test edildi", "çalışıyor", "doğrulandı" bir test adımı **değildir**.
  Ölçülebilir sonuç içermeli: `178 test, 0 hata` · `4/4 proje doğrulandı` ·
  `[OK]` · `süre: 0:08`.

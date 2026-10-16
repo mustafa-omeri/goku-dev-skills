@@ -44,18 +44,36 @@ Tetikleyici tablosu ve sınırlar: [mcp-usage-enforcement.md](./mcp-usage-enforc
 ⛔ **KESİN VE NET KURAL:** İster bir sprint planı dahilinde olsun, ister sprint dışı küçük dilimlere (slice'lara) veya task listesine bölünmüş olsun:
 **"Ne yapılacağı" (what) bilinse dahi, "nasıl yapılacağı" (how) planlanmadan DOĞRUDAN KODA BAŞLAMAK KESİNLİKLE YASAKTIR.**
 
-Geliştirmeye başlamadan önce ajan sırasıyla şu 4 adımı işletmek zorundadır:
+Geliştirmeye başlamadan önce ajan sırasıyla şu adımları işletmek zorundadır:
 
 1. **Detaylı Uygulama Planı ("Nasıl Yapılacak?"):**
    - Değişecek, oluşturulacak veya silinecek dosyalar,
    - Mimari yaklaşım, tasarım desenleri ve bileşen sınırları,
    - Varsa state yönetimi, veri akışı ve endpoint bağlantı adımları çıkarılır.
-2. **Kabul Kriterleri (Acceptance Criteria):**
-   - İşin bittiğini kanıtlayan gözlemlenebilir kabul kriterleri (Given/When/Then veya somut test adımları) belirlenir.
-3. **3. Parti Araç ve Kütüphane Araştırması:**
+
+2. ⛔ **Uçtan Uca Veri Döngüsü (E2E Data Lifecycle) ve 5 Zorunlu Halka:**
+   Veri üreten veya toplayan her özellik (form, bildirim, geri bildirim, kayıt vb.) için şu 5 halka planda eksiksiz tanımlanmalıdır:
+   - **Halka 1 (Üretim & UI):** Form alanları, tip kontrolü, UX durumları (submitting, success, error).
+   - **Halka 2 (Güvenlik & İstismar Kalkanı):** Public/anonim veri girişlerinde bot koruması (Honeypot / Turnstile), hız limiti (Rate Limiting) ve girdi sanitizasyonu (Zod).
+   - **Halka 3 (İletim & API):** Verinin taşındığı endpoint, DTO/şema doğrulaması ve HTTP durum kodları (201 Created, 400 Bad Request, 429 Too Many Requests).
+   - **Halka 4 (Kalıcılık & Yetkilendirme):** Veritabanı tablosu, kolon kısıtları, migration dosyası ve RLS (Row Level Security) kuralları (ör. Anonim kullanıcılar için Strict Blind Insert: `FOR INSERT WITH CHECK (true)`, `FOR SELECT USING (false)`).
+   - **Halka 5 (Tüketim & Döngü Kapanışı - Loop Closure):** "Kullanıcıya 'Editörlerimiz inceleyecek' denip verinin unutulması yasaktır." Bu veriyi hangi rol (`content_approver`, `admin`), hangi ekrandan veya mekanizmayla (moderasyon masası, webhook, e-posta) karşılayacak?
+
+3. ⛔ **Sessiz Mock Yasağı (No Silent Mocking - Anti-Phantom Rule):**
+   - Ajanın gerçek bir backend/DB gerektiren özelliği kullanıcıya bildirmeden sessizce `localStorage`, `sessionStorage` veya in-memory state arkasına bağlayıp "bitti / çalışıyor" demesi **AĞIR İHLAL (Violation)** sayılır.
+   - Eğer sprint veya task kapsamında bilinçli olarak yalnızca UI prototip yapılıyorsa:
+     1. Kod içinde açıkça `// TODO: MOCK - NOT CONNECTED TO BACKEND` yazılmalıdır.
+     2. Arayüzde veya dev modunda açık bir "Demo/Mock Modu" uyarısı yer almalıdır.
+     3. Planda ve KANBAN kartında durum "Mock Prototip" olarak beyan edilmeli, kullanıcı onayı alınmadan asla "Tamamlandı / Canlı Özellik" olarak sunulmamalıdır.
+
+4. **Kabul Kriterleri (Acceptance Criteria & Derin Gherkin):**
+   - Yalnızca ekrandaki toast mesajını değil, ağ yanıtını (`HTTP 201`) ve veritabanı kaydını kapsayan derin kabul kriterleri belirlenir.
+
+5. **3. Parti Araç ve Kütüphane Araştırması:**
    - Görevde harici bir kütüphane, araç, servis veya paket kullanılacaksa önceden araştırılır.
    - ⛔ **Açık Kaynak (Open-Source) Önceliği Zorunludur:** Kapalı kaynak veya tescilli araçlar yerine öncelikle aktif geliştirilen, güvenilir lisanslı (MIT, Apache 2.0, BSD) açık kaynaklı alternatifler tercih edilir ve gerekçesi plana eklenir.
-4. **Kullanıcıya Sunum, Değişiklik/Review Şansı ve Açık Onay:**
+
+6. **Kullanıcıya Sunum, Değişiklik/Review Şansı ve Açık Onay:**
    - Hazırlanan plan kullanıcıya sunulur.
    - Kullanıcıya planı inceleme, revize etme veya değişiklik talep etme fırsatı verilir.
    - ⛔ **Kullanıcıdan açık onay ("onay", "başla", "uygun" vb.) alınmadan Adım 3 (Geliştir) aşamasına KESİNLİKLE GEÇİLEMEZ.**
@@ -127,6 +145,11 @@ Ayrıntı: [no-unused-code.md](./no-unused-code.md) ·
    Bu durumda commit onayında ve devir raporunda:
    *"Kullanıcı Test Rehberi: Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"*
    olarak beyan edilir ve gerekiyorsa rehberdeki hangi mevcut adımın geçerli olduğu belirtilir.
+5. ⛔ **Veri Toplayan/Üreten Özelliklerde 3 Katmanlı Doğrulama Zorunluluğu:**
+   Bir form, bildirim veya veri akışı teslim edildiğinde rehber ve test adımları yalnızca ekrandaki başarı mesajıyla (toast/modal) sınırlı kalamaz; şu 3 katmanı içermek **zorundadır**:
+   - **Katman 1 (Görsel UX):** Form alanlarını doldur, gönder, başarı toast/bildirimini ve formun temizlendiğini gör.
+   - **Katman 2 (Ağ / Network Doğrulaması):** Tarayıcı F12 Geliştirici Araçları → Network sekmesinde giden HTTP isteğinin (API / Supabase REST) `201 Created` veya `200 OK` döndüğünü ve giden payload'u doğrula.
+   - **Katman 3 (Veritabanı Kalıcılık Doğrulaması):** Veritabanı sorgusuyla (`SELECT ... FROM ... ORDER BY created_at DESC LIMIT 1;`) veya Admin panelinde yeni satırın oluştuğunu kanıtla. DB kanıtı sunulmayan hiçbir veri toplama özelliği "DONE" kabul edilemez.
 
 ---
 

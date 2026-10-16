@@ -58,12 +58,29 @@ _(Bu bölüm projeye özeldir. Her yeni özellikte/sprintte ajan bu bölümü g�
 
 ### 3.3 Özellik Bazlı Kullanıcı Kabul Senaryoları (Manuel Test)
 
-* **Özellik / Senaryo 1:**
+> ⛔ **Veri Üreten/Toplayan Özelliklerde Zorunlu 3 Katman:**
+> Form, bildirim veya geri bildirim gibi veri toplayan her teslimatta test adımları yalnızca ekrandaki mesaja bakarak bitti sayılamaz. Aşağıdaki 3 katmanlı format zorunludur:
+
+* **Özellik / Senaryo 1 (Standart UI / Görsel Akış):**
   1. Tarayıcıda `URL` adresine gidin.
-  2. `[Buton/Form]` bileşenine tıklayın.
+  2. `[Buton/Menü]` bileşenine tıklayın.
   3. Ekranda `[Beklenen Sonuç]` çıktısını gözlemleyin.
-* **Özellik / Senaryo 2:**
-  ...
+
+* **Özellik / Senaryo 2 (Veri Toplayan / Form Özelliği — 3 Katmanlı Doğrulama):**
+  - **Katman 1 (Görsel UX):**
+    1. `URL` sayfasına gidin ve form alanlarını doldurun.
+    2. Gönder butonuna tıklayın.
+    3. Ekranda beklenen başarı bildirimini (`[Başarı Mesajı]`) ve formun sıfırlandığını görün.
+  - **Katman 2 (Ağ / Network Doğrulaması):**
+    1. Tarayıcıda `F12` Geliştirici Araçlarını açıp **Network (Ağ)** sekmesine gelin.
+    2. Formu gönderdiğinizde çıkan API isteğini (`POST /api/...` veya Supabase REST) bulun.
+    3. Yanıt durum kodunun `201 Created` veya `200 OK` olduğunu ve giden payload'u doğrulayın.
+  - **Katman 3 (Veritabanı Kalıcılık Doğrulaması):**
+    1. Veritabanı sorgusu veya yönetim panelinde yeni kaydı sorgulayın:
+       ```sql
+       SELECT id, created_at, [ilgili_kolonlar] FROM [tablo_adi] ORDER BY created_at DESC LIMIT 1;
+       ```
+    2. Gönderdiğiniz verinin DB'ye kaydedildiğini ve yetkisiz kişilerin erişemeyeceğini (RLS) doğrulayın.
 
 ---
 
