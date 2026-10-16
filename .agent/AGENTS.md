@@ -147,6 +147,18 @@ Ek kapı (tek kural dosyasına bağlı değildir):
 | `mcp-usage-enforcement.md` | TUTUM |
 | `no-silent-wait.md` | TUTUM |
 
+### 3.3 Kapsam-Duyarlı Doğrulama İlkesi (Scope-Aware Verification)
+
+⛔ **Körlemesine Test Koşturma Yasağı:**
+Yukarıdaki ölçülebilir kapı komutları (`npm run build`, `npx tsc`, `mvn clean compile`, `pnpm test`, `test:e2e`) **yalnızca ilgili etki alanındaki dosyalar değiştiğinde** çalıştırılır:
+
+1. **Uygulama Kodu Değiştiğinde (`src/**`, `components/**`, `api/**`, `package.json`, `pom.xml` vb.):**
+   - İlgili derleme (`build`), tip (`typecheck`), birim ve e2e test komutları **ZORUNLUDUR**.
+2. **Yalnızca Ajan Kuralları veya Dokümantasyon Değiştiğinde (`.agent/**`, `*.md`, `docs/**`, `.gitignore`):**
+   - Uygulama build'i (`npm run build`, `pnpm build`), testleri (`pnpm test`, `mvn test`) ve e2e testler **ÇALIŞTIRILMAZ (ATLANIR / SKIPPED)**. Kaynak kod değişmediği için testlerin kırılma riski yoktur; çalıştırmak gereksiz token, CPU ve zaman israfıdır.
+   - Varsa yalnızca ilgili kural kapısı (`python .agent/skills/musgoku/scripts/rules_gates.py` vb.) çalıştırılır.
+   - Devir raporunda dürüstçe beyan edilir: *"Uygulama Testleri: Kapsam dışı (Yalnızca .agent/ ve dokümantasyon değişti)"*.
+
 ⛔ **Bir şeyi doğrulamadıysan "yaptım" deme.** Test/build çalıştırılmadıysa
 "çalıştırılmadı" de. Uydurma kanıt, kanıtsız başarıdan kötüdür.
 

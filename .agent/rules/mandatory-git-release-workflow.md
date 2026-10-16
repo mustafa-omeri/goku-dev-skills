@@ -19,6 +19,12 @@ sinif: SUREC
    hem yeni tag'ler (`git push --tags`) gönderilir.
 5. **Kesintisizlik.** Onay sonrası tüm pipeline tek seferde yürütülür; ara
    komut onayı istenmez.
+6. ⛔ **Kapsam-Duyarlı Doğrulama (Gereksiz Build/Test Yasağı):** Commit öncesinde
+   yalnızca `.agent/**`, `*.md`, `docs/**` veya `.gitignore` değiştiğinde
+   uygulama derleme (`build`), tip (`typecheck`) veya birim/e2e testlerini
+   koşturmak **YASAKTIR (ATLANIR)**. Kaynak kod değişmemiştir; test çalıştırmak
+   gereksiz zaman ve token israfıdır. Yalnızca `src/`, `package.json`, `pom.xml` gibi
+   uygulama kodu değiştiğinde derleme ve testler zorunludur.
 
 ## Adım özeti
 

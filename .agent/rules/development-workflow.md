@@ -123,6 +123,18 @@ front matter `sinif:` / `kapi:` alanları.
 Ayrıntı: [no-unused-code.md](./no-unused-code.md) ·
 [AGENTS.md §3](../AGENTS.md)
 
+### Kapsam-Duyarlı Kapı Çalıştırma İlkesi (Scope-Aware Verification)
+
+⛔ **Körlemesine Test Koşturma Yasağı:**
+Yukarıdaki ölçülebilir kapı komutları (`npm run build`, `pnpm test`, `npx tsc`, `mvn clean compile`, `test:e2e`) **yalnızca ilgili etki alanındaki dosyalar değiştiğinde** çalıştırılır:
+
+1. **Uygulama Kodu Değiştiğinde (`src/**`, `components/**`, `api/**`, `package.json`, `pom.xml` vb.):**
+   - İlgili derleme (`build`), tip (`typecheck`), birim ve e2e test komutları **ZORUNLUDUR**.
+2. **Yalnızca Ajan Kuralları veya Dokümantasyon Değiştiğinde (`.agent/**`, `*.md`, `docs/**`, `.gitignore`):**
+   - Uygulama build'i (`npm run build`, `pnpm build`), testleri (`pnpm test`, `mvn test`) ve e2e testler **ÇALIŞTIRILMAZ (ATLANIR / SKIPPED)**. Kaynak kod değişmediği için testlerin kırılma riski yoktur; çalıştırmak gereksiz token, CPU ve zaman israfıdır.
+   - Varsa yalnızca ilgili kural kapısı (`python .agent/skills/musgoku/scripts/rules_gates.py` vb.) çalıştırılır.
+   - Devir raporunda dürüstçe beyan edilir: *"Uygulama Testleri: Kapsam dışı (Yalnızca .agent/ ve dokümantasyon değişti)"*.
+
 ---
 
 ## Adım 4.1 — Kullanıcı Test Edilebilirliği ve Test Rehberi (KULLANICI_TEST_REHBERI.md)

@@ -27,6 +27,10 @@ commit, PR kontrolü gibi konular bu skill'in kapsamı **değildir.**
 2. Çalışma ağacında değişiklik var mı? → Yoksa dur ve bildir.
 3. `git-release-workflow` kuralları projedeki `AGENTS.md` ile çelişmiyor mu?
    → Çelişiyorsa proje kuralı kazanır, akışı durdur ve sor.
+4. ⛔ **Kapsam-Duyarlı Doğrulama:** Değişen dosyalar yalnızca `.agent/**`, `*.md`, `docs/**`
+   veya `.gitignore` ise, uygulama derleme (`build`) ve test (`test`, `typecheck`)
+   komutları **ÇALIŞTIRILMAZ (ATLANIR)**. Yalnızca `src/`, `package.json`, `pom.xml` gibi
+   uygulama kodu değiştiğinde test/build zorunludur.
 
 ## Hızlı kullanım
 

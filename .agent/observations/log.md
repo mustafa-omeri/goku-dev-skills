@@ -17,3 +17,23 @@
 4. `KULLANICI_TEST_REHBERI.template.md` içine 3 katmanlı doğrulama (Görsel UX + Network F12 + DB SQL kanıtı) eklendi.
 
 **Principle:** Bir kullanıcı arayüzü veri üretiyorsa, o verinin iletimi (API), güvenliği (Rate Limit/Abuse), saklanması (DB/RLS) ve tüketilmesi (Consumer/Moderasyon Masası) uçtan uca doğrulanmadan veya mock olduğu açıkça beyan edilmeden hiçbir özellik 'DONE' kabul edilemez.
+
+---
+
+### Observation 2: Kapsam-Duyarlı Doğrulama (Scope-Aware Verification vs. Blind Test Execution)
+
+**Date:** 2026-10-16
+**Session context:** Projelerde yalnızca `.agent/` (skill/kural) veya `*.md` dosyaları commitlemek istendiğinde bile ajanın körlemesine `pnpm test`, `pnpm build`, `test:e2e` koşturması.
+**Skill:** mandatory-git-release-workflow, development-workflow, AGENTS.md
+**Type:** open-source
+**Phase/Area:** Verification, Git Release, Resource Efficiency
+
+**Issue:** Kod ajanı yalnızca markdown dokümanı veya `.agent/` kuralları değiştiği durumlarda dahi, kuraldaki genel "doğrulama kapılarını çalıştır" ifadesini mekanik biçimde yorumlayarak tüm uygulamanın build, typecheck ve e2e test pipeline'ını baştan sona koşturmaktadır. Bu durum 2-3 dakikalık boş bekleme süresine, devasa token/context tüketimine ve kaynak israfına yol açmaktadır.
+
+**Suggested improvement:**
+1. `AGENTS.md` §3.3 ve `development-workflow.md` Adım 4'e "Kapsam-Duyarlı Doğrulama İlkesi" eklendi.
+2. `mandatory-git-release-workflow.md` ve `git-release-workflow/SKILL.md` içine kural bağlandı: Kaynak kod (`src/**`, `package.json`, `pom.xml`) değişmemişse, uygulama build/test adımları çalıştırılmaz (atlanır / skipped).
+3. Raporlarda dürüst beyan kuralı getirildi: *"Uygulama Testleri: Kapsam dışı (Yalnızca dokümantasyon / .agent değişti)"*.
+
+**Principle:** Değişikliğin etki alanında olmayan bir testi çalıştırmak güvenlik sağlamaz; yalnızca zaman, CPU ve token israfı üretir. Doğrulama kapıları etki alanına duyarlı (scope-aware) olmalıdır.
+
