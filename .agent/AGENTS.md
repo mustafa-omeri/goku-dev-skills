@@ -326,10 +326,12 @@ zaten hiçbir git komutu çağırmaz.
 3. `SKILL.md` `description` alanını sözleşmeye göre yaz:
    25-70 kelime · `Tetikleyiciler:` · `Tetiklenmez:` · TR + EN örnek ·
    araç/proje adı yok · sözlük atfı zorunlu
-4. Yukarıdaki iki doğrulama kapısını koştur
-5. `python delivery.py --dry-run` → hedefleri kontrol et
-6. `python delivery.py` → dağıt
-7. `delivery.md` §6 çalışma kaydını güncelle
+4. `python scripts/generate_skills_catalog.py` çalıştırarak `.agent/skills-catalog.html` dosyasını güncelle
+   (her yeni skill veya yapı eklendiğinde zorunlu; `test_skills_catalog.py` bayatlığı yakalar)
+5. Yukarıdaki doğrulama kapılarını koştur (`python tests/run_all.py` ve sözleşme testleri)
+6. `python delivery.py --dry-run` → hedefleri kontrol et
+7. `python delivery.py` → dağıt
+8. `delivery.md` §6 çalışma kaydını güncelle
 
 ### Ajan bulma tuzağı
 

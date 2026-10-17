@@ -23,7 +23,7 @@ HERE = Path(__file__).resolve().parent
 PROJECT_ROOT = HERE.parent
 SKILLS_DIR = PROJECT_ROOT / ".agent" / "skills"
 ROUTING_FILE = PROJECT_ROOT / ".agent" / "rules" / "skill-trigger-routing.md"
-OUTPUT_HTML = PROJECT_ROOT / "skills-catalog.html"
+OUTPUT_HTML = PROJECT_ROOT / ".agent" / "skills-catalog.html"
 
 # Windows konsol UTF-8 desteği
 for stream in (sys.stdout, sys.stderr):
@@ -37,7 +37,7 @@ CATEGORIES = {
     "Tasarım & UI": [
         "frontend-design", "ui-ux-pro-max", "ui-styling", "theme-factory",
         "design-system", "canvas-design", "banner-design", "design",
-        "mock-asset-provider", "web-ide-ux-architect"
+        "mock-asset-provider", "web-ide-ux-architect", "onboarding-tour"
     ],
     "Kod & Mimari": [
         "musgoku", "react-best-practices", "i18n-localization"
@@ -214,6 +214,17 @@ COPY --from=builder /app/dist /usr/share/nginx/html"""
 @RestController
 @RequestMapping("/api/v1/events")
 public class EventController { ... }"""
+    },
+    "onboarding-tour": {
+        "status": "Sıfır-Ayar (Zero-Config)",
+        "badge_class": "badge-success",
+        "file": "Ek dosya gerekmez (Opsiyonel driver.js / react-joyride)",
+        "features": ["Driver.js (Önerilen)", "React Joyride Desteği", "Pulsing Coachmarks", "Otonom Paket Yükleme Protokolü"],
+        "detail": "Kullanıcı karşılama (onboarding), spotlight odaklamalı ürün turları, adım adım walkthrough kılavuzları ve pulsing coachmark ipucu balonları tasarlar. Eksik paketleri kurallara göre projeye otonom ekler.",
+        "sample_prompt": "Yeni başlayan kullanıcılar için dashboard ve menü adımlarını tanıtan hafif bir Driver.js onboarding turu hazırla.",
+        "config_snippet": """// scaffold_tour.py ile TypeScript hook veya bileşen üretilebilir:
+// python .agent/skills/onboarding-tour/scripts/scaffold_tour.py --engine driverjs --name demoTour
+import { useDemoTour } from './useDemoTour';"""
     }
 }
 
@@ -239,7 +250,12 @@ SAMPLE_PROMPTS = {
     "react-best-practices": "React bileşenindeki gereksiz re-render'ları ve waterfall veri çekimlerini ortadan kaldır.",
     "theme-factory": "Uygulama için 10 hazır temadan birini seç ve HEX paletini uygula.",
     "web-ide-ux-architect": "Düşük gecikmeli, kod editörü ve split-pane panelli bir IDE arayüzü tasarla.",
-    "mock-asset-provider": "Kullanıcı profilleri için kadın ve erkek portreleri içeren gerçekçi mock görseller sağla."
+    "mock-asset-provider": "Kullanıcı profilleri için kadın ve erkek portreleri içeren gerçekçi mock görseller sağla.",
+    "onboarding-tour": "Yeni başlayan kullanıcılar için dashboard ve menü adımlarını tanıtan hafif bir Driver.js onboarding turu hazırla.",
+    "production-docker-architect": "Üretim ortamı için hafif, multi-stage ve non-root kullanıcılı Dockerfile ve Compose oluştur.",
+    "i18n-localization": "Uygulamadaki hardcode metinleri ve eksik çeviri anahtarlarını i18n_checker ile denetle ve düzelt.",
+    "brand": "Marka kılavuzunu, ton ve mesaj çerçevesini docs/brand-guidelines.md olarak oluştur.",
+    "musgoku-prd": "Yeni özellik için kapsamı, Gherkin kabul kriterlerini ve 90 puanlık PRD dokümanını hazırla."
 }
 
 
@@ -929,7 +945,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
     <div class="header-content">
       <div class="title-area">
         <h1>🚀 <span class="gradient">Ajan Skill & Mimari Kataloğu</span></h1>
-        <p>Projedeki 21 skill'in sorumluluk sınırları, tetikleyici kelimeleri, GitHub/API entegrasyonları ve konfigürasyon gereksinimleri tek bir rehberde.</p>
+        <p>Projedeki {len(skills)} skill'in sorumluluk sınırları, tetikleyici kelimeleri, GitHub/API entegrasyonları ve konfigürasyon gereksinimleri tek bir rehberde.</p>
       </div>
       <div class="header-actions">
         <div class="stat-pill">
@@ -1047,6 +1063,8 @@ def generate_catalog_html(skills: list[dict]) -> str:
       filtered.forEach((s, idx) => {{
         const card = document.createElement('div');
         card.className = 'skill-card';
+        card.setAttribute('data-name', s.name);
+        card.setAttribute('data-category', s.category);
         
         const triggersHtml = s.triggers.map(t => 
           `<span class="trigger-pill" title="Kopyalamak için tıkla" onclick="copyToClipboard('${{t.replace(/'/g, "\\\\\\'")}}', 'Tetikleyici kopyalandı: \\'${{t}}\\'')">"${{escapeHtml(t)}}"</span>`
@@ -1241,6 +1259,19 @@ def main() -> int:
             skills.append(parse_skill_md(skill_md))
 
     html_content = generate_catalog_html(skills)
+
+    if "--check" in sys.argv:
+        if not OUTPUT_HTML.is_file():
+            print(f"HATA: {OUTPUT_HTML} mevcut değil!")
+            return 1
+        disk_content = OUTPUT_HTML.read_text(encoding="utf-8")
+        if disk_content != html_content:
+            print(f"HATA: {OUTPUT_HTML} güncel değil! 'python scripts/generate_skills_catalog.py' çalıştırın.")
+            return 1
+        print(f"[OK] {OUTPUT_HTML} güncel ({len(skills)} skill).")
+        return 0
+
+    OUTPUT_HTML.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_HTML.write_text(html_content, encoding="utf-8")
     print(f"Katalog başarıyla derlendi ({len(skills)} skill): {OUTPUT_HTML}")
     return 0

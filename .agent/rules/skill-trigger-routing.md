@@ -178,6 +178,16 @@ Bu sözleşme otomatik doğrulanır:
 
 ---
 
+## F. İnteraktif Skill & Mimari Kataloğu (`.agent/skills-catalog.html`)
+
+Kullanıcının tüm skill'leri, sorumluluk sınırlarını, config gereksinimlerini ve tetikleyicilerini tarayıcıda görsel olarak inceleyebilmesi ve arayabilmesi için `.agent/skills-catalog.html` dosyası tutulur.
+
+- **Konum:** Kesinlikle `.agent/skills-catalog.html` altında yaşar (proje kökünü kirletmez).
+- **Zorunlu Güncelleme:** Her yeni skill, config veya mimari yapı eklendiğinde `python scripts/generate_skills_catalog.py` çalıştırılarak katalog güncellenmelidir.
+- **Doğrulama Kapısı:** `tests/test_skills_catalog.py` ve `test_skill_contracts.py` kapıları kataloğun bayat kalmasını veya herhangi bir skill'in katalogdan eksik kalmasını engeller.
+
+---
+
 ## Proje Bazlı Ek Kurallar
 
 > ⛔ **Kural Ekleme ve Mükerrerlik İlkesi:**

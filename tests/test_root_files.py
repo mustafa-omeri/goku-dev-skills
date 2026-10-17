@@ -83,7 +83,7 @@ def run_tests():
 
     print()
     print("=== TEST 4: DEV_BRIEF.md yonetilmemis olmali (kritik) ===")
-    for name in ("DEV_BRIEF.md", "HANDOFF.md", "knowledge-base.md", "AGENTS.md"):
+    for name in ("DEV_BRIEF.md", "HANDOFF.md", "knowledge-base.md", "AGENTS.md", "skills-catalog.html"):
         check(f"{name} rootFiles'ta degil", name not in config.get("rootFiles", []))
 
     print()

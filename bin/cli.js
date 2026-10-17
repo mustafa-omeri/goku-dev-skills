@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
-const VERSION = '1.4.0';
+const VERSION = '1.9.1';
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 const RAW_URL_BASE = `https://raw.githubusercontent.com/${GITHUB_REPO}/main`;
 
@@ -139,6 +139,16 @@ const SKILLS_MANIFEST = {
     category: 'React Architecture & Performance',
     desc: 'Battle-tested React & Next.js performance guidelines, waterfall elimination, bundle optimizations & composition patterns.',
     triggers: 'react performans, re-render, waterfall, useMemo, compound component, react best practices, composition patterns',
+  },
+  'mock-asset-provider': {
+    category: 'UI & Media Assets',
+    desc: 'Realistic mock visual assets, profile avatars, event covers and fallback pipelines with GitHub repo, API and CDN support.',
+    triggers: 'mock gorsel, gercekci resim, kart gorseli, profil resmi, etkinlik afisi, mock images, placeholder images, realistic avatars',
+  },
+  'onboarding-tour': {
+    category: 'UI / UX Guidance',
+    desc: 'Guided product tours, walkthroughs and pulsing coachmarks using lightweight Driver.js or React Joyride with zero bundle bloat.',
+    triggers: 'tur hazirla, tour hazirla, desing tour, urun turu, onboarding turu, ipucu balonu, product tour, guided tour, coachmarks',
   },
 };
 

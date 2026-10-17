@@ -220,6 +220,14 @@ class SkillDescriptionContract(unittest.TestCase):
         broken = sorted({t for t in targets if not (SKILLS_ROOT / t / "SKILL.md").is_file()})
         self.assertEqual(broken, [], f"dictionary points at missing skills: {broken}")
 
+    def test_skills_catalog_exists_in_dot_agent_and_lists_all_skills(self):
+        """`.agent/skills-catalog.html` must exist and include every skill."""
+        catalog = SKILLS_ROOT.parent / "skills-catalog.html"
+        self.assertTrue(catalog.is_file(), f"missing skills catalog at {catalog}")
+        text = catalog.read_text(encoding="utf-8")
+        missing = [d.name for d in self.skills if f'data-name="{d.name}"' not in text and f'"{d.name}"' not in text]
+        self.assertEqual(missing, [], f"skills absent from skills-catalog.html: {missing}")
+
 
 if __name__ == "__main__":
     unittest.main()
