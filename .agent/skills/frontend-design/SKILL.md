@@ -1,6 +1,6 @@
 ---
 name: frontend-design
-description: Karakterli, üretim kalitesinde web arayüzü kodu üretir; tipografi, renk, kompozisyon ve "generic AI tasarımı" kalıplarından kaçınma disiplini. `./themes/`, `./dashboard-theme/` ve `./component-themes/` (sidebar, login, navbar, card, footer) ile hazır referans sağlar. Tetikleyiciler: "arayüz yap", "sayfa tasarla", "şu daha iyi görünsün", "amatör görünüyor", "landing page", "dashboard tasarımı", "build a component", "looks generic". Tetiklenmez: veri katmanı ve mimari `musgoku`'ya aittir. Tam sözlük: `.agent/rules/skill-trigger-routing.md`
+description: Karakterli, üretim kalitesinde web arayüzü kodu üretir; tipografi, renk, kompozisyon ve "generic AI tasarımı" kalıplarından kaçınma disiplini. `./themes/`, `./dashboard-theme/` ve `./component-themes/` (sidebar, login, navbar, card, footer) ile hazır referans sağlar. Tetikleyiciler: "arayüz yap", "sayfa tasarla", "şu daha iyi görünsün", "amatör görünüyor", "UI polish", "tasarımı düzelt", "[DESIGN-REFRESH]", "landing page", "dashboard tasarımı", "build a component", "looks generic". Tetiklenmez: veri katmanı ve mimari `musgoku`'ya aittir. Tam sözlük: `.agent/rules/skill-trigger-routing.md`
 license: Complete terms in LICENSE.txt
 ---
 

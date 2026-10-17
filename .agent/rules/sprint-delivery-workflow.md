@@ -244,6 +244,18 @@ bilinçli olarak `sprint: S<n+1>` ile taşınmış olmalıdır. Üçüncü yol
  2. Ağ (Network): F12 Ağ sekmesinde giden API isteğinin `201 Created` / `200 OK` olduğunu ve giden payload'u doğrula.
  3. Veritabanı (DB): Veritabanı sorgusu (`SELECT ...`) veya Admin panelinde yeni satırın oluştuğunu doğrula. DB kanıtı olmadan veri toplama işi "Yapıldı" yapılamaz.
 
+### 6.1 UI/UX Kalite Kapısı ve Anti-Slop Zorunluluğu (Definition of Done)
+
+Bir kart veya sprint görevi yeni bir kullanıcı arayüzü (sayfa, dashboard, form, tablo, görünüm veya bileşen) üretiyorsa ya da mevcut bir arayüzü güncelliyorsa:
+
+1. **Zorunlu Tasarım Skilleri:** `frontend-design`, `ui-ux-pro-max` ve (Tailwind/CSS ise) `ui-styling` kurallarına uymak **ZORUNLUDUR**.
+2. ⛔ **Anti-Slop Kuralı (Generic UI Yasağı):** Yalnızca fonksiyonel testlerin (`pnpm test`, `typecheck`, Gherkin senaryoları) yeşil olması işin bittiğini kanıtlamaz. Standart, tekdüze ve çiğ "AI-slop" (ör. tekdüze `p-4 bg-white border rounded` kutuları, zayıf tipografi kontrastı, hiyerarşisiz düğmeler, nefes almayan padding'ler, okunaksız veri tabloları) içeren tasarımlar **Yapıldı (Done)** kabul edilemez.
+3. **Dashboard ve Yönetim Ekranı Standartları:** Yönetici (admin), onaylayıcı (approver) veya içerik sağlayıcı (provider) ekranlarında:
+   - Net görsel hiyerarşi ve KPI/metrik kartları,
+   - Hızlı tarama (rapid scanning): net durum rozetleri (status badges), diff/karşılaştırma alanları,
+   - Boş durumlar (empty states) ve eylemlerde tehlike/onay renk dengesi zorunludur.
+4. Bu görsel ve hiyerarşik standartlar sağlanmadan kart `Yapıldı` sütununa taşınamaz.
+
  ⛔ "Test edildi", "çalışıyor", "doğrulandı" bir test adımı **değildir**.
  Ölçülebilir sonuç içermeli: `178 test, 0 hata` · `4/4 proje doğrulandı` ·
  `[OK]` · `süre: 0:08`.

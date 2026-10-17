@@ -28,6 +28,19 @@ bir talepte** aşağıdaki üç skill **birlikte** okunur ve uygulanır:
 3. Yanıtın başlangıcında bu üç skill'in ve kullanılan MCP araçlarının
    **aktif devrede olduğunu** açıkça belirt.
 
+## 2.1 Prompt Makroları ve Hızlı Kısayollar (`[DESIGN-REFRESH]`, `[UI-POLISH]`)
+
+Kullanıcının her seferinde uzun ve detaylı tasarım prompt'ları yazmasını önlemek için standart kısayol etiketleri ve kısa tetikleyiciler tanımlıdır:
+
+- **Etiketler:** `[DESIGN-REFRESH]`, `[UI-POLISH]`, `[DASHBOARD-POLISH]`
+- **Kısa Tetikleyiciler:** `"UI polish"`, `"tasarımı düzelt"`, `"ekranları toparla"`, `"tasarımı profesyonelleştir"`, `"sayfaları güzelleştir"`
+
+Ajan bu etiket veya ifadelerden birini gördüğünde kullanıcıdan ek açıklama beklemeden doğrudan:
+1. `frontend-design`, `ui-ux-pro-max` ve (Tailwind ise) `ui-styling` skill'lerini açar.
+2. Belirtilen ekranlarda "AI-slop" şablonlarını temizler; derinlikli görsel hiyerarşi, nefes alan boşluk ritmi (spacing scale), rollerin hızlı taramasını (rapid scanning) destekleyen durum rozetleri ve diff alanları uygular.
+3. Arka plandaki iş mantığını (logic), state yönetimini ve API veri akışını bozmadan cerrahi refactoring yapar.
+4. Gözle doğrulama adımlarını `KULLANICI_TEST_REHBERI.md` dosyasına ekler.
+
 ## 3. Sahiplik haritası — her konunun tek sahibi vardır
 
 Tasarım alanına giren 12 skill'in sorumluluk sınırı şudur. **Bir konuyu iki

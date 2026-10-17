@@ -33,7 +33,7 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 | Tetikleyici kelime (TR / EN) | Skill | Gövde yolu |
 |---|---|---|
 | tasarımını incele, tasarım gözden geçir, tasarım denetle / review design, design review, critique UI | `ui-ux-pro-max` + `frontend-design` | `skills/ui-ux-pro-max/SKILL.md` |
-| tasarımı yenile, arayüzü tazele, modernleştir, amatör görünüyor / refresh design, modernize UI, looks generic, amateur design | `ui-ux-pro-max` + `frontend-design` | aynı |
+| tasarımı yenile, arayüzü tazele, modernleştir, amatör görünüyor, UI polish, tasarımı düzelt, ekranları toparla, güzelleştir, tasarımı profesyonelleştir / refresh design, modernize UI, looks generic, amateur design, ui polish, polish ui, fix design | `ui-ux-pro-max` + `frontend-design` | aynı |
 | poster, afiş, kapak görseli, manifesto, .png, .pdf çıktı / poster, art, print piece | `canvas-design` | `skills/canvas-design/SKILL.md` |
 | banner, kapak banner, reklam görseli, facebook cover, linkedin banner, og image, hero görseli / banner, ad creative, cover image | `banner-design` | `skills/banner-design/SKILL.md` |
 | logo, logo brief, logo fikri / logo, logo brief, logotype | `design` | `skills/design/SKILL.md` |
@@ -91,6 +91,15 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 | overcomplication, gereksiz karmaşıklık, kapsam kayması, varsayımı belirt / overengineering, scope creep, state assumptions | `karpathy-guidelines` | — |
 | tasarım becerisi, daha iyi yaz, amatör mü / better code, improve quality | `karpathy-guidelines` + tasarım üçlüsü | — |
 | gözlem kaydet, skill geliştir, süreç analizi, yeni skill öner / log observation, improve skill, observe task | `task-observer` | `skills/task-observer/SKILL.md` |
+
+### A5. Prompt Makroları ve Kısayol Etiketleri (Prompt Shorthands)
+
+Kullanıcının detaylı ve uzun prompt yazmadan doğrudan tam kapsamlı revizyon talep edebilmesi için tasarlanmış kısayollardır:
+
+| Makro / Etiket | Açılan Skill'ler | Yürütülen Protokol |
+|---|---|---|
+| `[DESIGN-REFRESH]` / `[UI-POLISH]` | `frontend-design` + `ui-ux-pro-max` + `ui-styling` | Kullanıcı tek satırda revizyon ister. Ajan ek açıklama beklemeden; belirtilen sayfalarda generic AI-slop şablonlarını temizler, görsel hiyerarşi, boşluk ritmi, scanning ergonomisi ve rozet revizyonunu mevcut veri akışını bozmadan tamamlar. |
+| `[DASHBOARD-POLISH]` | `ui-ux-pro-max` + `frontend-design` + `ui-styling` | Yönetim, onay ve metrik masalarının bilgi mimarisi, kart ve tablo ergonomisini profesyonel seviyeye çıkarır. |
 
 ---
 

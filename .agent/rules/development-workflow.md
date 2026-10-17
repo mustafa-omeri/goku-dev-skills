@@ -88,6 +88,7 @@ Geliştirmeye başlamadan önce ajan sırasıyla şu adımları işletmek zorund
 4. Backend projesi ise API dokümantasyon dosyasını aynı değişiklikte güncelle.
 5. Veritabanı şeması, tablo, kolon veya entity revizyonu yapıldıysa `DB_MIGRATIONS.md` dosyasını aynı değişiklikte güncelle.
 6. Mevcut kodun akışını ve iş mantığını bozma; refactor'ı ayrı adımda yap.
+7. Frontend projesinde yeni veya güncellenen bir arayüz (sayfa, dashboard, form, tablo, bileşen) üretiliyorsa; `frontend-design`, `ui-ux-pro-max` ve (Tailwind ise) `ui-styling` kurallarına uymak zorunludur. Tekdüze "AI-slop" arayüzler testler geçse dahi teslim edilemez (bkz. `sprint-delivery-workflow.md` §6.1).
 
 ---
 
@@ -162,6 +163,8 @@ Yukarıdaki ölçülebilir kapı komutları (`npm run build`, `pnpm test`, `npx 
    - **Katman 1 (Görsel UX):** Form alanlarını doldur, gönder, başarı toast/bildirimini ve formun temizlendiğini gör.
    - **Katman 2 (Ağ / Network Doğrulaması):** Tarayıcı F12 Geliştirici Araçları → Network sekmesinde giden HTTP isteğinin (API / Supabase REST) `201 Created` veya `200 OK` döndüğünü ve giden payload'u doğrula.
    - **Katman 3 (Veritabanı Kalıcılık Doğrulaması):** Veritabanı sorgusuyla (`SELECT ... FROM ... ORDER BY created_at DESC LIMIT 1;`) veya Admin panelinde yeni satırın oluştuğunu kanıtla. DB kanıtı sunulmayan hiçbir veri toplama özelliği "DONE" kabul edilemez.
+6. ⛔ **UI/UX Kalite Kapısı ve Anti-Slop Kontrolü:**
+   Yeni veya güncellenen bir sayfa, tablo veya form teslim edilirken; tasarımın `frontend-design` ve `ui-ux-pro-max` standartlarını karşıladığı, tekdüze gri kutulardan kaçınıldığı, net görsel hiyerarşi ve durum rozetleri sağlandığı rehberde gözle doğrulanmalıdır. Gözle profesyonel görünmeyen arayüz tamamlanmış sayılamaz.
 
 ---
 
