@@ -46,6 +46,7 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 | ux kuralı, erişilebilirlik denetimi, kontrast, klavye gezinme / ux guideline, accessibility audit, contrast ratio | `ui-ux-pro-max` | `skills/ui-ux-pro-max/SKILL.md` |
 | grafik tipi, chart seçimi, dashboard yerleşimi / chart type, which graph, dashboard layout | `ui-ux-pro-max` | aynı |
 | mock görsel, gerçekçi resim, kart görseli, profil resmi, etkinlik görseli, avatar ekle / mock images, placeholder images, realistic avatars, test data visuals | `mock-asset-provider` | `skills/mock-asset-provider/SKILL.md` |
+| tur hazırla, tour hazırla, desing tour, ürün turu, onboarding turu, adım adım rehber, ipucu balonu / onboarding tour, product tour, guided tour, walkthrough, coachmarks | `onboarding-tour` | `skills/onboarding-tour/SKILL.md` |
 
 ### A2. Marka, sunum, doküman
 
@@ -136,6 +137,7 @@ haritasından** gelir ([`design-skills-enforcement.md`](./design-skills-enforcem
 | "Marka dokümanı" | İçerik → `brand`. Yazma süreci → `doc-coauthoring` |
 | "Logo çiz" | Brief → `design`. Görsel üretimi bu setin **kapsamı dışında** (ücretli API çağrılmaz) |
 | "Mock görsel / resim" mi "Banner" mı? | Arayüz kartı/içerik için gerçekçi fotoğraf/avatar → `mock-asset-provider`. Sabit ölçülü reklam/kapak → `banner-design` |
+| "Ürün turu / onboarding" mi "UI tasarımı" mı? | Adım adım spotlight, rehberli tur ve ipucu balonu → `onboarding-tour`. Sayfa, form ve bileşenin kendi yerleşimi → `frontend-design` + `ui-styling` |
 | Tasarım skill'i mi, kod skill'i mi? | Görsel karar varsa tasarım seti. Veri akışı/mimari varsa `musgoku`. İkisi de varsa **ikisi** |
 
 ---

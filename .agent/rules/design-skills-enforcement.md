@@ -116,6 +116,7 @@ skill sahiplenmez.** Çakışma şüphesinde bu tabloya bak ve doğru olanı aç
 | Sabit px ölçülü banner / kapak / reklam görseli | `banner-design` |
 | Logo & CIP **brief'i**, sosyal medya görseli akışı, yönlendirme | `design` |
 | UI kart, profil, etkinlik mock görselleri (placeholder alternatifi) | `mock-asset-provider` |
+| Kullanıcı onboarding ve ürün tanıtım turu (rehberli adımlar, coachmarks) | `onboarding-tour` |
 | IDE benzeri uygulama arayüzü | `web-ide-ux-architect` (kapsam dışı ilan eder) |
 
 **Kapsam dışı ilan edilen:** `web-ide-ux-architect`
@@ -137,7 +138,7 @@ Yalnız renk değişikliği, tek bir metin düzeltmesi veya logik hatası için
 üç skill'in tamamını okumak gerekmez — bu durumda hangisinin devrede olduğunu
 belirtip geç.
 
-`brand`, `slides`, `banner-design`, `design`, `doc-coauthoring`, `mock-asset-provider` üçlüye **dahil
+`brand`, `slides`, `banner-design`, `design`, `doc-coauthoring`, `mock-asset-provider`, `onboarding-tour` üçlüye **dahil
 değildir**; bunlar UI kodu üretmez, çıktı/strateji/varlık üretir. Onlar kendi
 kapsam sınırı bölümünde tanımlıdır.
 
