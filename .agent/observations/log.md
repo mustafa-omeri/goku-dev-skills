@@ -37,3 +37,24 @@
 
 **Principle:** Değişikliğin etki alanında olmayan bir testi çalıştırmak güvenlik sağlamaz; yalnızca zaman, CPU ve token israfı üretir. Doğrulama kapıları etki alanına duyarlı (scope-aware) olmalıdır.
 
+---
+
+### Observation 3: Adaptif Viewport, UX Durumları ve Modal Standartları (Responsive UX Ergonomics & Adaptive Modals)
+
+**Date:** 2026-10-17
+**Session context:** UI geliştirme süreçlerinde UX durumlarının (Loading, Empty, Error, Feedback) unutulması, her çözünürlüğün (özellikle Mobil ve Tablet farkının) kullanıcı tarafından her defasında ayrı ayrı talep edilmek zorunda kalınması ve açılan modalların mobilde responsive olmayıp klavye/scroll taşması yaratması vakası.
+**Skill:** design-skills-enforcement, frontend-design, ui-styling, development-workflow, task-observer
+**Type:** open-source
+**Phase/Area:** UI/UX, Responsive Design, Component Architecture, Acceptance Criteria
+
+**Issue:** Tasarım kuralları ve prompt makroları (`[UI-POLISH]`, `[DESIGN-REFRESH]`) estetik zanaata odaklanırken; arayüzün dinamik durumları (loading skeleton, empty state, inline error, feedback toast) ve cihaz kullanım ergonomisi atlanmaktaydı. Ajanlar "responsive" kavramını sadece grid'i tek sütuna büzüştürmek olarak uyguluyor; tabletin 2 sütunlu/split-view ergonomisi ile mobilin başparmak (Thumb Zone) gereksinimlerini göz ardı ediyordu. Ayrıca masaüstü modal dialog'ları mobilde ortalanmış dar bir kutu olarak bırakılıyor, klavye açılınca inputlar altında kalıyor ve taşmalar oluşuyordu.
+
+**Suggested improvement:**
+1. `design-skills-enforcement.md`: §2.1 prompt makroları genişletildi (`[UX-POLISH]`, `[RESPONSIVE-POLISH]`), §2.2 'Zorunlu 4 UX Durumu Sözleşmesi', §2.3 '3 Katmanlı Çözünürlük & Cihaz Ergonomisi Sözleşmesi' ve §2.4 'Adaptif Modal & Dialog Standartları' (Masaüstü: Dialog, Mobil: Bottom Sheet / Drawer) eklendi.
+2. `development-workflow.md`: Adım 2.1 uygulama planına ve Adım 4.1 test edilebilirliğe 3 cihaz ergonomisi (Mobil, Tablet, Masaüstü) ve modal doğrulama zorunluluğu bağlandı.
+3. `KULLANICI_TEST_REHBERI.template.md`: §3.3 manuel test adımlarına Masaüstü (>1024px), Tablet (768px-1024px) ve Mobil (375px Bottom Sheet) kabul kriterleri eklendi.
+4. `ui-styling/SKILL.md` & `frontend-design/SKILL.md`: Adaptif Responsive Dialog (`useMediaQuery` ile Masaüstü Dialog ↔ Mobil Drawer) ve Tablet Split-View hazır kalıpları eklendi.
+
+**Principle:** Tasarım sadece masaüstünde başlayıp dar ekranda büzüşen bir şey değildir. Mobil (Bottom Sheet, Thumb Zone, tek sütun), Tablet (Split-View, 2-sütun) ve Masaüstü (Multi-column) üçlüsü kullanıcı belirtmeden otomatik uygulanmalı; modallar mobilde asla ortalanmış küçük pencere olarak kalmamalı, alt çekmeceye (drawer) dönüşmelidir.
+
+

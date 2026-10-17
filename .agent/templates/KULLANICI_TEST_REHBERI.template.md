@@ -61,10 +61,24 @@ _(Bu bölüm projeye özeldir. Her yeni özellikte/sprintte ajan bu bölümü g�
 > ⛔ **Veri Üreten/Toplayan Özelliklerde Zorunlu 3 Katman:**
 > Form, bildirim veya geri bildirim gibi veri toplayan her teslimatta test adımları yalnızca ekrandaki mesaja bakarak bitti sayılamaz. Aşağıdaki 3 katmanlı format zorunludur:
 
-* **Özellik / Senaryo 1 (Standart UI / Görsel Akış):**
-  1. Tarayıcıda `URL` adresine gidin.
-  2. `[Buton/Menü]` bileşenine tıklayın.
-  3. Ekranda `[Beklenen Sonuç]` çıktısını gözlemleyin.
+* **Özellik / Senaryo 1 (Standart UI / 3 Cihaz Ergonomisi ve Modal Doğrulaması):**
+  - **Masaüstü Testi (> 1024px):**
+    1. Tarayıcıda `URL` adresine gidin.
+    2. Sol menünün, geniş bilgi ızgarasının ve çok sütunlu yerleşimin ferah oturduğunu görün.
+    3. Modal/Popup açan butona tıklayın: Merkezli, `max-w-lg` şık bir Dialog açıldığını ve sayfa temasını (renk, radius, backdrop) koruduğunu doğrulayın.
+  - **Tablet Testi (768px – 1024px / F12 Responsive iPad):**
+    1. `F12` açıp genişliği `768px` ile `1024px` arasına getirin.
+    2. Düzenin mobildeki gibi tek sütuna büzüşmediğini; dengeli 2 sütunlu grid veya Split-View (sol liste, sağ detay) olarak açıldığını gözlemleyin.
+    3. Kenar çubuğunun daraltılmış/katlanabilir olduğunu ve dokunma alanlarının ferah olduğunu doğrulayın.
+  - **Mobil Testi (375px / F12 Responsive iPhone/Android):**
+    1. Genişliği `375px` yapın.
+    2. Tek sütun akışını, kritik butonların ekranın alt kısmında (Thumb Zone) yer aldığını ve yatay kayma (horizontal overflow) olmadığını görün.
+    3. Modal/Popup açan butona tıklayın: **ÖNEMLİ:** Modalın ortada sıkışmak yerine ekranın altından yükselen bir **Bottom Sheet (Drawer)** olarak açıldığını, parmakla aşağı kaydırılıp kapatılabildiğini ve form alanlarına odaklanıldığında klavye altında kalmadığını doğrulayın.
+  - **4 UX Durumu Kontrolü:**
+    1. *Loading:* Sayfa yüklenirken veya butona basıldığında skeleton/spinner ve buton disable durumunu görün.
+    2. *Empty:* Veri yokken veya filtre boşken yönlendirici ikon + CTA butonunu görün.
+    3. *Error:* Yanlış veride anlaşılır inline hata ve "Yeniden Dene" butonunu görün.
+    4. *Feedback:* İşlem bitince Toast onay bildirimini görün.
 
 * **Özellik / Senaryo 2 (Veri Toplayan / Form Özelliği — 3 Katmanlı Doğrulama):**
   - **Katman 1 (Görsel UX):**

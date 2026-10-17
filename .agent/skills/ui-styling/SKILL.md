@@ -329,6 +329,60 @@ export function LoginForm() {
 </div>
 ```
 
+**Adaptive Responsive Dialog (Desktop: Dialog ↔ Mobile: Bottom Sheet / Drawer):**
+```tsx
+import * as React from "react"
+import { useMediaQuery } from "@/hooks/use-media-query" // window.matchMedia('(min-width: 768px)')
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
+import { Button } from "@/components/ui/button"
+
+export function AdaptiveModal({ children, title, triggerText }: { children: React.ReactNode, title: string, triggerText: string }) {
+  const [open, setOpen] = React.useState(false)
+  const isDesktop = useMediaQuery("(min-width: 768px)")
+
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild><Button>{triggerText}</Button></DialogTrigger>
+        <DialogContent className="sm:max-w-lg rounded-2xl max-h-[85dvh] overflow-y-auto">
+          <DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>
+          <div className="py-2">{children}</div>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
+  return (
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild><Button className="w-full min-h-[44px]">{triggerText}</Button></DrawerTrigger>
+      <DrawerContent className="max-h-[90dvh] rounded-t-2xl pb-safe">
+        <DrawerHeader className="text-left"><DrawerTitle>{title}</DrawerTitle></DrawerHeader>
+        <div className="px-4 pb-6 overflow-y-auto overscroll-contain">{children}</div>
+      </DrawerContent>
+    </Drawer>
+  )
+}
+```
+
+**Tablet & Desktop Split-View Pattern (Master-Detail):**
+```tsx
+export function SplitViewLayout({ list, detail }: { list: React.ReactNode, detail: React.ReactNode }) {
+  return (
+    <div className="flex flex-col md:grid md:grid-cols-12 min-h-[calc(100vh-4rem)] gap-4 p-4">
+      {/* Sol Liste: Mobilde tam genişlik, Tablette 5 kolon, Masaüstünde 4 kolon */}
+      <div className="w-full md:col-span-5 lg:col-span-4 border-b md:border-b-0 md:border-r border-border pr-0 md:pr-4 overflow-y-auto">
+        {list}
+      </div>
+      {/* Sağ Detay: Mobilde akış devamı, Tablette 7 kolon, Masaüstünde 8 kolon */}
+      <div className="w-full md:col-span-7 lg:col-span-8 pl-0 md:pl-4 overflow-y-auto">
+        {detail}
+      </div>
+    </div>
+  )
+}
+```
+
 ## Resources
 
 - shadcn/ui Docs: https://ui.shadcn.com

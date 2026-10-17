@@ -58,7 +58,7 @@ def test_repo_is_clean():
           "; ".join(f"{c} {n}" for c, n, _ in warnings[:4]))
 
     rules = rules_gates.collect_rules(RULES)
-    check("17 kural dosyasi", len(rules) == 17, f"{len(rules)} bulundu")
+    check("18 kural dosyasi", len(rules) == 18, f"{len(rules)} bulundu")
     check("her kural sinif bildiriyor", all(r.sinif for r in rules))
     measurable = [r for r in rules if r.sinif == "OLCULEBILIR"]
     check("olculebilir kuralin kapisi var",

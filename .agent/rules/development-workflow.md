@@ -73,7 +73,13 @@ Geliştirmeye başlamadan önce ajan sırasıyla şu adımları işletmek zorund
    - Görevde harici bir kütüphane, araç, servis veya paket kullanılacaksa önceden araştırılır.
    - ⛔ **Açık Kaynak (Open-Source) Önceliği Zorunludur:** Kapalı kaynak veya tescilli araçlar yerine öncelikle aktif geliştirilen, güvenilir lisanslı (MIT, Apache 2.0, BSD) açık kaynaklı alternatifler tercih edilir ve gerekçesi plana eklenir.
 
-6. **Kullanıcıya Sunum, Değişiklik/Review Şansı ve Açık Onay:**
+6. ⛔ **UX Durumları ve 3 Cihaz Ergonomisi Planı (Responsive Viewport Contract):**
+   - Görev bir arayüz, sayfa veya bileşen içeriyorsa planda şu 3 unsur açıkça tanımlanmalıdır:
+     1. **4 UX Durumu:** Loading (skeleton/spinner), Empty (açıklayıcı ikon+CTA), Error (inline+çözüm) ve Action Feedback (toast/optimistic).
+     2. **3 Cihaz Ergonomisi:** Mobil (< 768px - tek sütun / Thumb Zone / Bottom Nav / kart listesi), Tablet (768px-1024px - 2 sütun / Split-View / dokunmatik aralıklar), Masaüstü (> 1024px - çok sütunlu zengin ızgara).
+     3. **Modal / Popup Davranışı:** Sayfa token'larıyla uyum, mobilde alttan açılan Bottom Sheet (Drawer) adaptasyonu ve `max-h-[85dvh]` kaydırma/klavye koruması.
+
+7. **Kullanıcıya Sunum, Değişiklik/Review Şansı ve Açık Onay:**
    - Hazırlanan plan kullanıcıya sunulur.
    - Kullanıcıya planı inceleme, revize etme veya değişiklik talep etme fırsatı verilir.
    - ⛔ **Kullanıcıdan açık onay ("onay", "başla", "uygun" vb.) alınmadan Adım 3 (Geliştir) aşamasına KESİNLİKLE GEÇİLEMEZ.**
@@ -165,6 +171,11 @@ Yukarıdaki ölçülebilir kapı komutları (`npm run build`, `pnpm test`, `npx 
    - **Katman 3 (Veritabanı Kalıcılık Doğrulaması):** Veritabanı sorgusuyla (`SELECT ... FROM ... ORDER BY created_at DESC LIMIT 1;`) veya Admin panelinde yeni satırın oluştuğunu kanıtla. DB kanıtı sunulmayan hiçbir veri toplama özelliği "DONE" kabul edilemez.
 6. ⛔ **UI/UX Kalite Kapısı ve Anti-Slop Kontrolü:**
    Yeni veya güncellenen bir sayfa, tablo veya form teslim edilirken; tasarımın `frontend-design` ve `ui-ux-pro-max` standartlarını karşıladığı, tekdüze gri kutulardan kaçınıldığı, net görsel hiyerarşi ve durum rozetleri sağlandığı rehberde gözle doğrulanmalıdır. Gözle profesyonel görünmeyen arayüz tamamlanmış sayılamaz.
+7. ⛔ **3 Cihaz Ergonomisi ve Adaptif Modal Doğrulaması (Responsive UX Verification):**
+   Arayüz veya modal içeren her teslimatta, kullanıcının bizzat gözüyle test edebilmesi için `KULLANICI_TEST_REHBERI.md` içine şu 3 senaryonun eklenmesi zorunludur:
+   - **Mobil (375px/414px F12 Cihaz Simülasyonu):** Tek sütun akışı, başparmakla butonlara erişim, formların yatay taşmaması ve açılan modalın alttan gelen Bottom Sheet (Drawer) olarak açılıp parmakla kaydırılabilmesi.
+   - **Tablet (768px – 1024px iPad Simülasyonu):** 2 sütunlu dengeli düzen veya split-view, dokunmatik buton aralıkları, katlanabilir sidebar.
+   - **Masaüstü (> 1024px):** Çok sütunlu zengin yerleşim, ortalanmış modal dialog ve hover durumları.
 
 ---
 

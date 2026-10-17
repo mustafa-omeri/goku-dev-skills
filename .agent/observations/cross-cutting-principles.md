@@ -15,3 +15,6 @@ Veri toplayan sistemlerde kabul testi 3 katmanlı kanıt sunmalıdır:
 ## P4: Kapsam-Duyarlı Doğrulama (Scope-Aware Verification)
 Bir commit veya görevde yalnızca ajan kuralları (`.agent/**`) veya dokümanlar (`*.md`, `docs/**`) değiştiyse, uygulama derleme (`build`) ve test (`test`, `typecheck`) komutları çalıştırılmaz (atlanır / skipped). Kaynak kod değişmemişken test koşturmak israftır. Kapılar yalnızca ilgili etki alanı değiştiğinde zorunludur.
 
+## P5: Adaptif Viewport ve UX Ergonomisi İlkliği (Adaptive Viewport & UX Ergonomics First)
+Tasarım sadece masaüstünde başlayıp dar ekranda tek sütuna büzüşen statik bir görüntü değildir. Mobil (< 768px: Thumb Zone, Bottom Sheet/Drawer, min 44×44px touch, kart listesi), Tablet (768px–1024px: 2 sütunlu grid, split-view, dokunmatik alanlar) ve Masaüstü (> 1024px: multi-column, dialog) ergonomisi kullanıcı talep etmeden varsayılan refleks olarak uygulanır. Masaüstündeki bir modal mobilde asla ortalanmış küçük pencere olarak kalamaz; alttan açılan Bottom Sheet (Drawer) veya tam ekrana dönüşür. Her arayüz 4 UX durumunu (Loading, Empty, Error, Feedback) eksiksiz sağlamak zorundadır.
+
