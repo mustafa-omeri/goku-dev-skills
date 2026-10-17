@@ -4,7 +4,7 @@ description: Frontend projelerinde chunk boyutu, ağır kütüphane ve toplam bu
 sinif: OLCULEBILIR
 kapi:
   - yigin: "Frontend / bundle bütçesi"
-    komut: "npm run build"
+    komut: "python .agent/skills/musgoku/scripts/check_bundle_limits.py"
 ---
 
 # ⛔ Bundle ve Chunk Bütçesi Kuralı (Frontend projelerinde zorunlu)
