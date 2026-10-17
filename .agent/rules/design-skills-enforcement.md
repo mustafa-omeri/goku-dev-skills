@@ -1,6 +1,6 @@
 ---
 name: Mandatory Design Skills
-description: Tasarım, UI/UX ve görsel yerleşim taleplerinde canvas-design, frontend-design ve ui-ux-pro-max skillerinin birlikte okunmasını zorunlu kılar; ayrıca 12 skill'in sahiplik (tek sahip) haritasını tanımlar.
+description: Tasarım, UI/UX ve görsel yerleşim taleplerinde canvas-design, frontend-design ve ui-ux-pro-max skillerinin birlikte okunmasını zorunlu kılar; ayrıca 13 skill'in sahiplik (tek sahip) haritasını tanımlar.
 sinif: OLCULEBILIR
 kapi:
   - yigin: "Tasarım / skill sahipliği"
@@ -80,9 +80,25 @@ Popup ve modallar sayfanın en kritik etkileşim noktalarıdır. Bir modal tesli
    - **Scroll Koruması:** `max-h-[85dvh] overflow-y-auto` ve `overscroll-contain` zorunludur; modal açıldığında arka plan kaydırması (`body scroll lock`) kilitlenmelidir.
    - **Mobil Klavye Koruması:** Mobilde form inputuna tıklandığında sanal klavye açıldığında input alanının klavyenin altında kalmaması için safe-area padding (`pb-safe`, `pb-6`) ve dinamik viewport yüksekliği (`dvh`) kullanılmalıdır.
 
+## 2.5 Gerçekçi Mock Veri ve Görsel Varlık Sözleşmesi (Realistic Mock Visuals Contract)
+
+Arayüz bileşenlerinde (kartlar, kullanıcı profilleri, listeler, ürün ızgaraları, etkinlik/event takvimleri vb.) kullanıcı deneyimini ve görsel hiyerarşiyi bozacak donuk, gri boş kutular veya kırık harici placeholder servisleri (`via.placeholder.com` vb.) kullanılması **YASAKTIR**.
+
+Ajan, görsel içeren her UI bileşeninde şu öncelik sırasını (fallback cascade) izlemek zorundadır:
+
+1. **Öncelik 1 — Proje Varlıkları / Config (`.agent/config/assets.json`):**
+   - Projede `.agent/config/assets.json` tanımlıysa ve yerel klasör veya GitHub deposu belirtilmişse varlıklar oradan çekilir.
+2. **Öncelik 2 — Sıfır-Ayar Tematik Public Endpoint'ler (Deterministik & CORS-Free):**
+   - Config yoksa veya ek varlık gerekiyorsa `mock-asset-provider` kataloğundaki kırılmayan servisler kullanılır:
+     * **İnsan / Profil / Avatar:** RandomUser API (`https://randomuser.me/api/portraits/{women|men}/{id}.jpg`) veya DiceBear (`https://api.dicebear.com/7.x/...`).
+     * **Etkinlik / Organizasyon / Zaman:** Deterministik seed ile Picsum (`https://picsum.photos/seed/{event-slug}/800/600`).
+     * **E-Ticaret / Ürün:** DummyJSON veya Picsum ürün görselleri.
+3. **Öncelik 3 — Yerel İndirme ve Kalıcı Ön Bellekleme (Local Caching):**
+   - Çevrimdışı çalışabilirlik ve kırılma riskine karşı ajan, görselleri `python .agent/skills/mock-asset-provider/scripts/fetch_assets.py` ile projenin `public/mock-assets/` dizinine yerel olarak indirebilir veya Antigravity `image-generator` subagent'ı ile özgün üretebilir.
+
 ## 3. Sahiplik haritası — her konunun tek sahibi vardır
 
-Tasarım alanına giren 12 skill'in sorumluluk sınırı şudur. **Bir konuyu iki
+Tasarım alanına giren 13 skill'in sorumluluk sınırı şudur. **Bir konuyu iki
 skill sahiplenmez.** Çakışma şüphesinde bu tabloya bak ve doğru olanı aç.
 
 | Konu | Sahip skill |
@@ -99,6 +115,7 @@ skill sahiplenmez.** Çakışma şüphesinde bu tabloya bak ve doğru olanı aç
 | Sunum/slayt **üretimi** (HTML render + token denetimi) | `design-system` |
 | Sabit px ölçülü banner / kapak / reklam görseli | `banner-design` |
 | Logo & CIP **brief'i**, sosyal medya görseli akışı, yönlendirme | `design` |
+| UI kart, profil, etkinlik mock görselleri (placeholder alternatifi) | `mock-asset-provider` |
 | IDE benzeri uygulama arayüzü | `web-ide-ux-architect` (kapsam dışı ilan eder) |
 
 **Kapsam dışı ilan edilen:** `web-ide-ux-architect`
@@ -120,8 +137,8 @@ Yalnız renk değişikliği, tek bir metin düzeltmesi veya logik hatası için
 üç skill'in tamamını okumak gerekmez — bu durumda hangisinin devrede olduğunu
 belirtip geç.
 
-`brand`, `slides`, `banner-design`, `design`, `doc-coauthoring` üçlüye **dahil
-değildir**; bunlar UI kodu üretmez, çıktı/strateji üretir. Onlar kendi
+`brand`, `slides`, `banner-design`, `design`, `doc-coauthoring`, `mock-asset-provider` üçlüye **dahil
+değildir**; bunlar UI kodu üretmez, çıktı/strateji/varlık üretir. Onlar kendi
 kapsam sınırı bölümünde tanımlıdır.
 
 ---

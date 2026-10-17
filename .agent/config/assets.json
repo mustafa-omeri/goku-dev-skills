@@ -1,0 +1,23 @@
+{
+  "enabled": true,
+  "storage_dir": "public/mock-assets",
+  "download_locally": true,
+  "sources": {
+    "github": {
+      "enabled": false,
+      "repo_url": "",
+      "branch": "main",
+      "sub_path": "images"
+    },
+    "api": {
+      "unsplash_access_key": "",
+      "pexels_api_key": ""
+    },
+    "default_fallbacks": {
+      "portraits": "randomuser",
+      "events": "picsum",
+      "products": "dummyjson",
+      "general": "picsum"
+    }
+  }
+}

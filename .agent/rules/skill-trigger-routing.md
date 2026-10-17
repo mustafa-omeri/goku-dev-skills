@@ -45,6 +45,7 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 | tailwind, shadcn, dark mode, responsive düzen, erişilebilir bileşen / tailwind config, shadcn component, accessible dialog | `ui-styling` | `skills/ui-styling/SKILL.md` |
 | ux kuralı, erişilebilirlik denetimi, kontrast, klavye gezinme / ux guideline, accessibility audit, contrast ratio | `ui-ux-pro-max` | `skills/ui-ux-pro-max/SKILL.md` |
 | grafik tipi, chart seçimi, dashboard yerleşimi / chart type, which graph, dashboard layout | `ui-ux-pro-max` | aynı |
+| mock görsel, gerçekçi resim, kart görseli, profil resmi, etkinlik görseli, avatar ekle / mock images, placeholder images, realistic avatars, test data visuals | `mock-asset-provider` | `skills/mock-asset-provider/SKILL.md` |
 
 ### A2. Marka, sunum, doküman
 
@@ -134,6 +135,7 @@ haritasından** gelir ([`design-skills-enforcement.md`](./design-skills-enforcem
 | "Sunum" mu "belge" mi? | HTML deck → `slides` + `design-system`. Markdown doküman → `doc-coauthoring` |
 | "Marka dokümanı" | İçerik → `brand`. Yazma süreci → `doc-coauthoring` |
 | "Logo çiz" | Brief → `design`. Görsel üretimi bu setin **kapsamı dışında** (ücretli API çağrılmaz) |
+| "Mock görsel / resim" mi "Banner" mı? | Arayüz kartı/içerik için gerçekçi fotoğraf/avatar → `mock-asset-provider`. Sabit ölçülü reklam/kapak → `banner-design` |
 | Tasarım skill'i mi, kod skill'i mi? | Görsel karar varsa tasarım seti. Veri akışı/mimari varsa `musgoku`. İkisi de varsa **ikisi** |
 
 ---
