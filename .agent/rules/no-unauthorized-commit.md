@@ -17,9 +17,18 @@ sinif: SUREC
      (minor rötüş veya dahili refactoring ise güncelleme gerekmediği ve geçerli mevcut senaryo açıkça belirtilir).
      ⛔ Yeni özellik veya akış değişikliğinde test adımları sunulmadan ve rehber güncellenmeden commit onayı istenemez.
 3. Aşağıdakiler açık onay sayılır: "commit yap", "onaylıyorum", "evet",
-   "commitleyebilirsin", "gönder".
+   "commitleyebilirsin", "gönder", "commitx", "commitle".
    "devam et", "bak", "bir de şunu düzelt" onay **sayılmaz**.
 4. Onay yoksa yalnızca değişiklikleri hazırla ve onay bekle.
+
+## 1.1 Doğrudan Kesintisiz Yayınlama İstisnası (`commitx`, `commitle`)
+
+Kullanıcı mesajında açık bir eylem olarak **`commitx`** veya **`commitle`** yazdığında; bu talep **peşin ve açık tam yetki (Express Pre-Approval)** kabul edilir:
+
+- Ajan ara onay sormak ("Onaylıyor musunuz?", "Commit yapayım mı?", "Push yapayım mı?") için **duraksamaz**.
+- Kapsam-duyarlı doğrulama ilkesine göre gerekiyorsa test/build doğrulamalarını yapar, semantik tag artışını hesaplar, `git add` → `git commit` → `git tag` → `git push` adımlarını arka arkaya otonom ve kesintisiz tamamlar.
+- Kullanıcıya doğrudan nihai sürüm ve push raporunu sunar.
+- ⛔ Şartlı veya soru cümleleri (ör. *"commitlemeden önce şuna bak"*, *"commitlemeli miyiz?"*) peşin onay **sayılmaz**; yalnız doğrudan eylem kipi (*"commitle"*, *"bunu commitle"*, *"commitx"*) peşin onaydır.
 
 ## Onay sonrası davranış
 

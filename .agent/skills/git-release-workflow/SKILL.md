@@ -3,9 +3,9 @@ name: git-release-workflow
 description: >-
   Kullanıcı onayından sonra değişiklikleri hazırlama, semantik sürüm etiketi artırma,
   commit oluşturma ve dal ile etiketleri uzak depoya gönderme akışını kesintisiz
-  otomatik yürütür. Tetikleyiciler: "commit yap", "sürüm yayınla", "release çıkar",
-  "tag at", "gönder", "push", "yayına al", "commit this", "tag a release", "push to
-  remote". Her commit/tag/push öncesi ayrı onay zorunludur; onaysız çalışmaz.
+  otomatik yürütür. Tetikleyiciler: "commitx", "commitle", "commit yap", "sürüm yayınla",
+  "release çıkar", "tag at", "gönder", "push", "yayına al", "commit this", "tag a
+  release", "push to remote". Her commit/tag/push öncesi onay zorunludur; onaysız çalışmaz.
   Tetiklenmez: "git durumu nedir", "diff göster", "log" gibi salt okuma istekleri.
   Tam sözlük: .agent/rules/skill-trigger-routing.md
 ---
@@ -37,6 +37,7 @@ commit, PR kontrolü gibi konular bu skill'in kapsamı **değildir.**
 Kullanıcı: *"Değişiklikleri commit et, mesaj: 'layout hatası düzeltildi'."*
 Ajan: etiketleri okur → hazırlar → **onay ister** → onay gelince tek seferde
 commit + tag + push yapar ve sonucu raporlar.
+💡 Doğrudan *"commitx"* veya *"commitle"* denildiğinde peşin yetki devreye girer, ara onay beklemeden tüm akış tek nefeste tamamlanır.
 
 ## İş Akışı
 
@@ -58,7 +59,8 @@ commit + tag + push yapar ve sonucu raporlar.
 
 - **ASLA KULLANICIYA SORMAYIP ONAY ALMADAN COMMIT ATMA!**
 - Değiştirilen dosyaları, önerilen commit mesajını ve **kullanıcının çıktıyı gözüyle nasıl doğrulayacağını (`KULLANICI_TEST_REHBERI.md` adımları)** kullanıcıya göster.
-- Kullanıcıdan açık onay (onaylıyorum / evet / commit yap / commitleyebilirsin) almadan `git commit` adımına geçme. "devam et" gibi ifadeler onay **sayılmaz**.
+- Kullanıcıdan açık onay (onaylıyorum / evet / commit yap / commitleyebilirsin / commitx / commitle) almadan `git commit` adımına geçme. "devam et" gibi ifadeler onay **sayılmaz**.
+- ⚡ **PEŞİN YETKİLENDİRME İSTİSNASI (`commitx`, `commitle`):** Kullanıcı doğrudan `commitx` veya `commitle` yazdığında bu adım peşinen onaylanmıştır; ara onay sorulmaz, doğrudan 5, 6 ve 7. adımlar kesintisiz yürütülür ve rapor tek seferde sunulur.
 - ⭐ **ONAY SONRASI KESİNTİSİZ OTONOM ÇALIŞTIRMA:** Kullanıcıdan onay alındıktan sonra, sıradaki adımlar (`git add`, `git commit`, `git tag`, `git push` vb.) için her komutta TEKRAR TEKRAR ONAY İSTENMEZ. Tüm akış uçtan uca tek seferde, kesintisiz ve otonom olarak çalıştırılır, doğrudan nihai sonuç raporlanır.
 
 ### 5. Commit Changes (Only After User Confirmation)

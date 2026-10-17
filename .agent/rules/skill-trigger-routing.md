@@ -83,7 +83,7 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 
 | Tetikleyici kelime (TR / EN) | Skill | Gövde yolu |
 |---|---|---|
-| commit, sürüm yayınla, release, tag, gönder, push / commit, tag, release, publish | `git-release-workflow` | `skills/git-release-workflow/SKILL.md` |
+| commit, sürüm yayınla, release, tag, gönder, push, commitx, commitle / commit, tag, release, publish, commitx | `git-release-workflow` | `skills/git-release-workflow/SKILL.md` |
 | docker, prod imajı, docker compose, deploy, konteyner / production image, containerize | `production-docker-architect` | `skills/production-docker-architect/SKILL.md` |
 | api dokümantasyonu, swagger güncel mi / api docs, openapi | `rules/api-documentation-enforcement.md` | — |
 | veritabanı revizyonu, migration, yeni tablo, yeni kolon, db şeması / db migration, schema change, add column, new table | `rules/db-migration-enforcement.md` + `musgoku` | — |
@@ -100,6 +100,7 @@ Kullanıcının detaylı ve uzun prompt yazmadan doğrudan tam kapsamlı revizyo
 |---|---|---|
 | `[DESIGN-REFRESH]` / `[UI-POLISH]` | `frontend-design` + `ui-ux-pro-max` + `ui-styling` | Kullanıcı tek satırda revizyon ister. Ajan ek açıklama beklemeden; belirtilen sayfalarda generic AI-slop şablonlarını temizler, görsel hiyerarşi, boşluk ritmi, scanning ergonomisi ve rozet revizyonunu mevcut veri akışını bozmadan tamamlar. |
 | `[DASHBOARD-POLISH]` | `ui-ux-pro-max` + `frontend-design` + `ui-styling` | Yönetim, onay ve metrik masalarının bilgi mimarisi, kart ve tablo ergonomisini profesyonel seviyeye çıkarır. |
+| `commitx`, `commitle` / `[COMMITX]` | `git-release-workflow` | Peşin tam yetkili (express) sürüm yayını: commit ve push için ayrı ayrı ara onay sormadan `git add` → `git commit` → `git tag` → `git push` zincirini tek nefeste tamamlar ve doğrudan sonucu raporlar. |
 
 ---
 

@@ -183,6 +183,7 @@ Ayrıntı: [`rules/no-silent-wait.md`](rules/no-silent-wait.md).
 ## 5. Git kuralları
 
 - ⛔ Kullanıcı açık onay vermeden `git commit` / `tag` / `push` **çalıştırma.**
+- 💡 **Peşin Yetki (`commitx`, `commitle`):** Kullanıcı doğrudan eylem olarak `commitx` veya `commitle` yazdığında bu talep peşin açık onaydır; ajan ara onay (commit/push ayrımı) sormadan add, commit, tag ve push adımlarını tek seferde tamamlar.
 - Onay sonrası tüm commit/release adımları `git-release-workflow` skill'iyle,
   **kesintisiz** yürütülür; her komut için ayrı onay istenmez.
 - Ayrıntı: [`no-unauthorized-commit.md`](rules/no-unauthorized-commit.md),
