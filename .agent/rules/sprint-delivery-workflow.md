@@ -186,7 +186,7 @@ Feature: Kullanıcı test rehberi
 - Kartta `gherkin:` alanı dosya yolunu **ve** senaryo adını taşır
   (`#senaryo-adi`). Senaryo adı dosyada yoksa kapı kızar (E7).
 
-Bu karar PRD yazan `musgoku-prd` skill'iyle **tutarlıdır**; kapsam farkı yoktur
+Bu karar PRD standartlarıyla **tutarlıdır**; kapsam farkı yoktur
 (oran Gherkin üretir, burada kapı denetler).
 
 ---

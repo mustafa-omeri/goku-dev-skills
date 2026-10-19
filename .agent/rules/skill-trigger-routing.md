@@ -56,9 +56,7 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 | marka dokümanı yaz / write brand doc | `brand` + `doc-coauthoring` | — |
 | sunum, deck, pitch deck, slayt / presentation, deck, slide, keynote | `slides` (içerik) + `design-system` (üretim) | `skills/slides/SKILL.md` |
 | sunum html'e dönüşsün, chart.js, slayt üret / render deck, generate slides | `design-system` | `skills/design-system/SKILL.md` |
-| doküman yaz, proposal, spec, karar dokümanı, RFC / write doc, technical spec, decision doc | `doc-coauthoring` | `skills/doc-coauthoring/SKILL.md` |
-| PRD, gereksinim dokümanı, kapsam netleştirme, spec çıkar / write prd, requirements doc, define scope | `musgoku-prd` | `skills/musgoku-prd/SKILL.md` |
-| KVKK, gizlilik, aydınlatma metni, çerez politikası, açık rıza / kvkk, gdpr, privacy policy, cookie consent | `musgoku-prd` | aynı |
+| doküman yaz, proposal, spec, PRD, karar dokümanı, RFC / write doc, technical spec, write prd, decision doc | `doc-coauthoring` | `skills/doc-coauthoring/SKILL.md` |
 
 ### A3. Kod ve mimari
 
@@ -115,7 +113,7 @@ Kullanıcının detaylı ve uzun prompt yazmadan doğrudan tam kapsamlı revizyo
 | "Marka sitesi kur" | `brand` → `design-system` → `frontend-design` → `ui-styling` | kimlik → token → estetik → kod |
 | "Pitch deck hazırla" | `slides` → `design-system` → (palet için) `theme-factory` | içerik → üretim → renk |
 | "Kampanya görselleri" | `design` → `banner-design` → `brand` | brief → görsel → marka kontrolü |
-| "Yeni özellik planla" | `musgoku-prd` → `musgoku` | kapsam → mimari |
+| "Yeni özellik planla" | `doc-coauthoring` → `musgoku` | kapsam → mimari |
 | "Hata düzelt ve temizle" | `musgoku` → `karpathy-guidelines` | çözüm → sadeleştirme denetimi |
 | "Yayına al" | `production-docker-architect` → `git-release-workflow` | imaj → commit/tag/push |
 | "Genel kod talebi" | `musgoku` (yönlendirici) → ilgili alt tablo | — |
@@ -148,7 +146,7 @@ haritasından** gelir ([`design-skills-enforcement.md`](./design-skills-enforcem
 |---|---|
 | Tek satır düzeltme, dosya adı, yorum | Hiçbir skill açma. Yanıtta bunu **açıkça belirt** ([`always-read-skills.md`](./always-read-skills.md) §İstisna) |
 | Salt bilgi sorusu ("JWT nedir") | Kod yazılmıyorsa skill açma |
-| İstemci olmayan ortam (cron, CI, batch) | Soru sorulamaz; sessiz varsayım yalnız `musgoku-prd` §21 Varsayım Kaydı'nda |
+| İstemci olmayan ortam (cron, CI, batch) | Soru sorulamaz; sessiz varsayım yalnız dokümanda Varsayım Kaydı'nda |
 | Kullanıcı skill'i **reddettiyse** | Yerine geçme. Gerekçeni yaz, alternatif öner |
 
 ---
@@ -185,6 +183,36 @@ Kullanıcının tüm skill'leri, sorumluluk sınırlarını, config gereksinimle
 - **Konum:** Kesinlikle `.agent/skills-catalog.html` altında yaşar (proje kökünü kirletmez).
 - **Zorunlu Güncelleme:** Her yeni skill, config veya mimari yapı eklendiğinde `python scripts/generate_skills_catalog.py` çalıştırılarak katalog güncellenmelidir.
 - **Doğrulama Kapısı:** `tests/test_skills_catalog.py` ve `test_skill_contracts.py` kapıları kataloğun bayat kalmasını veya herhangi bir skill'in katalogdan eksik kalmasını engeller.
+
+---
+
+## G. Tasarım Fiilleri Yönlendirme Matrisi (24 Design Verbs)
+
+Kullanıcının arayüz üzerindeki niyetini doğrudan eyleme dönüştüren 24 standart tasarım fiili ve yönlendirme kuralları:
+
+| Fiil (Verb) | Kategori | Tetikleyiciler (TR / EN) | Sahip Skill & Eylem |
+|---|---|---|---|
+| `shape [hedef]` | Build | UX planla, kullanıcı akışı çıkar, ekranı kurgula / shape UX, plan UI flow | `frontend-design` + `ui-ux-pro-max` (kod öncesi UX kurgusu) |
+| `document` | Build | tasarım sistemini belgele, DESIGN.md üret, token haritası çıkar / document design, extract DESIGN.md | `design-system` + `brand` (kod tabanından token/stil dokümanı üretir) |
+| `extract [hedef]` | Build | token çıkar, bileşeni ayır, stilleri değişkene bağla / extract tokens, extract component | `design-system` + `ui-styling` (inline stilleri token'a dönüştürür) |
+| `critique [hedef]` | Evaluate | tasarımı eleştir, tasarım incelemesi, UX critique / critique UI, review design | `ui-ux-pro-max` + `frontend-design` (Zanaat Tabanı + Yüzey Modu P0/P1/P2 analizi) |
+| `audit [hedef]` | Evaluate | teknik denetim, erişilebilirlik testi, kontrast denetle / audit a11y, technical UI audit | `ui-ux-pro-max` + `musgoku` (`check_bundle_limits`, a11y) |
+| `polish [hedef]` | Refine | son cila, arayüzü parlat, mikro ritim, UI polish / polish UI, final quality pass | `frontend-design` + `ui-styling` (boşluk, hizalama, mikro zanaat) |
+| `bolder [hedef]` | Refine | daha cesur yap, güçlendir, sönük kalmış / make bolder, amplify design | `frontend-design` (mevcut marka dili içinde güçlendirme; yeni stil uydurmaz) |
+| `quieter [hedef]` | Refine | sakinleştir, göz yoruyor, cırtlak, gürültüyü azalt / make quieter, tone down, reduce noise | `frontend-design` (doygunluğu düşürme, kontrastı yumuşatma, dinginleştirme) |
+| `distill [hedef]` | Refine | sadeleştir, fazlalıkları at, özüne indir / distill design, strip complexity | `frontend-design` (süs ve dekoratif kutuları ayıklama, yalınlaştırma) |
+| `harden [hedef]` | Refine | sağlamlaştır, uç durumları bağla, prod kalitesi / harden UI, handle edge cases | `frontend-design` + `ui-styling` (4 UX Durumu + klavye odağı + safe-area) |
+| `onboard [hedef]` | Refine | tur ekle, ürün turu hazırla, ipucu balonu / onboard flow, product tour | `onboarding-tour` (Driver.js / Joyride rehberli tur ve coachmark) |
+| `animate [hedef]` | Enhance | animasyon ekle, hareket kat, mikro etkileşim / animate UI, add motion | `frontend-design` + `ui-styling` (150-250ms hızlı mikro geçişler, exponential ease) |
+| `colorize [hedef]` | Enhance | renklendir, renk kat, hiyerarşik renk / colorize UI, add strategic color | `theme-factory` + `ui-styling` (semantik durum ve vurgu renkleri) |
+| `typeset [hedef]` | Enhance | tipografiyi düzelt, fontları ayarla, satır dengesi / typeset, improve typography | `frontend-design` + `ui-ux-pro-max` (65-75ch, text-wrap: balance, -0.02em tracking) |
+| `layout [hedef]` | Enhance | yerleşimi düzelt, boşlukları ayarla, hizala / fix layout, adjust spacing rhythm | `frontend-design` (mt > mb ritmi, negatif alan, ızgara dengesi) |
+| `delight [hedef]` | Enhance | zarafet kat, mikro detay ekle, tarayıcı yüzeyleri / add delight, polish details | `frontend-design` (`::selection`, `caret-color`, `tabular-nums`, mikro zanaat) |
+| `overdrive [hedef]` | Enhance | sınırları zorla, deneysel yap, cesur kompozisyon / overdrive, push limits | `frontend-design` + `canvas-design` (deneysel ve sıra dışı görsel kompozisyon) |
+| `clarify [hedef]` | Fix | metinleri netleştir, buton etiketlerini düzelt, hata mesajı / clarify copy, fix labels | `frontend-design` (eyleme dayalı net dil, anlaşılır hata ve rehberlik) |
+| `adapt [hedef]` | Fix | responsive uyarla, mobilde düzelt, tablete uyarla / adapt responsive, fix mobile | `frontend-design` + `ui-styling` (3 Cihaz Ergonomisi + adaptif bottom sheet) |
+| `optimize [hedef]` | Fix | performansı artır, render optimize et, layout shift / optimize UI, fix performance | `react-best-practices` + `ui-styling` (CLS, memoization, lazy loading) |
+| `generate [n] [öğe]` | Iterate | varyasyon üret, 3 alternatif sun / generate variants, alternative styles | `frontend-design` + `theme-factory` (aynı öğe için 2-3 alternatif stil varyasyonu) |
 
 ---
 

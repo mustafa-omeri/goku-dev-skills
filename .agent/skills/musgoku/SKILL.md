@@ -94,7 +94,7 @@ Tespit yapamazsan **kullanıcıya sor.** Tahmin yürütme.
 | Poster / ölçüsüz görsel sanat | [`skills/canvas-design/`](../canvas-design/SKILL.md) |
 | Git commit / release | [`rules/mandatory-git-release-workflow.md`](../../rules/mandatory-git-release-workflow.md) → `git-release-workflow` |
 | Oturum devri / bilgi tabanı | [`rules/handoff-session-continuity.md`](../../rules/handoff-session-continuity.md) + [`rules/knowledge-base-management.md`](../../rules/knowledge-base-management.md) |
-| PRD / gereksinim dokümanı / kapsam netleştirme | [`skills/musgoku-prd/`](../musgoku-prd/SKILL.md) |
+| PRD / gereksinim dokümanı / teknik spec | [`skills/doc-coauthoring/`](../doc-coauthoring/SKILL.md) |
 
 > **Birden fazla referans gerekiyorsa hepsini oku.**
 > Örn. yeni bir backend modülü: `project-architecture.md` + `spring-boot-api.md` +

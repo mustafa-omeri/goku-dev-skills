@@ -1,6 +1,6 @@
 ---
 name: brand
-description: Marka içeriğinin sahibi: ton, görsel kimlik, mesaj çerçevesi, renk/font spesifikasyonu, varlık kuralları, tutarlılık denetimi; `docs/brand-guidelines.md` üretir ve token'a senkronlar. Tetikleyiciler: "marka", "marka tonu", "görsel kimlik", "marka kılavuzu", "brand voice", "brand guidelines", "visual identity", "style guide". Tetiklenmez: dokümanın yazma süreci `doc-coauthoring`'e, PRD `musgoku-prd`'ye aittir. Tam sözlük: `.agent/rules/skill-trigger-routing.md`
+description: Marka içeriğinin sahibi: ton, görsel kimlik, mesaj çerçevesi, renk/font spesifikasyonu, varlık kuralları, tutarlılık denetimi; `docs/brand-guidelines.md` üretir ve token'a senkronlar. Tetikleyiciler: "marka", "marka tonu", "görsel kimlik", "marka kılavuzu", "brand voice", "brand guidelines", "visual identity", "style guide". Tetiklenmez: dokümanın yazma süreci `doc-coauthoring`'e aittir. Tam sözlük: `.agent/rules/skill-trigger-routing.md`
 argument-hint: "[update|review|create] [args]"
 metadata:
   author: claudekit

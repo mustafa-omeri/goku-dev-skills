@@ -5,6 +5,8 @@ sinif: OLCULEBILIR
 kapi:
   - yigin: "Tasarım / skill sahipliği"
     komut: "python .agent/skills/musgoku/scripts/check_design_skills.py"
+  - yigin: "Tasarım / zanaat tabanı ve anti-slop"
+    komut: "python .agent/skills/musgoku/scripts/check_design_slop.py"
 ---
 
 # ⛔ Zorunlu Tasarım Skilleri
@@ -28,19 +30,24 @@ bir talepte** aşağıdaki üç skill **birlikte** okunur ve uygulanır:
 3. Yanıtın başlangıcında bu üç skill'in ve kullanılan MCP araçlarının
    **aktif devrede olduğunu** açıkça belirt.
 
-## 2.1 Prompt Makroları ve Hızlı Kısayollar (`[DESIGN-REFRESH]`, `[UI-POLISH]`, `[UX-POLISH]`, `[RESPONSIVE-POLISH]`)
+## 2.1 Prompt Makroları ve Tasarım Fiilleri (`[DESIGN-REFRESH]`, `[UI-POLISH]`, `[BOLDER]`, `[QUIETER]`, `[DISTILL]`, `[HARDEN]`)
 
-Kullanıcının her seferinde uzun ve detaylı tasarım/UX prompt'ları yazmasını önlemek için standart kısayol etiketleri ve kısa tetikleyiciler tanımlıdır:
+Kullanıcının her seferinde uzun ve detaylı tasarım/UX prompt'ları yazmasını önlemek için standart kısayol etiketleri ve 24 Tasarım Fiili (Design Verbs) makroları tanımlıdır:
 
-- **Etiketler:** `[DESIGN-REFRESH]`, `[UI-POLISH]`, `[DASHBOARD-POLISH]`, `[UX-POLISH]`, `[RESPONSIVE-POLISH]`
-- **Kısa Tetikleyiciler:** `"UI polish"`, `"tasarımı düzelt"`, `"ekranları toparla"`, `"tasarımı profesyonelleştir"`, `"sayfaları güzelleştir"`, `"responsive yap"`, `"kullanıcı dostu yap"`, `"mobilde düzelt"`, `"modalı düzelt"`
+- **Genel Yenileme Etiketleri:** `[DESIGN-REFRESH]`, `[UI-POLISH]`, `[DASHBOARD-POLISH]`, `[UX-POLISH]`, `[RESPONSIVE-POLISH]`
+- **Tasarım Fiil Makroları (Design Verbs):** `[POLISH]`, `[BOLDER]`, `[QUIETER]`, `[DISTILL]`, `[HARDEN]`, `[CRITIQUE]`, `[AUDIT]`, `[SHAPE]`, `[TYPESET]`, `[COLORIZE]`, `[LAYOUT]`, `[DELIGHT]`, `[CLARIFY]`, `[ADAPT]`, `[ONBOARD]`, `[OPTIMIZE]`
+- **Kısa Tetikleyiciler:** `"UI polish"`, `"tasarımı düzelt"`, `"daha cesur yap"`, `"sakinleştir"`, `"sadeleştir"`, `"sağlamlaştır"`, `"tasarımı eleştir"`, `"tipografiyi düzelt"`, `"renklendir"`, `"metinleri netleştir"`, `"responsive yap"`, `"tur ekle"`
 
-Ajan bu etiket veya ifadelerden birini gördüğünde kullanıcıdan ek açıklama veya çözünürlük talimatı beklemeden doğrudan:
-1. `frontend-design`, `ui-ux-pro-max` ve (Tailwind ise) `ui-styling` skill'lerini açar.
-2. Belirtilen ekranlarda "AI-slop" şablonlarını temizler; derinlikli görsel hiyerarşi, nefes alan boşluk ritmi (spacing scale), rollerin hızlı taramasını (rapid scanning) destekleyen durum rozetleri ve diff alanları uygular.
-3. Arka plandaki iş mantığını (logic), state yönetimini ve API veri akışını bozmadan cerrahi refactoring yapar.
-4. Aşağıdaki §2.2 (4 UX Durumu), §2.3 (3 Cihaz Ergonomisi) ve §2.4 (Adaptif Modal) standartlarını eksiksiz sağlar.
-5. Gözle doğrulama adımlarını (Masaüstü, Tablet ve Mobil için ayrı ayrı) `KULLANICI_TEST_REHBERI.md` dosyasına ekler.
+### Fiil İcra Semantiği ve Davranış İlkeleri (Verb Execution Semantics)
+Ajan, bu makro veya tetikleyicilerden birini aldığında şu davranış sınırlarına harfiyen uyar:
+1. **`bolder` (Güçlendir):** Yalnızca hedef bileşeni güçlendirir; komşu elemanları veya sayfa sistemini bozmaz. Mevcut tasarım sisteminin tipografi ölçeğini ve motiflerini sonuna kadar kullanır; yeni renk veya font uydurmaz.
+2. **`quieter` (Sakinleştir):** Fazla bağıran öğelerin doygunluğunu (%70–85) ve kontrastını düşürür; görsel gürültüyü arındırır. Ancak asla generic gri-beyaz şablona düşmez (dinginlik = zanaat inceliği).
+3. **`distill` (Özüne İndir):** Süs kutularını, iç içe çerçeveleri ve anlamsız dekorasyonları ayıklar; tasarımı salt işlevsel özüne ve negatif alana kavuşturur.
+4. **`harden` (Sağlamlaştır):** Bileşenin tüm 4 UX durumunu (Skeleton Loading, Empty State, Inline Error + Retry, Feedback Toast), klavye erişilebilirliğini ve taşma güvenliğini eksiksiz bağlar.
+5. **`clarify` (Netleştir):** UX metinlerini ve buton etiketlerini eyleme dayalı ("Kaydet", "Projeyi Yayınla") ve doğrudan kullanıcı diline çevirir.
+6. **`critique` (Eleştir):** Arayüzü Zanaat Tabanı (Craft Floor) ve Yüzey Modu (Surface Mode) açısından inceler, P0/P1/P2 öncelikli aksiyon listesi sunar.
+
+Ajan, belirtilen ekranlarda iş mantığını (logic), state yönetimini ve API veri akışını bozmadan cerrahi refactoring yapar; gözle doğrulama adımlarını `KULLANICI_TEST_REHBERI.md` dosyasına ekler.
 
 ## 2.2 Zorunlu 4 UX Durumu Sözleşmesi (The 4 UI/UX States Matrix)
 
@@ -95,6 +102,78 @@ Ajan, görsel içeren her UI bileşeninde şu öncelik sırasını (fallback cas
      * **E-Ticaret / Ürün:** DummyJSON veya Picsum ürün görselleri.
 3. **Öncelik 3 — Yerel İndirme ve Kalıcı Ön Bellekleme (Local Caching):**
    - Çevrimdışı çalışabilirlik ve kırılma riskine karşı ajan, görselleri `python .agent/skills/mock-asset-provider/scripts/fetch_assets.py` ile projenin `public/mock-assets/` dizinine yerel olarak indirebilir veya Antigravity `image-generator` subagent'ı ile özgün üretebilir.
+
+## 2.6 Tasarım Zanaat Tabanı ve Kesin Yasaklar (Craft Floor & Strict Anti-Patterns)
+
+Tüm web arayüzü, frontend bileşeni ve sayfa geliştirmelerinde "generic AI slop" çıktısını önlemek ve zanaat kalitesini garanti altına almak için aşağıdaki **Kesin Yasaklar** (Hard Refusals) ve **Zorunlu Çıktı Kontrolleri** (Craft Floor Verifications) tavizsiz uygulanır:
+
+### A. Kesin Yasaklar ve Anti-Pattern Reddi (Hard Refusals)
+
+1. **İç İçe Kart Yasağı (No Nested Cards):** Kart içine kart koymak şablon tembelliğidir ve KESİNLİKLE YASAKTIR. Hiyerarşi iç içe kutularla değil; düz zeminler, negatif alan veya ince ton adımlarıyla sağlanır. Birbirinin kopyası aynı boyutlu ikon+başlık+metin ızgaralarından kaçınılmalıdır.
+2. **Başlık Üstü Süs Etiketi Yasağı (No Eyebrow/Kicker Labels):** Başlıkların üzerine konan minik, izli (tracked) büyük harfli etiketler veya `"FEATURE"`, `"WHY US"`, `"YENİ"` gibi süs hapları KESİNLİKLE YASAKTIR. Başlık kendi ağırlığını taşımalıdır; süs etiketleri silinmeli ve doğrudan başlık konuşturulmalıdır.
+3. **Gradyan Metin Yasağı (No Gradient Text):** Metinlerde renk gradyanı (`bg-clip-text text-transparent`) yasaktır. Tipografik vurgu gradyandan değil; font ağırlığı (`font-weight`), boyutu (`font-size`) veya renk kontrastından gelir.
+4. **Kalın Renkli Kenar Çizgisi Yasağı (No Side Stripe Borders > 1px):** Kartların, callout'ların veya alert kutularının soluna/sağına konulan 3-4px kalın renkli dikey şeritler (`border-l-4`) yasaktır.
+5. **Sıfır-Blur Blok Gölgeler Yasağı (No Hard Offset Shadows):** Açıkça neobrutalist bir dünya tasarlanmıyorsa `box-shadow: 4px 4px 0` gibi sıfır-blur blok gölgeler yasaktır. Gölgeler her zaman yumuşak bir blur (`blur-md`, `blur-lg`) ve doğal bir offset taşımalıdır.
+6. **Yükseltiyi (Elevation) Tek Şey Belirler:** Ya border ya gölge. Geniş yumuşak gölgenin altına 1px border koymak "hayalet kart" (ghost card) hatasıdır. Kart köşe yuvarlaklığı (`border-radius`) 12–16px (`rounded-xl` / `rounded-2xl`) aralığında kalır; tam yuvarlak haplar (pills) sadece minik rozet/kontroller içindir.
+7. **Sistem Display Font Fallback Yasağı:** Karakterli bir display başlık yerine Impact, Arial Black gibi sistem fallback'lerini kullanmak yasaktır. Projeye özgü web fontları veya karakterli tipografi tercih edilmelidir.
+8. **Emoji veya Ham Unicode ile İkon Yasağı:** İkonlar rastgele emoji veya Unicode gliflerinden (`⚡`, `🚀`, `✔`) ibaret olamaz. Tutarlı bir SVG ikon kütüphanesinden (Lucide, Heroicons vb.) tek bir çizgi kalınlığı ve stil ile gelmelidir.
+9. **Klişe Hero-Metrik ve Dekoratif Göstergeler Yasağı:** Anlamsız hero-metrik şablonları (dev sayı + minik etiket + gradient), içerik yerine konan sahte sparkline'lar ve içi boş ilerleme halkaları yasaktır. İddia ve veriler gerçek ve dürüst olmalıdır.
+10. **Refleks Modal Yasağı:** Kullanıcı akışını kesintiye uğratması gerekmeyen sıradan işlemler için ezbere modal/dialog açmak yerine yerinde (inline) açılma veya panel geçişi uygulanmalıdır.
+11. **Uydurma Karalama SVG Yasağı (No Doodles/Sketchy SVGs):** `loose-sketch`, `doodle` veya `feTurbulence` gibi amatör karalama SVG'leri yasaktır. Vektör ya net geometridir (diyagram, ikon, shader, animasyonlu çizgi) ya da profesyonel illüstrasyondur.
+
+### B. Çıktı Üzerinde Zorunlu Zanaat Kontrolleri (Craft Floor Verifications)
+
+1. **Kontrast ve Renkli Zeminlerde Tonlama (Contrast & Hue Tinting):** Gövde metni ve placeholder kontrastı ≥ 4.5:1, büyük metin ≥ 3:1. Renkli zeminlerdeki ikincil metinler asla saf gri yapılmaz; her zaman zeminin renginden türetilmiş tonlu renk (tinted hue) taşır.
+2. **Boşluk ve Ritim Orantısı (Spacing Rhythm):** Sıkı gruplamalar, cömert ayırıcılar; bir başlığın üstündeki boşluk (`mt`) her zaman altındaki boşluktan (`mb`) daha fazladır.
+3. **Tipografi Ölçüleri ve Denge (Typography Floor):** Gövde metni satır genişliği 65–75ch, display başlık max 6rem, harf aralığı (tracking) -0.04em'den daha sıkışık olamaz (ideal: -0.02em - -0.03em), başlıklar dengeli sarılmalıdır (`text-wrap: balance`). Taşma (`overflow`) kesinlikle çözülmelidir.
+4. **Tarayıcı Yüzeylerinin Temalandırılması (Themed Browser Surfaces):** Sayfanın "hazır şablon mu yoksa özenle inşa edilmiş mi" olduğunu gösteren en güçlü sinyal tarayıcı varsayılanlarını tasarım paletiyle giydirmektir:
+   - `::selection`: Seçim arka planı ve metin rengi token paletinden renk alır.
+   - `caret-color`: Input imleç rengi vurgu rengiyle eşleşir.
+   - `::-webkit-scrollbar` / `scrollbar-color`: Özel ince kaydırma çubuğu.
+   - `focus-visible` & `outline-offset`: Özel odak halkaları (erişilebilir ve token uyumlu).
+   - `font-variant-numeric: tabular-nums`: Tablo, sayaç ve sayısal verilerde sabit genişlikli rakamlar.
+   - `text-underline-offset`: Bağlantı alt çizgilerinde doğal mesafe (`underline-offset-4`).
+5. **Dürüst ve Eyleme Dayalı Metinler (Material & Copy Honesty):** Butonlar ve kontroller yaptıkları eylemi net söyler ("Kaydet", "Projeyi Yayınla"); hatalar sorunun ne olduğunu ve çözümünü kullanıcı diliyle açıklar.
+
+## 2.7 Dört Yüzey Modu Sözleşmesi (The 4 Surface Modes: Persuade, Operate, Read, Experience)
+
+Tasarım başarısı tüm ekranlarda aynı görünmez. Bir landing page'in ihtiyacı olan cesur ve dramatik görsel dünya, bir admin paneline veya ayarlar ekranına zorla dayatılamaz. Ajan, üzerinde çalıştığı her arayüzün **Yüzey Modunu** (Surface Mode) belirlemek ve o modun disiplinine tavizsiz uymak zorundadır:
+
+| Yüzey Modu | Hedef & Ziyaretçi Başarısı | Tipik Ekranlar | Tipografi & Renk Standardı | Hareket (Motion) & Yoğunluk |
+|---|---|---|---|---|
+| **`Persuade`** *(İkna Et)* | Ziyaretçi karar verir ve aksiyon alır; **tasarım ürünün kendisidir**. | Landing page, pazarlama, fiyatlandırma, ürün lansman sayfaları. | Karakterli display/body font eşleşmesi; zengin renk paleti ve yüksek kontrastlı vurgular. | Tek bir amaca yönelik etkileyici giriş animasyonu (authored moment); cömert negatif alan ve nefes alan bölümler. |
+| **`Operate`** *(Çalıştır)* | Ziyaretçi bir iş/görev tamamlar. **Araç görevin arkasında kaybolmalıdır**. | Web app, dashboard, ayarlar (settings), veri tabloları, formlar, editörler. | **Tek bir Sans yazı tipi ailesi** (süs fontları ve devasa fluid başlıklar YASAKTIR); işlevsel durum renkleri (semantic tokens). | **Hızlı mikro geçişler (150–250ms)**; yavaş sayfa giriş koreografileri YASAKTIR; yüksek bilgi yoğunluğu (dense layout). |
+| **`Read`** *(Anla / Oku)* | Ziyaretçi bilgiyi anlar ve öğrenir. **Okuma deneyimi odaklıdır**. | Dokümantasyon, teknik spec, kılavuzlar, yardım merkezi, changelog, blog. | Okuma konforu; 65–75ch satır genişliği; belirgin `h1-h6` hiyerarşisi; kod bloklarında net kontrast. | Statik, sakin ve dikkat dağıtmayan zemin; yapışkan içindekiler tablosu (sticky TOC). |
+| **`Experience`** *(Deneyimle)* | Ziyaretçi eserin/içeriğin doğrudan içine girer; **arayüz geri çekilir**. | Portfolyolar, fotoğraf/sanat galerileri, multimedya vitrinleri. | Minimal ve geri planda tipografi; nötr ve eseri öne çıkaran zeminler. | Akıcı imersif geçişler; ilk ekrandan itibaren eseri öne çıkaran tam ekran kurgusu. |
+
+### Operate Modunda "Product Slop" Yasakları
+Admin panelleri, dashboard'lar veya uygulama arayüzlerinde (`Operate` modu):
+1. **Süslü Başlık ve Display Font Yasağı:** Form etiketlerinde, tablo başlıklarında veya butonlarda dekoratif display fontları kullanılamaz; tek bir temiz kurumsal Sans-serif ailesi kullanılır.
+2. **Yavaş Giriş Animasyonu Yasağı:** Kullanıcı her gün işini yapmak için girdiği ekranda bölümlerin tek tek süzülerek gelmesini (staggered fade-in) bekleyemez. Geçişler 150-250ms içinde anında gerçekleşir.
+3. **Standart Kontrolleri Yeniden İcat Etme Yasağı:** Standart buton, input veya dropdown'ları "farklı görünmek adına" kullanışsız ve garip biçimlere sokmak yasaktır. Tutarlılık, gösterişten önce gelir.
+4. **Ezbere Modal Açma Yasağı:** Görev kesinti gerektirmiyorsa modal açılmaz; inline genişleme veya yan çekmece (drawer) tercih edilir.
+
+## 2.8 Çift Katmanlı Proje Belleği Standardı (PRODUCT.md vs DESIGN.md)
+
+Frontend ve arayüz projelerinde tutarlılık, keyfi kararlarla değil çift katmanlı proje belleğiyle sağlanır. İki dosya proje kökünde yer alır ve rolleri kesin sınırlarla ayrılmıştır:
+
+| Katman Dosyası | Rolü ve Niteliği | İçeriği | Kapsam Dışı / Yasak |
+|---|---|---|---|
+| **`PRODUCT.md`** | **Ürün Gerçeği (Product Truth):** Ürünün kimliği, kitlesi ve değişmez gerçekleri. | Platform, hedef kullanıcılar, ürünün varoluş amacı, pazardaki konumu, çalışma bağlamı, yetenekler, teknik ve operasyonel kısıtlar, marka taahhütleri ve ses tonu, eldeki doğrulanabilir kanıtlar (evidence on hand), ürün ilkeleri ve WCAG 2.1 AA erişilebilirlik standardı. | **CSS, renk kodları, tipografi boyutları, HTML/Tailwind sınıfları YASAKTIR.** Hayali müşteri referansları, şişirilmiş istatistikler ve kanıtlanmamış iddialar ASLA yazılamaz. |
+| **`DESIGN.md`** | **Görsel Dünya & Tasarım Sözleşmesi (Visual World & Design Tokens):** Ürünün estetik kuzey yıldızı ve taşınabilir token kütüphanesi. | YAML Frontmatter'da taşınabilir token'lar (`colors`, `typography.scale`, `rounded`, `spacing`, `components`). Gövdede Kreatif Kuzey Yıldızı, Yüzey Modu (`Persuade`/`Operate`/`Read`/`Experience`), Bileşen Primitifleri Kiti, Renk/Zemin Kuralları, Tipografi Hiyerarşisi, Malzeme/Derinlik Kuralları, Tarayıcı Yüzeyleri (`::selection`, `caret-color`) ve Do/Do Not redline listesi. | Ürünün iş hedeflerini veya pazar stratejisini değiştirmeye kalkışmak yasaktır. |
+
+### İyileştirme (Refinement) vs Yeniden Tasarım (Redesign) Semantiği
+Ajan tasarım üzerinde çalışırken bu ayrımı kesinlikle gözetir:
+1. **İyileştirme (Refinement - `[POLISH]`, `[AUDIT]`, `[HARDEN]`, `[DISTILL]`, `[CLARIFY]`):**
+   - Hem `PRODUCT.md` hem de `DESIGN.md` korunur.
+   - Mevcut tasarım diline, token'larına ve kreatif kuzey yıldızına sadık kalınarak cerrahi iyileştirmeler yapılır.
+2. **Yeniden Tasarım (Redesign - `[OVERDRIVE]`, `[SHAPE]`, Yeni Konsept):**
+   - **`PRODUCT.md` DOKUNULMAZDIR.** Ürünün varoluş amacı, hedef kitlesi ve kısıtları değişmez.
+   - Mevcut `DESIGN.md` bir anti-referans kabul edilir; yeni bir görsel yön belirlenir ve `DESIGN.md` baştan yazılarak yeni token sözleşmesi ilan edilir.
+
+Şablonlar proje başlatılırken kopyalanır:
+- `.agent/templates/PRODUCT.template.md` → `<repo-kök>/PRODUCT.md`
+- `.agent/templates/DESIGN.template.md` → `<repo-kök>/DESIGN.md`
 
 ## 3. Sahiplik haritası — her konunun tek sahibi vardır
 

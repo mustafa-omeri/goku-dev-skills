@@ -383,6 +383,39 @@ export function SplitViewLayout({ list, detail }: { list: React.ReactNode, detai
 }
 ```
 
+**Themed Browser Surfaces & Craft Floor Base CSS:**
+```css
+/* src/index.css or globals.css */
+@layer base {
+  /* Themed text selection */
+  ::selection {
+    background-color: hsl(var(--primary) / 0.2);
+    color: hsl(var(--primary));
+  }
+
+  /* Themed caret */
+  input, textarea {
+    caret-color: hsl(var(--primary));
+  }
+
+  /* Sleek, themed scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+
+  /* Consistent alignment for numerals, prices, and tables */
+  .tabular-nums, table td, [data-numeric] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Generous underline offset on text links */
+  a:not([class*="no-underline"]) {
+    text-underline-offset: 4px;
+  }
+}
+```
+
 ## Resources
 
 - shadcn/ui Docs: https://ui.shadcn.com

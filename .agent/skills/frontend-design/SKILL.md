@@ -24,6 +24,19 @@ Then implement working code (HTML/CSS/JS, React, Vue, etc.) that is:
 - Cohesive with a clear aesthetic point-of-view
 - Meticulously refined in every detail
 
+## The 4 Surface Modes: Match Ambition to Function
+
+Scale design ambition to what visitor success looks like on the target surface:
+
+- **Persuade (Landing Pages, Marketing, Campaigns, Pricing):** The visitor decides and acts; design is the product. Commit to a distinct visual world, rich typography (display + refined body pairing), real imagery, and one authored entrance moment. Generous negative space.
+- **Operate (App UI, Dashboards, Tables, Settings, Tools):** The visitor completes a task. The tool must disappear into the workflow. Scanability, native expectations, and high information density outrank expression.
+  * *Typography:* A single well-tuned Sans family across headings, buttons, and labels (never use display fonts in UI chrome). Fixed rem scale, tight ratio (1.125–1.2).
+  * *Color:* Restrained palette with clear semantic status tokens (`hover`, `focus`, `active`, `disabled`, `loading`, `error`, `success`).
+  * *Motion:* Quick transitions (150–250ms); NEVER use slow orchestrated page-load sequences.
+  * *Interactions:* No reinventing standard affordances; modals only when disruption is strictly necessary.
+- **Read (Docs, Guides, Technical Specs, Changelogs):** The visitor understands something. Structure for comprehension: 65–75ch prose line length, clear heading hierarchy, sticky table of contents (TOC), crisp code blocks with copy ergonomics.
+- **Experience (Portfolios, Galleries, Showcases):** The visitor is inside the work itself. Minimal UI chrome; let the artifact lead from the first viewport.
+
 ## Frontend Aesthetics Guidelines
 
 Focus on:
@@ -115,6 +128,32 @@ AI-generated design clusters around recurring defaults that read as generic or s
 4. **Surfaces & Separation:** No box-shadows on elements at rest (shadows belong only on floating layers: dialogs, menus, sticky bars). No hairline divider lines; separate sections using generous vertical space (120–220px on desktop), filled shapes, or subtle tone steps.
 5. **Section Variety & Claim-Proof Flow:** Break the stock template sequence (*hero → logos → 3 feature cards → testimonial → pricing → CTA*). Order sections by claims with their proof. Neighbouring sections must not share the same layout geometry.
 6. **No Eyebrows or Gimmicks:** Do not place small uppercase labels or pill chips above titles. Say the message directly in the headline or the supporting sentence.
+
+## Craft Floor: Mechanical Checks & Hard Refusals
+
+Apply these mechanical checks on every built render. When building, commit to these non-negotiables:
+
+### 1. Hard Refusals (Anti-Slop Redlines)
+- **No Nested Cards:** Cards inside cards are strictly prohibited. Structure hierarchy with flat surface tones, generous whitespace, or subtle dividers.
+- **No Gradient Text:** Text with background clip gradients (`bg-clip-text text-transparent`) is prohibited. Emphasis must come from typography scale, weight, or sharp contrast.
+- **No Eyebrow / Kicker Labels:** Small tracked uppercase labels or pill chips above titles ("WHY CHOOSE US", "FEATURE") are banned. Let the headline speak for itself.
+- **No Colored Side-Stripe Borders:** 3-4px thick colored borders (`border-l-4`) on cards, list items, or alerts are banned.
+- **No Hard Offset Shadows:** Zero-blur block shadows (`box-shadow: 4px 4px 0`) are banned unless the project explicitly commits to neobrutalism. Shadows must carry soft blur and natural offset.
+- **Single Elevation Source:** Declare elevation once: either a subtle border OR a soft shadow. A 1px border under a wide soft shadow is a "ghost card". Card radius stays between 12–16px (`rounded-xl` to `rounded-2xl`).
+- **No Unicode Glyphs as Icons:** Never substitute emojis or raw Unicode characters for iconography. Use consistent SVG icons from a single library (e.g., Lucide).
+- **No Sketchy / Doodle SVGs:** SVG scenes pretending to be hand-drawn doodles (`feTurbulence`, sketchy outlines) look amateurish. Use crisp vector geometry or authentic photography.
+
+### 2. Mechanical Checks (Verify On Render)
+- **Contrast & Hue Tinting:** Body/placeholder text ≥ 4.5:1, large headings ≥ 3:1. On colored backgrounds, secondary text must be tinted with that surface's hue; never use raw, un-tinted gray.
+- **Themed Browser Surfaces:** The parts you didn't draw still carry the brand. Theme them from the palette:
+  - Text selection: `::selection { background: var(--accent); color: var(--accent-foreground); }`
+  - Caret color: `caret-color: var(--primary);`
+  - Scrollbars: `scrollbar-color: var(--border) transparent;`
+  - Keyboard focus: visible `focus-visible:ring-2` with `ring-offset-2`
+  - Tabular figures: `font-variant-numeric: tabular-nums` for all stats, timestamps, prices, and tables.
+  - Underline offset: `underline-offset-4` on text links.
+- **Spacing Rhythm:** Tight groups, generous separation (`gap-2` inside items, `gap-8` to `gap-16` between sections). Headings always have more margin above than below (`mt-8 mb-3`).
+- **Typography Floor:** Body measure constrained to 65–75ch (`max-w-prose` / `max-w-2xl`), display max 6rem, tracking floor clamped at -0.04em, and balanced heading wraps (`text-wrap: balance`).
 
 ### Real Cultural Imagery & Open Collections (`assets.mjs`)
 

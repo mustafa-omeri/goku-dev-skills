@@ -12,9 +12,11 @@
 |---|-----|--------|
 | 1 | Oturum devri — nerede kaldık, sıradaki iş, düşülen tuzaklar | `<repo-kök>\HANDOFF.md` |
 | 2 | Geliştirici profili ve kanıtlı ders kütüphanesi | `DEV_BRIEF.md` (varsa), yoksa vault `profile\` + `projects\_STANDARTLAR\decisions\` |
-| 3 | Vault kararları (salt okunur) | `<vault>\CLAUDE.md`, `<vault>\profile\`, `<vault>\projects\_STANDARTLAR\decisions\` |
-| 4 | Proje kararları | `<vault>\projects\<proje-slug>\` |
-| 5 | Bu dizindeki kurallar | `.agent\rules\` (bkz. `trigger-rule-action.md`) |
+| 3 | Ürün gerçeği ve kısıtlar (varsa) | `<repo-kök>\PRODUCT.md` |
+| 4 | Tasarım dili ve token sözleşmesi (UI/UX işlerinde) | `<repo-kök>\DESIGN.md` |
+| 5 | Vault kararları (salt okunur) | `<vault>\CLAUDE.md`, `<vault>\profile\`, `<vault>\projects\_STANDARTLAR\decisions\` |
+| 6 | Proje kararları | `<vault>\projects\<proje-slug>\` |
+| 7 | Bu dizindeki kurallar | `.agent\rules\` (bkz. `trigger-rule-action.md`) |
 
 **Okuma kanıtı:** koda geçmeden önce geçerli kararları başlıklarıyla özetle ya da
 *"bu iş için geçerli bir karar bulamadım"* de. Hatırladığını yazma, uydurma.
@@ -32,6 +34,8 @@
 | Verdiğin kalıcı karar | `<repo-kök>\knowledge-base.md` |
 | Durum, sıradaki iş, tuzaklar | `<repo-kök>\HANDOFF.md` |
 | DB revizyonu (şema, tablo, kolon) | `<repo-kök>\DB_MIGRATIONS.md` |
+| Ürün gerçeği (kitle, amaç, kısıtlar) | `<repo-kök>\PRODUCT.md` |
+| Tasarım dili, token'lar ve kurallar | `<repo-kök>\DESIGN.md` |
 
 - ⛔ Başka hiçbir yere yazma. Bu dosyaların **tek ve zorunlu yeri repo köküdür** (veya DB dokümantasyonu için `docs/database/DB_MIGRATIONS.md`).
 - ⛔ `knowledge-base.md`'yi baştan sona okuma; yalnız yaz (append). Boyutu büyüyebilir.
@@ -40,13 +44,16 @@
 
 Formatlar ve "ne yazılır / ne yazılmaz" listesi:
 [`.agent\rules\knowledge-base-management.md`](rules/knowledge-base-management.md),
-[`.agent\rules\handoff-session-continuity.md`](rules/handoff-session-continuity.md)
+[`.agent\rules\handoff-session-continuity.md`](rules/handoff-session-continuity.md),
+[`.agent\rules\design-skills-enforcement.md`](rules/design-skills-enforcement.md)
 ve [`.agent\rules\db-migration-enforcement.md`](rules/db-migration-enforcement.md).
 
 Şablonlar (ilk kez oluşturulurken kopyalanır, sonra dosyanın kendisi güncellenir):
 [`templates\HANDOFF.template.md`](templates/HANDOFF.template.md) ·
 [`templates\knowledge-base.template.md`](templates/knowledge-base.template.md) ·
-[`templates\DB_MIGRATIONS.template.md`](templates/DB_MIGRATIONS.template.md)
+[`templates\DB_MIGRATIONS.template.md`](templates/DB_MIGRATIONS.template.md) ·
+[`templates\PRODUCT.template.md`](templates/PRODUCT.template.md) ·
+[`templates\DESIGN.template.md`](templates/DESIGN.template.md)
 
 ---
 
@@ -115,6 +122,7 @@ kanıtlayamazsın — sadece beyan edersin.** Bu ayrım gizli değildir.
 | Backend / API dokümantasyonu | `python .agent/skills/musgoku/scripts/check_api_docs.py` | [`api-documentation-enforcement.md`](rules/api-documentation-enforcement.md) |
 | Backend / Veritabanı migration | `python .agent/skills/musgoku/scripts/check_db_migrations.py` | [`db-migration-enforcement.md`](rules/db-migration-enforcement.md) |
 | Tasarım / skill sahipliği | `python .agent/skills/musgoku/scripts/check_design_skills.py` | [`design-skills-enforcement.md`](rules/design-skills-enforcement.md) |
+| Tasarım / zanaat tabanı ve anti-slop | `python .agent/skills/musgoku/scripts/check_design_slop.py` | [`design-skills-enforcement.md`](rules/design-skills-enforcement.md) |
 | Frontend / bundle bütçesi | `python .agent/skills/musgoku/scripts/check_bundle_limits.py` | [`frontend-bundle-limits.md`](rules/frontend-bundle-limits.md) |
 | Frontend / i18n | `python .agent/skills/i18n-localization/scripts/i18n_checker.py` | [`i18n-enforcement.md`](rules/i18n-enforcement.md) |
 | TypeScript / React | `npx tsc --noEmit` | [`no-unused-code.md`](rules/no-unused-code.md) |
