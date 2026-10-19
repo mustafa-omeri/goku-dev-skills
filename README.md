@@ -12,7 +12,7 @@
 
 ### Core Pillars
 1. **26 Production-Grade Skills:** Spanning Spring Boot/Java backend architecture, Next.js / Vite SPA frontend engineering, WCAG-compliant design intelligence, Docker containerization, and rigorous software engineering practices (TDD, deep module design, two-axis code reviews, systematic bug diagnosis).
-2. **19 Enforced Quality Rules & 10 Verification Gates:** 10 deterministic Python test gates (API documentation, DB migrations, design anti-slop, bundle budgets, unused imports, i18n key consistency) preventing code regression, plus the strict red feedback loop rule (`bug-diagnosis-enforcement.md`).
+2. **19 Enforced Quality Rules & 11 Verification Gates:** 11 deterministic Python test gates (API documentation, DB migrations, design anti-slop, theme contrast & WCAG AA, bundle budgets, unused imports, i18n key consistency) preventing code regression, plus the strict red feedback loop rule (`bug-diagnosis-enforcement.md`).
 3. **Modular Profile-Based Architecture:** Install only what your tech stack needs — from ultra-lightweight backend setups (~2.5 MB) to minimal frontend (~5 MB) or fullstack architectures (~65 MB).
 4. **55 Curated Component Themes:** Standalone, production-ready HTML/CSS UI components (sidebars, navbars, menus, parallax, logins, footers, cards, accordions) equipped with bespoke design rationale documents (`<theme-name>.design.md`).
 5. **Automated Multi-Project Delivery Engine (`delivery.py`):** Distributes the `.agent/` architecture to connected downstream projects while preserving project-specific custom rules and validating SHA-256 integrity.
@@ -35,7 +35,7 @@ npx goku-dev-skills init -p frontend -m
 # 🌟 Full Frontend Profile (Includes all 55 HTML/CSS component themes) (~60 MB)
 npx goku-dev-skills init -p frontend
 
-# 🚀 Fullstack / All Profile (All 26 skills, 55 themes, 19 rules & 10 verification gates) (~65 MB)
+# 🚀 Fullstack / All Profile (All 26 skills, 55 themes, 19 rules & 11 verification gates) (~65 MB)
 npx goku-dev-skills init -p fullstack
 
 # 🔍 Auto-Detect Stack (Inspects pom.xml, package.json, csproj and selects appropriate profile)

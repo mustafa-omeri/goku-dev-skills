@@ -7,6 +7,8 @@ kapi:
     komut: "python .agent/skills/musgoku/scripts/check_design_skills.py"
   - yigin: "Tasarım / zanaat tabanı ve anti-slop"
     komut: "python .agent/skills/musgoku/scripts/check_design_slop.py"
+  - yigin: "Tasarım / tema kontrastı ve WCAG uyumu"
+    komut: "python .agent/skills/musgoku/scripts/check_theme_contrast.py"
 ---
 
 # ⛔ Zorunlu Tasarım Skilleri
@@ -123,7 +125,7 @@ Tüm web arayüzü, frontend bileşeni ve sayfa geliştirmelerinde "generic AI s
 
 ### B. Çıktı Üzerinde Zorunlu Zanaat Kontrolleri (Craft Floor Verifications)
 
-1. **Kontrast ve Renkli Zeminlerde Tonlama (Contrast & Hue Tinting):** Gövde metni ve placeholder kontrastı ≥ 4.5:1, büyük metin ≥ 3:1. Renkli zeminlerdeki ikincil metinler asla saf gri yapılmaz; her zaman zeminin renginden türetilmiş tonlu renk (tinted hue) taşır.
+1. **Kontrast ve Renkli Zeminlerde Tonlama (Contrast & Hue Tinting):** Gövde metni ve placeholder kontrastı ≥ 4.5:1, büyük metin ≥ 3:1 (WCAG AA). Renkli zeminlerdeki ikincil metinler asla saf gri yapılmaz; her zaman zeminin renginden türetilmiş tonlu renk (tinted hue) taşır. CSS tema değişkenleri arasındaki matematiksel kontrast oranı `python .agent/skills/musgoku/scripts/check_theme_contrast.py` kapısıyla deterministik olarak denetlenir. Koyu modda karanlık metin veya parlak modda aşırı soluk metin kalması kesin olarak engellenir.
 2. **Boşluk ve Ritim Orantısı (Spacing Rhythm):** Sıkı gruplamalar, cömert ayırıcılar; bir başlığın üstündeki boşluk (`mt`) her zaman altındaki boşluktan (`mb`) daha fazladır.
 3. **Tipografi Ölçüleri ve Denge (Typography Floor):** Gövde metni satır genişliği 65–75ch, display başlık max 6rem, harf aralığı (tracking) -0.04em'den daha sıkışık olamaz (ideal: -0.02em - -0.03em), başlıklar dengeli sarılmalıdır (`text-wrap: balance`). Taşma (`overflow`) kesinlikle çözülmelidir.
 4. **Tarayıcı Yüzeylerinin Temalandırılması (Themed Browser Surfaces):** Sayfanın "hazır şablon mu yoksa özenle inşa edilmiş mi" olduğunu gösteren en güçlü sinyal tarayıcı varsayılanlarını tasarım paletiyle giydirmektir:

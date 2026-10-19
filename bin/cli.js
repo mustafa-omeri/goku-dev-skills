@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 
-const VERSION = '1.9.4';
+const VERSION = '1.9.5';
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 const RAW_URL_BASE = `https://raw.githubusercontent.com/${GITHUB_REPO}/main`;
 
@@ -189,7 +189,7 @@ const PROFILES = {
   'fullstack': {
     id: 'fullstack',
     name: 'Fullstack / All',
-    desc: 'All 26 skills, 19 rules, 55 component themes & 10 validation gates (~65 MB)',
+    desc: 'All 26 skills, 19 rules, 55 component themes & 11 validation gates (~65 MB)',
     skills: Object.keys(SKILLS_MANIFEST),
     rules: '*',
     templates: '*',

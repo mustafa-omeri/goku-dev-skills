@@ -117,6 +117,7 @@ front matter `sinif:` / `kapi:` alanları.
 | Backend / Veritabanı migration | `python .agent/skills/musgoku/scripts/check_db_migrations.py` | [`db-migration-enforcement.md`](./db-migration-enforcement.md) |
 | Tasarım / skill sahipliği | `python .agent/skills/musgoku/scripts/check_design_skills.py` | [`design-skills-enforcement.md`](./design-skills-enforcement.md) |
 | Tasarım / zanaat tabanı ve anti-slop | `python .agent/skills/musgoku/scripts/check_design_slop.py` | [`design-skills-enforcement.md`](./design-skills-enforcement.md) |
+| Tasarım / tema kontrastı ve WCAG uyumu | `python .agent/skills/musgoku/scripts/check_theme_contrast.py` | [`design-skills-enforcement.md`](./design-skills-enforcement.md) |
 | Frontend / bundle bütçesi | `python .agent/skills/musgoku/scripts/check_bundle_limits.py` | [`frontend-bundle-limits.md`](./frontend-bundle-limits.md) |
 | Frontend / i18n | `python .agent/skills/i18n-localization/scripts/i18n_checker.py` | [`i18n-enforcement.md`](./i18n-enforcement.md) |
 | TypeScript / React | `npx tsc --noEmit` | [`no-unused-code.md`](./no-unused-code.md) |
