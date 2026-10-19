@@ -12,6 +12,7 @@ sinif: SUREC
 
 - Kod yazmadan, düzeltme yapmadan veya test koşmadan önce repo kökündeki
   `HANDOFF.md` dosyasını oku.
+- Projenin iş kavramları ve ortak dili için varsa `GLOSSARY.md` dosyasını oku.
 - Dosya yoksa veya boşsa kendin yaz.
 - Ayrıntı: [handoff-session-continuity.md](./handoff-session-continuity.md)
 
@@ -79,7 +80,12 @@ Geliştirmeye başlamadan önce ajan sırasıyla şu adımları işletmek zorund
      2. **3 Cihaz Ergonomisi:** Mobil (< 768px - tek sütun / Thumb Zone / Bottom Nav / kart listesi), Tablet (768px-1024px - 2 sütun / Split-View / dokunmatik aralıklar), Masaüstü (> 1024px - çok sütunlu zengin ızgara).
      3. **Modal / Popup Davranışı:** Sayfa token'larıyla uyum, mobilde alttan açılan Bottom Sheet (Drawer) adaptasyonu ve `max-h-[85dvh]` kaydırma/klavye koruması.
 
-7. **Kullanıcıya Sunum, Değişiklik/Review Şansı ve Açık Onay:**
+8. ⛔ **Dikiş Noktaları (Seams) ve Hata Teşhis / TDD Protokolü:**
+   - Testler yalnızca önceden belirlenen genel arayüz dikiş noktalarında (`seam`) yazılır; iç uygulama detaylarına bağlanamaz.
+   - Hata ayıklama veya çökme düzeltmelerinde kod değiştirmeden önce [`bug-diagnosis-enforcement.md`](./bug-diagnosis-enforcement.md) gereğince hatayı kanıtlayan kırmızı geri bildirim döngüsü (Aşama 1) zorunludur.
+   - Kod incelemelerinde [`code-review`](../skills/code-review/SKILL.md) iki eksenli (Standartlar vs Şartname) paralel denetim işletilir.
+
+9. **Kullanıcıya Sunum, Değişiklik/Review Şansı ve Açık Onay:**
    - Hazırlanan plan kullanıcıya sunulur.
    - Kullanıcıya planı inceleme, revize etme veya değişiklik talep etme fırsatı verilir.
    - ⛔ **Kullanıcıdan açık onay ("onay", "başla", "uygun" vb.) alınmadan Adım 3 (Geliştir) aşamasına KESİNLİKLE GEÇİLEMEZ.**

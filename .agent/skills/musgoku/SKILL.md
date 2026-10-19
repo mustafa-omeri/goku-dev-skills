@@ -91,10 +91,14 @@ Tespit yapamazsan **kullanıcıya sor.** Tahmin yürütme.
 | Sunum üretimi (HTML render + token denetimi) | [`skills/design-system/`](../design-system/SKILL.md) → "Slayt Üretimi" |
 | Banner / kapak / reklam görseli (sabit px) | [`skills/banner-design/`](../banner-design/SKILL.md) |
 | Logo & CIP brief'i / sosyal medya görseli | [`skills/design/`](../design/SKILL.md) |
-| Poster / ölçüsüz görsel sanat | [`skills/canvas-design/`](../canvas-design/SKILL.md) |
 | Git commit / release | [`rules/mandatory-git-release-workflow.md`](../../rules/mandatory-git-release-workflow.md) → `git-release-workflow` |
 | Oturum devri / bilgi tabanı | [`rules/handoff-session-continuity.md`](../../rules/handoff-session-continuity.md) + [`rules/knowledge-base-management.md`](../../rules/knowledge-base-management.md) |
 | PRD / gereksinim dokümanı / teknik spec | [`skills/doc-coauthoring/`](../doc-coauthoring/SKILL.md) |
+| Hata teşhisi / zorlu bug çözümü | [`rules/bug-diagnosis-enforcement.md`](../../rules/bug-diagnosis-enforcement.md) → [`skills/diagnosing-bugs/`](../diagnosing-bugs/SKILL.md) |
+| Test güdümlü geliştirme (TDD) / dikiş noktası | [`skills/tdd/`](../tdd/SKILL.md) |
+| Kod mimarisi / derin modül / silme testi | [`skills/codebase-design/`](../codebase-design/SKILL.md) |
+| İki eksenli kod inceleme (Standartlar vs Şartname) | [`skills/code-review/`](../code-review/SKILL.md) |
+| İş kavramı modelleme / sözlük / ADR kararı | [`skills/domain-modeling/`](../domain-modeling/SKILL.md) |
 
 > **Birden fazla referans gerekiyorsa hepsini oku.**
 > Örn. yeni bir backend modülü: `project-architecture.md` + `spring-boot-api.md` +

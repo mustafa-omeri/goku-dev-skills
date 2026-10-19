@@ -23,6 +23,7 @@ referanslarını **devreye sokar**. Aşağıdakilerin tamamına uyulur.
 | Konu | Kural |
 |---|---|
 | Geliştirme iş akışı | [development-workflow.md](./development-workflow.md) |
+| **Hata teşhis ve kırmızı döngü zorunluluğu** | **[bug-diagnosis-enforcement.md](./bug-diagnosis-enforcement.md)** |
 | **Sprint / MVP / kanban / release planı** | **[sprint-delivery-workflow.md](./sprint-delivery-workflow.md)** |
 | Kullanılmayan kod yasağı | [no-unused-code.md](./no-unused-code.md) |
 | **Sessiz bekleme ve kilitlenme yasağı** | **[no-silent-wait.md](./no-silent-wait.md)** |

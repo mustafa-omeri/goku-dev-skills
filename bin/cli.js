@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 
-const VERSION = '1.9.3';
+const VERSION = '1.9.4';
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 const RAW_URL_BASE = `https://raw.githubusercontent.com/${GITHUB_REPO}/main`;
 
@@ -38,7 +38,7 @@ const c = {
   magenta: '\x1b[35m',
 };
 
-// Available 21 skills with descriptions
+// Available 26 skills with descriptions
 const SKILLS_MANIFEST = {
   'musgoku': {
     category: 'Architecture / Fullstack',
@@ -145,6 +145,31 @@ const SKILLS_MANIFEST = {
     desc: 'Guided product tours, walkthroughs and pulsing coachmarks using lightweight Driver.js or React Joyride with zero bundle bloat.',
     triggers: 'tur hazirla, tour hazirla, desing tour, urun turu, onboarding turu, ipucu balonu, product tour, guided tour, coachmarks',
   },
+  'diagnosing-bugs': {
+    category: 'Engineering / Debugging',
+    desc: 'Systematic 6-phase debugging loop: red feedback loop before code change, ranked falsifiable hypotheses & regression tests.',
+    triggers: 'hata ayikla, bug coz, neden calismiyor, kok neden, diagnose bug, debug issue, root cause',
+  },
+  'tdd': {
+    category: 'Engineering / TDD',
+    desc: 'Test-driven development: vertical slices, pre-agreed seams, red-before-green loop & zero tautological tests.',
+    triggers: 'tdd, test gudumlu, once test yaz, test driven development, red green refactor, vertical slice',
+  },
+  'codebase-design': {
+    category: 'Engineering / Architecture',
+    desc: 'Deep modules (small interface, rich behavior), architectural seams, deletion test & designing for testability.',
+    triggers: 'kod mimarisi, modul tasarimi, derin modul, codebase design, deep modules, architectural seam',
+  },
+  'code-review': {
+    category: 'Engineering / Review',
+    desc: 'Two-axis code review: Standards (Fowler smell baseline) vs Spec (fidelity & scope creep) via parallel sub-agents.',
+    triggers: 'kod inceleme, code review, smell tara, review code, standards review, spec review',
+  },
+  'domain-modeling': {
+    category: 'Engineering / Domain Model',
+    desc: 'Ubiquitous language management, active GLOSSARY.md maintenance, inline updates & high-threshold ADR criteria.',
+    triggers: 'domain model, terimler sozlugu, glossary, domain modeling, ubiquitous language, adr decision',
+  },
 };
 
 // Component themes categories (55 HTML themes)
@@ -164,7 +189,7 @@ const PROFILES = {
   'fullstack': {
     id: 'fullstack',
     name: 'Fullstack / All',
-    desc: 'All 21 skills, 18 rules, 55 component themes & 10 validation gates (~65 MB)',
+    desc: 'All 26 skills, 19 rules, 55 component themes & 10 validation gates (~65 MB)',
     skills: Object.keys(SKILLS_MANIFEST),
     rules: '*',
     templates: '*',
@@ -192,9 +217,15 @@ const PROFILES = {
       'doc-coauthoring',
       'task-observer',
       'production-docker-architect',
+      'diagnosing-bugs',
+      'tdd',
+      'codebase-design',
+      'code-review',
+      'domain-modeling',
     ],
     rules: [
       'always-read-skills.md',
+      'bug-diagnosis-enforcement.md',
       'design-skills-enforcement.md',
       'development-workflow.md',
       'frontend-bundle-limits.md',
@@ -219,6 +250,7 @@ const PROFILES = {
       'RELEASE_PLAN.template.md',
       'KULLANICI_TEST_REHBERI.template.md',
       'PRODUCT.template.md',
+      'GLOSSARY.template.md',
       'DESIGN.template.md',
     ],
     minimalAllowed: true,
@@ -234,10 +266,16 @@ const PROFILES = {
       'doc-coauthoring',
       'task-observer',
       'production-docker-architect',
+      'diagnosing-bugs',
+      'tdd',
+      'codebase-design',
+      'code-review',
+      'domain-modeling',
     ],
     rules: [
       'always-read-skills.md',
       'api-documentation-enforcement.md',
+      'bug-diagnosis-enforcement.md',
       'db-migration-enforcement.md',
       'development-workflow.md',
       'handoff-session-continuity.md',
@@ -259,6 +297,7 @@ const PROFILES = {
       'RELEASE_PLAN.template.md',
       'KULLANICI_TEST_REHBERI.template.md',
       'DB_MIGRATIONS.template.md',
+      'GLOSSARY.template.md',
     ],
     minimalAllowed: false,
   },
@@ -373,7 +412,7 @@ async function promptProfileSelection() {
   });
 
   console.log(`\n${c.bold}Please select a project profile to install:${c.reset}`);
-  console.log(`  ${c.green}1) Fullstack / All${c.reset}  - All 21 skills, 55 themes, 18 rules (~65 MB) [Default]`);
+  console.log(`  ${c.green}1) Fullstack / All${c.reset}  - All 26 skills, 55 themes, 19 rules (~65 MB) [Default]`);
   console.log(`  ${c.cyan}2) Frontend${c.reset}         - React, Next.js, Vite, Tailwind, UI/UX, Zanaat Anti-slop (~60 MB / ~5 MB minimal)`);
   console.log(`  ${c.yellow}3) Backend${c.reset}          - Java, Spring Boot, .NET, REST API, DB Migrations (~2.5 MB, zero UI clutter)`);
   console.log(`  ${c.magenta}4) Creative & Brand${c.reset} - Brand voice, Visual identity, Posters, Banners, Slides (~8 MB)`);
@@ -821,7 +860,7 @@ ${c.bold}Init Options:${c.reset}
 ${c.bold}Examples:${c.reset}
   npx goku-dev-skills init -p backend           # Ultra lightweight Java/.NET API setup (~2.5 MB)
   npx goku-dev-skills init -p frontend -m       # Minimal React/Next.js setup without 55 themes (~5 MB)
-  npx goku-dev-skills init -p fullstack         # Full 21 skills + 55 component themes (~65 MB)
+  npx goku-dev-skills init -p fullstack         # Full 26 skills + 55 component themes (~65 MB)
   npx goku-dev-skills init --detect             # Auto-detect project stack
   npx goku-dev-skills add frontend-design       # Install single skill
   npx goku-dev-skills add theme sidebars/violet-minimal-sidebar

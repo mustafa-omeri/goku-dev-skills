@@ -99,7 +99,7 @@ class TestCliProfiles(unittest.TestCase):
 
         skills_dir = dest / ".agent" / "skills"
         installed_skills = {d.name for d in skills_dir.iterdir() if d.is_dir()}
-        self.assertEqual(len(installed_skills), 21)
+        self.assertEqual(len(installed_skills), 26)
 
 
 if __name__ == "__main__":

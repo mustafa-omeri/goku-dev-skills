@@ -11,8 +11,8 @@
 **Goku Dev Skills** is a battle-tested engineering and design skill repository designed to transform autonomous AI coding agents into senior architects and meticulous craftspeople. It enforces strict architectural patterns, deterministic verification gates, rich design libraries, and zero-tolerance policies for code rot, AI-slop, and undocumented APIs.
 
 ### Core Pillars
-1. **21 Production-Grade Skills:** Spanning Spring Boot/Java backend architecture, Next.js / Vite SPA frontend engineering, WCAG-compliant design intelligence, Docker containerization, and semantic git release flows.
-2. **18 Enforced Quality Rules & 10 Verification Gates:** 10 deterministic Python test gates (API documentation, DB migrations, design anti-slop, bundle budgets, unused imports, i18n key consistency) preventing code regression.
+1. **26 Production-Grade Skills:** Spanning Spring Boot/Java backend architecture, Next.js / Vite SPA frontend engineering, WCAG-compliant design intelligence, Docker containerization, and rigorous software engineering practices (TDD, deep module design, two-axis code reviews, systematic bug diagnosis).
+2. **19 Enforced Quality Rules & 10 Verification Gates:** 10 deterministic Python test gates (API documentation, DB migrations, design anti-slop, bundle budgets, unused imports, i18n key consistency) preventing code regression, plus the strict red feedback loop rule (`bug-diagnosis-enforcement.md`).
 3. **Modular Profile-Based Architecture:** Install only what your tech stack needs — from ultra-lightweight backend setups (~2.5 MB) to minimal frontend (~5 MB) or fullstack architectures (~65 MB).
 4. **55 Curated Component Themes:** Standalone, production-ready HTML/CSS UI components (sidebars, navbars, menus, parallax, logins, footers, cards, accordions) equipped with bespoke design rationale documents (`<theme-name>.design.md`).
 5. **Automated Multi-Project Delivery Engine (`delivery.py`):** Distributes the `.agent/` architecture to connected downstream projects while preserving project-specific custom rules and validating SHA-256 integrity.
@@ -35,7 +35,7 @@ npx goku-dev-skills init -p frontend -m
 # 🌟 Full Frontend Profile (Includes all 55 HTML/CSS component themes) (~60 MB)
 npx goku-dev-skills init -p frontend
 
-# 🚀 Fullstack / All Profile (All 21 skills, 55 themes, 18 rules & 10 verification gates) (~65 MB)
+# 🚀 Fullstack / All Profile (All 26 skills, 55 themes, 19 rules & 10 verification gates) (~65 MB)
 npx goku-dev-skills init -p fullstack
 
 # 🔍 Auto-Detect Stack (Inspects pom.xml, package.json, csproj and selects appropriate profile)
@@ -57,7 +57,7 @@ npx goku-dev-skills init --detect
 ### 3. Granular Skill & Theme Addition
 
 ```bash
-# List all 21 available skills, profiles and 55 component themes
+# List all 26 available skills, profiles and 55 component themes
 npx goku-dev-skills list
 
 # Add a single skill into current workspace
@@ -94,9 +94,10 @@ Zero external dependencies, instant execution.
 goku-dev-skills/
 ├── .agent/                             # Single Source of Truth for all connected projects
 │   ├── AGENTS.md                       # Global agent contract, reading order & validation gates
-│   ├── rules/                          # 16 Canonical Rules (measurable gates & behavioral contracts)
+│   ├── rules/                          # 19 Canonical Rules (measurable gates & behavioral contracts)
 │   │   ├── trigger-rule-action.md      # Master rule entrypoint & router
 │   │   ├── skill-trigger-routing.md    # Trigger dictionary & keyword resolution
+│   │   ├── bug-diagnosis-enforcement.md# Strict red feedback loop before modifying code
 │   │   ├── design-skills-enforcement.md# 12-skill UI/UX ownership map & trio mandate
 │   │   ├── no-unused-code.md           # Dead code & unused imports gate (Java & TypeScript)
 │   │   ├── api-documentation-enforcement.md # REST endpoint documentation enforcement
@@ -104,8 +105,8 @@ goku-dev-skills/
 │   │   ├── frontend-bundle-limits.md   # JS/CSS chunk budget gate
 │   │   ├── i18n-enforcement.md         # Hardcoded UI string prevention
 │   │   └── no-unauthorized-commit.md   # Strict git commit user confirmation rule
-│   ├── templates/                      # Standard HANDOFF.md and knowledge-base.md templates
-│   └── skills/                         # 18 Modular Production Skills
+│   ├── templates/                      # Standard HANDOFF, GLOSSARY and KB templates
+│   └── skills/                         # 26 Modular Production Skills
 │       ├── musgoku/                    # Global orchestrator (Spring Boot 3 + React/TypeScript)
 │       ├── ui-ux-pro-max/              # Searchable design intelligence (79 styles, 192 palettes, 119 UX rules)
 │       ├── frontend-design/            # Distinctive web UI code, anti-AI-slop & component themes
@@ -136,7 +137,7 @@ goku-dev-skills/
 
 ---
 
-## 🛠️ The 21 Shipped Skills
+## 🛠️ The 26 Shipped Skills
 
 | Skill | Category | Primary Focus & Capabilities |
 | :--- | :--- | :--- |
@@ -161,6 +162,11 @@ goku-dev-skills/
 | **`react-best-practices`** | React / Next | React 19 / Next.js performance optimizations, waterfall elimination, composition. |
 | **`mock-asset-provider`** | UI Assets | Realistic placeholder assets, developer avatars, event imagery, CDN fallback pipeline. |
 | **`onboarding-tour`** | Walkthrough | Guided interactive product tours and coachmarks (Driver.js / React Joyride). |
+| **`diagnosing-bugs`** | Debugging / QA | 6-phase systematic debugging, falsifiable hypotheses, red verification loop, regression tests. |
+| **`tdd`** | Code Quality | Test-driven development, red-before-green loop, tracer bullets, vertical slices, pre-agreed seams. |
+| **`codebase-design`** | Architecture | Deep modules, narrow interfaces, complexity containment, deletion testing, architectural seams. |
+| **`code-review`** | Code Quality | Two-axis review discipline: Martin Fowler code smells baseline vs spec fidelity & scope creep. |
+| **`domain-modeling`** | Domain / Arch | Ubiquitous language, GLOSSARY.md domain dictionary maintenance, strict 3-criteria ADR threshold. |
 
 ---
 

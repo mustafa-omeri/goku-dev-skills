@@ -40,14 +40,16 @@ CATEGORIES = {
         "mock-asset-provider", "web-ide-ux-architect", "onboarding-tour"
     ],
     "Kod & Mimari": [
-        "musgoku", "react-best-practices", "i18n-localization"
+        "musgoku", "react-best-practices", "i18n-localization",
+        "tdd", "codebase-design", "domain-modeling"
     ],
     "Teslimat & Kalite": [
         "git-release-workflow", "production-docker-architect",
-        "karpathy-guidelines", "task-observer"
+        "karpathy-guidelines", "task-observer",
+        "diagnosing-bugs", "code-review"
     ],
     "Marka & Doküman": [
-        "brand", "doc-coauthoring", "musgoku-prd", "slides"
+        "brand", "doc-coauthoring", "slides"
     ]
 }
 
@@ -255,7 +257,11 @@ SAMPLE_PROMPTS = {
     "production-docker-architect": "Üretim ortamı için hafif, multi-stage ve non-root kullanıcılı Dockerfile ve Compose oluştur.",
     "i18n-localization": "Uygulamadaki hardcode metinleri ve eksik çeviri anahtarlarını i18n_checker ile denetle ve düzelt.",
     "brand": "Marka kılavuzunu, ton ve mesaj çerçevesini docs/brand-guidelines.md olarak oluştur.",
-    "musgoku-prd": "Yeni özellik için kapsamı, Gherkin kabul kriterlerini ve 90 puanlık PRD dokümanını hazırla."
+    "diagnosing-bugs": "Çöken endpoint için kırmızı geri bildirim döngüsü kur, 3 hipotez üret ve hatayı teşhis et.",
+    "tdd": "Yeni sipariş iptal akışını dikiş noktalarında önce kırmızı test yazarak TDD dikey dilimiyle geliştir.",
+    "codebase-design": "Ödeme modülünün arayüzünü derinleştir, dikiş noktasını ve silme testini belirle.",
+    "code-review": "Mevcut branch değişikliklerini Standartlar ve Şartname eksenlerinde iki paralel alt ajanla incele.",
+    "domain-modeling": "İş kavramlarını netleştir, GLOSSARY.md sözlüğünü güncelle ve geri dönüşü zor karar için ADR oluştur."
 }
 
 

@@ -78,11 +78,16 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 | hardcoded metin, çeviri eksik, untranslated string / hardcoded string | `i18n-localization` + `rules/i18n-enforcement.md` | - |
 | dil değiştir, İngilizceye geçince Türkçe kalıyor, çeviri görünmüyor, eksik anahtar / missing translation key, locale switch | `i18n-localization` + `rules/i18n-enforcement.md` | - |
 | IDE arayüzü, kod editörü, terminal paneli, komut paleti, split pane / ide-like ui, code editor, command palette | `web-ide-ux-architect` | `skills/web-ide-ux-architect/SKILL.md` |
+| tdd, test güdümlü, önce test yaz, kırmızı yeşil döngüsü, dikey dilim / test driven development, red green refactor, vertical slice | `tdd` | `skills/tdd/SKILL.md` |
+| kod mimarisi, modül tasarımı, derin modül, dikiş noktası, seam, silme testi / codebase design, deep modules, module design, architectural seam | `codebase-design` | `skills/codebase-design/SKILL.md` |
+| domain model, terimler sözlüğü, glossary, adr hazırla, iş kavramı, ubiquitous language / domain modeling, ubiquitous language, glossary sync, adr decision | `domain-modeling` | `skills/domain-modeling/SKILL.md` |
 
 ### A4. Teslim ve kalite
 
 | Tetikleyici kelime (TR / EN) | Skill | Gövde yolu |
 |---|---|---|
+| hata ayıkla, bug çöz, neden çalışmıyor, kök neden, log incele / diagnose bug, debug issue, root cause, reproduce bug | `diagnosing-bugs` | `skills/diagnosing-bugs/SKILL.md` |
+| kod inceleme, code review, smell tara, standart denetimi, şartname kontrolü / code review, review code, smell audit, standards review, spec review | `code-review` | `skills/code-review/SKILL.md` |
 | commit, sürüm yayınla, release, tag, gönder, push, commitx, commitle / commit, tag, release, publish, commitx | `git-release-workflow` | `skills/git-release-workflow/SKILL.md` |
 | docker, prod imajı, docker compose, deploy, konteyner / production image, containerize | `production-docker-architect` | `skills/production-docker-architect/SKILL.md` |
 | api dokümantasyonu, swagger güncel mi / api docs, openapi | `rules/api-documentation-enforcement.md` | — |

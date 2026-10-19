@@ -13,10 +13,11 @@
 | 1 | Oturum devri — nerede kaldık, sıradaki iş, düşülen tuzaklar | `<repo-kök>\HANDOFF.md` |
 | 2 | Geliştirici profili ve kanıtlı ders kütüphanesi | `DEV_BRIEF.md` (varsa), yoksa vault `profile\` + `projects\_STANDARTLAR\decisions\` |
 | 3 | Ürün gerçeği ve kısıtlar (varsa) | `<repo-kök>\PRODUCT.md` |
-| 4 | Tasarım dili ve token sözleşmesi (UI/UX işlerinde) | `<repo-kök>\DESIGN.md` |
-| 5 | Vault kararları (salt okunur) | `<vault>\CLAUDE.md`, `<vault>\profile\`, `<vault>\projects\_STANDARTLAR\decisions\` |
-| 6 | Proje kararları | `<vault>\projects\<proje-slug>\` |
-| 7 | Bu dizindeki kurallar | `.agent\rules\` (bkz. `trigger-rule-action.md`) |
+| 4 | İş alanı terimleri ve ortak dil sözlüğü (varsa) | `<repo-kök>\GLOSSARY.md` |
+| 5 | Tasarım dili ve token sözleşmesi (UI/UX işlerinde) | `<repo-kök>\DESIGN.md` |
+| 6 | Vault kararları (salt okunur) | `<vault>\CLAUDE.md`, `<vault>\profile\`, `<vault>\projects\_STANDARTLAR\decisions\` |
+| 7 | Proje kararları | `<vault>\projects\<proje-slug>\` |
+| 8 | Bu dizindeki kurallar | `.agent\rules\` (bkz. `trigger-rule-action.md`) |
 
 **Okuma kanıtı:** koda geçmeden önce geçerli kararları başlıklarıyla özetle ya da
 *"bu iş için geçerli bir karar bulamadım"* de. Hatırladığını yazma, uydurma.
@@ -35,9 +36,11 @@
 | Durum, sıradaki iş, tuzaklar | `<repo-kök>\HANDOFF.md` |
 | DB revizyonu (şema, tablo, kolon) | `<repo-kök>\DB_MIGRATIONS.md` |
 | Ürün gerçeği (kitle, amaç, kısıtlar) | `<repo-kök>\PRODUCT.md` |
+| İş alanı kavramı ve terimler | `<repo-kök>\GLOSSARY.md` |
+| Mimari karar kaydı (ADR) | `docs/adr/` |
 | Tasarım dili, token'lar ve kurallar | `<repo-kök>\DESIGN.md` |
 
-- ⛔ Başka hiçbir yere yazma. Bu dosyaların **tek ve zorunlu yeri repo köküdür** (veya DB dokümantasyonu için `docs/database/DB_MIGRATIONS.md`).
+- ⛔ Başka hiçbir yere yazma. Bu dosyaların **tek ve zorunlu yeri repo köküdür** (veya DB dokümantasyonu için `docs/database/DB_MIGRATIONS.md`, ADR için `docs/adr/`).
 - ⛔ `knowledge-base.md`'yi baştan sona okuma; yalnız yaz (append). Boyutu büyüyebilir.
 - ⛔ Vault'a hiçbir şey yazma. Vault salt okunur; kalıcı kararları Kütüphaneci taşır.
 - ⛔ "Dosyada zaten var" dediğin kuralı ikinci kez yazma — terfi öner.
@@ -53,6 +56,7 @@ ve [`.agent\rules\db-migration-enforcement.md`](rules/db-migration-enforcement.m
 [`templates\knowledge-base.template.md`](templates/knowledge-base.template.md) ·
 [`templates\DB_MIGRATIONS.template.md`](templates/DB_MIGRATIONS.template.md) ·
 [`templates\PRODUCT.template.md`](templates/PRODUCT.template.md) ·
+[`templates\GLOSSARY.template.md`](templates/GLOSSARY.template.md) ·
 [`templates\DESIGN.template.md`](templates/DESIGN.template.md)
 
 ---
@@ -145,6 +149,7 @@ Ek kapı (tek kural dosyasına bağlı değildir):
 
 | Kural | Sınıf |
 |---|---|
+| `bug-diagnosis-enforcement.md` | SUREC |
 | `development-workflow.md` | SUREC |
 | `mandatory-git-release-workflow.md` | SUREC |
 | `no-unauthorized-commit.md` | SUREC |
