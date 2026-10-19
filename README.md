@@ -11,35 +11,60 @@
 **Goku Dev Skills** is a battle-tested engineering and design skill repository designed to transform autonomous AI coding agents into senior architects and meticulous craftspeople. It enforces strict architectural patterns, deterministic verification gates, rich design libraries, and zero-tolerance policies for code rot, AI-slop, and undocumented APIs.
 
 ### Core Pillars
-1. **18 Production-Grade Skills:** Spanning Spring Boot/Java backend architecture, Next.js / Vite SPA frontend engineering, WCAG-compliant design intelligence, Docker containerization, and semantic git release flows.
-2. **16 Enforced Quality Rules & Verification Gates:** 7 measurable Python test gates (API documentation, bundle size budgets, unused imports, i18n key consistency) preventing code regression before completion.
-3. **55 Curated Component Themes:** Standalone, production-ready HTML/CSS UI components (sidebars, navbars, menus, parallax, logins, footers, cards, accordions) equipped with bespoke design rationale documents (`<theme-name>.design.md`).
-4. **Automated Multi-Project Delivery Engine (`delivery.py`):** Distributes the `.agent/` architecture to connected downstream projects while preserving project-specific custom rules and validating SHA-256 integrity.
-5. **260+ Automated Tests:** 173 unittest contract tests and 87 pytest suites running on every modification.
+1. **21 Production-Grade Skills:** Spanning Spring Boot/Java backend architecture, Next.js / Vite SPA frontend engineering, WCAG-compliant design intelligence, Docker containerization, and semantic git release flows.
+2. **18 Enforced Quality Rules & 10 Verification Gates:** 10 deterministic Python test gates (API documentation, DB migrations, design anti-slop, bundle budgets, unused imports, i18n key consistency) preventing code regression.
+3. **Modular Profile-Based Architecture:** Install only what your tech stack needs — from ultra-lightweight backend setups (~2.5 MB) to minimal frontend (~5 MB) or fullstack architectures (~65 MB).
+4. **55 Curated Component Themes:** Standalone, production-ready HTML/CSS UI components (sidebars, navbars, menus, parallax, logins, footers, cards, accordions) equipped with bespoke design rationale documents (`<theme-name>.design.md`).
+5. **Automated Multi-Project Delivery Engine (`delivery.py`):** Distributes the `.agent/` architecture to connected downstream projects while preserving project-specific custom rules and validating SHA-256 integrity.
 
 ---
 
-## ⚡ Quick Start: Add Skills to Any Project / AI Agent
+## ⚡ Quick Start: Profile-Based Installation
 
-Any AI coding assistant or developer can install individual skills or component themes directly into their project without cloning this entire repository.
+Install only the skills and rules tailored to your project's stack, avoiding unnecessary bloat:
 
 ### 1. Zero-Install Execution via `npx`
 
 ```bash
-# List all 18 available skills and 55 component themes
-npx github:mustafa-omeri/goku-dev-skills list
+# ☕ Backend Profile (Java, Spring Boot, .NET, APIs, DB Migrations) — Ultra-lightweight (~2.5 MB, zero UI clutter)
+npx goku-dev-skills init -p backend
 
-# Add a specific skill to your current project (e.g. frontend-design or ui-ux-pro-max)
-npx github:mustafa-omeri/goku-dev-skills add frontend-design
+# 🎨 Minimal Frontend Profile (React, Vite, Next.js, Tailwind, Zanaat Anti-slop) — Excludes 55 heavy themes (~5 MB)
+npx goku-dev-skills init -p frontend -m
 
-# Add multiple skills with companion validation rules
-npx github:mustafa-omeri/goku-dev-skills add frontend-design ui-ux-pro-max --with-rules
+# 🌟 Full Frontend Profile (Includes all 55 HTML/CSS component themes) (~60 MB)
+npx goku-dev-skills init -p frontend
 
-# Add a standalone HTML/CSS component theme into your project
-npx github:mustafa-omeri/goku-dev-skills add theme sidebars/violet-minimal-sidebar
+# 🚀 Fullstack / All Profile (All 21 skills, 55 themes, 18 rules & 10 verification gates) (~65 MB)
+npx goku-dev-skills init -p fullstack
 
-# Initialize the complete .agent/ architecture for your project
-npx github:mustafa-omeri/goku-dev-skills init
+# 🔍 Auto-Detect Stack (Inspects pom.xml, package.json, csproj and selects appropriate profile)
+npx goku-dev-skills init --detect
+```
+
+### 2. Standalone One-Liners (No Node.js Required)
+
+- **Linux / macOS (curl / bash):**
+  ```bash
+  curl -fsSL https://raw.githubusercontent.com/mustafa-omeri/goku-dev-skills/main/scripts/install.sh | bash -s -- -p backend
+  ```
+
+- **Windows (PowerShell):**
+  ```powershell
+  irm https://raw.githubusercontent.com/mustafa-omeri/goku-dev-skills/main/scripts/install.ps1 | iex
+  ```
+
+### 3. Granular Skill & Theme Addition
+
+```bash
+# List all 21 available skills, profiles and 55 component themes
+npx goku-dev-skills list
+
+# Add a single skill into current workspace
+npx goku-dev-skills add frontend-design
+
+# Add a single component theme directly into your components folder
+npx goku-dev-skills add theme sidebars/violet-minimal-sidebar
 ```
 
 ### 2. Multi-Agent & Platform Adaptation
@@ -111,7 +136,7 @@ goku-dev-skills/
 
 ---
 
-## 🛠️ The 18 Shipped Skills
+## 🛠️ The 21 Shipped Skills
 
 | Skill | Category | Primary Focus & Capabilities |
 | :--- | :--- | :--- |
@@ -131,8 +156,11 @@ goku-dev-skills/
 | **`web-ide-ux-architect`** | Developer UX | High-density split-pane layouts, code editors, command palettes, and terminal interfaces. |
 | **`doc-coauthoring`** | Documentation | Structured PRD drafting, RFC formulation, and technical specification reviews. |
 | **`karpathy-guidelines`** | Code Standards | Radical simplification, elimination of speculative generality, readable architectures. |
-| **`musgoku-prd`** | Compliance | Product requirement documents with integrated KVKK / GDPR privacy audits. |
 | **`design`** | Creative Brief | Creative direction router, brand brief synthesis, and logo design specifications. |
+| **`task-observer`** | Meta / Evolution| Observation logging, methodology distillation, continuous skill set refinement. |
+| **`react-best-practices`** | React / Next | React 19 / Next.js performance optimizations, waterfall elimination, composition. |
+| **`mock-asset-provider`** | UI Assets | Realistic placeholder assets, developer avatars, event imagery, CDN fallback pipeline. |
+| **`onboarding-tour`** | Walkthrough | Guided interactive product tours and coachmarks (Driver.js / React Joyride). |
 
 ---
 

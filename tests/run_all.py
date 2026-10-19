@@ -23,6 +23,7 @@ TEST_SCRIPTS = [
     ("Test Sprint Board", HERE / "test_sprint_board.py"),
     ("Check AGENTS Parity", HERE / "check_agents_parity.py"),
     ("Test Skills Catalog", HERE / "test_skills_catalog.py"),
+    ("Test CLI Profiles", HERE / "test_cli_profiles.py"),
 ]
 
 
