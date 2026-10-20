@@ -19,21 +19,21 @@ from idea_manager import parse_ideas, init_idea_file
 SAMPLE_MARKDOWN = """# 💡 PROJE FİKİR HAVUZU (myidea.md)
 
 ### IDEA-101: Test Idea One
-- **Durum:** 🎯 `[ONERILEN]`
+- **Durum:** 🎯 `[RECOMMENDED]`
 - **Rating:** `9.5/10`
 - **Açıklama:** Quick explanation.
 - **Değer / Gerekçe:** High value.
 - **Ajan Değerlendirmesi:** Immediate win.
 
 ### IDEA-102: Obsolete Idea Two
-- **Durum:** ⛔ `[ELENDI - Replaced by modern stack]`
+- **Durum:** ⛔ `[DROPPED - Replaced by modern stack]`
 - **Rating:** `3.0/10`
 - **Açıklama:** Old stuff.
 - **Değer / Gerekçe:** Low value.
 - **Ajan Değerlendirmesi:** Do not proceed.
 
 ### IDEA-103: Completed Idea Three
-- **Durum:** ✅ `[UYGULANDI - Sprint 2]`
+- **Durum:** ✅ `[SHIPPED - Sprint 2]`
 - **Rating:** `8.0/10`
 - **Açıklama:** Already done.
 - **Değer / Gerekçe:** Useful.

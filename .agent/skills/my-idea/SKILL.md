@@ -23,7 +23,7 @@ Kullanıcı veya geliştirici aklına gelen fikri karmaşık formlara girmeden, 
 
 ```markdown
 ### IDEA-004: [Fikir Başlığı]
-- **Durum:** 💡 `[YENI]`
+- **Durum:** 💡 `[NEW]`
 - **Rating:** `8.5/10` (Etki: 9 | Efor: 8 | Uyum: 8)
 - **Açıklama:** Kullanıcıya veya projeye ne sağlayacak?
 - **Değer / Gerekçe:** Neden yapılmalı?
@@ -31,11 +31,11 @@ Kullanıcı veya geliştirici aklına gelen fikri karmaşık formlara girmeden, 
 ```
 
 ### Durum İmleri (Status Badges)
-- 💡 `[YENI]` : Yeni eklenmiş, değerlendirme bekleyen ham fikir.
-- 🎯 `[ONERILEN]` : Yüksek puanlı, sıradaki geliştirme için tavsiye edilen aday.
-- ⏳ `[ERTELENDI]` : Değerli ancak önkoşullar veya mevcut mimari aşama için henüz erken olan.
-- ⛔ `[ELENDI - Gerekçe]` : Bayatlamış, gereksizleşmiş veya mevcut yapıyla çakışan fikir (silinmez, gerekçesiyle arşivlenir).
-- ✅ `[UYGULANDI - Kart/Tarih]` : Sürece alınıp kod tabanına entegre edilmiş tamamlanan fikir.
+- 💡 `[NEW]` : Yeni eklenmiş, değerlendirme bekleyen ham fikir.
+- 🎯 `[RECOMMENDED]` : Yüksek puanlı, sıradaki geliştirme için tavsiye edilen aday.
+- ⏳ `[DEFERRED]` : Değerli ancak önkoşullar veya mevcut mimari aşama için henüz erken olan.
+- ⛔ `[DROPPED - Gerekçe]` : Bayatlamış, gereksizleşmiş veya mevcut yapıyla çakışan fikir (silinmez, gerekçesiyle arşivlenir).
+- ✅ `[SHIPPED - Kart/Tarih]` : Sürece alınıp kod tabanına entegre edilmiş tamamlanan fikir.
 
 ---
 
@@ -59,7 +59,7 @@ Ajan dosyaya her baktığında şu adımları izler:
    - `SPRINT_PLAN.md` ve `HANDOFF.md` (son tamamlanan özellikler)
    - Mevcut kod tabanı (`src/`, `components/`, `api/`)
 2. **Bayat / Gereksiz Fikirleri Ele:**
-   - Zaten yapılmış veya mimari kararla gereksizleşmişse başına `⛔ [ELENDI - Neden]` imi koy ve gerekçesini `Ajan Değerlendirmesi` satırına yaz.
+   - Zaten yapılmış veya mimari kararla gereksizleşmişse başına `⛔ [DROPPED - Reason]` imi koy ve gerekçesini `Ajan Değerlendirmesi` satırına yaz.
 3. **Puanlama (Re-rating):**
    - **Etki (Impact - 1-10):** Kullanıcıya veya performansa sağladığı fayda.
    - **Efor (Effort - 1-10):** Ters kolaylık (10 = hızlı/kolay, 1 = çok zor).
@@ -107,7 +107,7 @@ Kullanıcı bir fikir seçtiğinde (ör. *"1 ile ilerleyelim"*), sıfırdan haya
        ↓
 4. Mimari & Temiz Kodlama (`musgoku`, `codebase-design`, `karpathy-guidelines`)
        ↓
-5. Havuz Güncellemesi (`docs/idea/myidea.md` -> `✅ [UYGULANDI - Kart ID]`)
+5. Havuz Güncellemesi (`docs/idea/myidea.md` -> `✅ [SHIPPED - Kart ID]`)
 ```
 
 ---

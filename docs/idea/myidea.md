@@ -7,12 +7,12 @@
 
 ---
 
-## 📌 Durum İmleri (Status Badges)
-- 💡 `[YENI]` : Yeni eklenmiş, henüz ajan tarafından değerlendirilmemiş ham fikir.
-- 🎯 `[ONERILEN]` : Yüksek puanlı, sıradaki geliştirme için birincil tavsiye edilen.
-- ⏳ `[ERTELENDI]` : Değerli ancak mevcut aşama, mimari bağımlılıklar veya önkoşullar nedeniyle bekletilen.
-- ⛔ `[ELENDI - Neden]` : Bayatlamış, gereksizleşmiş veya mevcut mimariyle çakışan fikir (silinmez, gerekçesiyle arşivlenir).
-- ✅ `[UYGULANDI - Kart/Tarih]` : Sürece sokulup kod tabanına başarıyla entegre edilmiş tamamlanan fikir.
+## 📌 Status Badges
+- 💡 `[NEW]` : Newly added raw idea awaiting assessment.
+- 🎯 `[RECOMMENDED]` : High-scoring idea recommended for the next sprint.
+- ⏳ `[DEFERRED]` : Valuable, but deferred due to prerequisites or timing.
+- ⛔ `[DROPPED - Reason]` : Obsolete, duplicated, or superseded (never deleted, archived with reason).
+- ✅ `[SHIPPED - Card/Date]` : Shipped and verified in the codebase.
 
 ---
 
@@ -27,21 +27,21 @@
 ## 🚀 Fikirler Listesi
 
 ### IDEA-001: CLI ile Tek Komutta Fikir Havuzunu İnceleme ve Sıralama
-- **Durum:** 💡 `[YENI]`
+- **Durum:** 💡 `[NEW]`
 - **Rating:** `9.1/10` (Etki: 9 | Efor: 9 | Uyum: 10)
 - **Açıklama:** Terminalden `python .agent/skills/my-idea/scripts/idea_manager.py --top 3` çağrıldığında en yüksek puanlı fikirleri listelemesi.
 - **Değer / Gerekçe:** Geliştiricinin ve ajanın fikir havuzunu anında analiz etmesini ve otomasyona bağlamasını sağlar.
 - **Ajan Değerlendirmesi:** `my-idea` skill'i bünyesinde kolayca test edilebilir script ile uygulanabilir.
 
 ### IDEA-002: Fikirlerin GitHub Issue veya Kanban Kartına Otomatik Dönüştürülmesi
-- **Durum:** 🎯 `[ONERILEN]`
+- **Durum:** 🎯 `[RECOMMENDED]`
 - **Rating:** `8.4/10` (Etki: 8 | Efor: 8 | Uyum: 9)
 - **Açıklama:** Seçilen bir fikrin onay sonrası doğrudan `SPRINT_PLAN.md` veya `KANBAN.md` içine kart olarak yazılması.
 - **Değer / Gerekçe:** Manuel kopyala-yapıştır zahmetini kaldırır, süreci hızlandırır.
 - **Ajan Değerlendirmesi:** Mevcut `sprint-delivery-workflow` kurallarıyla tam uyumlu bir handoff adımıdır.
 
 ### IDEA-003: Ağır Harici Fikir Yönetim Servislerine Entegrasyon
-- **Durum:** ⛔ `[ELENDI - Yerel Markdown İlkesine Aykırı]`
+- **Durum:** ⛔ `[DROPPED - Yerel Markdown İlkesine Aykırı]`
 - **Rating:** `2.0/10` (Etki: 3 | Efor: 2 | Uyum: 1)
 - **Açıklama:** Jira veya harici bir SaaS platformu ile karmaşık çift yönlü senkronizasyon kurmak.
 - **Değer / Gerekçe:** Harici araç entegrasyonu sağlamak.

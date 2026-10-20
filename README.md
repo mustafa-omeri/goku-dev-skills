@@ -133,7 +133,7 @@ Developers frequently have creative, experimental, or visionary ideas that fall 
                                        │
                       [Re-Rating & Obsolete Elimination]
                    Formula: (Impact*0.4)+(Effort*0.3)+(Fit*0.3)
-                   Obsolete marked: ⛔ [ELENDI - Neden]
+                   Obsolete marked: ⛔ [DROPPED - Reason]
                                        │
                          [Propose Top 3 Ranked Picks]
                          ("Hangisiyle ilerlemek istersin?")
@@ -143,14 +143,14 @@ Developers frequently have creative, experimental, or visionary ideas that fall 
                  2. Sprint Card     ──► `sprint-delivery-workflow` / SPRINT_PLAN.md
                  3. TDD Loop        ──► `tdd` (Red -> Green -> Refactor)
                  4. Clean Code      ──► `musgoku`, `codebase-design`
-                 5. Pool Complete   ──► `docs/idea/myidea.md` marked ✅ [UYGULANDI]
+                 5. Pool Complete   ──► `docs/idea/myidea.md` marked ✅ [SHIPPED]
 ```
 
 ### Simple Idea Format (`docs/idea/myidea.md`)
 
 ```markdown
 ### IDEA-001: Command Palette Quick Actions (Ctrl+K)
-- **Durum:** 🎯 `[ONERILEN]`
+- **Durum:** 🎯 `[RECOMMENDED]`
 - **Rating:** `8.5/10` (Etki: 9 | Efor: 8 | Uyum: 8)
 - **Açıklama:** Top 5 frequent actions accessible via keyboard shortcut.
 - **Değer / Gerekçe:** Speeds up power-user navigation by 2x.
@@ -158,11 +158,11 @@ Developers frequently have creative, experimental, or visionary ideas that fall 
 ```
 
 ### Status Badges
-- 💡 `[YENI]` : Newly added raw idea awaiting assessment.
-- 🎯 `[ONERILEN]` : High-scoring idea recommended for the next sprint.
-- ⏳ `[ERTELENDI]` : Good idea, but deferred due to dependencies or early stage.
-- ⛔ `[ELENDI - Reason]` : Obsolete, duplicated, or superseded (never deleted, archived with reason).
-- ✅ `[UYGULANDI - Sprint/Date]` : Shipped and verified in the codebase.
+- 💡 `[NEW]` : Newly added raw idea awaiting assessment.
+- 🎯 `[RECOMMENDED]` : High-scoring idea recommended for the next sprint.
+- ⏳ `[DEFERRED]` : Good idea, but deferred due to dependencies or early stage.
+- ⛔ `[DROPPED - Reason]` : Obsolete, duplicated, or superseded (never deleted, archived with reason).
+- ✅ `[SHIPPED - Sprint/Date]` : Shipped and verified in the codebase.
 
 ### Automation Helper Script (`idea_manager.py`)
 

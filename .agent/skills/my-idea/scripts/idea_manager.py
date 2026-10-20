@@ -86,16 +86,16 @@ def parse_ideas(content: str) -> list[dict]:
         value_match = re.search(r"-\s+\*\*Değer\s*/\s*Gerekçe:\*\*\s*(.+)$", block, re.MULTILINE)
         note_match = re.search(r"-\s+\*\*Ajan\s*(?:Notu|Değerlendirmesi):\*\*\s*(.+)$", block, re.MULTILINE)
 
-        status_raw = status_match.group(1).strip() if status_match else "[YENI]"
+        status_raw = status_match.group(1).strip() if status_match else "[NEW]"
         score = float(rating_match.group(1)) if rating_match else 0.0
         desc = desc_match.group(1).strip() if desc_match else ""
         value = value_match.group(1).strip() if value_match else ""
         note = note_match.group(1).strip() if note_match else ""
 
-        # Elenme kontrolü
-        is_eliminated = ("ELENDI" in status_raw or "ELENDİ" in status_raw or "⛔" in status_raw)
-        is_done = ("UYGULANDI" in status_raw or "TAMAMLANDI" in status_raw or "✅" in status_raw)
-        is_deferred = ("ERTELENDI" in status_raw or "ERTELENDİ" in status_raw or "⏳" in status_raw)
+        # Elenme / Durum kontrolü (İngilizce standart + Türkçe geriye dönük uyumluluk)
+        is_eliminated = any(kw in status_raw for kw in ("DROPPED", "REJECTED", "ELENDI", "ELENDİ", "⛔"))
+        is_done = any(kw in status_raw for kw in ("SHIPPED", "IMPLEMENTED", "DONE", "UYGULANDI", "TAMAMLANDI", "✅"))
+        is_deferred = any(kw in status_raw for kw in ("DEFERRED", "POSTPONED", "ERTELENDI", "ERTELENDİ", "⏳"))
 
         ideas.append({
             "id": idea_id,
@@ -126,12 +126,13 @@ def init_idea_file(target_path: Path, template_path: Path) -> bool:
     else:
         content = (
             "# 💡 PROJE FİKİR HAVUZU (myidea.md)\n\n"
-            "## 📌 Durum İmleri\n"
-            "- 💡 `[YENI]` : Yeni eklenmiş ham fikir.\n"
-            "- 🎯 `[ONERILEN]` : Sıradaki geliştirme için tavsiye edilen.\n"
-            "- ⛔ `[ELENDI - Neden]` : Bayat veya elenmiş fikir.\n"
-            "- ✅ `[UYGULANDI - Kart/Tarih]` : Tamamlanmış fikir.\n\n"
-            "## 🚀 Fikirler Listesi\n\n"
+            "## 📌 Status Badges\n"
+            "- 💡 `[NEW]` : Newly added raw idea awaiting assessment.\n"
+            "- 🎯 `[RECOMMENDED]` : High-scoring idea recommended for development.\n"
+            "- ⏳ `[DEFERRED]` : Deferred due to prerequisites or timing.\n"
+            "- ⛔ `[DROPPED - Reason]` : Obsolete or superseded idea (archived with reason).\n"
+            "- ✅ `[SHIPPED - Card/Date]` : Successfully shipped into codebase.\n\n"
+            "## 🚀 Ideas List\n\n"
         )
     target_path.write_text(content, encoding="utf-8")
     print(f"[OK] Fikir havuzu dosyası oluşturuldu: {target_path}")
