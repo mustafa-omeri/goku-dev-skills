@@ -192,6 +192,7 @@ Ayrıntı: [`rules/no-silent-wait.md`](rules/no-silent-wait.md).
 - Tasarım/UI taleplerinde `canvas-design` + `frontend-design` + `ui-ux-pro-max`
   birlikte okunur; hangi konunun sahibi olduğunu `design-skills-enforcement.md`
   §3 sahiplik haritasından doğrula.
+- Skill seti güncelleme taleplerinde ("Goku skill güncelle", "skill update", "GS update", "GS güncelle", "goku update", "skillset güncelle" vb.) `musgoku` cerrahi güncelleme protokolü ([`references/skill-set-update.md`](skills/musgoku/references/skill-set-update.md)) işletilir: `npx goku-dev-skills update` (veya `--remote`) çalıştırılır; proje kural bloğu korunur, kurulu olmayan skill'ler indirilmez.
 
 ---
 

@@ -97,6 +97,7 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 | tasarım becerisi, daha iyi yaz, amatör mü / better code, improve quality | `karpathy-guidelines` + tasarım üçlüsü | — |
 | gözlem kaydet, skill geliştir, süreç analizi, yeni skill öner / log observation, improve skill, observe task | `task-observer` | `skills/task-observer/SKILL.md` |
 | fikirlerime bak, fikirlerimi incele, fikir havuzu, yeni fikir seç, ne yapabiliriz, myidea, my idea / review ideas, idea backlog, brainstorm ideas | `my-idea` | `skills/my-idea/SKILL.md` |
+| Goku skill güncelle, skill update, GS update, GS güncelle, goku update, skillset güncelle, skill'leri güncelle, goku skills update, ajan yeteneklerini güncelle / update skills, goku update, update skill set, upgrade skills, sync skills | `musgoku` | `skills/musgoku/SKILL.md` |
 
 ### A5. Prompt Makroları ve Kısayol Etiketleri (Prompt Shorthands)
 

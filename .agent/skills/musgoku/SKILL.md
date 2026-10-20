@@ -1,14 +1,12 @@
 ---
 name: musgoku
 description: >-
-  Global geliştirme yönlendiricisi. Backend (Java, Spring Boot, JPA, REST, WebSocket,
-  güvenlik, pagination) ve frontend (React, TypeScript, i18n, bundle) taleplerini doğru
-  sub-skill'e yönlendirir; kalite kapılarını ve doğrulama adımlarını tanımlar.
-  Tetikleyiciler: "API yaz", "endpoint ekle", "entity oluştur", "pagination ekle",
-  "güvenlik", "refactoring", "hata düzelt", "bileşen oluştur", "form ekle", "route ekle",
-  "add endpoint", "create entity", "refactor", "fix bug". Tetiklenmez: tek satırlık kod
-  düzeltmesi veya planlama gerektirmeyen işler. Tam sözlük:
-  .agent/rules/skill-trigger-routing.md
+  Global geliştirme yönlendiricisi. Backend (Java, Spring Boot, REST) ve frontend
+  (React, TypeScript, bundle) taleplerini doğru sub-skill'e yönlendirir; kalite
+  kapılarını tanımlar. Tetikleyiciler: "API yaz", "endpoint ekle", "refactor",
+  "fix bug", "Goku skill güncelle", "skill update", "GS update", "GS güncelle",
+  "add endpoint", "create entity". Tetiklenmez: tek satırlık kod düzeltmesi veya
+  planlama gerektirmeyen işler. Tam sözlük: .agent/rules/skill-trigger-routing.md
 ---
 
 
@@ -99,6 +97,7 @@ Tespit yapamazsan **kullanıcıya sor.** Tahmin yürütme.
 | Kod mimarisi / derin modül / silme testi | [`skills/codebase-design/`](../codebase-design/SKILL.md) |
 | İki eksenli kod inceleme (Standartlar vs Şartname) | [`skills/code-review/`](../code-review/SKILL.md) |
 | İş kavramı modelleme / sözlük / ADR kararı | [`skills/domain-modeling/`](../domain-modeling/SKILL.md) |
+| Goku skill güncelleme / cerrahi update (`npx goku-dev-skills update`) | [`references/skill-set-update.md`](./references/skill-set-update.md) |
 
 > **Birden fazla referans gerekiyorsa hepsini oku.**
 > Örn. yeni bir backend modülü: `project-architecture.md` + `spring-boot-api.md` +

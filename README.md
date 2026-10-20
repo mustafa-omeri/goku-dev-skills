@@ -75,6 +75,13 @@ npx goku-dev-skills update --dest ./my-backend-service
 > [!TIP]
 > **Project Rule Preservation:** Custom rules inside `AGENTS.md` under `## Proje Bazlı Ek Kurallar` are automatically parsed, protected, and restored during updates.
 
+> [!NOTE]
+> **🤖 AI Agent Natural Language Triggers:**
+> Instead of running terminal commands manually, you can tell your AI assistant directly in chat:
+> - `"Goku skill güncelle"`, `"skill update"`, `"GS update"`, `"GS güncelle"`
+> - `"goku update"`, `"skillset güncelle"`, `"skill'leri güncelle"`, `"sync skills"`
+> The agent will autonomously execute the surgical update protocol, verify zero-clutter, ensure your project rules are protected, and present a status report.
+
 ### 3. Granular Skill & Theme Addition
 
 ```bash
@@ -176,6 +183,21 @@ python .agent/skills/my-idea/scripts/idea_manager.py --init
 ---
 
 ## 🛠️ The 27 Shipped Skills
+
+> [!TIP]
+> ### 📑 Interactive Visual Skills Catalog (`skills-catalog.html`)
+> For an interactive, searchable, and comprehensive visual guide of all 27 skills, prompt templates, trigger keywords, and configuration blueprints, open the included offline HTML catalog:
+> - 🌐 **Direct File:** [`.agent/skills-catalog.html`](.agent/skills-catalog.html)
+> - 🚀 **Quick Open (Browser):**
+>   ```bash
+>   # Windows
+>   start .agent/skills-catalog.html
+>   # macOS
+>   open .agent/skills-catalog.html
+>   # Linux
+>   xdg-open .agent/skills-catalog.html
+>   ```
+> Includes dual view modes (**Card Grid** & **Compact Trackable Table** via `V`), instant fuzzy search (`/` or `Ctrl+K`), one-click prompt copying, and dark/light theme toggle (`T`).
 
 | Skill | Category | Primary Focus & Capabilities |
 | :--- | :--- | :--- |

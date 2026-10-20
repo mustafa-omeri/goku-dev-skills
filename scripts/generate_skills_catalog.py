@@ -3,11 +3,12 @@
 """Ajan Skill & Mimari Katalog Üreticisi (Skills Catalog HTML Generator).
 
 `.agent/skills/` altındaki tüm `SKILL.md` dosyalarını ve kural sözlüklerini
-tarayarak kullanıcı dostu, filtrelenebilir, kopyalanabilir ve modern
-`skills-catalog.html` dosyasını derler.
+tarayarak kullanıcı dostu, filtrelenebilir, çift görünümlü (Kart Grid & Kompakt Takip Tablosu),
+kopyalanabilir ve modern `skills-catalog.html` dosyasını derler.
 
 Kullanım:
     python scripts/generate_skills_catalog.py
+    python scripts/generate_skills_catalog.py --check
 """
 
 from __future__ import annotations
@@ -178,20 +179,6 @@ COPY --from=builder /app/dist /usr/share/nginx/html"""
   }
 }"""
     },
-    "musgoku-prd": {
-        "status": "Proje Dosyası",
-        "badge_class": "badge-info",
-        "file": "HANDOFF.md / PRD.md",
-        "features": ["HANDOFF Protokolü", "90 Puan Kalite Kapısı", "KVKK Denetimi"],
-        "detail": "Proje kökündeki zorunlu HANDOFF.md protokolünü kurar ve 90 puan kalite kapısıyla PRD üretir.",
-        "sample_prompt": "Yeni bir özellik için kullanıcı sorularıyla kapsamı netleştirip uygulanabilir bir PRD çıkar.",
-        "config_snippet": """# HANDOFF.md Şablonu:
-- 0. Bu Projede Düşülen ve Kanıtlanmış Tuzaklar
-- 1. Bu Oturumda Yapılanlar
-- 2. Güncellik Kanıtı
-- 3. Nerede Kaldık
-- 4. Sıradaki İş"""
-    },
     "brand": {
         "status": "Proje Dosyası",
         "badge_class": "badge-info",
@@ -209,9 +196,9 @@ COPY --from=builder /app/dist /usr/share/nginx/html"""
         "status": "Proje Dosyası",
         "badge_class": "badge-info",
         "file": "pom.xml / package.json / .agent/rules",
-        "features": ["REST Controller", "JPA Entity", "Keyset Pagination", "WebSocket"],
-        "detail": "Backend (Spring Boot/Java) veya Frontend mimari kuralları ve kalite kapılarını yönetir.",
-        "sample_prompt": "Spring Boot REST controller ve JPA entity katmanını pagination ile oluştur.",
+        "features": ["REST Controller", "JPA Entity", "Keyset Pagination", "WebSocket", "Cerrahi Skill Güncelleme"],
+        "detail": "Backend (Spring Boot/Java) veya Frontend mimari kuralları, kalite kapılarını ve cerrahi skill güncelleme protokolünü yönetir.",
+        "sample_prompt": "Spring Boot REST controller ve JPA entity katmanını pagination ile oluştur; Goku skill setini güncelle.",
         "config_snippet": """// Spring Boot Entity & REST mimarisi
 @RestController
 @RequestMapping("/api/v1/events")
@@ -251,28 +238,33 @@ DEFAULT_CONFIG_META = {
 }
 
 SAMPLE_PROMPTS = {
-    "frontend-design": "Arayüzü modernleştir, AI-slop kalıplarını temizle ve [DESIGN-REFRESH] protokolünü uygula.",
+    "musgoku": "Spring Boot REST controller ve JPA entity katmanını pagination ile oluştur; veya Goku skill setini güncelle.",
     "ui-ux-pro-max": "Arayüzün renk paleti, tipografi ve erişilebilirlik (WCAG) kurallarını incele.",
+    "frontend-design": "Arayüzü modernleştir, AI-slop kalıplarını temizle ve [DESIGN-REFRESH] protokolünü uygula.",
     "canvas-design": "Etkinlik için ölçüsüz görsel sanat ve manifesto afişi posteri oluştur.",
     "banner-design": "Web sitesi hero alanı ve LinkedIn için 1584x396 ölçülü kapak görseli tasarla.",
-    "design": "Kurumsal kimlik için logo brief'i ve kartvizit tasarım yönergelerini hazırla.",
-    "slides": "Yatırımcı sunumu için PAS formülüyle 10 slaytlık pitch deck metni ve düzeni çıkar.",
-    "doc-coauthoring": "Teknik mimari karar dokümanı (RFC / Decision Doc) taslağı oluştur.",
-    "my-idea": "Fikirlerime bak ve güncel proje durumuna göre sıradaki en mantıklı 3 adımı öner.",
-    "karpathy-guidelines": "Kod karmaşıklığını azalt, gereksiz soyutlamaları sadeleştir ve varsayımları yüzeye çıkar.",
-    "react-best-practices": "React bileşenindeki gereksiz re-render'ları ve waterfall veri çekimlerini ortadan kaldır.",
+    "design-system": "Uygulama için 3 katmanlı design token mimarisi (primitive, semantic, component) ve CSS değişkenleri üret.",
+    "ui-styling": "Bileşeni Tailwind CSS utility sınıfları ve dark mode desteğiyle responsive stillendir.",
     "theme-factory": "Uygulama için 10 hazır temadan birini seç ve HEX paletini uygula.",
-    "web-ide-ux-architect": "Düşük gecikmeli, kod editörü ve split-pane panelli bir IDE arayüzü tasarla.",
+    "design": "Kurumsal kimlik için logo brief'i ve kartvizit tasarım yönergelerini hazırla.",
     "mock-asset-provider": "Kullanıcı profilleri için kadın ve erkek portreleri içeren gerçekçi mock görseller sağla.",
+    "web-ide-ux-architect": "Düşük gecikmeli, kod editörü ve split-pane panelli bir IDE arayüzü tasarla.",
     "onboarding-tour": "Yeni başlayan kullanıcılar için dashboard ve menü adımlarını tanıtan hafif bir Driver.js onboarding turu hazırla.",
-    "production-docker-architect": "Üretim ortamı için hafif, multi-stage ve non-root kullanıcılı Dockerfile ve Compose oluştur.",
+    "react-best-practices": "React bileşenindeki gereksiz re-render'ları ve waterfall veri çekimlerini ortadan kaldır.",
     "i18n-localization": "Uygulamadaki hardcode metinleri ve eksik çeviri anahtarlarını i18n_checker ile denetle ve düzelt.",
-    "brand": "Marka kılavuzunu, ton ve mesaj çerçevesini docs/brand-guidelines.md olarak oluştur.",
-    "diagnosing-bugs": "Çöken endpoint için kırmızı geri bildirim döngüsü kur, 3 hipotez üret ve hatayı teşhis et.",
     "tdd": "Yeni sipariş iptal akışını dikiş noktalarında önce kırmızı test yazarak TDD dikey dilimiyle geliştir.",
     "codebase-design": "Ödeme modülünün arayüzünü derinleştir, dikiş noktasını ve silme testini belirle.",
+    "domain-modeling": "İş kavramlarını netleştir, GLOSSARY.md sözlüğünü güncelle ve geri dönüşü zor karar için ADR oluştur.",
+    "git-release-workflow": "commitx: Yapılan değişiklikleri semantik sürüm etiketi artırarak commit ve push yap.",
+    "production-docker-architect": "Üretim ortamı için hafif, multi-stage ve non-root kullanıcılı Dockerfile ve Compose oluştur.",
+    "karpathy-guidelines": "Kod karmaşıklığını azalt, gereksiz soyutlamaları sadeleştir ve varsayımları yüzeye çıkar.",
+    "task-observer": "Bu oturumdaki metodoloji ve kural eksikliklerini gözlem olarak log.md'ye kaydet ve gelişim öner.",
+    "diagnosing-bugs": "Çöken endpoint için kırmızı geri bildirim döngüsü kur, 3 hipotez üret ve hatayı teşhis et.",
     "code-review": "Mevcut branch değişikliklerini Standartlar ve Şartname eksenlerinde iki paralel alt ajanla incele.",
-    "domain-modeling": "İş kavramlarını netleştir, GLOSSARY.md sözlüğünü güncelle ve geri dönüşü zor karar için ADR oluştur."
+    "my-idea": "Fikirlerime bak ve güncel proje durumuna göre sıradaki en mantıklı 3 adımı öner.",
+    "brand": "Marka kılavuzunu, ton ve mesaj çerçevesini docs/brand-guidelines.md olarak oluştur.",
+    "doc-coauthoring": "Teknik mimari karar dokümanı (RFC / Decision Doc) taslağı oluştur.",
+    "slides": "Yatırımcı sunumu için PAS formülüyle 10 slaytlık pitch deck metni ve düzeni çıkar."
 }
 
 
@@ -335,7 +327,7 @@ def parse_skill_md(skill_path: Path) -> dict:
     scripts_dir = skill_path.parent / "scripts"
     cli_cmd = ""
     if scripts_dir.is_dir():
-        py_files = list(scripts_dir.glob("*.py"))
+        py_files = sorted(scripts_dir.glob("*.py"))
         if py_files:
             main_script = py_files[0].name
             cli_cmd = f"python .agent/skills/{name}/scripts/{main_script}"
@@ -346,6 +338,8 @@ def parse_skill_md(skill_path: Path) -> dict:
         search_keywords.extend(cfg["features"])
     if name == "mock-asset-provider":
         search_keywords.extend(["github", "api", "unsplash", "pexels", "resim", "foto", "avatar", "profil", "etkinlik", "assets.json"])
+    if name == "musgoku":
+        search_keywords.extend(["goku update", "skill update", "gs update", "güncelle", "cerrahi"])
 
     return {
         "name": name,
@@ -367,8 +361,24 @@ def parse_skill_md(skill_path: Path) -> dict:
 
 def generate_catalog_html(skills: list[dict]) -> str:
     skills_json = json.dumps(skills, ensure_ascii=False)
+    
+    pkg_json_file = PROJECT_ROOT / "package.json"
+    pkg_version = "1.9.10"
+    if pkg_json_file.is_file():
+        try:
+            pkg_version = json.loads(pkg_json_file.read_text(encoding="utf-8")).get("version", "1.9.10")
+        except Exception:
+            pass
+    cat_badges = {
+        "Tasarım & UI": "cat-design",
+        "Kod & Mimari": "cat-code",
+        "Teslimat & Kalite": "cat-delivery",
+        "Marka & Doküman": "cat-brand"
+    }
+
     cat_buttons = "".join(
-        f'<button class="chip" onclick="setCategoryFilter(\'{cat}\', this)">{cat} ({len(skills_in_cat)})</button>'
+        f'<button class="chip {cat_badges.get(cat, "")}" onclick="setCategoryFilter(\'{cat}\', this)">'
+        f'{cat} <span class="chip-count">({len(skills_in_cat)})</span></button>'
         for cat, skills_in_cat in CATEGORIES.items()
     )
 
@@ -377,18 +387,19 @@ def generate_catalog_html(skills: list[dict]) -> str:
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ajan Skill & Mimari Kataloğu — Antigravity Agent Ecosystem</title>
+  <title>Ajan Skill & Mimari Kataloğu — Goku Dev Skills</title>
   <style>
     :root {{
-      --bg: #0b0f19;
-      --surface: #111827;
-      --surface-hover: #1f293d;
-      --card-bg: #151d30;
-      --border: #22304d;
-      --text-main: #f3f4f6;
+      --bg: #080c14;
+      --surface: #0f172a;
+      --surface-hover: #1e293b;
+      --card-bg: #0d1527;
+      --card-border: rgba(255, 255, 255, 0.08);
+      --border: #1e293b;
+      --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --primary: #38bdf8;
-      --primary-glow: rgba(56, 189, 248, 0.15);
+      --primary-glow: rgba(56, 189, 248, 0.18);
       --accent: #818cf8;
       --success: #34d399;
       --success-bg: rgba(52, 211, 153, 0.12);
@@ -410,6 +421,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
       --surface: #ffffff;
       --surface-hover: #f1f5f9;
       --card-bg: #ffffff;
+      --card-border: #e2e8f0;
       --border: #e2e8f0;
       --text-main: #0f172a;
       --text-muted: #64748b;
@@ -423,7 +435,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
       --info: #2563eb;
       --info-bg: rgba(37, 99, 235, 0.1);
       --danger: #dc2626;
-      --danger-bg: rgba(220, 38, 38, 0.1);
+      --danger-bg: rgba(220, 38, 38, 0.08);
     }}
 
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
@@ -432,151 +444,164 @@ def generate_catalog_html(skills: list[dict]) -> str:
       background-color: var(--bg);
       color: var(--text-main);
       line-height: 1.6;
-      padding: 0;
       min-height: 100vh;
       transition: background-color 0.25s, color 0.25s;
     }}
 
-    .container {{
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2.5rem 1.5rem;
+    /* Sticky Ergonomic Header */
+    header {{
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+    }}
+    [data-theme="light"] header {{
+      background: rgba(255, 255, 255, 0.88);
     }}
 
-    /* Header */
-    header {{
-      background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
-      border-bottom: 1px solid var(--border);
-      padding: 2.5rem 1.5rem 1.5rem;
-    }}
     .header-content {{
-      max-width: 1400px;
+      max-width: 1440px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      flex-wrap: wrap;
+      align-items: center;
       gap: 1.5rem;
+      flex-wrap: wrap;
     }}
-    .title-area h1 {{
-      font-size: 2.15rem;
-      font-weight: 800;
-      letter-spacing: -0.025em;
+
+    .title-area {{
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.85rem;
+    }}
+    .title-area h1 {{
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }}
     .title-area h1 span.gradient {{
       background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }}
-    .title-area p {{
-      color: var(--text-muted);
-      font-size: 1rem;
-      margin-top: 0.5rem;
-      max-width: 800px;
+    .version-tag {{
+      font-family: var(--font-mono);
+      font-size: 0.725rem;
+      font-weight: 700;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--primary);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
     }}
 
     .header-actions {{
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
+      flex-wrap: wrap;
     }}
-    .stat-pill {{
+
+    .view-mode-toggle {{
+      display: flex;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.18rem;
+      gap: 0.2rem;
+    }}
+    .btn-view {{
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.35rem 0.7rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 4px;
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.35rem;
+      transition: all 0.15s;
+    }}
+    .btn-view.active {{
       background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.5rem 1rem;
-      border-radius: 9999px;
-      font-size: 0.875rem;
-      font-weight: 600;
-    }}
-    .stat-pill .num {{
       color: var(--primary);
-      font-weight: 800;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }}
-    .btn-theme {{
+
+    .btn-action {{
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text-main);
-      padding: 0.55rem 0.9rem;
+      padding: 0.45rem 0.85rem;
       border-radius: var(--radius-sm);
       cursor: pointer;
-      font-size: 0.875rem;
+      font-size: 0.825rem;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      transition: all 0.2s;
+      transition: all 0.15s;
     }}
-    .btn-theme:hover {{
+    .btn-action:hover {{
       background: var(--surface-hover);
       border-color: var(--primary);
     }}
 
-    /* Integration Highlight Banner (GitHub & API Hub) */
-    .integration-banner {{
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(129, 140, 248, 0.08) 100%);
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      border-radius: var(--radius-md);
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      position: relative;
-    }}
-    .banner-header {{
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      user-select: none;
-    }}
-    .banner-title {{
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }}
-    .banner-body {{
-      margin-top: 1.25rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 1.25rem;
-      border-top: 1px solid rgba(56, 189, 248, 0.15);
-      padding-top: 1.25rem;
-    }}
-    .banner-col h4 {{
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 0.4rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }}
-    .banner-col p {{
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }}
-    .code-preview {{
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 0.85rem;
-      font-family: var(--font-mono);
-      font-size: 0.775rem;
-      color: #38bdf8;
-      overflow-x: auto;
-      margin-top: 0.5rem;
-      position: relative;
+    /* Main Container */
+    .container {{
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
     }}
 
-    /* Toolbar */
+    /* Hero / Subhead */
+    .hero-strip {{
+      margin-bottom: 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }}
+    .hero-strip p {{
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 820px;
+      line-height: 1.55;
+    }}
+    .stat-badge-group {{
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }}
+    .stat-pill {{
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }}
+    .stat-pill .num {{
+      color: var(--primary);
+      font-weight: 800;
+      font-family: var(--font-mono);
+    }}
+
+    /* Toolbar & Search Hub */
     .toolbar {{
       background: var(--surface);
       border: 1px solid var(--border);
@@ -586,20 +611,26 @@ def generate_catalog_html(skills: list[dict]) -> str:
       display: flex;
       flex-direction: column;
       gap: 1rem;
-      box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.25);
+    }}
+
+    .search-row {{
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
     }}
     .search-box {{
       position: relative;
-      width: 100%;
+      flex: 1;
     }}
     .search-input {{
       width: 100%;
       background: var(--bg);
       border: 1px solid var(--border);
       color: var(--text-main);
-      padding: 0.85rem 1rem 0.85rem 2.85rem;
+      padding: 0.85rem 2.85rem 0.85rem 2.75rem;
       border-radius: var(--radius-sm);
-      font-size: 1rem;
+      font-size: 0.975rem;
       outline: none;
       transition: all 0.2s;
     }}
@@ -614,32 +645,77 @@ def generate_catalog_html(skills: list[dict]) -> str:
       transform: translateY(-50%);
       color: var(--text-muted);
       pointer-events: none;
+      font-size: 1rem;
+    }}
+    .btn-clear-search {{
+      position: absolute;
+      right: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      display: none;
+    }}
+    .btn-clear-search:hover {{
+      color: var(--text-main);
+    }}
+    .kbd-shortcut {{
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      pointer-events: none;
     }}
 
+    .filter-row {{
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      padding-top: 0.85rem;
+    }}
     .filter-group {{
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.45rem;
     }}
     .filter-label {{
-      font-size: 0.825rem;
+      font-size: 0.775rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--text-muted);
-      margin-right: 0.5rem;
+      margin-right: 0.4rem;
     }}
+
     .chip {{
       background: var(--bg);
       border: 1px solid var(--border);
       color: var(--text-muted);
-      padding: 0.4rem 0.85rem;
+      padding: 0.35rem 0.75rem;
       border-radius: 9999px;
-      font-size: 0.825rem;
+      font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
     }}
     .chip:hover {{
       color: var(--text-main);
@@ -651,18 +727,39 @@ def generate_catalog_html(skills: list[dict]) -> str:
       color: #0b0f19;
       font-weight: 700;
     }}
+    .chip-count {{
+      font-size: 0.7rem;
+      opacity: 0.8;
+      font-family: var(--font-mono);
+    }}
 
-    /* Grid of Cards */
+    /* Filter status count text */
+    .filter-summary {{
+      font-size: 0.825rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }}
+    .btn-reset-filters {{
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 0.825rem;
+    }}
+
+    /* GRID VIEW */
     .skills-grid {{
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
       gap: 1.5rem;
     }}
 
-    /* Skill Card */
     .skill-card {{
       background: var(--card-bg);
-      border: 1px solid var(--border);
+      border: 1px solid var(--card-border);
       border-radius: var(--radius-md);
       padding: 1.5rem;
       display: flex;
@@ -676,9 +773,37 @@ def generate_catalog_html(skills: list[dict]) -> str:
       border-color: var(--primary);
       box-shadow: 0 12px 28px -10px var(--primary-glow);
     }}
-    .skill-card-top {{
+
+    .card-top {{
       margin-bottom: 1.25rem;
     }}
+
+    .card-meta-bar {{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }}
+    .card-index {{
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      opacity: 0.6;
+    }}
+    .skill-category-badge {{
+      font-size: 0.725rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
+    }}
+    .cat-design {{ background: rgba(56, 189, 248, 0.1); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.25); }}
+    .cat-code {{ background: rgba(52, 211, 153, 0.1); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.25); }}
+    .cat-delivery {{ background: rgba(251, 191, 36, 0.1); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.25); }}
+    .cat-brand {{ background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.25); }}
+
     .card-header {{
       display: flex;
       justify-content: space-between;
@@ -687,21 +812,13 @@ def generate_catalog_html(skills: list[dict]) -> str:
       margin-bottom: 0.75rem;
     }}
     .skill-name {{
-      font-size: 1.3rem;
-      font-weight: 700;
+      font-size: 1.25rem;
+      font-weight: 800;
       font-family: var(--font-mono);
       color: var(--text-main);
-    }}
-    .skill-category {{
-      font-size: 0.725rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--accent);
-      background: rgba(129, 140, 248, 0.1);
-      padding: 0.25rem 0.6rem;
-      border-radius: 9999px;
-      border: 1px solid rgba(129, 140, 248, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
     }}
 
     /* Badges */
@@ -709,7 +826,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      padding: 0.25rem 0.65rem;
+      padding: 0.22rem 0.65rem;
       border-radius: 9999px;
       font-size: 0.75rem;
       font-weight: 700;
@@ -731,12 +848,12 @@ def generate_catalog_html(skills: list[dict]) -> str:
       border: 1px solid rgba(96, 165, 250, 0.3);
     }}
 
-    /* Feature tags */
+    /* Features Row */
     .features-row {{
       display: flex;
       flex-wrap: wrap;
       gap: 0.35rem;
-      margin: 0.6rem 0 1rem;
+      margin: 0.4rem 0 0.85rem;
     }}
     .feature-tag {{
       font-size: 0.7rem;
@@ -750,18 +867,18 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
     .skill-purpose {{
       color: var(--text-main);
-      font-size: 0.95rem;
-      line-height: 1.5;
-      margin-bottom: 1.25rem;
+      font-size: 0.925rem;
+      line-height: 1.55;
+      margin-bottom: 1.15rem;
     }}
 
     .section-title {{
-      font-size: 0.775rem;
+      font-size: 0.75rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--text-muted);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.45rem;
       display: flex;
       align-items: center;
       gap: 0.4rem;
@@ -770,17 +887,17 @@ def generate_catalog_html(skills: list[dict]) -> str:
     .triggers-list {{
       display: flex;
       flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-bottom: 1rem;
+      gap: 0.35rem;
+      margin-bottom: 0.9rem;
     }}
     .trigger-pill {{
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--primary);
-      padding: 0.25rem 0.55rem;
+      padding: 0.22rem 0.55rem;
       border-radius: var(--radius-sm);
       font-family: var(--font-mono);
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       cursor: pointer;
       transition: all 0.15s;
       user-select: none;
@@ -796,8 +913,8 @@ def generate_catalog_html(skills: list[dict]) -> str:
       border-left: 3px solid var(--border);
       padding: 0.75rem;
       border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-      font-size: 0.85rem;
-      margin-bottom: 1rem;
+      font-size: 0.825rem;
+      margin-bottom: 0.9rem;
     }}
     .config-box.warning {{ border-left-color: var(--warning); }}
     .config-box.info {{ border-left-color: var(--info); }}
@@ -811,19 +928,19 @@ def generate_catalog_html(skills: list[dict]) -> str:
     }}
     .config-desc {{
       color: var(--text-muted);
-      font-size: 0.8rem;
+      font-size: 0.785rem;
+      line-height: 1.45;
     }}
 
-    /* Collapsible JSON Preview */
+    /* JSON Accordion */
     .json-accordion {{
-      margin-top: 0.6rem;
-      margin-bottom: 1rem;
+      margin: 0.6rem 0 0.9rem;
     }}
     .btn-toggle-json {{
       background: transparent;
       border: 1px dashed var(--border);
       color: var(--primary);
-      font-size: 0.775rem;
+      font-size: 0.75rem;
       font-weight: 600;
       padding: 0.35rem 0.65rem;
       border-radius: var(--radius-sm);
@@ -840,7 +957,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
     .json-code-drawer {{
       display: none;
       margin-top: 0.5rem;
-      background: #080c14;
+      background: #060911;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       padding: 0.75rem;
@@ -851,10 +968,10 @@ def generate_catalog_html(skills: list[dict]) -> str:
     }}
     .json-code-drawer pre {{
       font-family: var(--font-mono);
-      font-size: 0.75rem;
+      font-size: 0.735rem;
       color: #a5f3fc;
       overflow-x: auto;
-      max-height: 240px;
+      max-height: 220px;
     }}
     .btn-copy-code {{
       position: absolute;
@@ -877,10 +994,10 @@ def generate_catalog_html(skills: list[dict]) -> str:
       background: var(--danger-bg);
       border: 1px solid rgba(248, 113, 113, 0.2);
       border-radius: var(--radius-sm);
-      padding: 0.6rem 0.75rem;
-      font-size: 0.8rem;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.785rem;
       color: var(--danger);
-      margin-bottom: 1rem;
+      margin-bottom: 0.9rem;
     }}
 
     .card-footer {{
@@ -896,7 +1013,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text-main);
-      padding: 0.45rem 0.8rem;
+      padding: 0.45rem 0.85rem;
       border-radius: var(--radius-sm);
       font-size: 0.8rem;
       font-weight: 600;
@@ -912,6 +1029,58 @@ def generate_catalog_html(skills: list[dict]) -> str:
       color: var(--primary);
     }}
 
+    /* TABLE VIEW (Kompakt Takip Modu) */
+    .skills-table-wrapper {{
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.25);
+    }}
+    .skills-table {{
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.875rem;
+    }}
+    .skills-table th {{
+      background: rgba(15, 23, 42, 0.7);
+      padding: 0.95rem 1rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      font-size: 0.725rem;
+      letter-spacing: 0.05em;
+    }}
+    .skills-table td {{
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }}
+    .skills-table tr:hover td {{
+      background: var(--surface-hover);
+    }}
+    .table-skill-cell {{
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }}
+    .table-skill-name {{
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }}
+    .table-triggers {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      max-width: 380px;
+    }}
+
+    /* Toast Notification */
     .toast {{
       position: fixed;
       bottom: 2rem;
@@ -920,9 +1089,9 @@ def generate_catalog_html(skills: list[dict]) -> str:
       color: #ffffff;
       padding: 0.85rem 1.4rem;
       border-radius: var(--radius-md);
-      font-size: 0.95rem;
+      font-size: 0.925rem;
       font-weight: 600;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -939,37 +1108,41 @@ def generate_catalog_html(skills: list[dict]) -> str:
     .no-results {{
       grid-column: 1 / -1;
       text-align: center;
-      padding: 4rem 1rem;
+      padding: 5rem 1rem;
       color: var(--text-muted);
     }}
     .no-results h3 {{
-      font-size: 1.3rem;
+      font-size: 1.35rem;
       margin-bottom: 0.5rem;
       color: var(--text-main);
     }}
 
-    @media (max-width: 768px) {{
+    @media (max-width: 900px) {{
       .skills-grid {{ grid-template-columns: 1fr; }}
-      .header-content {{ flex-direction: column; }}
-      .title-area h1 {{ font-size: 1.75rem; }}
-      .banner-body {{ grid-template-columns: 1fr; }}
+      .header-content {{ flex-direction: column; align-items: flex-start; }}
     }}
   </style>
 </head>
 <body data-theme="dark">
 
+  <!-- Sticky Top Header -->
   <header>
     <div class="header-content">
       <div class="title-area">
-        <h1>🚀 <span class="gradient">Ajan Skill & Mimari Kataloğu</span></h1>
-        <p>Projedeki {len(skills)} skill'in sorumluluk sınırları, tetikleyici kelimeleri, GitHub/API entegrasyonları ve konfigürasyon gereksinimleri tek bir rehberde.</p>
+        <h1>🚀 <span class="gradient">Goku Dev Skills</span> Kataloğu</h1>
+        <span class="version-tag">v{pkg_version}</span>
       </div>
       <div class="header-actions">
-        <div class="stat-pill">
-          <span>Toplam Skill:</span>
-          <span class="num">{len(skills)}</span>
+        <!-- View Mode Switcher -->
+        <div class="view-mode-toggle">
+          <button class="btn-view active" id="btnViewGrid" onclick="setViewMode('grid')">
+            <span>🔲</span> Kart Grid
+          </button>
+          <button class="btn-view" id="btnViewTable" onclick="setViewMode('table')">
+            <span>📑</span> Takip Tablosu
+          </button>
         </div>
-        <button class="btn-theme" id="themeToggleBtn" onclick="toggleTheme()">
+        <button class="btn-action" id="themeToggleBtn" onclick="toggleTheme()" title="Temayı değiştir (Kısayol: T)">
           <span id="themeIcon">☀️</span> Açık Tema
         </button>
       </div>
@@ -978,70 +1151,69 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
   <div class="container">
     
-    <!-- Integration Highlight Banner (GitHub Repo & API Hub) -->
-    <div class="integration-banner">
-      <div class="banner-header" onclick="toggleBanner()">
-        <div class="banner-title">
-          <span>⚡</span>
-          <span>Özel Entegrasyon Rehberi: GitHub Reposu ve Harici API Ekleme (mock-asset-provider)</span>
-        </div>
-        <button class="btn-theme" style="padding: 0.3rem 0.7rem; font-size: 0.75rem;">
-          <span id="bannerToggleIcon">▼</span> Göster / Gizle
-        </button>
+    <!-- Hero / Summary Strip -->
+    <div class="hero-strip">
+      <div>
+        <p>Yapay zeka kod asistanları (Antigravity, Cursor, Claude Code, Windsurf) için projedeki <strong>{len(skills)} skill</strong>'in sorumluluk sınırları, doğal dil tetikleyici kelimeleri, GitHub/API entegrasyonları ve konfigürasyon gereksinimleri tek bir takip arayüzünde.</p>
       </div>
-      <div class="banner-body" id="bannerBody">
-        <div class="banner-col">
-          <h4>📁 1. Projeye Özel GitHub Görsel Paketi</h4>
-          <p>Kullanıcı kendi Figma export paketini veya hazır görsel reposunu projeye bağlayabilir. Ajan tek komutla indirir ve <code>public/mock-assets/</code> dizinine yerleştirir.</p>
-          <div class="code-preview">
-"github": {{
-  "enabled": true,
-  "repo_url": "https://github.com/user/event-images-pack"
-}}
-          </div>
-        </div>
-        <div class="banner-col">
-          <h4>🔑 2. Harici API Entegrasyonu (Unsplash & Pexels)</h4>
-          <p>Kullanıcı kendi Unsplash veya Pexels API anahtarını <code>.agent/config/assets.json</code> içine ekleyerek yüksek çözünürlüklü tematik fotoğrafları doğrudan projeye akıtabilir.</p>
-          <div class="code-preview">
-"api": {{
-  "unsplash_access_key": "YOUR_UNSPLASH_KEY",
-  "pexels_api_key": "YOUR_PEXELS_KEY"
-}}
-          </div>
-        </div>
-        <div class="banner-col">
-          <h4>🌐 3. Sıfır-Ayar (Zero-Config) Otomatik Fallback</h4>
-          <p>Hiçbir repo veya API anahtarı verilmezse ajan asla boş gri kutu bırakmaz; RandomUser (kadın/erkek portre), Picsum (etkinlik/manzara) ve DiceBear (SVG) servisleriyle besler.</p>
-          <button class="btn-copy-prompt" style="margin-top: 0.75rem; width: 100%; justify-content: center;" onclick="copyAssetsJsonTemplate()">
-            📋 assets.json Tam Şablonunu Kopyala
-          </button>
-        </div>
+      <div class="stat-badge-group">
+        <div class="stat-pill">Toplam Skill: <span class="num">{len(skills)}</span></div>
+        <div class="stat-pill">Kategori: <span class="num">{len(CATEGORIES)}</span></div>
+        <div class="stat-pill">Bileşen Teması: <span class="num">55</span></div>
       </div>
     </div>
 
-    <!-- Toolbar -->
+    <!-- Toolbar: Search & Filter Hub -->
     <div class="toolbar">
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" class="search-input" placeholder="Skill adı, 'github', 'api', 'mock görsel', 'banner', 'commitx', 'tokens', 'i18n' ara..." oninput="filterSkills()">
+      <div class="search-row">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" class="search-input" placeholder="Skill adı, 'goku update', 'banner', 'commitx', 'tokens', 'i18n', 'mock görsel' ara... (Kısayol: / veya Ctrl+K)" oninput="filterSkills()">
+          <button class="btn-clear-search" id="btnClearSearch" onclick="clearSearch()">✕</button>
+          <span class="kbd-shortcut">/</span>
+        </div>
       </div>
-      <div class="filter-group">
-        <span class="filter-label">Kategori:</span>
-        <button class="chip active" onclick="setCategoryFilter('all', this)">Tümü ({len(skills)})</button>
-        {cat_buttons}
+
+      <div class="filter-row">
+        <div class="filter-group">
+          <span class="filter-label">Kategori:</span>
+          <button class="chip active" onclick="setCategoryFilter('all', this)">Tümü <span class="chip-count">({len(skills)})</span></button>
+          {cat_buttons}
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Config:</span>
+          <button class="chip active" onclick="setConfigFilter('all', this)">Tümü</button>
+          <button class="chip" onclick="setConfigFilter('Sıfır-Ayar', this)">🟢 Sıfır-Ayar</button>
+          <button class="chip" onclick="setConfigFilter('Opsiyonel Config', this)">🟡 Opsiyonel</button>
+          <button class="chip" onclick="setConfigFilter('Proje Dosyası', this)">🔵 Proje Dosyası</button>
+        </div>
       </div>
-      <div class="filter-group">
-        <span class="filter-label">Config Durumu:</span>
-        <button class="chip active" onclick="setConfigFilter('all', this)">Tümü</button>
-        <button class="chip" onclick="setConfigFilter('Sıfır-Ayar', this)">🟢 Sıfır-Ayar (Zero-Config)</button>
-        <button class="chip" onclick="setConfigFilter('Opsiyonel Config', this)">🟡 Opsiyonel Config</button>
-        <button class="chip" onclick="setConfigFilter('Proje Dosyası', this)">🔵 Proje Dosyası Gerektiren</button>
+
+      <div class="filter-summary" id="filterSummary">
+        <span>Tüm skill'ler listeleniyor ({len(skills)})</span>
       </div>
     </div>
 
-    <!-- Skills Grid -->
+    <!-- VIEW 1: Grid Mode -->
     <div class="skills-grid" id="skillsGrid"></div>
+
+    <!-- VIEW 2: Compact Table Mode (Ultra Scanability) -->
+    <div class="skills-table-wrapper" id="skillsTableWrapper">
+      <table class="skills-table">
+        <thead>
+          <tr>
+            <th style="width: 45px;">#</th>
+            <th style="width: 220px;">Skill & Kategori</th>
+            <th>Temel Görevi & Yetenekleri</th>
+            <th style="width: 360px;">Tetikleyiciler (Triggers)</th>
+            <th style="width: 170px;">Config Durumu</th>
+            <th style="width: 160px; text-align: right;">Hızlı İşlem</th>
+          </tr>
+        </thead>
+        <tbody id="skillsTableBody"></tbody>
+      </table>
+    </div>
+
   </div>
 
   <!-- Toast Notification -->
@@ -1054,11 +1226,35 @@ def generate_catalog_html(skills: list[dict]) -> str:
     let currentCategory = 'all';
     let currentConfig = 'all';
     let currentSearch = '';
+    let currentViewMode = localStorage.getItem('agent_catalog_view') || 'grid';
 
-    function renderCards() {{
+    const categoryBadgeClassMap = {{
+      'Tasarım & UI': 'cat-design',
+      'Kod & Mimari': 'cat-code',
+      'Teslimat & Kalite': 'cat-delivery',
+      'Marka & Doküman': 'cat-brand'
+    }};
+
+    function setViewMode(mode) {{
+      currentViewMode = mode;
+      localStorage.setItem('agent_catalog_view', mode);
+      document.getElementById('btnViewGrid').classList.toggle('active', mode === 'grid');
+      document.getElementById('btnViewTable').classList.toggle('active', mode === 'table');
+      
       const grid = document.getElementById('skillsGrid');
-      grid.innerHTML = '';
+      const table = document.getElementById('skillsTableWrapper');
+      
+      if (mode === 'grid') {{
+        grid.style.display = 'grid';
+        table.style.display = 'none';
+      }} else {{
+        grid.style.display = 'none';
+        table.style.display = 'block';
+      }}
+      renderAll();
+    }}
 
+    function renderAll() {{
       const filtered = allSkills.filter(s => {{
         const matchCategory = (currentCategory === 'all' || s.category === currentCategory);
         const matchConfig = (currentConfig === 'all' || s.config_status.includes(currentConfig));
@@ -1067,11 +1263,38 @@ def generate_catalog_html(skills: list[dict]) -> str:
         return matchCategory && matchConfig && matchSearch;
       }});
 
+      // Update Filter Summary
+      const summary = document.getElementById('filterSummary');
+      if (filtered.length === allSkills.length) {{
+        summary.innerHTML = `<span>Tüm skill'ler listeleniyor (${{allSkills.length}})</span>`;
+      }} else {{
+        summary.innerHTML = `
+          <span><strong>${{filtered.length}}</strong> / ${{allSkills.length}} skill filtrelendi</span>
+          <button class="btn-reset-filters" onclick="resetFilters()">Filtreleri Sıfırla</button>
+        `;
+      }}
+
+      // Clear search button visibility
+      const clearBtn = document.getElementById('btnClearSearch');
+      clearBtn.style.display = currentSearch ? 'block' : 'none';
+
+      if (currentViewMode === 'grid') {{
+        renderCards(filtered);
+      }} else {{
+        renderTable(filtered);
+      }}
+    }}
+
+    function renderCards(filtered) {{
+      const grid = document.getElementById('skillsGrid');
+      grid.innerHTML = '';
+
       if (filtered.length === 0) {{
         grid.innerHTML = `
           <div class="no-results">
             <h3>Sonuç Bulunamadı</h3>
             <p>Arama kriterlerine veya seçilen filtrelere uygun skill bulunamadı.</p>
+            <button class="btn-action" style="margin-top:1rem" onclick="resetFilters()">Filtreleri Sıfırla</button>
           </div>
         `;
         return;
@@ -1106,13 +1329,18 @@ def generate_catalog_html(skills: list[dict]) -> str:
           </div>
         ` : '';
 
+        const catClass = categoryBadgeClassMap[s.category] || 'cat-design';
+        const numPadded = String(idx + 1).padStart(2, '0');
+
         card.innerHTML = `
-          <div class="skill-card-top">
+          <div class="card-top">
+            <div class="card-meta-bar">
+              <span class="card-index">#${{numPadded}}</span>
+              <span class="skill-category-badge ${{catClass}}">${{escapeHtml(s.category)}}</span>
+            </div>
+
             <div class="card-header">
-              <div>
-                <div class="skill-name">${{escapeHtml(s.name)}}</div>
-                <span class="skill-category">${{escapeHtml(s.category)}}</span>
-              </div>
+              <div class="skill-name">${{escapeHtml(s.name)}}</div>
               <span class="badge ${{s.badge_class}}">${{escapeHtml(s.config_status)}}</span>
             </div>
 
@@ -1152,23 +1380,96 @@ def generate_catalog_html(skills: list[dict]) -> str:
       }});
     }}
 
+    function renderTable(filtered) {{
+      const tbody = document.getElementById('skillsTableBody');
+      tbody.innerHTML = '';
+
+      if (filtered.length === 0) {{
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 4rem 1rem; color: var(--text-muted);">
+              Filtrelere uygun skill bulunamadı.
+            </td>
+          </tr>
+        `;
+        return;
+      }}
+
+      filtered.forEach((s, idx) => {{
+        const tr = document.createElement('tr');
+        tr.setAttribute('data-name', s.name);
+
+        const triggersHtml = s.triggers.slice(0, 5).map(t => 
+          `<span class="trigger-pill" style="font-size:0.7rem;" title="Kopyalamak için tıkla" onclick="copyToClipboard('${{t.replace(/'/g, "\\\\\\'")}}', 'Tetikleyici kopyalandı!')">"${{escapeHtml(t)}}"</span>`
+        ).join('') + (s.triggers.length > 5 ? `<span style="font-size:0.7rem;color:var(--text-muted);">+${{s.triggers.length - 5}}</span>` : '');
+
+        const catClass = categoryBadgeClassMap[s.category] || 'cat-design';
+        const numPadded = String(idx + 1).padStart(2, '0');
+
+        tr.innerHTML = `
+          <td style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);font-weight:700;">#${{numPadded}}</td>
+          <td>
+            <div class="table-skill-cell">
+              <span class="table-skill-name">${{escapeHtml(s.name)}}</span>
+              <span class="skill-category-badge ${{catClass}}" style="display:inline-block;width:max-content;font-size:0.65rem;padding:0.1rem 0.45rem;">${{escapeHtml(s.category)}}</span>
+            </div>
+          </td>
+          <td>
+            <div style="font-size:0.85rem;color:var(--text-main);line-height:1.45;margin-bottom:0.35rem;">${{escapeHtml(s.purpose)}}</div>
+            ${{s.features && s.features.length ? `<div class="features-row" style="margin:0;">${{s.features.slice(0, 3).map(f => `<span class="feature-tag" style="font-size:0.65rem;">✦ ${{escapeHtml(f)}}</span>`).join('')}}</div>` : ''}}
+          </td>
+          <td>
+            <div class="table-triggers">${{triggersHtml || '<span style="color:var(--text-muted);font-size:0.75rem;">Genel yönlendirici</span>'}}</div>
+          </td>
+          <td>
+            <span class="badge ${{s.badge_class}}" style="font-size:0.7rem;">${{escapeHtml(s.config_status)}}</span>
+            <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted);margin-top:0.3rem;">${{escapeHtml(s.config_file)}}</div>
+          </td>
+          <td style="text-align: right;">
+            <button class="btn-copy-prompt" style="padding:0.35rem 0.65rem;font-size:0.75rem;" onclick="copyToClipboard('${{s.sample_prompt.replace(/'/g, "\\\\\\'")}}', 'Örnek prompt kopyalandı!')">
+              📋 Kopyala
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      }});
+    }}
+
     function filterSkills() {{
       currentSearch = document.getElementById('searchInput').value;
-      renderCards();
+      renderAll();
+    }}
+
+    function clearSearch() {{
+      document.getElementById('searchInput').value = '';
+      currentSearch = '';
+      renderAll();
+    }}
+
+    function resetFilters() {{
+      currentCategory = 'all';
+      currentConfig = 'all';
+      currentSearch = '';
+      document.getElementById('searchInput').value = '';
+      document.querySelectorAll('.chip').forEach(c => {{
+        if (c.innerText.includes('Tümü')) c.classList.add('active');
+        else c.classList.remove('active');
+      }});
+      renderAll();
     }}
 
     function setCategoryFilter(cat, btn) {{
       currentCategory = cat;
       btn.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
       btn.classList.add('active');
-      renderCards();
+      renderAll();
     }}
 
     function setConfigFilter(cfg, btn) {{
       currentConfig = cfg;
       btn.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
       btn.classList.add('active');
-      renderCards();
+      renderAll();
     }}
 
     function toggleJsonDrawer(id) {{
@@ -1176,45 +1477,6 @@ def generate_catalog_html(skills: list[dict]) -> str:
       if (el) {{
         el.classList.toggle('open');
       }}
-    }}
-
-    function toggleBanner() {{
-      const b = document.getElementById('bannerBody');
-      const icon = document.getElementById('bannerToggleIcon');
-      if (b.style.display === 'none') {{
-        b.style.display = 'grid';
-        icon.innerText = '▼';
-      }} else {{
-        b.style.display = 'none';
-        icon.innerText = '▶';
-      }}
-    }}
-
-    function copyAssetsJsonTemplate() {{
-      const tpl = JSON.stringify({{
-        "enabled": true,
-        "storage_dir": "public/mock-assets",
-        "download_locally": true,
-        "sources": {{
-          "github": {{
-            "enabled": true,
-            "repo_url": "https://github.com/kullanici/etkinlik-resimleri-paketi",
-            "branch": "main",
-            "sub_path": "images"
-          }},
-          "api": {{
-            "unsplash_access_key": "YOUR_UNSPLASH_KEY",
-            "pexels_api_key": "YOUR_PEXELS_KEY"
-          }},
-          "default_fallbacks": {{
-            "portraits": "randomuser",
-            "events": "picsum",
-            "products": "dummyjson",
-            "general": "picsum"
-          }}
-        }}
-      }}, null, 2);
-      copyToClipboard(tpl, ".agent/config/assets.json tam şablonu kopyalandı!");
     }}
 
     function copyToClipboard(text, msg) {{
@@ -1254,6 +1516,28 @@ def generate_catalog_html(skills: list[dict]) -> str:
                 .replace(/'/g, "&#039;");
     }}
 
+    // Global Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {{
+      if (e.key === '/' && document.activeElement.id !== 'searchInput') {{
+        e.preventDefault();
+        document.getElementById('searchInput').focus();
+      }}
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {{
+        e.preventDefault();
+        document.getElementById('searchInput').focus();
+      }}
+      if (e.key === 'Escape') {{
+        if (currentSearch) clearSearch();
+      }}
+      if (e.key.toLowerCase() === 't' && document.activeElement.tagName !== 'INPUT') {{
+        toggleTheme();
+      }}
+      if (e.key.toLowerCase() === 'v' && document.activeElement.tagName !== 'INPUT') {{
+        setViewMode(currentViewMode === 'grid' ? 'table' : 'grid');
+      }}
+    }});
+
+    // Initialize Theme & View
     const savedTheme = localStorage.getItem('agent_catalog_theme') || 'dark';
     document.body.setAttribute('data-theme', savedTheme);
     if (savedTheme === 'light') {{
@@ -1261,7 +1545,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
       document.getElementById('themeToggleBtn').innerHTML = '🌙 Koyu Tema';
     }}
 
-    renderCards();
+    setViewMode(currentViewMode);
   </script>
 </body>
 </html>
