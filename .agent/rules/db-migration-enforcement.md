@@ -9,7 +9,7 @@ kapi:
 
 # 🗄️ Veritabanı Revizyon ve Migration Zorunluluğu
 
-> Bu kural veritabanı içeren tüm backend projelerinde geçerlidir. Frontend-only projelerde uygulanmaz.
+> Bu kural veritabanı veya kalıcılık katmanı içeren **tüm projelerde** (Java/Spring, Node/TS, Python, Go, Rust, .NET; Supabase, Firebase, Prisma, Drizzle, Alembic, Flyway vb.; SQL ve NoSQL) istisnasız geçerlidir. Yalnızca hiçbir veritabanı varlığı veya bağımlılığı bulunmayan salt frontend projelerinde uygulanmaz.
 
 ---
 
@@ -20,15 +20,16 @@ sessiz veri kayıpları ve canlı ortam kesintileri en büyük risk kaynaklarıd
 AI kod ajanları çalıştıkları projelerde veritabanı revizyonu yaptıklarında hafıza kaybı yaşamamak,
 yapılan her şema hamlesini izlenebilir kılmak ve geriye uyumluluğu garanti altına almak zorundadır.
 
-Bu kural aşağıdaki işlemlerin tamamında **anında** devreye girer:
-- Yeni tablo veya entity oluşturulması
+Bu kural aşağıdaki işlemlerin tamamında ve tüm ekosistemlerde **anında** devreye girer:
+- Yeni tablo, koleksiyon veya entity/model oluşturulması
 - Mevcut tabloya yeni kolon eklenmesi
 - Kolon tipi, boyutu, nullability (`NULL` / `NOT NULL`) veya varsayılan değerinin (`DEFAULT`) değiştirilmesi
 - Kolon veya tablonun silinmesi ya da kullanımdan kaldırılması (`DEPRECATE` / `DROP`)
 - İndeks (`INDEX`), benzersizlik (`UNIQUE`), yabancı anahtar (`FOREIGN KEY`) veya kısıt (`CONSTRAINT`) eklenmesi/kaldırılması
 - Enum tiplerinin genişletilmesi veya değerlerinin güncellenmesi
-- Veritabanı migration scripti eklenmesi (Flyway `V...__*.sql`, Liquibase changeset, Prisma migration, TypeORM vb.)
+- Veritabanı migration scripti eklenmesi veya düzenlenmesi (Supabase `supabase/migrations/*.sql`, Flyway `V...__*.sql`, Liquibase changeset, Prisma migration, Drizzle migration, Alembic revision vb.)
 - Veri taşıma (data migration) ve backfill işlemleri
+- Saklı yordamlar (RPC, stored procedure) ve RLS (Row Level Security) güvenlik politikalarının değiştirilmesi
 
 ---
 
@@ -130,16 +131,28 @@ Mevcut `DB_MIGRATIONS.md` dosyasını güncellerken:
 
 ## 7. Kalite Kapısı ve Doğrulama
 
-Kuralın uygulanması aşağıdaki kapı komutu ile doğrulanır:
+Kuralın uygulanması aşağıdaki evrensel kapı komutu ile doğrulanır:
 
 ```bash
 python .agent/skills/musgoku/scripts/check_db_migrations.py
 ```
 
-- Projede entity veya migration scripti varsa ve `DB_MIGRATIONS.md` yoksa kapı **hata verir (E1)**.
-- Diskte migration scripti olup `DB_MIGRATIONS.md` içinde belgelenmemişse kapı **hata verir (E2)**.
-- Dosya boşsa veya revizyon başlığı içermiyorsa kapı **hata verir (E3)**.
-- Veritabanı varlığı olmayan frontend projelerinde kapı otomatik olarak **kapsam dışı kalır (exit 0)**.
+### Kapı Kontrolleri ve Hata Kodları
+
+| Kod | Tür | Açıklama |
+|---|---|---|
+| **E1** | Hata (Exit 1) | Projede veritabanı bağımlılığı, entity/model veya migration scripti var ancak `DB_MIGRATIONS.md` bulunamadı. |
+| **E2** | Hata (Exit 1) | Diskteki migration scripti `DB_MIGRATIONS.md` içinde belgelenmemiş. |
+| **E3** | Hata (Exit 1) | `DB_MIGRATIONS.md` boş (<80 bayt) veya yetersiz içerik barındırıyor. |
+| **E4** | Hata (Exit 1) | **Dinamik Git-Diff Koruması:** Git çalışma ağacında (staged/unstaged) veritabanı, migration veya şema dosyası değiştirildi ancak `DB_MIGRATIONS.md` aynı oturumda güncellenmedi. |
+| **W1** | Uyarı | Entity/Model sınıfları tespit edildi ancak dokümanda anılmamış. |
+| **W2** | Uyarı | `DB_MIGRATIONS.md` içinde standart `### [REV-...]` revizyon başlığı bulunamadı. |
+| **W3** | Uyarı | Kural öncesi geçmiş (legacy) migration'lar mevcut ve baseline olarak kabul edildi. |
+| **W4** | Uyarı | Birden fazla `DB_MIGRATIONS.md` dosyası tespit edildi; en güncel olanı esas alındı. |
+
+- **Brownfield / Legacy Projelerde Baseline Standardı:**
+  Kural yürürlüğe girmeden önce projede mevcut olan eski migration dosyaları için `DB_MIGRATIONS.md` başlığında `Başlangıç / Baseline: 001..045` şeklinde deklarasyon yapılması yeterlidir; her eski dosya için geçmişe dönük yüzlerce blok yazma zorunluluğu yoktur. Ancak yeni eklenen veya git'te dokunulan her migration için tek tek revizyon kaydı **ZORUNLUDUR**.
+- **Kapsam Dışı:** Veritabanı varlığı veya bağımlılığı bulunmayan salt frontend projelerinde kapı otomatik olarak kapsam dışı kalır (`exit 0`).
 
 ---
 

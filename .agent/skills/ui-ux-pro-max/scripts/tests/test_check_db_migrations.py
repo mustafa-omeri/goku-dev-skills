@@ -5,6 +5,7 @@
 import json
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -111,6 +112,104 @@ class TestCheckDbMigrations(unittest.TestCase):
 
         ret = check_db_migrations.main(["--json"])
         self.assertEqual(ret, 0)
+
+    def test_supabase_project_detected_and_verified(self):
+        """Supabase migrations dizini ve package.json bağımlılığı evrensel olarak tespit edilmeli."""
+        pkg = self.tmp_dir / "package.json"
+        pkg.write_text('{"name": "test-app", "dependencies": {"@supabase/supabase-js": "^2.39.0"}}', encoding="utf-8")
+
+        mig_dir = self.tmp_dir / "supabase" / "migrations"
+        mig_dir.mkdir(parents=True, exist_ok=True)
+        (mig_dir / "20261020_001_create_items.sql").write_text("CREATE TABLE items (id uuid primary key);", encoding="utf-8")
+
+        # Önce dokümansızken hata vermeli (E1)
+        ret_fail = check_db_migrations.main(["--json"])
+        self.assertEqual(ret_fail, 1)
+
+        # Doküman eklendiğinde ve migration belgelendiğinde geçmeli
+        doc_file = self.tmp_dir / "docs" / "database" / "DB_MIGRATIONS.md"
+        doc_file.parent.mkdir(parents=True, exist_ok=True)
+        doc_file.write_text(
+            "# DB_MIGRATIONS.md\n\n"
+            "## 1. Proje Veritabanı Özeti\n"
+            "- Motor: Supabase PostgreSQL\n\n"
+            "## 2. Revizyon Geçmişi\n\n"
+            "### [REV-20261020-01] Items Tablosu\n"
+            "- Migration Dosyası: supabase/migrations/20261020_001_create_items.sql\n"
+            "| Tablo | Kolon | İşlem |\n| items | id | ADD |\n",
+            encoding="utf-8"
+        )
+
+        ret_ok = check_db_migrations.main(["--json"])
+        self.assertEqual(ret_ok, 0)
+
+    def test_drizzle_and_python_alembic_detected(self):
+        """Drizzle ve Python/Alembic projeleri otomatik algılanmalı."""
+        # Drizzle config
+        (self.tmp_dir / "drizzle.config.ts").write_text("export default {};", encoding="utf-8")
+        ret_drizzle = check_db_migrations.main(["--json"])
+        self.assertEqual(ret_drizzle, 1)  # DB_MIGRATIONS.md yok diye E1 vermeli
+
+        # Drizzle sil, Python requirements dene
+        (self.tmp_dir / "drizzle.config.ts").unlink()
+        (self.tmp_dir / "requirements.txt").write_text("alembic==1.13.0\npsycopg2-binary==2.9.9", encoding="utf-8")
+        ret_python = check_db_migrations.main(["--json"])
+        self.assertEqual(ret_python, 1)
+
+    def test_baseline_declaration_allows_legacy_migrations(self):
+        """Baseline bildirimi yapıldığında eski migration'lar hata vermemeli (W3 uyarısı vermeli)."""
+        mig_dir = self.tmp_dir / "supabase" / "migrations"
+        mig_dir.mkdir(parents=True, exist_ok=True)
+        (mig_dir / "001_initial.sql").write_text("CREATE TABLE t1 (id int);", encoding="utf-8")
+        (mig_dir / "002_profiles.sql").write_text("CREATE TABLE t2 (id int);", encoding="utf-8")
+        (mig_dir / "049_new_feature.sql").write_text("CREATE TABLE t49 (id int);", encoding="utf-8")
+
+        doc_file = self.tmp_dir / "DB_MIGRATIONS.md"
+        doc_file.write_text(
+            "# DB_MIGRATIONS.md\n\n"
+            "## 1. Proje Veritabanı Özeti\n"
+            "- Motor: PostgreSQL\n"
+            "- Başlangıç / Baseline: 001..048 başlangıç şeması\n"
+            "- Son Revizyon: REV-20261020-01\n\n"
+            "## 2. Revizyon Geçmişi\n\n"
+            "### [REV-20261020-01] New Feature\n"
+            "- Migration Dosyası: 049_new_feature.sql\n"
+            "| Tablo | Kolon | İşlem |\n| t49 | id | ADD |\n",
+            encoding="utf-8"
+        )
+
+        ret = check_db_migrations.main(["--json"])
+        self.assertEqual(ret, 0)  # Baseline olduğu için exit 0 olmalı
+
+    def test_git_working_tree_e4_guard(self):
+        """Git çalışma ağacında SQL değiştirilip DB_MIGRATIONS.md ellenmediğinde E4 vermelidir."""
+        # Git deposu oluştur
+        subprocess.run(["git", "init"], cwd=str(self.tmp_dir), capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.name", "Test"], cwd=str(self.tmp_dir), check=True)
+        subprocess.run(["git", "config", "user.email", "test@test.com"], cwd=str(self.tmp_dir), check=True)
+
+        doc_file = self.tmp_dir / "DB_MIGRATIONS.md"
+        doc_file.write_text(
+            "# DB_MIGRATIONS.md\n\n"
+            "## 1. Proje Veritabanı Özeti\n"
+            "- Motor: MySQL\n"
+            "### [REV-20261016-01] Initial\n"
+            "- Migration: V1__init.sql\n"
+            "| Tablo | Kolon | İşlem |\n| a | b | c |\n",
+            encoding="utf-8"
+        )
+        mig_dir = self.tmp_dir / "migrations"
+        mig_dir.mkdir(parents=True, exist_ok=True)
+        (mig_dir / "V1__init.sql").write_text("CREATE TABLE a (b INT);", encoding="utf-8")
+
+        subprocess.run(["git", "add", "."], cwd=str(self.tmp_dir), check=True)
+        subprocess.run(["git", "commit", "-m", "init"], cwd=str(self.tmp_dir), check=True)
+
+        # Şimdi yeni bir migration ekle ama DB_MIGRATIONS.md'ye dokunma
+        (mig_dir / "V2__add_status.sql").write_text("ALTER TABLE a ADD COLUMN status VARCHAR;", encoding="utf-8")
+
+        ret = check_db_migrations.main(["--json"])
+        self.assertEqual(ret, 1)  # E4 ve E2 nedeniyle hata vermeli
 
 
 if __name__ == "__main__":
