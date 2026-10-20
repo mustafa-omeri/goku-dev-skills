@@ -8,6 +8,8 @@ elenenleri filtreler ve en yüksek puanlı fikirleri listeler.
 Kullanım:
     python .agent/skills/my-idea/scripts/idea_manager.py --list
     python .agent/skills/my-idea/scripts/idea_manager.py --top 3
+    python .agent/skills/my-idea/scripts/idea_manager.py --to-card IDEA-002
+    python .agent/skills/my-idea/scripts/idea_manager.py --to-card IDEA-002 --append
     python .agent/skills/my-idea/scripts/idea_manager.py --json
     python .agent/skills/my-idea/scripts/idea_manager.py --init
 """
@@ -114,6 +116,57 @@ def parse_ideas(content: str) -> list[dict]:
     return ideas
 
 
+def format_kanban_card(idea: dict, sprint: str = "S2", card_id: str | None = None) -> str:
+    """Fikir objesinden standart KANBAN.md kart bloğu üretir."""
+    score = idea.get("score", 0.0)
+    priority = "P1" if score >= 8.5 else ("P2" if score >= 7.0 else "P3")
+    cid = card_id or f"{sprint}-{idea.get('id', 'IDEA').replace('IDEA-', '')}"
+    title = idea.get("title", "Yeni Görev")
+    slug = re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
+
+    return (
+        f"### {cid} · {title}\n"
+        f"| alan | değer |\n"
+        f"|---|---|\n"
+        f"| durum | Bekliyor |\n"
+        f"| oncelik | {priority} |\n"
+        f"| sprint | {sprint} |\n"
+        f"| gherkin | specs/{cid}.feature#{slug} |\n"
+        f"| kapi | python tests/run_all.py |\n"
+        f"| test | (yazılacak) |\n"
+        f"| risk | orta |\n"
+    )
+
+
+def convert_idea_to_card(
+    idea_id: str,
+    ideas: list[dict],
+    sprint: str = "S2",
+    append_target: Path | None = None,
+) -> str | None:
+    """Belirtilen fikir ID'sini bulup KANBAN kartına dönüştürür, istenirse dosyaya ekler."""
+    matched = None
+    for item in ideas:
+        if item["id"].lower() == idea_id.lower():
+            matched = item
+            break
+    if not matched:
+        return None
+
+    card_md = format_kanban_card(matched, sprint=sprint)
+
+    if append_target and append_target.is_file():
+        content = append_target.read_text(encoding="utf-8")
+        if "## Bekliyor" in content:
+            parts = content.split("## Bekliyor", 1)
+            new_content = parts[0] + "## Bekliyor\n\n" + card_md + "\n" + parts[1].lstrip("\r\n")
+            append_target.write_text(new_content, encoding="utf-8")
+        else:
+            append_target.write_text(content.rstrip() + "\n\n" + card_md + "\n", encoding="utf-8")
+
+    return card_md
+
+
 def init_idea_file(target_path: Path, template_path: Path) -> bool:
     """Yoksa docs/idea/myidea.md dosyasını şablondan oluşturur."""
     if target_path.exists():
@@ -144,6 +197,9 @@ def main() -> int:
     parser.add_argument("--file", "-f", type=str, help="İncelenecek myidea.md dosya yolu.")
     parser.add_argument("--list", "-l", action="store_true", help="Tüm fikirleri listele.")
     parser.add_argument("--top", "-t", type=int, default=0, help="En yüksek puanlı N fikri getir.")
+    parser.add_argument("--to-card", "-c", type=str, metavar="IDEA_ID", help="Belirtilen fikir ID'sini KANBAN.md kartı formatına dönüştürür.")
+    parser.add_argument("--sprint", "-s", type=str, default="S2", help="Kart için hedef sprint (varsayılan: S2).")
+    parser.add_argument("--append", "-a", action="store_true", help="Üretilen kartı doğrudan KANBAN.md dosyasına ekler.")
     parser.add_argument("--json", "-j", action="store_true", help="JSON formatında çıktı ver.")
     parser.add_argument("--init", action="store_true", help="docs/idea/myidea.md dosyasını başlat.")
 
@@ -167,6 +223,26 @@ def main() -> int:
 
     content = idea_file.read_text(encoding="utf-8")
     ideas = parse_ideas(content)
+
+    if args.to_card:
+        kanban_file = project_root / "KANBAN.md" if args.append else None
+        card = convert_idea_to_card(args.to_card, ideas, sprint=args.sprint, append_target=kanban_file)
+        if not card:
+            if args.json:
+                print(json.dumps({"error": f"Fikir bulunamadı: {args.to_card}"}, ensure_ascii=False))
+            else:
+                print(f"[HATA] Fikir bulunamadı: {args.to_card}")
+            return 1
+        if args.json:
+            print(json.dumps({"idea_id": args.to_card, "sprint": args.sprint, "card": card}, ensure_ascii=False, indent=2))
+        else:
+            print(f"============================================================")
+            print(f"📋 KANBAN KARTI: {args.to_card} -> {args.sprint}")
+            print(f"============================================================\n")
+            print(card)
+            if args.append and kanban_file and kanban_file.is_file():
+                print(f"[OK] Kart {kanban_file.name} dosyasının '## Bekliyor' bölümüne eklendi.")
+        return 0
 
     if args.top > 0:
         # Aktif ve elenmemiş fikirleri puana göre sırala

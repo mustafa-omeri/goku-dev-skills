@@ -13,7 +13,7 @@ SCRIPTS_DIR = Path(__file__).resolve().parents[1]
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
-from idea_manager import parse_ideas, init_idea_file
+from idea_manager import parse_ideas, init_idea_file, convert_idea_to_card, format_kanban_card
 
 
 SAMPLE_MARKDOWN = """# 💡 PROJE FİKİR HAVUZU (myidea.md)
@@ -76,6 +76,33 @@ class TestIdeaManager(unittest.TestCase):
             # Calling again should return False (already exists)
             res2 = init_idea_file(target, tpl)
             self.assertFalse(res2)
+
+    def test_convert_idea_to_card(self):
+        ideas = parse_ideas(SAMPLE_MARKDOWN)
+        card = convert_idea_to_card("IDEA-101", ideas, sprint="S3")
+        self.assertIsNotNone(card)
+        self.assertIn("### S3-101 · Test Idea One", card)
+        self.assertIn("| durum | Bekliyor |", card)
+        self.assertIn("| oncelik | P1 |", card)
+        self.assertIn("| sprint | S3 |", card)
+        self.assertIn("| gherkin | specs/S3-101.feature#test-idea-one |", card)
+        self.assertIn("| kapi | python tests/run_all.py |", card)
+        self.assertIn("| test | (yazılacak) |", card)
+        self.assertIn("| risk | orta |", card)
+
+        # Non-existent idea returns None
+        self.assertIsNone(convert_idea_to_card("IDEA-999", ideas))
+
+    def test_convert_idea_to_card_append(self):
+        ideas = parse_ideas(SAMPLE_MARKDOWN)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            kanban = Path(tmpdir) / "KANBAN.md"
+            kanban.write_text("# KANBAN\n\n## Bekliyor\n\n### Existing\n\n## Yapılıyor\n", encoding="utf-8")
+            card = convert_idea_to_card("IDEA-101", ideas, sprint="S2", append_target=kanban)
+            self.assertIsNotNone(card)
+            content = kanban.read_text(encoding="utf-8")
+            self.assertIn("### S2-101 · Test Idea One", content)
+            self.assertTrue(content.index("### S2-101") < content.index("## Yapılıyor"))
 
 
 if __name__ == "__main__":

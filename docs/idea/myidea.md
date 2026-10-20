@@ -34,11 +34,11 @@
 - **Ajan Değerlendirmesi:** `my-idea` skill'i bünyesinde kolayca test edilebilir script ile uygulanabilir.
 
 ### IDEA-002: Fikirlerin GitHub Issue veya Kanban Kartına Otomatik Dönüştürülmesi
-- **Durum:** 🎯 `[RECOMMENDED]`
+- **Durum:** ✅ `[SHIPPED - my-idea SKILL §5 & CLI --to-card]`
 - **Rating:** `8.4/10` (Etki: 8 | Efor: 8 | Uyum: 9)
 - **Açıklama:** Seçilen bir fikrin onay sonrası doğrudan `SPRINT_PLAN.md` veya `KANBAN.md` içine kart olarak yazılması.
 - **Değer / Gerekçe:** Manuel kopyala-yapıştır zahmetini kaldırır, süreci hızlandırır.
-- **Ajan Değerlendirmesi:** Mevcut `sprint-delivery-workflow` kurallarıyla tam uyumlu bir handoff adımıdır.
+- **Ajan Değerlendirmesi:** `my-idea` skill'i §5 el sıkışma kuralı ile bağlandı; `idea_manager.py --to-card <ID> [--append]` ile otomatik kart üretimi ve ekleme özelliği devreye alındı.
 
 ### IDEA-003: Ağır Harici Fikir Yönetim Servislerine Entegrasyon
 - **Durum:** ⛔ `[DROPPED - Yerel Markdown İlkesine Aykırı]`
