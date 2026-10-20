@@ -112,8 +112,20 @@ Boş bırakmak yerine kapının seni uyarmasını tercih et.
   3. Gerekli 3. parti bağımlılıklar açık kaynak önceliğiyle araştırılır,
   4. Plan kullanıcıya sunulup review/değişiklik şansı verilir ve **kullanıcıdan açık onay alınır.** Onay geldikten sonra geliştirmeye geçilir.
 
----
+### 2.4 Sprint Ortası Major Değişiklik ve PRD/Gherkin Revizyon Protokolü (Mid-Sprint Scope Disruption)
 
+Sprint devam ederken kullanıcı tarafından talep edilen ve yapılması onaylanan, sprint hedefini veya sistem mimarisini değiştiren her **major talepte** şu 4 adımlı protokol tavizsiz işletilir:
+
+1. **PRD Güncellemesi (Gherkin Kabul Kriteri ile):**
+   Onaylanan talep, projenin `PRODUCT.md` (veya `docs/*-prd.md`) dokümanına ilgili özellik/modül altına doğrudan eklenir. Kabul kriterleri serbest metin olarak değil; `Feature` ve `Scenario` (`Given / When / Then`) formatında derin Gherkin senaryosu olarak kalıcı şekilde işlenir. Kod ile PRD dokümanının birbirinden kopması (spec drift) kesin olarak engellenir.
+2. **Sprint Planı Revizyonu (`SPRINT_PLAN.md` & `RELEASE_PLAN.md`):**
+   Sprint hedefi ve `**MVP Kapsam**` listesi revize edilir. Yeni işin plana dahil edilmesiyle birlikte, WIP limitini (maksimum 3 kart) ve sprint gerçekçiliğini korumak adına ötelenmesi gereken mevcut kartlar belirlenerek `RELEASE_PLAN.md`'ye aktarılır (**Kapsam Takası / Scope Trade-off**). Kullanıcıya hangi işin neden ötelendiği şeffafça bildirilir.
+3. **Feature Dosyası ve Kanban Kartı Açılışı:**
+   PRD'ye işlenen Gherkin senaryosu referans alınarak `specs/<kart-id>.feature` dosyası oluşturulur. `KANBAN.md` üzerinde yeni kart açılır (`gherkin:`, `kapi:`, `test:` alanlarıyla) ve `Bekliyor` sütununa kaydedilir.
+4. **TDD Kırmızı → Yeşil Döngüsü:**
+   Yeni talep koda dökülürken doğrudan üretim kodu yazılmaz; [`tdd`](../skills/tdd/SKILL.md) disiplini gereğince belirlenen dikiş noktasında (`seam`) önce kırmızı test yazılır, minimal kodla yeşile çevrilir ve doğrulanır.
+
+---
 
 ## 3. Kanban sözleşmesi
 

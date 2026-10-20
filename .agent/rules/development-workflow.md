@@ -95,12 +95,16 @@ Geliştirmeye başlamadan önce ajan sırasıyla şu adımları işletmek zorund
 ## Adım 3 — Geliştir
 
 1. İlgili skill'leri oku ve kurallarına uy.
-2. Kodu yaz — DRY, guard clauses, erken return, tip güvenliği.
-3. Frontend projesi ise i18n anahtarlarını **her iki dil dosyasına** ekle.
-4. Backend projesi ise API dokümantasyon dosyasını aynı değişiklikte güncelle.
-5. Veritabanı şeması, tablo, kolon veya entity revizyonu yapıldıysa `DB_MIGRATIONS.md` dosyasını aynı değişiklikte güncelle.
-6. Mevcut kodun akışını ve iş mantığını bozma; refactor'ı ayrı adımda yap.
-7. Frontend projesinde yeni veya güncellenen bir arayüz (sayfa, dashboard, form, tablo, bileşen) üretiliyorsa; `frontend-design`, `ui-ux-pro-max` ve (Tailwind ise) `ui-styling` kurallarına uymak zorunludur. Tekdüze "AI-slop" arayüzler testler geçse dahi teslim edilemez (bkz. `sprint-delivery-workflow.md` §6.1).
+2. ⛔ **TDD Kırmızı → Yeşil Döngüsü (Red-Green-Refactor):** Yeni iş mantığı, servis, endpoint, yardımcı fonksiyon veya veri dönüşümü geliştirirken doğrudan üretim kodunu yazmak YASAKTIR (`tdd` skill'i devreye girer):
+   - **Aşama 1 (Kırmızı Test):** Önceden belirlenen dikiş noktasında (`seam`) başarısız olan test yazılır ve testin kırmızıya düştüğü çalıştırılarak kanıtlanır. Dahili/private metotlar mock'lanmaz; genel arayüzün davranışı test edilir.
+   - **Aşama 2 (Minimal Geçiş Kodu):** Yalnızca o testi yeşile çevirecek kadar minimal üretim kodu yazılır (spekülatif kod veya geleceğe dönük hayali yapılar eklenmez).
+   - **Aşama 3 (Yeşil Doğrulama):** Test çalıştırılır ve yeşile döndüğü kanıtlanır. Döngü başına tek dikey dilim (tracer bullet) ilerlenir.
+3. Kodu yaz — DRY, guard clauses, erken return, tip güvenliği.
+4. Frontend projesi ise i18n anahtarlarını **her iki dil dosyasına** ekle.
+5. Backend projesi ise API dokümantasyon dosyasını aynı değişiklikte güncelle.
+6. Veritabanı şeması, tablo, kolon veya entity revizyonu yapıldıysa `DB_MIGRATIONS.md` dosyasını aynı değişiklikte güncelle.
+7. Mevcut kodun akışını ve iş mantığını bozma; refactor'ı ayrı adımda yap (`code-review` ve `codebase-design` ilkeleriyle).
+8. Frontend projesinde yeni veya güncellenen bir arayüz (sayfa, dashboard, form, tablo, bileşen) üretiliyorsa; `frontend-design`, `ui-ux-pro-max` ve (Tailwind ise) `ui-styling` kurallarına uymak zorunludur. Tekdüze "AI-slop" arayüzler testler geçse dahi teslim edilemez (bkz. `sprint-delivery-workflow.md` §6.1).
 
 ---
 

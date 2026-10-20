@@ -188,6 +188,7 @@ Ayrıntı: [`rules/no-silent-wait.md`](rules/no-silent-wait.md).
 - Kod yazmadan önce `.agent/skills/` altındaki ilgili skill'i oku.
 - Yönlendirme: [`.agent\skills\musgoku\SKILL.md`](skills/musgoku/SKILL.md)
 - Kurallar dizini tek kaynaktır: [`.agent\rules/`](rules/) — `trigger-rule-action.md` hepsini bağlar.
+- Yeni iş mantığı, servis veya endpoint geliştirmede `tdd` (kırmızı → yeşil döngüsü); hata ayıklamada ise `bug-diagnosis-enforcement` (önce kırmızı geri bildirim döngüsü) tavizsiz uygulanır.
 - Tasarım/UI taleplerinde `canvas-design` + `frontend-design` + `ui-ux-pro-max`
   birlikte okunur; hangi konunun sahibi olduğunu `design-skills-enforcement.md`
   §3 sahiplik haritasından doğrula.
