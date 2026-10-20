@@ -24,6 +24,7 @@ TEST_SCRIPTS = [
     ("Check AGENTS Parity", HERE / "check_agents_parity.py"),
     ("Test Skills Catalog", HERE / "test_skills_catalog.py"),
     ("Test CLI Profiles", HERE / "test_cli_profiles.py"),
+    ("Test CLI Update", HERE / "test_cli_update.py"),
 ]
 
 

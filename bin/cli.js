@@ -16,8 +16,9 @@
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
+const https = require('https');
 
-const VERSION = '1.9.8';
+const VERSION = '1.9.9';
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 const RAW_URL_BASE = `https://raw.githubusercontent.com/${GITHUB_REPO}/main`;
 
@@ -357,6 +358,63 @@ const PROFILES = {
 };
 // Aliases
 PROFILES.all = PROFILES.fullstack;
+
+const PROJECT_BLOCK_REGEX = /^## Proje Bazlı Ek Kurallar[\s\S]*$/m;
+
+// Helper: Extract project-specific rules from AGENTS.md
+function extractProjectBlock(content) {
+  if (!content) return null;
+  const match = content.match(PROJECT_BLOCK_REGEX);
+  return match ? match[0] : null;
+}
+
+// Helper: Inject preserved project-specific rules back into AGENTS.md
+function injectProjectBlock(content, projectBlock) {
+  if (!projectBlock) return content;
+  if (PROJECT_BLOCK_REGEX.test(content)) {
+    return content.replace(PROJECT_BLOCK_REGEX, projectBlock);
+  }
+  return content.trimEnd() + '\n\n' + projectBlock;
+}
+
+// Helper: Simple HTTP/HTTPS GET with redirect and timeout support
+function httpGet(url) {
+  return new Promise((resolve, reject) => {
+    const req = https.get(url, { headers: { 'User-Agent': 'goku-dev-skills-cli' } }, (res) => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        return httpGet(res.headers.location).then(resolve).catch(reject);
+      }
+      if (res.statusCode !== 200) {
+        return reject(new Error(`HTTP ${res.statusCode} for ${url}`));
+      }
+      const chunks = [];
+      res.on('data', (chunk) => chunks.push(chunk));
+      res.on('end', () => resolve(Buffer.concat(chunks)));
+    });
+    req.on('error', reject);
+    req.setTimeout(15000, () => {
+      req.destroy();
+      reject(new Error(`Timeout fetching ${url}`));
+    });
+  });
+}
+
+// Helper: List all files recursively in a directory
+function listFilesRecursive(dir, baseDir = dir, ignoreDirs = ['__pycache__', '.pytest_cache']) {
+  if (!fs.existsSync(dir)) return [];
+  const results = [];
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (ignoreDirs.includes(entry.name)) continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results.push(...listFilesRecursive(full, baseDir, ignoreDirs));
+    } else if (entry.isFile()) {
+      results.push(path.relative(baseDir, full).replace(/\\/g, '/'));
+    }
+  }
+  return results;
+}
 
 // Helper: Copy directory recursively with optional ignore
 function copyDirSync(src, dest, options = {}) {
@@ -819,6 +877,18 @@ async function cmdInit(options) {
     fs.copyFileSync(srcCatalog, path.join(destAgent, 'skills-catalog.html'));
   }
 
+  // 7. Save goku.json metadata
+  const gokuConfig = {
+    version: VERSION,
+    profile: profile.id,
+    minimal: !!options.minimal,
+    installedSkills: skillsToCopy,
+    installedRules: rulesToCopy,
+    installedTemplates: templatesToCopy,
+    initializedAt: new Date().toISOString(),
+  };
+  fs.writeFileSync(path.join(destAgent, 'goku.json'), JSON.stringify(gokuConfig, null, 2), 'utf8');
+
   // Size calculation
   const totalSizeBytes = getDirSizeBytes(destAgent);
   const totalSizeMB = (totalSizeBytes / (1024 * 1024)).toFixed(1);
@@ -838,6 +908,388 @@ async function cmdInit(options) {
   console.log(`\nYour AI assistant is now ready to develop with ${c.cyan}[${profile.name}]${c.reset} standards!`);
 }
 
+// Command: update (Surgical updater for already-installed skills & rules)
+async function cmdUpdate(options) {
+  const cwd = process.cwd();
+  const targetDir = options.dest ? path.resolve(cwd, options.dest) : cwd;
+  const destAgent = path.join(targetDir, '.agent');
+
+  if (!fs.existsSync(destAgent)) {
+    console.error(`${c.red}Error:${c.reset} No .agent directory found at ${targetDir}`);
+    console.log(`To install skills for the first time, run: ${c.cyan}npx goku-dev-skills init${c.reset}`);
+    process.exit(1);
+  }
+
+  // Load existing goku.json if present
+  let gokuConfig = null;
+  const gokuJsonPath = path.join(destAgent, 'goku.json');
+  if (fs.existsSync(gokuJsonPath)) {
+    try {
+      gokuConfig = JSON.parse(fs.readFileSync(gokuJsonPath, 'utf8'));
+    } catch (_) {}
+  }
+
+  // Detect currently installed assets
+  const skillsDir = path.join(destAgent, 'skills');
+  const installedSkills = fs.existsSync(skillsDir)
+    ? fs.readdirSync(skillsDir).filter((f) => {
+        const full = path.join(skillsDir, f);
+        return fs.statSync(full).isDirectory() && !f.startsWith('.');
+      })
+    : [];
+
+  const rulesDir = path.join(destAgent, 'rules');
+  const installedRules = fs.existsSync(rulesDir)
+    ? fs.readdirSync(rulesDir).filter((f) => f.endsWith('.md'))
+    : [];
+
+  const templatesDir = path.join(destAgent, 'templates');
+  const installedTemplates = fs.existsSync(templatesDir)
+    ? fs.readdirSync(templatesDir).filter((f) => f.endsWith('.md'))
+    : [];
+
+  const hasCatalog = fs.existsSync(path.join(destAgent, 'skills-catalog.html'));
+  const hasAgentsMd = fs.existsSync(path.join(destAgent, 'AGENTS.md'));
+  const hasThemes = fs.existsSync(path.join(skillsDir, 'frontend-design', 'component-themes'));
+
+  // Profile determination
+  const profileId = options.profile || gokuConfig?.profile || detectProjectProfile(targetDir) || 'fullstack';
+  const profile = PROFILES[profileId] || PROFILES.fullstack;
+
+  const isCheckOnly = !!(options.check || options.dryRun);
+  const useRemote = !!(options.remote || !HAS_LOCAL_AGENT);
+
+  console.log(`\n${c.bold}${c.cyan}Goku Dev Skills Update${c.reset} ${isCheckOnly ? c.yellow + '[CHECK / DRY-RUN]' + c.reset : ''}`);
+  console.log(`${c.dim}${'─'.repeat(70)}${c.reset}`);
+  console.log(`- Target: ${c.bold}${targetDir}${c.reset}`);
+  console.log(`- Source: ${useRemote ? c.magenta + 'GitHub (https://github.com/' + GITHUB_REPO + ')' + c.reset : c.green + 'Local Package (' + LOCAL_AGENT_DIR + ')' + c.reset}`);
+  console.log(`- Active Profile: ${c.bold}${profile.name}${c.reset}`);
+  console.log(`- Installed Skills to update: ${c.green}${installedSkills.length}${c.reset} (${installedSkills.join(', ') || 'none'})`);
+  console.log(`- Installed Rules to update: ${c.green}${installedRules.length}${c.reset}`);
+  console.log(`- Installed Templates to update: ${c.green}${installedTemplates.length}${c.reset}`);
+  console.log(`- Component Themes: ${hasThemes ? c.cyan + 'Installed' + c.reset : c.yellow + 'Minimal (Excluded)' + c.reset}`);
+  const uninstalledCount = Math.max(0, Object.keys(SKILLS_MANIFEST).length - installedSkills.length);
+  console.log(`- ${c.dim}Skipped uninstalled skills: ${uninstalledCount} skills will NOT be fetched.${c.reset}`);
+  console.log(`${c.dim}${'─'.repeat(70)}${c.reset}\n`);
+
+  const updatedFiles = [];
+  const unchangedFiles = [];
+  const errorFiles = [];
+
+  // Preservation of project-specific rules in AGENTS.md
+  let preservedProjectBlock = null;
+  const targetAgentsPath = path.join(destAgent, 'AGENTS.md');
+  if (fs.existsSync(targetAgentsPath)) {
+    preservedProjectBlock = extractProjectBlock(fs.readFileSync(targetAgentsPath, 'utf8'));
+  }
+
+  // --- LOCAL UPDATE MODE ---
+  if (!useRemote) {
+    // 1. Update installed skills
+    for (const skill of installedSkills) {
+      const srcSkillDir = path.join(LOCAL_AGENT_DIR, 'skills', skill);
+      const destSkillDir = path.join(skillsDir, skill);
+
+      if (!fs.existsSync(srcSkillDir)) {
+        console.log(`  ${c.yellow}⚠ Warning: Skill "${skill}" not found in source package.${c.reset}`);
+        continue;
+      }
+
+      const ignoreList = ['__pycache__', '.pytest_cache'];
+      if (!hasThemes && skill === 'frontend-design') {
+        ignoreList.push('component-themes');
+      }
+
+      const files = listFilesRecursive(srcSkillDir, srcSkillDir, ignoreList);
+      for (const rel of files) {
+        const srcFile = path.join(srcSkillDir, rel);
+        const destFile = path.join(destSkillDir, rel);
+
+        const srcBuf = fs.readFileSync(srcFile);
+        let isDifferent = true;
+
+        if (fs.existsSync(destFile)) {
+          const destBuf = fs.readFileSync(destFile);
+          isDifferent = Buffer.compare(srcBuf, destBuf) !== 0;
+        }
+
+        const displayPath = `.agent/skills/${skill}/${rel}`;
+        if (isDifferent) {
+          updatedFiles.push(displayPath);
+          if (!isCheckOnly) {
+            fs.mkdirSync(path.dirname(destFile), { recursive: true });
+            fs.copyFileSync(srcFile, destFile);
+          }
+        } else {
+          unchangedFiles.push(displayPath);
+        }
+      }
+    }
+
+    // 2. Update installed rules
+    for (const rule of installedRules) {
+      const srcRule = path.join(LOCAL_AGENT_DIR, 'rules', rule);
+      const destRule = path.join(rulesDir, rule);
+
+      if (fs.existsSync(srcRule)) {
+        let content = fs.readFileSync(srcRule, 'utf8');
+        content = adaptRuleFile(rule, content, profile.id);
+
+        let isDifferent = true;
+        if (fs.existsSync(destRule)) {
+          const destContent = fs.readFileSync(destRule, 'utf8');
+          isDifferent = content !== destContent;
+        }
+
+        const displayPath = `.agent/rules/${rule}`;
+        if (isDifferent) {
+          updatedFiles.push(displayPath);
+          if (!isCheckOnly) {
+            fs.writeFileSync(destRule, content, 'utf8');
+          }
+        } else {
+          unchangedFiles.push(displayPath);
+        }
+      }
+    }
+
+    // 3. Update installed templates
+    for (const tpl of installedTemplates) {
+      const srcTpl = path.join(LOCAL_AGENT_DIR, 'templates', tpl);
+      const destTpl = path.join(templatesDir, tpl);
+
+      if (fs.existsSync(srcTpl)) {
+        const srcBuf = fs.readFileSync(srcTpl);
+        let isDifferent = true;
+        if (fs.existsSync(destTpl)) {
+          const destBuf = fs.readFileSync(destTpl);
+          isDifferent = Buffer.compare(srcBuf, destBuf) !== 0;
+        }
+
+        const displayPath = `.agent/templates/${tpl}`;
+        if (isDifferent) {
+          updatedFiles.push(displayPath);
+          if (!isCheckOnly) {
+            fs.copyFileSync(srcTpl, destTpl);
+          }
+        } else {
+          unchangedFiles.push(displayPath);
+        }
+      }
+    }
+
+    // 4. Update AGENTS.md
+    if (hasAgentsMd) {
+      const srcAgents = path.join(LOCAL_AGENT_DIR, 'AGENTS.md');
+      if (fs.existsSync(srcAgents)) {
+        let content = fs.readFileSync(srcAgents, 'utf8');
+        content = filterAgentsMd(content, profile.id);
+        content = injectProjectBlock(content, preservedProjectBlock);
+
+        const destAgents = path.join(destAgent, 'AGENTS.md');
+        const destContent = fs.existsSync(destAgents) ? fs.readFileSync(destAgents, 'utf8') : '';
+        const isDifferent = content !== destContent;
+
+        const displayPath = `.agent/AGENTS.md`;
+        if (isDifferent) {
+          updatedFiles.push(displayPath);
+          if (!isCheckOnly) {
+            fs.writeFileSync(destAgents, content, 'utf8');
+            const rootAgents = path.join(targetDir, 'AGENTS.md');
+            if (fs.existsSync(rootAgents)) {
+              fs.writeFileSync(rootAgents, content, 'utf8');
+            }
+          }
+        } else {
+          unchangedFiles.push(displayPath);
+        }
+      }
+    }
+
+    // 5. Update skills-catalog.html
+    if (hasCatalog) {
+      const srcCatalog = path.join(LOCAL_AGENT_DIR, 'skills-catalog.html');
+      const destCatalog = path.join(destAgent, 'skills-catalog.html');
+
+      if (fs.existsSync(srcCatalog)) {
+        const srcBuf = fs.readFileSync(srcCatalog);
+        let isDifferent = true;
+        if (fs.existsSync(destCatalog)) {
+          const destBuf = fs.readFileSync(destCatalog);
+          isDifferent = Buffer.compare(srcBuf, destBuf) !== 0;
+        }
+
+        const displayPath = `.agent/skills-catalog.html`;
+        if (isDifferent) {
+          updatedFiles.push(displayPath);
+          if (!isCheckOnly) {
+            fs.copyFileSync(srcCatalog, destCatalog);
+          }
+        } else {
+          unchangedFiles.push(displayPath);
+        }
+      }
+    }
+  } else {
+    // --- REMOTE GITHUB UPDATE MODE ---
+    console.log(`Connecting to GitHub Tree API to resolve updated files...`);
+    let tree = [];
+    try {
+      const treeUrl = `https://api.github.com/repos/${GITHUB_REPO}/git/trees/main?recursive=1`;
+      const treeResBuf = await httpGet(treeUrl);
+      const treeJson = JSON.parse(treeResBuf.toString('utf8'));
+      tree = treeJson.tree || [];
+    } catch (err) {
+      console.log(`${c.yellow}Tree API unavailable (${err.message}). Falling back to direct URL fetch for installed files.${c.reset}`);
+    }
+
+    // Filter remote tree to ONLY include files corresponding to installed assets
+    const remoteTargets = [];
+    if (tree.length > 0) {
+      for (const item of tree) {
+        if (item.type !== 'blob') continue;
+        const p = item.path.replace(/\\/g, '/');
+
+        // Must start with .agent/
+        if (!p.startsWith('.agent/')) continue;
+
+        // Skills check
+        if (p.startsWith('.agent/skills/')) {
+          const parts = p.split('/');
+          const skillName = parts[2];
+          if (!installedSkills.includes(skillName)) continue;
+          if (!hasThemes && skillName === 'frontend-design' && p.includes('/component-themes/')) continue;
+          remoteTargets.push(p);
+          continue;
+        }
+
+        // Rules check
+        if (p.startsWith('.agent/rules/')) {
+          const ruleName = path.basename(p);
+          if (installedRules.includes(ruleName)) {
+            remoteTargets.push(p);
+          }
+          continue;
+        }
+
+        // Templates check
+        if (p.startsWith('.agent/templates/')) {
+          const tplName = path.basename(p);
+          if (installedTemplates.includes(tplName)) {
+            remoteTargets.push(p);
+          }
+          continue;
+        }
+
+        if (p === '.agent/AGENTS.md' && hasAgentsMd) {
+          remoteTargets.push(p);
+          continue;
+        }
+
+        if (p === '.agent/skills-catalog.html' && hasCatalog) {
+          remoteTargets.push(p);
+          continue;
+        }
+      }
+    }
+
+    console.log(`Fetching updates for ${c.cyan}${remoteTargets.length}${c.reset} installed assets from GitHub...`);
+
+    for (const relPath of remoteTargets) {
+      const remoteUrl = `${RAW_URL_BASE}/${relPath}`;
+      const localFilePath = path.join(targetDir, relPath);
+
+      try {
+        const remoteBuf = await httpGet(remoteUrl);
+        let newContentBuf = remoteBuf;
+
+        // Apply profile tailoring for rules & AGENTS.md
+        if (relPath.startsWith('.agent/rules/')) {
+          const ruleName = path.basename(relPath);
+          let text = remoteBuf.toString('utf8');
+          text = adaptRuleFile(ruleName, text, profile.id);
+          newContentBuf = Buffer.from(text, 'utf8');
+        } else if (relPath === '.agent/AGENTS.md') {
+          let text = remoteBuf.toString('utf8');
+          text = filterAgentsMd(text, profile.id);
+          text = injectProjectBlock(text, preservedProjectBlock);
+          newContentBuf = Buffer.from(text, 'utf8');
+        }
+
+        let isDifferent = true;
+        if (fs.existsSync(localFilePath)) {
+          const localBuf = fs.readFileSync(localFilePath);
+          isDifferent = Buffer.compare(newContentBuf, localBuf) !== 0;
+        }
+
+        if (isDifferent) {
+          updatedFiles.push(relPath);
+          if (!isCheckOnly) {
+            fs.mkdirSync(path.dirname(localFilePath), { recursive: true });
+            fs.writeFileSync(localFilePath, newContentBuf);
+            if (relPath === '.agent/AGENTS.md') {
+              const rootAgents = path.join(targetDir, 'AGENTS.md');
+              if (fs.existsSync(rootAgents)) {
+                fs.writeFileSync(rootAgents, newContentBuf);
+              }
+            }
+          }
+        } else {
+          unchangedFiles.push(relPath);
+        }
+      } catch (err) {
+        errorFiles.push(`${relPath}: ${err.message}`);
+      }
+    }
+  }
+
+  // Update goku.json metadata
+  if (!isCheckOnly) {
+    const updatedGokuConfig = {
+      version: VERSION,
+      profile: profileId,
+      minimal: !hasThemes,
+      installedSkills: installedSkills,
+      installedRules: installedRules,
+      installedTemplates: installedTemplates,
+      lastUpdated: new Date().toISOString(),
+      updatedVia: useRemote ? 'github-remote' : 'local-package',
+    };
+    fs.writeFileSync(gokuJsonPath, JSON.stringify(updatedGokuConfig, null, 2), 'utf8');
+  }
+
+  // Summary Report
+  console.log(`\n${c.bold}Update Summary:${c.reset}`);
+  console.log(`${c.dim}${'─'.repeat(70)}${c.reset}`);
+  if (updatedFiles.length > 0) {
+    console.log(`${c.green}${c.bold}Files ${isCheckOnly ? 'to update' : 'updated'} (${updatedFiles.length}):${c.reset}`);
+    for (const f of updatedFiles.slice(0, 15)) {
+      console.log(`  ${c.green}✓${c.reset} ${f}`);
+    }
+    if (updatedFiles.length > 15) {
+      console.log(`  ${c.dim}... and ${updatedFiles.length - 15} more files.${c.reset}`);
+    }
+  } else {
+    console.log(`${c.green}✓ All installed assets are already up-to-date! (0 files changed)${c.reset}`);
+  }
+
+  console.log(`\n- Unchanged files: ${c.dim}${unchangedFiles.length} already current${c.reset}`);
+  console.log(`- Skipped uninstalled skills: ${c.yellow}${uninstalledCount} skills safely bypassed (zero clutter)${c.reset}`);
+
+  if (errorFiles.length > 0) {
+    console.log(`\n${c.red}Warnings / Network Errors (${errorFiles.length}):${c.reset}`);
+    for (const err of errorFiles) {
+      console.log(`  ${c.red}✗${c.reset} ${err}`);
+    }
+  }
+
+  if (isCheckOnly) {
+    console.log(`\n${c.yellow}Check complete. Run without --check to apply updates.${c.reset}`);
+  } else {
+    console.log(`\n${c.green}${c.bold}✓ Skill set updated successfully to v${VERSION}!${c.reset}`);
+  }
+}
+
 // Main CLI Router
 async function main() {
   const args = process.argv.slice(2);
@@ -852,15 +1304,18 @@ ${c.bold}Usage:${c.reset}
 
 ${c.bold}Commands:${c.reset}
   ${c.green}init${c.reset}                             Install the .agent/ architecture by profile
+  ${c.green}update [options]${c.reset}                 Surgically update only already-installed skills & rules
   ${c.green}list${c.reset}                             List all available skills, profiles & component categories
   ${c.green}add <skill-name...>${c.reset}             Install one or more individual skills
   ${c.green}add theme <category>/<theme>${c.reset}    Install a standalone HTML/CSS component theme
   ${c.green}info <skill-name>${c.reset}               Display triggers, documentation & details for a skill
 
-${c.bold}Init Options:${c.reset}
+${c.bold}Init & Update Options:${c.reset}
   -p, --profile <name>            Profile: backend, frontend, creative, fullstack (default: fullstack)
   -m, --minimal                   Exclude heavy component themes in frontend (~5 MB vs ~60 MB)
   -d, --detect                    Auto-detect project stack from current workspace
+  --check, --dry-run              Dry-run check: inspect pending updates without modifying files
+  --remote                        Force fetching updates directly from GitHub main repository
   --dest <path>                   Custom destination directory (default: current directory)
   --agent <name>                  Target AI agent: antigravity (default), cursor, claude, windsurf
   --with-rules                    Also copy .agent/rules/ quality validation gates
@@ -869,8 +1324,9 @@ ${c.bold}Init Options:${c.reset}
 ${c.bold}Examples:${c.reset}
   npx goku-dev-skills init -p backend           # Ultra lightweight Java/.NET API setup (~2.5 MB)
   npx goku-dev-skills init -p frontend -m       # Minimal React/Next.js setup without 55 themes (~5 MB)
-  npx goku-dev-skills init -p fullstack         # Full 26 skills + 55 component themes (~65 MB)
-  npx goku-dev-skills init --detect             # Auto-detect project stack
+  npx goku-dev-skills update                    # Surgically update only existing skills & rules
+  npx goku-dev-skills update --check            # Inspect what will be updated without touching disk
+  npx goku-dev-skills update --remote           # Pull latest updates directly from GitHub main
   npx goku-dev-skills add frontend-design       # Install single skill
   npx goku-dev-skills add theme sidebars/violet-minimal-sidebar
 `);
@@ -890,6 +1346,9 @@ ${c.bold}Examples:${c.reset}
     minimal: false,
     detect: false,
     withRules: false,
+    check: false,
+    dryRun: false,
+    remote: false,
   };
 
   const cleanArgs = [];
@@ -906,6 +1365,12 @@ ${c.bold}Examples:${c.reset}
       options.detect = true;
     } else if (args[i] === '--with-rules') {
       options.withRules = true;
+    } else if (args[i] === '--check') {
+      options.check = true;
+    } else if (args[i] === '--dry-run') {
+      options.dryRun = true;
+    } else if (args[i] === '--remote') {
+      options.remote = true;
     } else {
       cleanArgs.push(args[i]);
     }
@@ -917,6 +1382,12 @@ ${c.bold}Examples:${c.reset}
     case 'list':
     case 'ls':
       cmdList();
+      break;
+
+    case 'update':
+    case 'upgrade':
+    case 'sync':
+      await cmdUpdate(options);
       break;
 
     case 'info':
