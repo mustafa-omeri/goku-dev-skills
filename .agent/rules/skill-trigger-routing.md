@@ -96,6 +96,7 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 | overcomplication, gereksiz karmaşıklık, kapsam kayması, varsayımı belirt / overengineering, scope creep, state assumptions | `karpathy-guidelines` | — |
 | tasarım becerisi, daha iyi yaz, amatör mü / better code, improve quality | `karpathy-guidelines` + tasarım üçlüsü | — |
 | gözlem kaydet, skill geliştir, süreç analizi, yeni skill öner / log observation, improve skill, observe task | `task-observer` | `skills/task-observer/SKILL.md` |
+| fikirlerime bak, fikirlerimi incele, fikir havuzu, yeni fikir seç, ne yapabiliriz, myidea, my idea / review ideas, idea backlog, brainstorm ideas | `my-idea` | `skills/my-idea/SKILL.md` |
 
 ### A5. Prompt Makroları ve Kısayol Etiketleri (Prompt Shorthands)
 
@@ -121,6 +122,7 @@ Kullanıcının detaylı ve uzun prompt yazmadan doğrudan tam kapsamlı revizyo
 | "Yeni özellik planla" | `doc-coauthoring` → `musgoku` | kapsam → mimari |
 | "Hata düzelt ve temizle" | `musgoku` → `karpathy-guidelines` | çözüm → sadeleştirme denetimi |
 | "Yayına al" | `production-docker-architect` → `git-release-workflow` | imaj → commit/tag/push |
+| "Fikir havuzundan iş seç" | `my-idea` → `doc-coauthoring` → `sprint-delivery-workflow` → `tdd` → `musgoku` | re-rating & seçim → spec → sprint kartı → test → kodlama |
 | "Genel kod talebi" | `musgoku` (yönlendirici) → ilgili alt tablo | — |
 
 ---

@@ -46,7 +46,7 @@ CATEGORIES = {
     "Teslimat & Kalite": [
         "git-release-workflow", "production-docker-architect",
         "karpathy-guidelines", "task-observer",
-        "diagnosing-bugs", "code-review"
+        "diagnosing-bugs", "code-review", "my-idea"
     ],
     "Marka & Doküman": [
         "brand", "doc-coauthoring", "slides"
@@ -227,6 +227,16 @@ public class EventController { ... }"""
         "config_snippet": """// scaffold_tour.py ile TypeScript hook veya bileşen üretilebilir:
 // python .agent/skills/onboarding-tour/scripts/scaffold_tour.py --engine driverjs --name demoTour
 import { useDemoTour } from './useDemoTour';"""
+    },
+    "my-idea": {
+        "status": "Proje Havuzu",
+        "badge_class": "badge-info",
+        "file": "docs/idea/myidea.md",
+        "features": ["Fikir Havuzu Analizi", "Re-rating Skoru", "Bayat Fikir Eleme", "Top 3 Seçim", "TDD & Sprint Entegrasyonu"],
+        "detail": "Proje planı dışındaki serbest fikirleri docs/idea/myidea.md içinde toplar; ajan büyük işler bittiğinde veya kullanıcı isteğiyle fikirleri re-rate eder ve ilk 3 öneriyi sunar.",
+        "sample_prompt": "Fikirlerime bak ve güncel proje durumuna göre sıradaki en mantıklı 3 adımı öner.",
+        "config_snippet": """# Fikirleri İncele ve Sırala:
+python .agent/skills/my-idea/scripts/idea_manager.py --top 3"""
     }
 }
 
@@ -248,6 +258,7 @@ SAMPLE_PROMPTS = {
     "design": "Kurumsal kimlik için logo brief'i ve kartvizit tasarım yönergelerini hazırla.",
     "slides": "Yatırımcı sunumu için PAS formülüyle 10 slaytlık pitch deck metni ve düzeni çıkar.",
     "doc-coauthoring": "Teknik mimari karar dokümanı (RFC / Decision Doc) taslağı oluştur.",
+    "my-idea": "Fikirlerime bak ve güncel proje durumuna göre sıradaki en mantıklı 3 adımı öner.",
     "karpathy-guidelines": "Kod karmaşıklığını azalt, gereksiz soyutlamaları sadeleştir ve varsayımları yüzeye çıkar.",
     "react-best-practices": "React bileşenindeki gereksiz re-render'ları ve waterfall veri çekimlerini ortadan kaldır.",
     "theme-factory": "Uygulama için 10 hazır temadan birini seç ve HEX paletini uygula.",

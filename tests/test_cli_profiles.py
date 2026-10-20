@@ -98,8 +98,9 @@ class TestCliProfiles(unittest.TestCase):
         self.assertEqual(res.returncode, 0, f"CLI init fullstack failed: {res.stderr}")
 
         skills_dir = dest / ".agent" / "skills"
-        installed_skills = {d.name for d in skills_dir.iterdir() if d.is_dir()}
-        self.assertEqual(len(installed_skills), 26)
+        installed_skills = {d.name for d in skills_dir.iterdir() if d.is_dir() and (d / "SKILL.md").is_file()}
+        source_skills = len([d for d in (ROOT / ".agent" / "skills").iterdir() if d.is_dir() and (d / "SKILL.md").is_file()])
+        self.assertEqual(len(installed_skills), source_skills)
 
 
 if __name__ == "__main__":

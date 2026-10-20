@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 
-const VERSION = '1.9.5';
+const VERSION = '1.9.8';
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 const RAW_URL_BASE = `https://raw.githubusercontent.com/${GITHUB_REPO}/main`;
 
@@ -38,7 +38,7 @@ const c = {
   magenta: '\x1b[35m',
 };
 
-// Available 26 skills with descriptions
+// Available 27 skills with descriptions
 const SKILLS_MANIFEST = {
   'musgoku': {
     category: 'Architecture / Fullstack',
@@ -170,6 +170,11 @@ const SKILLS_MANIFEST = {
     desc: 'Ubiquitous language management, active GLOSSARY.md maintenance, inline updates & high-threshold ADR criteria.',
     triggers: 'domain model, terimler sozlugu, glossary, domain modeling, ubiquitous language, adr decision',
   },
+  'my-idea': {
+    category: 'Product & Ideas',
+    desc: 'Idea backlog evaluator: re-rates docs/idea/myidea.md against project state, filters obsolete ideas, proposes top 3 choices & hands off to TDD/Sprint.',
+    triggers: 'fikirlerime bak, fikirlerimi incele, fikir havuzu, yeni fikir sec, myidea, review ideas, idea backlog',
+  },
 };
 
 // Component themes categories (55 HTML themes)
@@ -189,7 +194,7 @@ const PROFILES = {
   'fullstack': {
     id: 'fullstack',
     name: 'Fullstack / All',
-    desc: 'All 26 skills, 19 rules, 55 component themes & 11 validation gates (~65 MB)',
+    desc: 'All 27 skills, 19 rules, 55 component themes & 11 validation gates (~65 MB)',
     skills: Object.keys(SKILLS_MANIFEST),
     rules: '*',
     templates: '*',
@@ -222,6 +227,7 @@ const PROFILES = {
       'codebase-design',
       'code-review',
       'domain-modeling',
+      'my-idea',
     ],
     rules: [
       'always-read-skills.md',
@@ -252,6 +258,7 @@ const PROFILES = {
       'PRODUCT.template.md',
       'GLOSSARY.template.md',
       'DESIGN.template.md',
+      'myidea.template.md',
     ],
     minimalAllowed: true,
   },
@@ -271,6 +278,7 @@ const PROFILES = {
       'codebase-design',
       'code-review',
       'domain-modeling',
+      'my-idea',
     ],
     rules: [
       'always-read-skills.md',
@@ -298,6 +306,7 @@ const PROFILES = {
       'KULLANICI_TEST_REHBERI.template.md',
       'DB_MIGRATIONS.template.md',
       'GLOSSARY.template.md',
+      'myidea.template.md',
     ],
     minimalAllowed: false,
   },
