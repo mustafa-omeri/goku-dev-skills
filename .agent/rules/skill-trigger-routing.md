@@ -97,6 +97,7 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 | tasarım becerisi, daha iyi yaz, amatör mü / better code, improve quality | `karpathy-guidelines` + tasarım üçlüsü | — |
 | gözlem kaydet, skill geliştir, süreç analizi, yeni skill öner / log observation, improve skill, observe task | `task-observer` | `skills/task-observer/SKILL.md` |
 | fikirlerime bak, fikirlerimi incele, fikir havuzu, yeni fikir seç, ne yapabiliriz, myidea, my idea / review ideas, idea backlog, brainstorm ideas | `my-idea` | `skills/my-idea/SKILL.md` |
+| güvenlik denetimi, security audit, güvenlik açığı tara, vulnerability scan, pen test, sızma testi, güvenlik incelemesi, yetki aşımı kontrolü / security audit, vulnerability scan, pen test, security review, audit security, exploit check | `security-audit` | `skills/security-audit/SKILL.md` |
 | Goku skill güncelle, skill update, GS update, GS güncelle, goku update, skillset güncelle, skill'leri güncelle, goku skills update, ajan yeteneklerini güncelle / update skills, goku update, update skill set, upgrade skills, sync skills | `musgoku` | `skills/musgoku/SKILL.md` |
 
 ### A5. Prompt Makroları ve Kısayol Etiketleri (Prompt Shorthands)
@@ -143,6 +144,7 @@ haritasından** gelir ([`design-skills-enforcement.md`](./design-skills-enforcem
 | "Marka dokümanı" | İçerik → `brand`. Yazma süreci → `doc-coauthoring` |
 | "Logo çiz" | Brief → `design`. Görsel üretimi bu setin **kapsamı dışında** (ücretli API çağrılmaz) |
 | "Mock görsel / resim" mi "Banner" mı? | Arayüz kartı/içerik için gerçekçi fotoğraf/avatar → `mock-asset-provider`. Sabit ölçülü reklam/kapak → `banner-design` |
+| "Güvenlik incelemesi" mi "Kod inceleme (code-review)" mi? | Kod kokuları (smell) ve PRD şartname uygunluğu → `code-review`. Güvenlik zafiyetleri, yetki aşımı, sızma testi, boundary violation, token/injection açıkları → `security-audit`. |
 | "Ürün turu / onboarding" mi "UI tasarımı" mı? | Adım adım spotlight, rehberli tur ve ipucu balonu → `onboarding-tour`. Sayfa, form ve bileşenin kendi yerleşimi → `frontend-design` + `ui-styling` |
 | Tasarım skill'i mi, kod skill'i mi? | Görsel karar varsa tasarım seti. Veri akışı/mimari varsa `musgoku`. İkisi de varsa **ikisi** |
 

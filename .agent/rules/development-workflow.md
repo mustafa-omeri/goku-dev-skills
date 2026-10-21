@@ -55,7 +55,7 @@ Geliştirmeye başlamadan önce ajan sırasıyla şu adımları işletmek zorund
 2. ⛔ **Uçtan Uca Veri Döngüsü (E2E Data Lifecycle) ve 5 Zorunlu Halka:**
    Veri üreten veya toplayan her özellik (form, bildirim, geri bildirim, kayıt vb.) için şu 5 halka planda eksiksiz tanımlanmalıdır:
    - **Halka 1 (Üretim & UI):** Form alanları, tip kontrolü, UX durumları (submitting, success, error).
-   - **Halka 2 (Güvenlik & İstismar Kalkanı):** Public/anonim veri girişlerinde bot koruması (Honeypot / Turnstile), hız limiti (Rate Limiting) ve girdi sanitizasyonu (Zod).
+   - **Halka 2 (Güvenlik & İstismar Kalkanı):** Public/anonim veri girişlerinde bot koruması (Honeypot / Turnstile), hız limiti (Rate Limiting), girdi sanitizasyonu (Zod) ve sınır ihlali denetimi (`security-audit` Guidance Mode — `WEB-PROTOCOL-AND-AUTH.md` & `CLIENT-SIDE.md`).
    - **Halka 3 (İletim & API):** Verinin taşındığı endpoint, DTO/şema doğrulaması ve HTTP durum kodları (201 Created, 400 Bad Request, 429 Too Many Requests).
    - **Halka 4 (Kalıcılık & Yetkilendirme):** Veritabanı tablosu, kolon kısıtları, migration dosyası ve RLS (Row Level Security) kuralları (ör. Anonim kullanıcılar için Strict Blind Insert: `FOR INSERT WITH CHECK (true)`, `FOR SELECT USING (false)`).
    - **Halka 5 (Tüketim & Döngü Kapanışı - Loop Closure):** "Kullanıcıya 'Editörlerimiz inceleyecek' denip verinin unutulması yasaktır." Bu veriyi hangi rol (`content_approver`, `admin`), hangi ekrandan veya mekanizmayla (moderasyon masası, webhook, e-posta) karşılayacak?
@@ -83,7 +83,7 @@ Geliştirmeye başlamadan önce ajan sırasıyla şu adımları işletmek zorund
 8. ⛔ **Dikiş Noktaları (Seams) ve Hata Teşhis / TDD Protokolü:**
    - Testler yalnızca önceden belirlenen genel arayüz dikiş noktalarında (`seam`) yazılır; iç uygulama detaylarına bağlanamaz.
    - Hata ayıklama veya çökme düzeltmelerinde kod değiştirmeden önce [`bug-diagnosis-enforcement.md`](./bug-diagnosis-enforcement.md) gereğince hatayı kanıtlayan kırmızı geri bildirim döngüsü (Aşama 1) zorunludur.
-   - Kod incelemelerinde [`code-review`](../skills/code-review/SKILL.md) iki eksenli (Standartlar vs Şartname) paralel denetim işletilir.
+   - Kod incelemelerinde [`code-review`](../skills/code-review/SKILL.md) iki eksenli (Standartlar vs Şartname) paralel denetim işletilir; sızma testi, zafiyet avcılığı ve güvenlik sınır denetimlerinde [`security-audit`](../skills/security-audit/SKILL.md) devreye girer.
 
 9. **Kullanıcıya Sunum, Değişiklik/Review Şansı ve Açık Onay:**
    - Hazırlanan plan kullanıcıya sunulur.

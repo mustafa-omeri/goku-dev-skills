@@ -47,7 +47,7 @@ CATEGORIES = {
     "Teslimat & Kalite": [
         "git-release-workflow", "production-docker-architect",
         "karpathy-guidelines", "task-observer",
-        "diagnosing-bugs", "code-review", "my-idea"
+        "diagnosing-bugs", "code-review", "my-idea", "security-audit"
     ],
     "Marka & Doküman": [
         "brand", "doc-coauthoring", "slides"

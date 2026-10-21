@@ -1,5 +1,9 @@
 # Güvenlik, Loglama ve Performans Standardı
 
+> 🛡️ **Güvenlik Otoritesi ve Zafiyet Denetimi:**
+> Bu dosya Spring Boot ve backend tarafında güvenli kod yazımı, loglama ve performans için yapıcı kodlama standartlarını tanımlar.
+> Sistem ve kod tabanlarında sızma testi, güvenlik açığı avcılığı, yetki aşımı (privilege escalation), token/session istismarı ve boundary violation denetimi için sistemin tek yetkili güvenlik otoritesi **`.agent/skills/security-audit/`** skill'idir.
+
 ---
 
 ## 1. Kimlik doğrulama ve yetkilendirme
