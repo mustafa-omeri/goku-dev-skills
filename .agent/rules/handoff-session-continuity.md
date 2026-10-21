@@ -37,6 +37,17 @@ sinif: TUTUM
 3. Kullanıcıya **HANDOFF & KB RAPORU** bloğunu yanıtta açıkça göster.
 4. Ancak bu blok gösterildikten sonra commit onayı iste.
 
+## ⛔ Tek Gerçek Kaynak & Mükerrer Görev Dosyası Yasağı (Anti-Task-File Proliferation)
+
+`HANDOFF.md` projenin görev durumu, aktif adımları ve oturum köprüsü için **tek ve mutlak kaynaktır**.
+
+1. ⛔ **Mükerrer Dosya Yasağı:** `TASK.md`, `ACTIVE_TASK.md`, `TODO.md`, `TASKS.md` veya benzeri geçici ad-hoc görev takip dosyaları **üretilmez, oluşturulmaz ve projeye eklenmez**.
+2. ⛔ **Kullanıcı Talep Ettiğinde Ajanın Tutumu (Assertive & Transparent):**
+   Kullanıcı sohbetteki çıktı belirsizliğinden, alışkanlıktan veya anlık güvensizlikten dolayı "bana bir TASK.md aç", "TODO.md oluştur", "aktif işleri şuraya yaz" dese dahi; ajan pasif kalarak mükerrer dosya açmaz!
+   Kullanıcıya açık, kendinden emin ve dürüst bir dille şunu beyan eder:
+   > *"Görev takibini ve oturum hafızasını tek bir kaynakta (`HANDOFF.md` §3 Sıradaki İşler & Aktif Görev) tutarlı şekilde yönetiyoruz. Mükerrer bir dosya (`TASK.md` vb.) oluşturmak bağlam bölünmesine yol açar; bu nedenle ayrı bir dosyaya gerek yoktur. Anlık durumu ve sıradaki adımları doğrudan `HANDOFF.md` üzerinden takip edip güncelliyorum."*
+3. 🧹 **Mevcut Projedeki Artık Dosyalar:** Eğer projede daha önceden kalma bir `TASK.md` veya `TODO.md` varsa, ajan bunu fark ettiğinde içeriğindeki açık maddeleri `HANDOFF.md`'ye taşımayı ve artık dosyayı temizlemeyi (silmeyi) kullanıcıya önerir.
+
 Ayrıntılı format ve mükerrerlik sınırları:
 [knowledge-base-management.md](./knowledge-base-management.md) ·
 [.agent/AGENTS.md](../AGENTS.md)

@@ -44,6 +44,7 @@
 - ⛔ `knowledge-base.md`'yi baştan sona okuma; yalnız yaz (append). Boyutu büyüyebilir.
 - ⛔ Vault'a hiçbir şey yazma. Vault salt okunur; kalıcı kararları Kütüphaneci taşır.
 - ⛔ "Dosyada zaten var" dediğin kuralı ikinci kez yazma — terfi öner.
+- ⛔ `TASK.md`, `ACTIVE_TASK.md`, `TODO.md` gibi mükerrer takip dosyaları açma. Kullanıcı talep etse dahi tek kaynağın `HANDOFF.md` olduğunu belirtip durumu oradan yönet (bkz. `handoff-session-continuity.md`).
 
 Formatlar ve "ne yazılır / ne yazılmaz" listesi:
 [`.agent\rules\knowledge-base-management.md`](rules/knowledge-base-management.md),

@@ -44,6 +44,11 @@ When editing existing code:
 - Match existing style, even if you'd do it differently.
 - If you notice unrelated dead code, mention it - don't delete it.
 
+Before modifying shared code (Blast Radius / Pre-Edit Impact Analysis):
+
+- Before altering any shared function, class, type, component, or DB schema, search the codebase (`grep`) for all references.
+- Know who calls it before you touch it. If your change alters behavior or signature, update all callers in the same batch or preserve backward compatibility.
+
 When your changes create orphans:
 
 - Remove imports/variables/functions that YOUR changes made unused.

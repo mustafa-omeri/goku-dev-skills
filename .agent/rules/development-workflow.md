@@ -14,6 +14,7 @@ sinif: SUREC
   `HANDOFF.md` dosyasını oku.
 - Projenin iş kavramları ve ortak dili için varsa `GLOSSARY.md` dosyasını oku.
 - Dosya yoksa veya boşsa kendin yaz.
+- ⛔ **Mükerrer Görev Dosyası Yasağı (Anti-Task-File Proliferation):** `TASK.md`, `ACTIVE_TASK.md`, `TODO.md` gibi ad-hoc takip dosyaları AÇILMAZ. Kullanıcı talep etse dahi, tek kaynağın `HANDOFF.md` (§3 Sıradaki İşler & Aktif Görev) olduğu nazikçe ve güvenle beyan edilir.
 - Ayrıntı: [handoff-session-continuity.md](./handoff-session-continuity.md)
 
 ---
@@ -79,6 +80,13 @@ Geliştirmeye başlamadan önce ajan sırasıyla şu adımları işletmek zorund
      1. **4 UX Durumu:** Loading (skeleton/spinner), Empty (açıklayıcı ikon+CTA), Error (inline+çözüm) ve Action Feedback (toast/optimistic).
      2. **3 Cihaz Ergonomisi:** Mobil (< 768px - tek sütun / Thumb Zone / Bottom Nav / kart listesi), Tablet (768px-1024px - 2 sütun / Split-View / dokunmatik aralıklar), Masaüstü (> 1024px - çok sütunlu zengin ızgara).
      3. **Modal / Popup Davranışı:** Sayfa token'larıyla uyum, mobilde alttan açılan Bottom Sheet (Drawer) adaptasyonu ve `max-h-[85dvh]` kaydırma/klavye koruması.
+
+7. ⛔ **Ön Etki Analizi ve Patlama Yarıçapı Protokolü (Pre-Edit Impact Analysis & Blast Radius Scan - Sıfır Regresyon):**
+   Paylaşılan bir fonksiyon, sınıf, interface, bileşen (React/Vue/TSX component), DTO, enum, API endpoint'i veya veritabanı tablosunu/kolonunu değiştirmeden önce ajan:
+   1. İlgili sembolün adını kod tabanında aramakla (`grep` / codebase search),
+   2. Bu sembolü çağıran veya referans veren tüm dosyaları (patlama yarıçapını / blast radius) listelemekle,
+   3. Değişikliğin çağıran dosyaları kırıp kırmayacağını analiz etmekle ve kırıyorsa, tüm çağıranları **aynı çoklu-dosya düzenleme bloğunda (aynı işlemde)** güncellemekle YÜKÜMLÜDÜR.
+   4. "Derleyici zaten yakalar" diyerek körlemesine düzenleme yapmak yasaktır; semantik, tip ve çalışma zamanı (runtime) sözleşmeleri korunmalıdır.
 
 8. ⛔ **Dikiş Noktaları (Seams) ve Hata Teşhis / TDD Protokolü:**
    - Testler yalnızca önceden belirlenen genel arayüz dikiş noktalarında (`seam`) yazılır; iç uygulama detaylarına bağlanamaz.

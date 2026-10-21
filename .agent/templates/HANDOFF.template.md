@@ -56,6 +56,8 @@
 
 ### Sıradaki işler
 
+> 💡 Bu bölüm projenin canlı görev panosudur. Ayrı bir `TASK.md` veya `TODO.md` açılmaz; tüm aktif ve sıradaki adımlar burada takip edilir.
+
 | # | Durum | İş |
 |---|---|---|
 | 1 | ⏭️ | _(bir sonraki oturumun ilk somut hedefi)_ |
