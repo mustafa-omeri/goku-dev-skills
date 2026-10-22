@@ -183,8 +183,8 @@ const SKILLS_MANIFEST = {
   },
   'seo-growth': {
     category: 'Marketing & SEO',
-    desc: 'Search Engine Optimization (SEO) & Growth Strategy: technical SEO, meta tags, schema markup, robots.txt, sitemaps, GTM launches & CRO.',
-    triggers: 'seo, teknik seo, meta tag, sitemap, schema markup, urun lansmani, seo optimization, technical seo, gtm strategy, product launch',
+    desc: 'Search Engine Optimization (SEO), GEO (AI Search) & Growth: technical SEO, meta tags, schema markup, topic clusters, GTM launches & CRO.',
+    triggers: 'seo, teknik seo, geo, ai search, meta tag, sitemap, schema markup, urun lansmani, seo optimization, technical seo, gtm strategy, product launch',
   },
 };
 

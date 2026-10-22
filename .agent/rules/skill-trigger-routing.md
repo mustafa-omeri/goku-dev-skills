@@ -57,7 +57,7 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 | sunum, deck, pitch deck, slayt / presentation, deck, slide, keynote | `slides` (içerik) + `design-system` (üretim) | `skills/slides/SKILL.md` |
 | sunum html'e dönüşsün, chart.js, slayt üret / render deck, generate slides | `design-system` | `skills/design-system/SKILL.md` |
 | doküman yaz, proposal, spec, PRD, karar dokümanı, RFC / write doc, technical spec, write prd, decision doc | `doc-coauthoring` | `skills/doc-coauthoring/SKILL.md` |
-| seo, teknik seo, meta tag, sitemap, robots.txt, schema markup, arama motoru optimizasyonu, gtm stratejisi, ürün lansmanı, büyüme pazarlaması, dönüşüm optimizasyonu / seo optimization, technical seo, meta description, schema markup, gtm strategy, product launch, growth marketing, cro, copywriting framework | `seo-growth` | `skills/seo-growth/SKILL.md` |
+| seo, teknik seo, geo, yapay zeka araması, ai search, eeat, topic cluster, hreflang, meta tag, sitemap, robots.txt, schema markup, arama motoru optimizasyonu, gtm stratejisi, ürün lansmanı, büyüme pazarlaması, dönüşüm optimizasyonu / seo optimization, technical seo, geo, ai search, eeat, topic cluster, meta description, schema markup, gtm strategy, product launch, growth marketing, cro, copywriting framework | seo-growth | skills/seo-growth/SKILL.md |
 
 ### A3. Kod ve mimari
 
