@@ -57,6 +57,7 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 | sunum, deck, pitch deck, slayt / presentation, deck, slide, keynote | `slides` (içerik) + `design-system` (üretim) | `skills/slides/SKILL.md` |
 | sunum html'e dönüşsün, chart.js, slayt üret / render deck, generate slides | `design-system` | `skills/design-system/SKILL.md` |
 | doküman yaz, proposal, spec, PRD, karar dokümanı, RFC / write doc, technical spec, write prd, decision doc | `doc-coauthoring` | `skills/doc-coauthoring/SKILL.md` |
+| seo, teknik seo, meta tag, sitemap, robots.txt, schema markup, arama motoru optimizasyonu, gtm stratejisi, ürün lansmanı, büyüme pazarlaması, dönüşüm optimizasyonu / seo optimization, technical seo, meta description, schema markup, gtm strategy, product launch, growth marketing, cro, copywriting framework | `seo-growth` | `skills/seo-growth/SKILL.md` |
 
 ### A3. Kod ve mimari
 
@@ -121,6 +122,7 @@ Kullanıcının detaylı ve uzun prompt yazmadan doğrudan tam kapsamlı revizyo
 | "Marka sitesi kur" | `brand` → `design-system` → `frontend-design` → `ui-styling` | kimlik → token → estetik → kod |
 | "Pitch deck hazırla" | `slides` → `design-system` → (palet için) `theme-factory` | içerik → üretim → renk |
 | "Kampanya görselleri" | `design` → `banner-design` → `brand` | brief → görsel → marka kontrolü |
+| "Ürün lansmanı ve SEO planı" | `seo-growth` → `brand` → `doc-coauthoring` | SEO & GTM stratejisi → marka dili → spec |
 | "Yeni özellik planla" | `doc-coauthoring` → `musgoku` | kapsam → mimari |
 | "Hata düzelt ve temizle" | `musgoku` → `karpathy-guidelines` | çözüm → sadeleştirme denetimi |
 | "Yayına al" | `production-docker-architect` → `git-release-workflow` | imaj → commit/tag/push |
@@ -142,6 +144,8 @@ haritasından** gelir ([`design-skills-enforcement.md`](./design-skills-enforcem
 | "Tailwind" mi "shadcn" mi? | Token üretimi `design-system`'de. Tailwind/shadcn **kod tarafı** `ui-styling`'de. Prensip `musgoku-styling-ui.md`'de |
 | "Sunum" mu "belge" mi? | HTML deck → `slides` + `design-system`. Markdown doküman → `doc-coauthoring` |
 | "Marka dokümanı" | İçerik → `brand`. Yazma süreci → `doc-coauthoring` |
+| "SEO & Growth" mu "Brand" mi? | Arama motoru, meta, schema, indexing, GTM, lansman kanalları, CRO → `seo-growth`. Marka tonu, visual identity, logo, kurumsal kimlik → `brand`. |
+| "SEO & Growth" mu "Doc-coauthoring" mi? | SEO mimarisi, anahtar kelime, dağıtım kanalı, landing page metin formülü → `seo-growth`. PRD, RFC, teknik spec yazım süreci → `doc-coauthoring`. |
 | "Logo çiz" | Brief → `design`. Görsel üretimi bu setin **kapsamı dışında** (ücretli API çağrılmaz) |
 | "Mock görsel / resim" mi "Banner" mı? | Arayüz kartı/içerik için gerçekçi fotoğraf/avatar → `mock-asset-provider`. Sabit ölçülü reklam/kapak → `banner-design` |
 | "Güvenlik incelemesi" mi "Kod inceleme (code-review)" mi? | Kod kokuları (smell) ve PRD şartname uygunluğu → `code-review`. Güvenlik zafiyetleri, yetki aşımı, sızma testi, boundary violation, token/injection açıkları → `security-audit`. |

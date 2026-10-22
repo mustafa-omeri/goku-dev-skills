@@ -50,7 +50,7 @@ CATEGORIES = {
         "diagnosing-bugs", "code-review", "my-idea", "security-audit"
     ],
     "Marka & Doküman": [
-        "brand", "doc-coauthoring", "slides"
+        "brand", "doc-coauthoring", "slides", "seo-growth"
     ]
 }
 

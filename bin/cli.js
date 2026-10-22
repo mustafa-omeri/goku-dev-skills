@@ -18,7 +18,7 @@ const path = require('path');
 const readline = require('readline');
 const https = require('https');
 
-const VERSION = '1.10.0';
+const VERSION = '1.11.0';
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 const RAW_URL_BASE = `https://raw.githubusercontent.com/${GITHUB_REPO}/main`;
 
@@ -39,7 +39,7 @@ const c = {
   magenta: '\x1b[35m',
 };
 
-// Available 28 skills with descriptions
+// Available 29 skills with descriptions
 const SKILLS_MANIFEST = {
   'musgoku': {
     category: 'Architecture / Fullstack',
@@ -181,6 +181,11 @@ const SKILLS_MANIFEST = {
     desc: 'Offensive & defensive security harness: boundary crossing, vulnerability hunting, candidate verification, coverage ledger & findings schema.',
     triggers: 'guvenlik denetimi, security audit, guvenlik acigi tara, vulnerability scan, pen test, sizma testi, security review',
   },
+  'seo-growth': {
+    category: 'Marketing & SEO',
+    desc: 'Search Engine Optimization (SEO) & Growth Strategy: technical SEO, meta tags, schema markup, robots.txt, sitemaps, GTM launches & CRO.',
+    triggers: 'seo, teknik seo, meta tag, sitemap, schema markup, urun lansmani, seo optimization, technical seo, gtm strategy, product launch',
+  },
 };
 
 // Component themes categories (55 HTML themes)
@@ -200,7 +205,7 @@ const PROFILES = {
   'fullstack': {
     id: 'fullstack',
     name: 'Fullstack / All',
-    desc: 'All 28 skills, 19 rules, 55 component themes & 11 validation gates (~65 MB)',
+    desc: 'All 29 skills, 19 rules, 55 component themes & 11 validation gates (~65 MB)',
     skills: Object.keys(SKILLS_MANIFEST),
     rules: '*',
     templates: '*',
@@ -235,6 +240,7 @@ const PROFILES = {
       'domain-modeling',
       'my-idea',
       'security-audit',
+      'seo-growth',
     ],
     rules: [
       'always-read-skills.md',
@@ -287,6 +293,7 @@ const PROFILES = {
       'domain-modeling',
       'my-idea',
       'security-audit',
+      'seo-growth',
     ],
     rules: [
       'always-read-skills.md',

@@ -46,3 +46,9 @@ KANBAN.md
 RELEASE_PLAN.md
 KULLANICI_TEST_REHBERI.md
 specs/
+
+# Private Scout Tool & Config
+scout/
+temp/
+tests/*scout*
+
