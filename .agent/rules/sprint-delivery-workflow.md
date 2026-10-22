@@ -272,6 +272,47 @@ Bir kart veya sprint görevi yeni bir kullanıcı arayüzü (sayfa, dashboard, f
  Ölçülebilir sonuç içermeli: `178 test, 0 hata` · `4/4 proje doğrulandı` ·
  `[OK]` · `süre: 0:08`.
 
+### 6.2 Uçtan Uca Dikey Dilim & Sahte Bitti Yasağı (Full-Stack Vertical Slice & Anti-Phantom Done Gate)
+
+⛔ **TAVİZSİZ KESİN KURAL:** Bir kartın veya sprint hedefinin "Yapıldı (Done)" sütununa taşınabilmesi ve sprintin "BİTTİ / TAMAMLANDI" ilan edilebilmesi için şu 5 katmanlı **Dikey Dilim Bütünlüğü (Full-Stack Vertical Slice)** eksiksiz doğrulanmalıdır:
+
+1. **Katman 1 (Kalıcılık & DB Şeması):**
+   - Veri alanı (kolon, bayrak, sayaç, ilişki) veya yeni varlık gerektiren her özellikte fiziksel migration scripti yazılmış, uygulanmış ve `DB_MIGRATIONS.md`'ye işlenmiş olmalıdır.
+   - Sadece TypeScript/Java arayüzünde (ör. `is_sponsored?: boolean`) opsiyonel tip alanı tanımlayıp veritabanı şemasını açmamak KESİNLİKLE YASAKTIR.
+
+2. **Katman 2 (Sunucu / View / RPC / Sorgu Katmanı):**
+   - Veritabanı görünümleri (SQL view'ları), API endpoint'leri veya RPC fonksiyonları bu alanı gerçekte dönmeli veya işlemelidir.
+   - ⚠️ **Sessiz Render Olmamasının Önlenmesi:** SQL View'da seçilmeyen alan çalışma zamanında `undefined` geleceğinden, istemci arayüzünde bileşenin sessizce hiç çizilmemesi tuzağı (ör. `SponsoredBadge` bileşeninin canlıda asla görünmemesi) bu katmanda engellenir. View sorgularının ve RPC'lerin gerçek şemayla eşleştiği kanıtlanmalıdır.
+
+3. **Katman 3 (İstemci Entegrasyonu & Gerçek Veri Akışı):**
+   - Frontend API/servis katmanı veya React hook'u, gerçek endpoint/view ile konuşmalıdır.
+   - ⛔ **Mock Yanılgısı:** Birim testinde `render(<Badge isSponsored={true} />)` testinin %100 yeşil olması, özelliğin canlıda çalıştığını KANITLAMAZ. Gerçek view/API kontratı doğrulanmalıdır.
+
+4. **Katman 4 (Arayüz & Kullanıcı Eylemleri):**
+   - Arayüz bileşeni (rozet, kart, modal, sayaç vb.); veri varlığı, yokluğu, boş ve yükleme durumları ile eksiksiz render edilmelidir.
+   - Kabul kriterlerindeki (AC) tıklama sayacı, harici yönlendirme veya buton eylemleri doğrudan dummy link ile geçiştirilemez; RPC/izleme çağrısı bağlanmalı, `rel="sponsored noopener noreferrer"` gibi güvenlik/SEO etiketleri eksiksiz uygulanmalıdır.
+
+5. **Katman 5 (Yönetim / Giriş / Döngü Kapanışı - Loop Closure):**
+   - *"Bu veriyi sisteme kim, nereden ve nasıl girecek?"* sorusunun cevabı olmadan hiçbir veri tabanlı özellik bitmiş sayılamaz.
+   - İçerik sağlayıcı formu, admin yönetim ekranı (`/yonetim/...`), moderasyon masası veya otomatik ingestion hattı bulunmalıdır.
+   - "Kullanıcıya rozet gösterdik ama adminin veya sağlayıcının sponsorluk tanımlayacağı form sonraki sprintin TODO'su" deniyorsa, o iş BİTMEMİŞTİR; kart `Yapılıyor` veya `Bekliyor`'da tutulur ve durum açıkça **"YARIM (Yönetim Formu Eksik)"** ilan edilir.
+
+#### Zorunlu Katman Denetimi Matrisi (Layer Audit Matrix)
+
+Sprinti veya ilgili kartı kapatmadan önce ajan şu matrisi çıkarmak ve doğrulamakla yükümlüdür:
+
+| Katman | Durum | Kanıt |
+|---|---|---|
+| 1. DB / Şema / Migration | ✅ Var / ❌ Yok / ➖ Kapsam Dışı | [migration dosya adı veya salt UI gerekçesi] |
+| 2. Backend / View / RPC | ✅ Var / ❌ Yok / ➖ Kapsam Dışı | [view / RPC adı veya sorgu] |
+| 3. API & İstemci Entegrasyonu | ✅ Var / ❌ Yok | [hook / servis / DTO] |
+| 4. UI / UX & Eylemler | ✅ Var / ❌ Yok | [bileşen & event RPC / feedback] |
+| 5. Yönetim / Giriş Formu (Döngü Kapanışı) | ✅ Var / ❌ Yok | [form / ekran veya veri kaynağı] |
+
+⛔ **Matriste tek bir `❌ Yok` veya `⚠️ Mock/Yarım` katman dahi varsa:**
+Kart `Yapıldı` sütununa TAŞINAMAZ. Sprint "BİTTİ" İLAN EDİLEMEZ.
+Durum `YARIM` olarak bildirilir ve eksik katman `HANDOFF.md` §3 Sıradaki İşler ve `RELEASE_PLAN.md`'ye derhal işlenir.
+
 ---
 
 ## 7. Kapı çıktısı ve exit kodu

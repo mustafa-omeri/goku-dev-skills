@@ -197,6 +197,9 @@ Yukarıdaki ölçülebilir kapı komutları (`npm run build`, `pnpm test`, `npx 
    - **Tablet (768px – 1024px iPad Simülasyonu):** 2 sütunlu dengeli düzen veya split-view, dokunmatik buton aralıkları, katlanabilir sidebar.
    - **Masaüstü (> 1024px):** Çok sütunlu zengin yerleşim, ortalanmış modal dialog ve hover durumları.
 
+8. ⛔ **Sahte Bitti (Phantom Done) ve Katman Bütünlüğü Denetimi:**
+   Otomasyon veya mock testlerinin yeşil olmasına aldanarak teslimatı "Bitti" ilan etmek AĞIR İHLALDİR. 5 Katmanlı Dikey Dilim (1. DB Şeması & Migration, 2. View/RPC/Sorgu, 3. API & İstemci Entegrasyonu, 4. Arayüz & Eylem/İzleme, 5. Yönetim/Admin Giriş Formu) doğrulanmadan hiçbir veri tabanlı iş tamamlanamaz. Herhangi bir katman eksikse teslimat "YARIM (Eksik Katman: ...)" olarak raporlanır ve eksik parça `HANDOFF.md` §3 Sıradaki İşler tablosuna kaydedilir (bkz. `sprint-delivery-workflow.md` §6.2).
+
 ---
 
 ## Adım 5 — Devir ve bilgi tabanı güncellemesi

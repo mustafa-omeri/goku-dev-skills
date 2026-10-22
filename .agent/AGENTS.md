@@ -71,16 +71,23 @@ ve [`.agent\rules\db-migration-enforcement.md`](rules/db-migration-enforcement.m
    olması kodun çalıştığını kanıtlar; kullanıcının çıktıyı gözüyle nasıl doğrulayacağını göstermez.
    Kullanıcı test adımları sunulmadan iş bitti sayılamaz ve commit onayına geçilemez.
    💡 **İstisna (Minor Rötüş & Dahili Değişiklikler):** Mevcut kullanıcı akışını, ekran bileşenlerini veya kabul senaryolarını değiştirmeyen minor rötüşlar (CSS boşluk/renk ince ayarı, dahili refactoring, tip düzeltmesi, typo) için rehbere gereksiz satır ekleme/dosya işlemi yapılmaz; raporda *"Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"* beyan edilir.
-3. Veritabanı revizyonu (tablo, kolon, indeks, entity) yapıldıysa `DB_MIGRATIONS.md` dosyasını güncelle (yoksa `.agent/templates/DB_MIGRATIONS.template.md` şablonundan oluştur).
-4. `knowledge-base.md`'ye bu adımda çözülen hataları ve verilen kararları **yaz**.
-5. `HANDOFF.md`'yi güncelle: kanıt metrikleri, nerede kaldık, **sıradaki iş**,
+3. ⛔ **Sahte Bitti (Phantom Done) ve Katman Bütünlüğü Denetimi:**
+   Bir özellik veya sprint için "BİTTİ / TAMAMLANDI" beyanında bulunabilmek için yalnızca birim/mock testlerinin yeşil olması ASLA YETMEZ. Veri odaklı veya sunucu/istemci etkileşimli her özellikte 5 Katmanlı Dikey Dilim (Full-Stack Vertical Slice: 1. DB/Şema/Migration → 2. Backend/View/RPC → 3. İstemci API Entegrasyonu → 4. Arayüz/UX & Eylemler → 5. Yönetim/Döngü Kapanışı) eksiksiz kanıtlanmalıdır:
+   - Sadece UI bileşeni ve TypeScript/Java tipi yazıp veritabanı şemasını (tablo/kolon/migration) açmamak,
+   - Mock verili testlerin yeşil olmasına aldanıp gerçek view/endpoint bağlantısını kurmamak (canlıda view'da kolon yoksa `undefined` döner ve bileşen sessizce hiç çizilmez),
+   - Verinin sisteme nasıl gireceğini (admin formu, submission ekranı, döngü kapanışı) yapmadan özelliği tamamlandı saymak
+   **AĞIR İHLAL (Phantom Done)** sayılır. Katmanlardan biri eksikse iş "BİTTİ" ilan edilemez; durum açıkça **"YARIM (Eksik Katman: ...)"** olarak kaydedilir ve eksik parça `HANDOFF.md` §3 Sıradaki İşler tablosuna ilk sıradan eklenir.
+4. Veritabanı revizyonu (tablo, kolon, indeks, entity) yapıldıysa `DB_MIGRATIONS.md` dosyasını güncelle (yoksa `.agent/templates/DB_MIGRATIONS.template.md` şablonundan oluştur).
+5. `knowledge-base.md`'ye bu adımda çözülen hataları ve verilen kararları **yaz**.
+6. `HANDOFF.md`'yi güncelle: kanıt metrikleri, katman denetimi matrisi, nerede kaldık, **sıradaki iş**,
    varsa yeni düşülen hata ve "Nasıl Test Edilir (kullanıcı)" bölümü.
-6. Kullanıcıya şeffaf rapor ver — aşağıdaki blok **zorunludur**.
-7. Commit istenmedikçe `git commit` / `push` / `tag` **yapma**.
+7. Kullanıcıya şeffaf rapor ver — aşağıdaki blok **zorunludur**.
+8. Commit istenmedikçe `git commit` / `push` / `tag` **yapma**.
 
 ```markdown
 ### 📝 OTURUM DEVİR & BİLGİ TABANI GÜNCELLEMESİ (HANDOFF & KB RAPORU)
 - **Kullanıcı Test Rehberi:** [KULLANICI_TEST_REHBERI.md güncellendi mi? Eklenen test senaryoları/adımları veya "Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"]
+- **Katman Bütünlüğü (Full-Stack Slice):** [5 Katman doğrulandı mı? (DB, View/RPC, API, UI, Admin/Giriş Formu) veya "Salt UI/İstemci (DB bağımlılığı yok)" veya "YARIM (Eksik: ...)"]
 - **knowledge-base.md:** [Eklenen hata/karar başlıkları ve kısa özeti (yoksa "yeni yok")]
 - **DB Migrations:** [DB_MIGRATIONS.md güncellendi mi? Eklenen revizyonlar veya "DB değişikliği yok / kapsam dışı"]
 - **HANDOFF.md:**

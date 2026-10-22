@@ -43,6 +43,19 @@
 
 > Buradaki sayılar **tahmin değil, bizzat terminal çıktısından ölçülen** değerlerdir.
 
+
+### Katman Denetimi Matrisi (Full-Stack Vertical Slice Audit)
+
+> ⛔ Bir özellik veya sprint teslimatında tüm katmanlar doğrulanmadan "BİTTİ" yazılamaz. Eksik katman varsa durum "YARIM" işaretlenir ve §3 Sıradaki İşler tablosuna eklenir.
+
+| Katman | Durum | Kanıt |
+|---|---|---|
+| 1. DB / Şema / Migration | [✅ Var / ❌ Yok / ➖ Kapsam Dışı] | [migration dosya adı veya salt UI gerekçesi] |
+| 2. Backend / View / RPC | [✅ Var / ❌ Yok / ➖ Kapsam Dışı] | [view / RPC adı veya sorgu] |
+| 3. API & İstemci Entegrasyonu | [✅ Var / ❌ Yok] | [hook / servis / DTO] |
+| 4. UI / UX & Eylemler | [✅ Var / ❌ Yok] | [bileşen & event RPC / feedback] |
+| 5. Yönetim / Giriş Formu (Döngü Kapanışı) | [✅ Var / ❌ Yok] | [form / ekran veya veri kaynağı] |
+
 ---
 
 ## 3. ⏭️ BURADAN DEVAM ET
