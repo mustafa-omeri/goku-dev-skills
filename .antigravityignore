@@ -1,0 +1,37 @@
+# ==============================================================================
+# .antigravityignore — Antigravity CLI Dosya Dışlama ve Bağlam Hijyeni
+# ==============================================================================
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Sanal Ortamlar
+.venv/
+venv/
+env/
+ENV/
+
+# Derleme ve Paket Çıktıları
+build/
+dist/
+*.egg-info/
+
+# Test & Kapsam Raporları
+.coverage
+htmlcov/
+
+# Projeye Özel Çıktı & Geçici Dosyalar
+cikti/
+temp/
+tmp/
+*.log
+
+# Sırlar
+.env
+.env.*
+!.env.example
