@@ -1,60 +1,149 @@
-# Goku Dev Skills (goku-dev-skills)
+# ⚡ Goku Dev Skills (`goku-dev-skills`)
 
-> **Universal, Agent-Agnostic Intelligence & Production Workflow System for AI Coding Assistants**  
-> Compatible with **Google Antigravity**, **Claude Code**, **Cursor**, **Windsurf**, and **OpenCode**.  
-> Distributed from a single source of truth (`.agent/`) to multiple downstream microservices and web applications.
+<div align="center">
+
+[![Version](https://img.shields.io/badge/version-1.11.5-blue.svg?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/goku-dev-skills)
+[![Skills](https://img.shields.io/badge/skills-29%20battle--tested-8A2BE2.svg?style=for-the-badge&logo=expertsexchange)](./.agent/skills/)
+[![Rules](https://img.shields.io/badge/rules-19%20enforced-orange.svg?style=for-the-badge&logo=codereview)](./.agent/rules/)
+[![Gates](https://img.shields.io/badge/gates-11%20deterministic-success.svg?style=for-the-badge&logo=checkmarx)](./.agent/skills/musgoku/scripts/)
+[![Tests](https://img.shields.io/badge/tests-100%25%20green-brightgreen.svg?style=for-the-badge&logo=pytest)](./tests/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge)](./LICENSE)
+
+**Universal, Agent-Agnostic Intelligence & Production Workflow Engine for AI Coding Assistants**  
+*Turning stochastic language models into senior software architects, meticulous UI/UX craftspeople, and disciplined QA sentinels.*
+
+[Overview](#-overview) • [Why Goku?](#-why-goku-dev-skills-anti-slop-matrix) • [Developer Archetypes](#-the-29-production-skills--developer-archetypes) • [Quickstart](#-quick-start--installation) • [Interactive Catalog](#-interactive-visual-skills-catalog) • [Verification Gates](#-the-11-deterministic-verification-gates)
+
+</div>
+
+---
+
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                              GOKU DEV SKILLS ECOSYSTEM v1.11.5                         │
+├──────────────────────────────┬─────────────────────────────┬───────────────────────────┤
+│    29 PRODUCTION SKILLS      │     19 ENFORCED RULES       │   55 COMPONENT THEMES     │
+│ Architecture · Design · TDD  │ 11 Deterministic Gates      │ Standalone HTML/CSS/JS    │
+│ Security · SEO · Backlog AI  │ Full-Stack Vertical Slice   │ Bespoke Rationale Docs    │
+│ LLM Council · Docker · i18n  │ Zero-Slop · WCAG AA Parity  │ Micro-Interactions        │
+└──────────────────────────────┴─────────────────────────────┴───────────────────────────┘
+```
 
 ---
 
 ## 🌟 Overview
 
-**Goku Dev Skills** is a battle-tested engineering and design intelligence system designed to elevate autonomous AI coding assistants into senior architects and meticulous craftspeople. It enforces strict architectural patterns, deterministic verification gates, rich design libraries, and zero-tolerance policies for code rot, AI-slop, and undocumented APIs.
+**Goku Dev Skills** is an open-source, battle-tested software engineering and design operating system for autonomous AI coding agents (**Google Antigravity**, **Cursor**, **Claude Code**, **Windsurf**, and **OpenCode**).
+
+Most AI coding assistants produce **"Skin-Deep Code"**: they scaffold quick React components, pass tests with shallow mocks, declare tasks *"Done"*, and abandon missing verifications, empty databases, unhandled network states, and generic, uninspired UI styling.
+
+**Goku Dev Skills eliminates this failure mode.** By injecting structured skills, behavioral contracts, 11 deterministic Python verification gates, and the mandatory **5-Layer Full-Stack Vertical Slice Protocol**, it transforms autonomous assistants into seasoned engineering partners that verify every layer from SQL migration to responsive viewport ergonomics before declaring any task finished.
+
+---
+
+## ⚡ Why Goku Dev Skills? (Anti-Slop Matrix)
+
+| Engineering Dimension | Standard AI Coding Assistant | With Goku Dev Skills (`goku-dev-skills`) |
+| :--- | :--- | :--- |
+| **Definition of Done (DoD)** | ❌ **Phantom Done:** Marks tasks completed after unit mock tests pass; ignores missing DB migrations and unmounted views. | ✅ **5-Layer Vertical Slice:** Mandatory proof across DB/Migration, Backend View/RPC, Client API, End-User UX, and Admin Management Form. |
+| **UI/UX Aesthetics** | ❌ **AI Slop:** Generic `bg-white p-4 border rounded` boxes, flat typography, unaligned numeric tables, zero visual hierarchy. | ✅ **Zanaat Anti-Slop & 55 Component Themes:** 79 curated styles, 192 product palettes, tabular numbers, contrast verification (`check_design_slop.py`). |
+| **Bug Fixing & Debugging** | ❌ **Guess & Patch:** Edits code blindly, often breaking existing logic and creating silent regressions. | ✅ **Red Feedback Loop (`diagnosing-bugs`):** Mandatory red test proving the bug before writing a single line of production code. |
+| **Complexity Management** | ❌ **Speculative Bloat:** Premature abstraction, unnecessary interfaces, over-engineered utility functions. | ✅ **Karpathy Guidelines & Deep Modules:** Radical simplicity, narrow interfaces, complexity containment, deletion testing. |
+| **Architectural Decisions** | ❌ **Sycophantic Agreement:** Agrees with any user prompt, even flawed designs. | ✅ **3-Stage LLM Council (`karpathy-guidelines`):** Blind peer review deliberation (Stage 1 Proposals → Stage 2 Blind Review → Stage 3 Synthesis). |
+| **Security & Vulnerabilities** | ❌ **Blind Inserts:** Misses RLS policies, rate limits, honeypots, and input sanitization on public forms. | ✅ **Security Sentinel (`security-audit`):** Guidance & Full-Audit modes, OWASP checks, strict blind insert policies, safe POSIX shell execution. |
+| **SEO & AI Search** | ❌ **Blank Metadata:** Basic title tags, ignores modern AI crawlers and search engine answer blocks. | ✅ **Agentic SEO (`seo-growth`):** AI crawler matrix (`/llms.txt`), competitive gap briefs, JSON-LD schemas, robots.txt bot directives. |
+| **Verification & Integrity** | ❌ **Self-Claimed Green:** "I tested it and it works" with no verifiable metrics. | ✅ **11 Deterministic Gates:** Measured exit codes for DB migrations, bundle budgets, unused imports, i18n key parity, and API docs. |
+
+---
+
+## 🧠 The 29 Production Skills & Developer Archetypes
+
+The 29 production skills are organized into 5 cohesive **Developer Archetypes**:
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                          GOKU DEV SKILLS ECOSYSTEM                              │
-├──────────────────────────────┬─────────────────────────────┬────────────────────┤
-│   27 PRODUCTION SKILLS       │   19 QUALITY RULES          │ 55 COMPONENT THEMES│
-│  Architecture · Design · QA  │  11 Deterministic Gates     │ Standalone HTML/CSS│
-│  TDD · Backlog Ideas · Docker│  WCAG AA · i18n · Slop-Free │ Bespoke Design Docs│
-└──────────────────────────────┴─────────────────────────────┴────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                               DEVELOPER ARCHETYPE MODULES                              │
+├───────────────────────┬───────────────────────┬────────────────────────────────────────┤
+│ 🏗️ System Architect   │ 🎨 UI/UX Foundry      │ 🧪 QA & Reliability Guardian           │
+│ 🛡️ Security Sentinel  │ 🚀 Product Catalyst   │ 📑 Interactive Offline Catalog         │
+└───────────────────────┴───────────────────────┴────────────────────────────────────────┘
 ```
 
-### Core Pillars
-1. **27 Production-Grade Skills:** Spanning Spring Boot/Java backend architecture, Next.js / Vite SPA frontend engineering, WCAG-compliant design intelligence, Docker containerization, backlog idea evaluation (`my-idea`), and rigorous software engineering practices (TDD, deep module design, two-axis code reviews, systematic bug diagnosis).
-2. **19 Enforced Quality Rules & 11 Verification Gates:** 11 deterministic Python test gates (API documentation, DB migrations, design anti-slop, theme contrast & WCAG AA, bundle budgets, unused imports, i18n key consistency) preventing code regression, plus the strict red feedback loop rule (`bug-diagnosis-enforcement.md`).
-3. **Autonomous Backlog Idea Engine (`my-idea`):** Free-form idea backlog (`docs/idea/myidea.md`), autonomous re-rating against live project state, filtering of obsolete items, and zero-hallucination pipeline handoff to PRD/Sprint/TDD.
-4. **Surgical Update Engine (`update`):** Updates *only* currently installed skills and rules. Never downloads uninstalled skills or unwanted component themes.
-5. **Modular Profile-Based Architecture:** Install only what your tech stack needs — from ultra-lightweight backend setups (~2.5 MB) to minimal frontend (~5 MB) or fullstack architectures (~65 MB).
-6. **55 Curated Component Themes:** Standalone, production-ready HTML/CSS UI components (sidebars, navbars, menus, parallax, logins, footers, cards, accordions) equipped with bespoke design rationale documents (`<theme-name>.design.md`).
-7. **Automated Multi-Project Delivery Engine (`delivery.py`):** Propagates upstream changes downstream while preserving project-specific custom rules and validating SHA-256 integrity.
+### 1. 🏗️ The System Architect & Backend Engine
+*Core infrastructure, clean architecture, deep modules, containerization, and data contracts.*
+
+- [`musgoku`](.agent/skills/musgoku/SKILL.md) — Master backend & frontend orchestrator (Java 21, Spring Boot 3, REST APIs, JPA queries, React architecture).
+- [`codebase-design`](.agent/skills/codebase-design/SKILL.md) — Deep module engineering, narrow seams, complexity abstraction, and the deletion test.
+- [`production-docker-architect`](.agent/skills/production-docker-architect/SKILL.md) — Hardened multi-stage Docker builds, non-root users, CVE minimization, and optimized Compose stacks.
+- [`domain-modeling`](.agent/skills/domain-modeling/SKILL.md) — Ubiquitous language enforcement, `GLOSSARY.md` maintenance, and strict 3-criteria Architecture Decision Records (ADRs).
+
+### 2. 🎨 The UI/UX & Design Systems Foundry
+*Distinctive design, accessible primitives, token pipelines, marketing creatives, and developer workstations.*
+
+- [`frontend-design`](.agent/skills/frontend-design/SKILL.md) — Production UI code avoiding generic AI slop; houses the 55 production component themes.
+- [`ui-ux-pro-max`](.agent/skills/ui-ux-pro-max/SKILL.md) — Searchable design reference database: 79 styles, 192 product palettes, 74 font pairings, 119 UX heuristics.
+- [`design-system`](.agent/skills/design-system/SKILL.md) — Multi-tier token pipeline (primitive → semantic → component), CSS variables, and HTML slide deck generator.
+- [`ui-styling`](.agent/skills/ui-styling/SKILL.md) — Tailwind CSS and shadcn/ui code layer: accessible Radix primitives, dark mode, responsive layouts, and `tailwind.config`.
+- [`theme-factory`](.agent/skills/theme-factory/SKILL.md) — 10 curated turnkey color palettes with paired Google Fonts and hex scales for zero-friction branding.
+- [`banner-design`](.agent/skills/banner-design/SKILL.md) — Fixed-dimension marketing banners, social covers (X, LinkedIn, Facebook, YouTube), safe zones, and 22 art-direction styles.
+- [`brand`](.agent/skills/brand/SKILL.md) — Brand voice, tone matrices, visual identity specs, and automated `docs/brand-guidelines.md` synthesis.
+- [`web-ide-ux-architect`](.agent/skills/web-ide-ux-architect/SKILL.md) — High-density IDE interfaces: split panes, code editors, command palettes, and terminal docks.
+
+### 3. 🧪 The Quality, TDD & Debugging Guardian
+*Test-driven development, falsifiable hypotheses, smell detection, and multi-model consensus.*
+
+- [`tdd`](.agent/skills/tdd/SKILL.md) — Strict Test-Driven Development: vertical slices, minimal passing code, and red-before-green verification.
+- [`diagnosing-bugs`](.agent/skills/diagnosing-bugs/SKILL.md) — 6-phase systematic root-cause debugging: mandatory red feedback loop before editing production code.
+- [`code-review`](.agent/skills/code-review/SKILL.md) — Parallel two-axis code review: Martin Fowler code smells baseline vs spec fidelity and scope creep.
+- [`karpathy-guidelines`](.agent/skills/karpathy-guidelines/SKILL.md) — Radical code simplification, avoiding speculative generality, plus 3-Stage LLM Council Deliberation (`council_ranker.py`).
+- [`react-best-practices`](.agent/skills/react-best-practices/SKILL.md) — React 19 & Next.js performance optimizations, waterfall elimination, and clean composition patterns.
+
+### 4. 🛡️ The Security, SEO & Operations Sentinel
+*Vulnerability hunting, AI crawler optimization, internationalization parity, and semantic releases.*
+
+- [`security-audit`](.agent/skills/security-audit/SKILL.md) — Vulnerability scanning, penetration testing, exploit shielding (Honeypot/Rate-limiting/RLS), Guidance & Full-Audit modes.
+- [`seo-growth`](.agent/skills/seo-growth/SKILL.md) — Technical SEO, Generative Engine Optimization (GEO/AI search), AI Crawler Matrix (`/llms.txt`), robots.txt directives, and GTM playbooks.
+- [`i18n-localization`](.agent/skills/i18n-localization/SKILL.md) — Multi-language translation key parity, hardcoded text detection, and elimination of silent default-value fallbacks.
+- [`git-release-workflow`](.agent/skills/git-release-workflow/SKILL.md) — User-approved atomic release workflow: semantic version tagging, commit generation, and remote push.
+
+### 5. 🚀 The Product, Ideation & Growth Catalyst
+*Autonomous backlog innovation, interactive user tours, creative direction, and technical documentation.*
+
+- [`my-idea`](.agent/skills/my-idea/SKILL.md) — Autonomous backlog idea pool (`docs/idea/myidea.md`), project-aware re-rating, top-3 recommendation picks, and TDD handoff.
+- [`doc-coauthoring`](.agent/skills/doc-coauthoring/SKILL.md) — Technical PRD drafting, RFC formulation, architecture decision docs, and context-free reader testing.
+- [`onboarding-tour`](.agent/skills/onboarding-tour/SKILL.md) — Interactive guided product tours, walkthroughs, and coachmarks via Driver.js and React Joyride.
+- [`slides`](.agent/skills/slides/SKILL.md) — Presentation narrative architecture, pacing, emotion arcs, 25 layout recipes, and copywriting formulas (PAS, AIDA, FAB).
+- [`canvas-design`](.agent/skills/canvas-design/SKILL.md) — Unbounded graphic design: editorial posters, aesthetic manifestos, cover artwork, and static visual pieces (`.png`/`.pdf`).
+- [`mock-asset-provider`](.agent/skills/mock-asset-provider/SKILL.md) — Realistic placeholder visuals, developer avatars, event imagery, and zero-config CDN fallback pipelines.
+- [`design`](.agent/skills/design/SKILL.md) — Creative direction router, brand brief synthesizer, logo style explorer, and corporate identity specifications.
+- [`task-observer`](.agent/skills/task-observer/SKILL.md) — Meta-skill that monitors execution workflows, distilling observations into reusable rules and skills.
 
 ---
 
 ## ⚡ Quick Start & Installation
 
-Install only the skills and rules tailored to your project's stack, avoiding unnecessary bloat:
+Install only what your tech stack needs — from ultra-lightweight backend setups (~2.5 MB) to minimal frontend (~5 MB) or fullstack architectures (~65 MB):
 
 ### 1. Profile-Based Installation via `npx`
 
 ```bash
-# ☕ Backend Profile (Java, Spring Boot, .NET, APIs, DB Migrations) — Ultra-lightweight (~2.5 MB, zero UI clutter)
+# ☕ Backend Profile (Java, Spring Boot, Python, APIs, DB Migrations) — Ultra-lightweight (~2.5 MB, zero UI clutter)
 npx goku-dev-skills init -p backend
 
-# 🎨 Minimal Frontend Profile (React, Vite, Next.js, Tailwind, Zanaat Anti-slop) — Excludes 55 heavy themes (~5 MB)
+# 🎨 Minimal Frontend Profile (React, Vite, Next.js, Tailwind, Anti-slop) — Excludes 55 heavy themes (~5 MB)
 npx goku-dev-skills init -p frontend -m
 
 # 🌟 Full Frontend Profile (Includes all 55 HTML/CSS component themes) (~60 MB)
 npx goku-dev-skills init -p frontend
 
-# 🚀 Fullstack / All Profile (All 27 skills, 55 themes, 19 rules & 11 verification gates) (~65 MB)
+# 🚀 Fullstack Profile (All 29 skills, 55 themes, 19 rules & 11 verification gates) (~65 MB)
 npx goku-dev-skills init -p fullstack
 
-# 🔍 Auto-Detect Stack (Inspects pom.xml, package.json, csproj and selects appropriate profile)
+# 🔍 Auto-Detect Stack (Inspects pom.xml, package.json, requirements.txt and selects optimal profile)
 npx goku-dev-skills init --detect
 ```
 
-### 2. Surgical Updates for Existing Workspaces (Zero-Bloat Sync)
+### 2. Surgical Workspace Updates (Zero-Bloat Sync)
 
 When upstream skills, rules, or scripts receive updates, sync **only what is already installed in your project**. It will **never** download uninstalled skills or re-introduce excluded heavy component themes:
 
@@ -82,20 +171,7 @@ npx goku-dev-skills update --dest ./my-backend-service
 > - `"goku update"`, `"skillset güncelle"`, `"skill'leri güncelle"`, `"sync skills"`
 > The agent will autonomously execute the surgical update protocol, verify zero-clutter, ensure your project rules are protected, and present a status report.
 
-### 3. Granular Skill & Theme Addition
-
-```bash
-# List all 27 available skills, profiles and 55 component themes
-npx goku-dev-skills list
-
-# Add a single skill into current workspace
-npx goku-dev-skills add frontend-design
-
-# Add a single component theme directly into your components folder
-npx goku-dev-skills add theme sidebars/violet-minimal-sidebar
-```
-
-### 4. Multi-Agent & Platform Adaptation
+### 3. Multi-Agent & Platform Support
 
 Different AI coding assistants store rules and skills in different workspace locations. Use the `--agent` flag to target your preferred environment:
 
@@ -109,129 +185,81 @@ Different AI coding assistants store rules and skills in different workspace loc
 
 ---
 
-## 💡 Autonomous Idea Backlog & Re-Rating (`my-idea`)
+## 📑 Interactive Visual Skills Catalog
 
-Developers frequently have creative, experimental, or visionary ideas that fall outside the active sprint or PRD scope. Storing them haphazardly causes scope creep or lost context. The **`my-idea`** skill provides a structured yet lightweight pool (`docs/idea/myidea.md`) where ideas live, get dynamically re-rated against live project state, and get seamlessly handed off to production.
+Included with every full distribution is a standalone, offline, single-file interactive visual catalog (`skills-catalog.html`).
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           MY-IDEA WORKFLOW LIFECYCLE                            │
-└──────────────────────────────────────┬──────────────────────────────────────────┘
-                                       │
-                         [Developer / User Free-form Idea]
-                         (Added to docs/idea/myidea.md)
-                                       │
-               ┌───────────────────────┴───────────────────────┐
-               ▼                                               ▼
-     [Autonomous Trigger]                             [User Explicit Prompt]
-(Major sprint finished / No WIP)               ("fikirlerime bak", "review ideas")
-               │                                               │
-               └───────────────────────┬───────────────────────┘
-                                       │
-                        [Scan Current Project State]
-                   (PRODUCT.md · SPRINT_PLAN · Live Code)
-                                       │
-                      [Re-Rating & Obsolete Elimination]
-                   Formula: (Impact*0.4)+(Effort*0.3)+(Fit*0.3)
-                   Obsolete marked: ⛔ [DROPPED - Reason]
-                                       │
-                         [Propose Top 3 Ranked Picks]
-                         ("Hangisiyle ilerlemek istersin?")
-                                       │
-                        [Zero-Hallucination Pipeline]
-                 1. PRD Sync        ──► `doc-coauthoring` / PRODUCT.md
-                 2. Sprint Card     ──► `sprint-delivery-workflow` / SPRINT_PLAN.md
-                 3. TDD Loop        ──► `tdd` (Red -> Green -> Refactor)
-                 4. Clean Code      ──► `musgoku`, `codebase-design`
-                 5. Pool Complete   ──► `docs/idea/myidea.md` marked ✅ [SHIPPED]
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                        OFFLINE VISUAL SKILLS CATALOG (HTML)                            │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│ • Instant Fuzzy Search: Press `/` or `Ctrl+K` to search across all 29 skills           │
+│ • Dual View Modes: Press `V` to toggle between rich Card Grid & Compact Table View     │
+│ • Theme Switcher: Press `T` to toggle Dark / Light aesthetic                           │
+│ • One-Click Copy: Instantly copy agent prompt triggers and execution commands          │
+└────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Simple Idea Format (`docs/idea/myidea.md`)
-
-```markdown
-### IDEA-001: Command Palette Quick Actions (Ctrl+K)
-- **Durum:** 🎯 `[RECOMMENDED]`
-- **Rating:** `8.5/10` (Etki: 9 | Efor: 8 | Uyum: 8)
-- **Açıklama:** Top 5 frequent actions accessible via keyboard shortcut.
-- **Değer / Gerekçe:** Speeds up power-user navigation by 2x.
-- **Ajan Değerlendirmesi:** Ready to build using existing web-ide-ux-architect dialog.
-```
-
-### Status Badges
-- 💡 `[NEW]` : Newly added raw idea awaiting assessment.
-- 🎯 `[RECOMMENDED]` : High-scoring idea recommended for the next sprint.
-- ⏳ `[DEFERRED]` : Good idea, but deferred due to dependencies or early stage.
-- ⛔ `[DROPPED - Reason]` : Obsolete, duplicated, or superseded (never deleted, archived with reason).
-- ✅ `[SHIPPED - Sprint/Date]` : Shipped and verified in the codebase.
-
-### Automation Helper Script (`idea_manager.py`)
-
+**Quick Open:**
 ```bash
-# List all ideas formatted in terminal
-python .agent/skills/my-idea/scripts/idea_manager.py --list
+# Windows
+start .agent/skills-catalog.html
 
-# Filter active ideas and output top 3 ranked picks
-python .agent/skills/my-idea/scripts/idea_manager.py --top 3
+# macOS
+open .agent/skills-catalog.html
 
-# Export machine-readable JSON for agents/CI
-python .agent/skills/my-idea/scripts/idea_manager.py --top 3 --json
-
-# Initialize docs/idea/myidea.md from template if missing
-python .agent/skills/my-idea/scripts/idea_manager.py --init
+# Linux
+xdg-open .agent/skills-catalog.html
 ```
 
 ---
 
-## 🛠️ The 27 Shipped Skills
+## 🛡️ The 5-Layer Full-Stack Vertical Slice Protocol
 
-> [!TIP]
-> ### 📑 Interactive Visual Skills Catalog (`skills-catalog.html`)
-> For an interactive, searchable, and comprehensive visual guide of all 27 skills, prompt templates, trigger keywords, and configuration blueprints, open the included offline HTML catalog:
-> - 🌐 **Direct File:** [`.agent/skills-catalog.html`](.agent/skills-catalog.html)
-> - 🚀 **Quick Open (Browser):**
->   ```bash
->   # Windows
->   start .agent/skills-catalog.html
->   # macOS
->   open .agent/skills-catalog.html
->   # Linux
->   xdg-open .agent/skills-catalog.html
->   ```
-> Includes dual view modes (**Card Grid** & **Compact Trackable Table** via `V`), instant fuzzy search (`/` or `Ctrl+K`), one-click prompt copying, and dark/light theme toggle (`T`).
+To prevent the **"Phantom Done"** failure mode (where an agent declares a feature *"BİTTİ / DONE"* simply because an isolated React component and mock unit tests passed, despite missing backend tables, views, and forms), Goku Dev Skills enforces the **5-Layer Vertical Slice Protocol**:
 
-| Skill | Category | Primary Focus & Capabilities |
-| :--- | :--- | :--- |
-| **`musgoku`** | Orchestrator | Java 21, Spring Boot 3, REST APIs, JPA queries, WebSocket, TypeScript & React routing. |
-| **`ui-ux-pro-max`** | Design Intel | Searchable engine: 79 styles, 192 product palettes, 74 font pairings, 119 UX heuristics. |
-| **`frontend-design`** | UI Code | Distinctive web UI code, avoiding generic AI templates, hosts 55 component themes. |
-| **`canvas-design`** | Visual Art | Unbounded graphic design, editorial posters, manifestos, visual weight and spatial tension. |
-| **`design-system`** | Token Engine | Token pipeline (primitive → semantic → component), slide generation and contrast verification. |
-| **`ui-styling`** | Tailwind/shadcn | Accessible Radix primitives, utility classes, mobile-first layouts and dark mode. |
-| **`git-release-workflow`** | DevOps/Git | User-approved semantic tagging, changelog generation, atomic commit & push flow. |
-| **`i18n-localization`** | i18n/L10n | Translation key parity, missing key detection, elimination of hardcoded default values. |
-| **`production-docker-architect`**| Containers | Optimized multi-stage Dockerfiles, non-root users, CVE minimization, compose stacks. |
-| **`brand`** | Identity | Brand voice, archetype definitions, color psychology, and corporate identity guidelines. |
-| **`slides`** | Presentations | Narrative structure, executive summaries, pacing and slide layout strategy. |
-| **`banner-design`** | Marketing | Fixed-dimension marketing banners, display advertising, OpenGraph previews. |
-| **`theme-factory`** | Palette Library| 10 curated turnkey color palettes and paired Google Fonts for slides and documents. |
-| **`web-ide-ux-architect`** | Developer UX | High-density split-pane layouts, code editors, command palettes, and terminal interfaces. |
-| **`doc-coauthoring`** | Documentation | Structured PRD drafting, RFC formulation, and technical specification reviews. |
-| **`karpathy-guidelines`** | Code Standards | Radical simplification, elimination of speculative generality, readable architectures. |
-| **`design`** | Creative Brief | Creative direction router, brand brief synthesis, and logo design specifications. |
-| **`task-observer`** | Meta / Evolution| Observation logging, methodology distillation, continuous skill set refinement. |
-| **`react-best-practices`** | React / Next | React 19 / Next.js performance optimizations, waterfall elimination, composition. |
-| **`mock-asset-provider`** | UI Assets | Realistic placeholder assets, developer avatars, event imagery, CDN fallback pipeline. |
-| **`onboarding-tour`** | Walkthrough | Guided interactive product tours and coachmarks (Driver.js / React Joyride). |
-| **`diagnosing-bugs`** | Debugging / QA | 6-phase systematic debugging, falsifiable hypotheses, red verification loop, regression tests. |
-| **`tdd`** | Code Quality | Test-driven development, red-before-green loop, tracer bullets, vertical slices, pre-agreed seams. |
-| **`codebase-design`** | Architecture | Deep modules, narrow interfaces, complexity containment, deletion testing, architectural seams. |
-| **`code-review`** | Code Quality | Two-axis review discipline: Martin Fowler code smells baseline vs spec fidelity & scope creep. |
-| **`domain-modeling`** | Domain / Arch | Ubiquitous language, GLOSSARY.md domain dictionary maintenance, strict 3-criteria ADR threshold. |
-| **`my-idea`** | Product / Ideas| Backlog idea pool evaluator (`docs/idea/myidea.md`), autonomous re-rating, top-3 picks & TDD/Sprint handoff. |
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                        5-LAYER FULL-STACK VERTICAL SLICE (DoD)                         │
+└───────────────────────────────────────────┬────────────────────────────────────────────┘
+                                            │
+  1. DB & PERSISTENCE  ──► Physical migration file, columns, constraints, RLS policies.
+                                            │
+  2. BACKEND & VIEWS   ──► SQL views, RPCs or REST endpoints returning real data fields.
+                                            │
+  3. CLIENT & API      ──► Frontend API hooks connecting to live views (no silent undefined).
+                                            │
+  4. UI/UX & ACTIONS   ──► Rendered states (loading, empty, error) & real tracking RPCs.
+                                            │
+  5. MANAGEMENT & LOOP ──► Admin form or ingestion UI ("How does data enter the system?").
+```
+
+> ⛔ **Strict Anti-Phantom Rule:** If ANY required layer is missing, the task CANNOT be marked *"Done"*. It must be declared *"YARIM (Incomplete: Missing Layer)"* and prioritized in `HANDOFF.md`.
 
 ---
 
-## 🎨 Component Themes Library (`component-themes/`)
+## 🧪 The 11 Deterministic Verification Gates
+
+Every measurable rule in Goku Dev Skills is backed by a standalone Python verification script with clear exit codes (`0` = pass, `1` = violation, `2` = tool error):
+
+| Stack / Focus Area | Mandatory Verification Command | Enforced Rule |
+| :--- | :--- | :--- |
+| **Backend / API Documentation** | `python .agent/skills/musgoku/scripts/check_api_docs.py` | [`api-documentation-enforcement.md`](.agent/rules/api-documentation-enforcement.md) |
+| **Backend / Database Migrations** | `python .agent/skills/musgoku/scripts/check_db_migrations.py` | [`db-migration-enforcement.md`](.agent/rules/db-migration-enforcement.md) |
+| **Design / Skill Ownership** | `python .agent/skills/musgoku/scripts/check_design_skills.py` | [`design-skills-enforcement.md`](.agent/rules/design-skills-enforcement.md) |
+| **Design / Anti-Slop & Craft Floor**| `python .agent/skills/musgoku/scripts/check_design_slop.py` | [`design-skills-enforcement.md`](.agent/rules/design-skills-enforcement.md) |
+| **Design / Theme Contrast & WCAG**| `python .agent/skills/musgoku/scripts/check_theme_contrast.py` | [`design-skills-enforcement.md`](.agent/rules/design-skills-enforcement.md) |
+| **Frontend / Bundle Budgets** | `python .agent/skills/musgoku/scripts/check_bundle_limits.py` | [`frontend-bundle-limits.md`](.agent/rules/frontend-bundle-limits.md) |
+| **Frontend / i18n Key Parity** | `python .agent/skills/i18n-localization/scripts/i18n_checker.py` | [`i18n-enforcement.md`](.agent/rules/i18n-enforcement.md) |
+| **TypeScript / React Compiles** | `npx tsc --noEmit` | [`no-unused-code.md`](.agent/rules/no-unused-code.md) |
+| **Java / Spring Compiles** | `mvn clean compile -DskipTests` | [`no-unused-code.md`](.agent/rules/no-unused-code.md) |
+| **Skill Contracts & Triggers** | `cd .agent/skills/ui-ux-pro-max/scripts/tests && python -m unittest test_skill_contracts` | [`skill-trigger-routing.md`](.agent/rules/skill-trigger-routing.md) |
+| **Sprint / Kanban / MVP Board** | `python .agent/skills/musgoku/scripts/check_sprint_board.py` | [`sprint-delivery-workflow.md`](.agent/rules/sprint-delivery-workflow.md) |
+| **Rule System Integrity** | `python .agent/skills/musgoku/scripts/rules_gates.py --strict` | [`rules_gates.py`](.agent/skills/musgoku/scripts/rules_gates.py) |
+
+---
+
+## 🎨 55 Production Component Themes (`component-themes/`)
 
 Located at `.agent/skills/frontend-design/component-themes/`, this directory provides **55 production-grade HTML/CSS component themes**. Coding agents are instructed to inspect this library before creating UI components from scratch.
 
@@ -245,10 +273,10 @@ Each theme contains:
   - **Framework Porting:** Modern adaptation recipes for React, Vite SPA, Tailwind CSS, and shadcn/ui.
 
 ### Component Summary by Category
-- **Sidebars (8 Themes):** Minimal dark violet (`violet-minimal-sidebar`), dual-column indigo drawer (`dual-column-indigo-sidebar`), clean light SaaS rail (`light-saas-dual-rail-sidebar`), dark slate dock (`dark-slate-dock-sidebar`), CSS-toggle collapsible (`collapsible-expandable-sidebar`), compact developer dock (`compact-dock-sidebar`), workspace & profile switcher (`workspace-profile-sidebar`), and macOS window-chrome team sidebar (`window-chrome-team-sidebar`).
-- **Navbars & Menus (2 Themes):** Floating island pill navbar with kinetic sliding active marker (`floating-pill-marker-navbar`), and fullscreen overlay menu with staggered link animations (`fullscreen-overlay-stagger-menu`).
-- **Parallax (2 Themes):** Alternating narrative chapter parallax (`split-section-story-parallax`), and pure CSS multi-layer depth parallax (`multi-layer-pure-css-parallax`).
-- **Accordions (2 Themes):** Horizontal expandable plum team gallery (`horizontal-expand-plum-accordion`), and dark slate artwork accordion (`horizontal-expand-dark-accordion`).
+- **Sidebars (8 Themes):** Minimal dark violet, dual-column indigo drawer, clean light SaaS rail, dark slate dock, CSS-toggle collapsible, compact developer dock, workspace switcher, and macOS window-chrome team sidebar.
+- **Navbars & Menus (2 Themes):** Floating island pill navbar with kinetic sliding active marker, and fullscreen overlay menu with staggered link animations.
+- **Parallax (2 Themes):** Alternating narrative chapter parallax, and pure CSS multi-layer depth parallax.
+- **Accordions (2 Themes):** Horizontal expandable plum team gallery, and dark slate artwork accordion.
 - **Cards (10 Themes):** Pricing tier comparison grid, 3D interactive flip KPI card, vibrant social creator profile, career job listing, destination travel preview, dark account toolbar, expandable summary metric, editorial story preview, and portfolio member card.
 - **Logins (16 Themes):** Minimalist floating orb, compact dark credentials, clean B2B light card, Web3 crypto neon, orbiting blob security, animated SVG wave header, split-screen value hero, conversational sign-in, cosmic orbit, geometric split banner, fintech payment security, dark luxury glassmorphic, sliding dual-state auth toggle, and photo hero switcher.
 - **Footers (15 Themes):** Animated SVG wave footers, SaaS conversion CTA banners, minimal community pills, cyan electric split footers, consultative meeting schedulers ("Schedule a Call"), midnight newsletter captures, and enterprise compliance directories.
@@ -281,28 +309,12 @@ python delivery.py --only ocai
 
 ---
 
-## 🧪 Testing & Verification Gates
-
-```bash
-# Run 11/11 master distribution & regression test suite
-python tests/run_all.py
-
-# Run skill contract verification suite (11/11 OK)
-cd .agent/skills/ui-ux-pro-max/scripts/tests
-python -m unittest test_skill_contracts.py
-
-# Run strict rule validation gate (19 rules, 11 gates)
-python .agent/skills/musgoku/scripts/rules_gates.py --strict
-```
-
----
-
 ## 📜 Global Agent Contract
 
 Every agent interacting with a project governed by `goku-dev-skills` adheres to the strict protocol defined in `AGENTS.md`:
 1. **Mandatory Reading Order:** `HANDOFF.md` → `DEV_BRIEF.md` → Rules & Decisions.
 2. **Deterministic Evidence:** Never claim "it works" or "rule followed" without running measurable verification gates (`rules_gates.py`, `i18n_checker.py`, `check_api_docs.py`).
-3. **Strict Commit Approval:** Agents never invoke `git commit` or `git push` without explicit user review of changed files and proposed commit messages.
+3. **Strict Commit Approval:** Agents never invoke `git commit` or `git push` without explicit user review of changed files and proposed commit messages (or explicit `commitx` / `commitle` triggers).
 4. **Session Continuity:** Every session concludes with updating `knowledge-base.md` and the standardized `HANDOFF.md` transition report.
 
 ---
