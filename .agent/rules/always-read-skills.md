@@ -13,7 +13,7 @@ Kod yazmadan, dosya oluşturmadan veya terminal komutu çalıştırmadan önce
 
 0. Repo kökündeki `HANDOFF.md`'yi oku
    ([handoff-session-continuity.md](./handoff-session-continuity.md)).
-1. Talebi analiz et.
+1. Talebi ve etki alanını analiz et: Kullanıcı spesifik bir tetikleyici kelime yazmasa dahi, işin doğasına (UI, bug, mimari karar, SEO, güvenlik vb.) göre ilgili skill'i **otonom olarak** belirle (sihirli kelime bekleme; bkz. `skill-trigger-routing.md §0`).
 2. İlgili olabilecek skill dosyalarını `.agent/skills/` altında tara.
 3. Kodlamaya veya planlamaya geçmeden önce bu skill dosyalarını oku.
 4. Skill'teki standartlara **birebir** uyarak geliştirmeyi tamamla.

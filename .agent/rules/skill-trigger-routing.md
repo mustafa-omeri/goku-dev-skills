@@ -16,10 +16,35 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 > [`design-skills-enforcement.md`](./design-skills-enforcement.md) §3'te tanımlıdır
 > ve kalıcıdır. Bu dosya **operasyöneldir**: "şu kelime hangi dosyayı açar."
 
+## 0. Çift Kanatlı Tetikleme İlkesi (Otonom Bağlam vs. Manuel Kısayol)
+
+Tetikleme mekanizması iki kanaldan çalışır:
+
+### 1. Otonom (Bağlamsal) Tetikleme — Varsayılan ve Zorunlu
+⛔ **Kullanıcı Sihirli Kelimesine Bağımlılık Yasağı (No Passive Waiting for Keywords):**
+Ajan, kullanıcının belirli bir sihirli kelimeyi (trigger) yazmasını **asla pasifçe beklemez.** Görevin bağlamı, dokunulan dosyalar ve hedeflenen iş mantığı aşağıdaki tablodaki durumlardan birine uyuyorsa, kullanıcı o kelimeyi söylemeyi **unutsa dahi** ajan ilgili yeteneği **otonom olarak (unprompted)** devreye sokar ve yanıtta açıkça bildirir:
+
+| Durum / Görev Bağlamı | Otomatik Devreye Giren Skill / Araç | Neden Otonom? |
+|---|---|---|
+| **Arayüz / UI / CSS / Görsel Değişiklik:** `.tsx`, `.jsx`, `.css`, HTML, form, modal veya buton tasarımı | `frontend-design` + `ui-ux-pro-max` + `ui-styling` | Generic AI tasarımını önlemek ve Zanaat Tabanını (Craft Floor) korumak için zorunludur. |
+| **Mimari Karar / 2+ Alternatif Seçimi:** "Hangi kütüphane?", "Zustand mı Context mi?", "Nasıl bir yapı kuralım?" ikilemleri | `karpathy-guidelines` (Council Deliberation §5) | Tek model önyargısını ve kullanıcıya yaranmayı (sycophancy) kırmak için Option A vs B körlemesi zorunludur. |
+| **Hata / Bug Teşhisi:** Beklenmeyen çıktı, log hatası, console error, "çalışmıyor" durumu | `diagnosing-bugs` | Koda dokunmadan önce hatayı kanıtlayan kırmızı döngü (Red Loop) zorunludur. |
+| **Yeni İş Mantığı / Servis / Endpoint:** Yeni fonksiyon, API veya iş kuralı ekleme | `tdd` + `musgoku` | Körlemesine kod yazımını önlemek için önce kırmızı test (Red-Green-Refactor) esastır. |
+| **Refactoring & Sadeleştirme:** Kod karmaşıklığı, uzun fonksiyonlar, ortak kod değişiklikleri | `karpathy-guidelines` + `codebase-design` | Ön etki analizi (blast radius), derin modül ve cerrahi değişiklik disiplini zorunludur. |
+| **Landing Page / Web / robots.txt:** Yeni web sayfası, SEO, sitemap, crawler politikaları | `seo-growth` (`seo_checker.py`) | Arama motoru ve AI bot görünürlüğü için standart denetim esastır. |
+| **Güvenlik / Yetki / Token / Hassas Veri:** Auth, role, input sanitization, API anahtarı | `security-audit` | Güvenlik kalkanı ve yetki aşımı denetimi tavizsizdir. |
+| **Yeni Paket / Dokümantasyon / API İsmi:** Harici kütüphane ekleme veya API kullanımı | `context7` MCP | Sürüm farkları ve doğru API parametrelerini doğrulamak için zorunludur. |
+| **3+ Adımlı Plan / Belirsiz Mantık:** Karmaşık mimari akıl yürütme veya strateji | `sequential-thinking` MCP | Düşünce zincirinin dağılmasını önlemek için zorunludur. |
+
+### 2. Manuel (Açık) Tetikleyiciler — Kullanıcı Kısayolları
+Kullanıcının belirli bir isteği doğrudan ve kestirmeden ajana bildirmesini sağlayan konfor kısayollarıdır (`commitx`, `sadeleştir`, `council`, `smell tara`, `geo`, `palet öner`). Kullanıcı bu kelimeleri yazdığında niyet kesindir ve ara müzakereye gerek kalmadan ilgili operasyon icra edilir.
+
+---
+
 ## Nasıl kullanılır
 
-1. Kullanıcının isteğini **tek cümleye** indirge.
-2. Aşağıdaki tablodan eşleşen skill'i bul.
+1. Kullanıcının isteğini ve etki alanını analiz et (otonom tetikleme matrisiyle eşle).
+2. Kullanıcı açık bir anahtar kelime kullandıysa aşağıdaki tablodan eşleşen skill'i bul.
 3. Bulamazsan §B kombinasyon tablosuna, o da olmazsa §C ayrım ağacına bak.
 4. Skill dosyasını **okumadan kod yazma** — bkz. [`always-read-skills.md`](./always-read-skills.md).
 5. Yanıtta hangi skill'in devrede olduğunu **açıkça belirt.**
@@ -94,7 +119,7 @@ burada yaşar; `SKILL.md` `description` alanları yalnız **özet** ve **atıf**
 | api dokümantasyonu, swagger güncel mi / api docs, openapi | `rules/api-documentation-enforcement.md` | — |
 | veritabanı revizyonu, migration, yeni tablo, yeni kolon, db şeması / db migration, schema change, add column, new table | `rules/db-migration-enforcement.md` + `musgoku` | — |
 | oturum devri, handoff, nerede kaldık / session handoff, where we left off | `rules/handoff-session-continuity.md` | — |
-| overcomplication, gereksiz karmaşıklık, kapsam kayması, varsayımı belirt / overengineering, scope creep, state assumptions | `karpathy-guidelines` | — |
+| overcomplication, gereksiz karmaşıklık, varsayımı belirt, llm council, akran incelemesi, hakemlik / overengineering, simplify, surface assumptions, llm council, peer review, council deliberation | `karpathy-guidelines` | `skills/karpathy-guidelines/SKILL.md` |
 | tasarım becerisi, daha iyi yaz, amatör mü / better code, improve quality | `karpathy-guidelines` + tasarım üçlüsü | — |
 | gözlem kaydet, skill geliştir, süreç analizi, yeni skill öner / log observation, improve skill, observe task | `task-observer` | `skills/task-observer/SKILL.md` |
 | fikirlerime bak, fikirlerimi incele, fikir havuzu, yeni fikir seç, ne yapabiliriz, myidea, my idea / review ideas, idea backlog, brainstorm ideas | `my-idea` | `skills/my-idea/SKILL.md` |
@@ -125,6 +150,7 @@ Kullanıcının detaylı ve uzun prompt yazmadan doğrudan tam kapsamlı revizyo
 | "Ürün lansmanı ve SEO planı" | `seo-growth` → `brand` → `doc-coauthoring` | SEO & GTM stratejisi → marka dili → spec |
 | "Yeni özellik planla" | `doc-coauthoring` → `musgoku` | kapsam → mimari |
 | "Hata düzelt ve temizle" | `musgoku` → `karpathy-guidelines` | çözüm → sadeleştirme denetimi |
+| "Mimari tercih ve alternatif seçimi" | `karpathy-guidelines` → `doc-coauthoring` | 3 aşamalı konsey körlemesi (council) → ADR karar kaydı |
 | "Yayına al" | `production-docker-architect` → `git-release-workflow` | imaj → commit/tag/push |
 | "Fikir havuzundan iş seç" | `my-idea` → `doc-coauthoring` → `sprint-delivery-workflow` → `tdd` → `musgoku` | re-rating & seçim → spec → sprint kartı → test → kodlama |
 | "Genel kod talebi" | `musgoku` (yönlendirici) → ilgili alt tablo | — |

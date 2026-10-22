@@ -1,14 +1,17 @@
 ---
 name: karpathy-guidelines
-description: Yaygın kodlama hatalarını azaltan davranış kuralları: gereksiz karmaşıklıktan kaçınma, cerrahi değişiklik, varsayımları yüzeye çıkarma, doğrulanabilir başarı ölçütü. Tetikleyiciler: "bu çok karmaşık", "basitleştir", "gereksiz kod", "varsayım ne", "iyi mi bu", "overcomplicated", "simplify this", "surface assumptions", "is this good code". Tetiklenmez: mimari kararlar `musgoku`, tasarım kararları tasarım skill setine aittir; bu skill her kod yazımında uygulanır. Tam sözlük: `.agent/rules/skill-trigger-routing.md`
+description: >
+  Yaygın kodlama hatalarını azaltan davranış kuralları ve hakemlik: gereksiz karmaşıklıktan kaçınma, cerrahi değişiklik, varsayımları yüzeye çıkarma, 3 aşamalı konsensüs (council). Tetikleyiciler: "bu çok karmaşık", "basitleştir", "gereksiz kod", "varsayım ne", "llm council", "overcomplicated", "simplify this", "surface assumptions", "peer review". Tetiklenmez: mimari kararlar `musgoku`, tasarım kararları tasarım skill setine aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
 license: MIT
 ---
 
 # Karpathy Guidelines
 
-Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls.
+Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls and the [LLM Council](https://github.com/karpathy/llm-council) multi-agent deliberation architecture.
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+
+---
 
 ## 1. Think Before Coding
 
@@ -21,6 +24,8 @@ Before implementing:
 - If a simpler approach exists, say so. Push back when warranted.
 - If something is unclear, stop. Name what's confusing. Ask.
 
+---
+
 ## 2. Simplicity First
 
 **Minimum code that solves the problem. Nothing speculative.**
@@ -32,6 +37,8 @@ Before implementing:
 - If you write 200 lines and it could be 50, rewrite it.
 
 Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+
+---
 
 ## 3. Surgical Changes
 
@@ -56,6 +63,8 @@ When your changes create orphans:
 
 The test: Every changed line should trace directly to the user's request.
 
+---
+
 ## 4. Goal-Driven Execution
 
 **Define success criteria. Loop until verified.**
@@ -75,3 +84,24 @@ For multi-step tasks, state a brief plan:
 ```
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+---
+
+## 5. Council Deliberation (3-Aşamalı Konsensüs & Kör Hakemlik)
+
+**Karmaşık kararlarda tek model önyargısına kapılma. Anonim akran değerlendirmesi ve sentez yürüt.**
+
+Büyük mimari tercihlerde, riskli refactoring kararlarında veya belirsiz tasarım ikilemlerinde Andrej Karpathy'nin 3 aşamalı konsey protokolü uygulanır:
+
+1. **Stage 1 (First Opinions):** Bağımsız 2-3 alternatif çözüm üretilir (`Option A`, `Option B`, `Option C`).
+2. **Stage 2 (Anonymized Peer Review):** Çözümler harflendirilerek kimliği gizlenir (körleme); alt ajanlara veya modellere güçlü/zayıf yönler ve Karpathy sadelik filtresi üzerinden inceletilip sıralanır (`FINAL RANKING:`).
+3. **Stage 3 (Chairman Synthesis):** Başkan ajan, akran eleştirilerini ve konsensüs tablosunu inceleyerek çelişkileri ayıklar; en yalın ve sağlam nihai sentezi üretir.
+
+Detaylı rehber ve prompt şablonları için:
+- **Hakemlik Rehberi:** `references/llm-council-deliberation.md`
+- **Sıralama ve Konsensüs Aracı:** `scripts/council_ranker.py`
+
+```bash
+# Örnek konsensüs çalışmasını çalıştır
+python .agent/skills/karpathy-guidelines/scripts/council_ranker.py --sample
+```

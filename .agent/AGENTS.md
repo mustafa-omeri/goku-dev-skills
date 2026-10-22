@@ -189,6 +189,7 @@ Ayrıntı: [`rules/no-silent-wait.md`](rules/no-silent-wait.md).
 - Kod yazmadan önce `.agent/skills/` altındaki ilgili skill'i oku.
 - Yönlendirme: [`.agent\skills\musgoku\SKILL.md`](skills/musgoku/SKILL.md)
 - Kurallar dizini tek kaynaktır: [`.agent\rules/`](rules/) — `trigger-rule-action.md` hepsini bağlar.
+- 💡 **Otonom Bağlamsal Tetikleme (Autonomous Activation):** Ajan, kullanıcının belirli bir sihirli kelimeyi (trigger) yazmasını **pasifçe beklemez.** Görevin bağlamı (UI değişikliği, 2+ alternatifli mimari ikilem, bug çözümü, SEO, güvenlik vb.) ilgili alana girdiği anda kullanıcı o kelimeyi unutsa dahi ilgili skill'i (`karpathy-guidelines` Council, `diagnosing-bugs`, tasarım üçlüsü, `seo-growth`, `security-audit`) **otonom olarak** devreye alır. (Bkz. [`rules/skill-trigger-routing.md`](rules/skill-trigger-routing.md) §0).
 - Yeni iş mantığı, servis veya endpoint geliştirmede `tdd` (kırmızı → yeşil döngüsü); hata ayıklamada ise `bug-diagnosis-enforcement` (önce kırmızı geri bildirim döngüsü) tavizsiz uygulanır.
 - Tasarım/UI taleplerinde `canvas-design` + `frontend-design` + `ui-ux-pro-max`
   birlikte okunur; hangi konunun sahibi olduğunu `design-skills-enforcement.md`
