@@ -177,7 +177,7 @@ node .agent/skills/frontend-design/scripts/assets.mjs --credits --to assets
 
 ## Restraint and self-critique
 
-Spend your boldness in one place. Let one element be the memorable thing, keep everything around it quiet and disciplined, and cut any decoration that does not serve the brief. Build to a quality floor without announcing it: responsive down to mobile, visible keyboard focus, reduced motion respected, visually accessible, harmonious color palettes. Critique your own work as you build, taking screenshots to review if your environment supports it — a picture is worth 1000 tokens. Consider Chanel's advice: before leaving the house, take a look in the mirror and remove one accessory.
+Spend your boldness in one place. Let one element be the memorable thing, keep everything around it quiet and disciplined, and cut any decoration that does not serve the brief. Build to a quality floor without announcing it: responsive down to mobile, visible keyboard focus, reduced motion respected, visually accessible, harmonious color palettes. Critique your own work as you build, taking screenshots to review if your environment supports it — a picture is worth 1000 tokens (see `references/vision-to-component-patterns.md` for translating screenshots/mockups to components). Consider Chanel's advice: before leaving the house, take a look in the mirror and remove one accessory.
 
 ## More on writing in design
 

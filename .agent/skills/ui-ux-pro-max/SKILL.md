@@ -210,6 +210,7 @@ Then synthesize the design system + detailed searches and implement.
 | Navigation feels confusing | `references/quick-reference.md` §9: `nav-hierarchy` + `bottom-nav-limit` + `back-behavior` |
 | Layout breaks on small screens | `references/quick-reference.md` §5: `mobile-first` + `breakpoint-consistency` |
 | Performance / jank | `references/quick-reference.md` §3: `virtualize-lists` + `main-thread-budget` + `debounce-throttle` |
+| Enterprise B2B / SaaS benchmark | `references/enterprise-design-systems.md` for Polaris, Carbon, Primer, SLDS |
 
 ## Before Delivering App UI
 

@@ -38,6 +38,15 @@ $ErrorActionPreference = "Stop"
 $root = (Resolve-Path "$PSScriptRoot\..\..\..\..").Path
 Set-Location $root
 
+# `java` PATH'te eski bir JDK olabilir (bu makinede Java 8). ecj 21 bytecode
+# istedigi icin UnsupportedClassVersionError -> canary 0 bulgu -> yalan FAIL.
+# JAVA_HOME verilmisse onu kullan.
+$javaExe = "java"
+if ($env:JAVA_HOME) {
+    $candidate = Join-Path $env:JAVA_HOME "bin\java.exe"
+    if (Test-Path $candidate) { $javaExe = $candidate }
+}
+
 $m2 = (mvn -B -q help:evaluate "-Dexpression=settings.localRepository" -DforceStdout | Out-String).Trim()
 if (-not $m2 -or -not (Test-Path $m2)) { $m2 = Join-Path $env:USERPROFILE ".m2\repository" }
 $ecjJar = Join-Path $m2 "org\eclipse\jdt\ecj\$EcjVersion\ecj-$EcjVersion.jar"
@@ -87,7 +96,7 @@ $FindingPattern = 'is never used|is not used|Unnecessary @SuppressWarnings'
 $NoticePattern  = 'unchecked|raw type'
 
 function Invoke-Ecj([string[]]$Sources, [string]$LogFile) {
-    & java "-javaagent:$lombokJar=ECJ" -jar $ecjJar `
+    & $javaExe "-javaagent:$lombokJar=ECJ" -jar $ecjJar `
         -21 -encoding UTF-8 -proceedOnError -d none `
         -warn:unusedImport,unusedLocal,warningToken,unchecked `
         -cp "$lombokJar;$cp" @Sources 2>&1 | Out-File $LogFile -Encoding utf8

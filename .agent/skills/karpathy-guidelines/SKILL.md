@@ -105,3 +105,20 @@ Detaylı rehber ve prompt şablonları için:
 # Örnek konsensüs çalışmasını çalıştır
 python .agent/skills/karpathy-guidelines/scripts/council_ranker.py --sample
 ```
+
+---
+
+## 6. Action-First & Token-Dense Output (Zero-Fluff & Prose Compression)
+
+**Bilişsel yükü düşür, dolgu cümlelerini sıfırla, teknik kesinliği tam koru.**
+
+Derived from [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) and [juliusbrussee/caveman](https://github.com/juliusbrussee/caveman):
+
+1. **Lead with Action:** Açılış cümlesi doğrudan yapılacak işi veya dosya/satırı belirtir; gereksiz giriş (preamble) ve özet (recap) cümleleri yasaktır.
+2. **Cap Lists to 5:** Bilişsel aşırı yüklenmeyi önlemek için listeler tek seferde en fazla 5 maddeyle sınırlandırılır.
+3. **Single Concrete Next Step:** Karar felcini önlemek için ucu açık sorular yerine tek bir net sonraki adım sunulur.
+4. **Prose Compression (Caveman Heuristic):** Kod, tipler ve diff'ler %100 eksiksiz korunur; açıklayıcı metinler ise yüksek yoğunluklu (high-density) tutulur.
+
+Detaylı rehberler:
+- **Action-First & ADHD Formatting:** `references/action-first-communication.md`
+- **Token-Efficient Prose Compression:** `references/token-efficient-communication.md`

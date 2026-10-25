@@ -43,6 +43,7 @@ for _stream in (sys.stdout, sys.stderr):
 
 HERE = Path(__file__).resolve().parent
 DELIVERY_MD = HERE / "delivery.md"
+SCOUT_TARGETS_MD = HERE / "scout" / "targets.md"
 CONFIG_RE = re.compile(r"```json\s*\n(.*?)\n```", re.DOTALL)
 PROJECT_BLOCK_HEADING = "## Proje Bazlı Ek Kurallar"
 # Baslik yalnizca SATIR BASINDA olabilir. §10 gibi bolumler metin icinde
@@ -74,9 +75,31 @@ def colour(text: str, code: str) -> str:
 def load_config(path: Path) -> dict:
     if not path.is_file():
         sys.exit(f"HATA: {path} bulunamadi.")
+
+    # 1. scout/targets.md dosyası ise scout.targets motoru ile çöz
+    if path.name == "targets.md" or (SCOUT_TARGETS_MD.is_file() and path.resolve() == SCOUT_TARGETS_MD.resolve()):
+        try:
+            from scout.targets import build_delivery_config_from_targets
+            base_config = {}
+            if DELIVERY_MD.is_file():
+                try:
+                    match = CONFIG_RE.search(DELIVERY_MD.read_text(encoding="utf-8"))
+                    if match:
+                        base_config = json.loads(match.group(1))
+                except Exception:
+                    pass
+            return build_delivery_config_from_targets(path, base_config=base_config)
+        except Exception as e:
+            sys.exit(f"HATA: {path} hedefleri çözümlenemedi -> {e}")
+
+    # 2. Standart ```json ... ``` bloğu içeren dosya (delivery.md vb.)
     match = CONFIG_RE.search(path.read_text(encoding="utf-8"))
     if not match:
-        sys.exit(f"HATA: {path.name} icinde ```json ... ``` config blogu yok.")
+        try:
+            from scout.targets import build_delivery_config_from_targets
+            return build_delivery_config_from_targets(path)
+        except Exception:
+            sys.exit(f"HATA: {path.name} icinde ```json ... ``` config blogu yok.")
     try:
         return json.loads(match.group(1))
     except json.JSONDecodeError as exc:
@@ -483,16 +506,23 @@ def main() -> int:
         "--prune-only", action="store_true",
         help="dagitim yapmadan yalnizca eski yedekleri temizle (--keep ile birlikte)",
     )
+    parser.add_argument(
+        "--config", metavar="PATH",
+        help="ozel konfigurasyon dosyasi (scout/targets.md veya delivery.md)",
+    )
     args = parser.parse_args()
 
-    config = load_config(DELIVERY_MD)
+    target_config = Path(args.config) if args.config else (SCOUT_TARGETS_MD if SCOUT_TARGETS_MD.is_file() else DELIVERY_MD)
+    config = load_config(target_config)
     source = resolve_source(config)
 
     if args.list:
-        print(f"{'id':<24} {'enabled':<9} {'stack':<20} path")
+        print(colour(f"Konfigürasyon: {target_config}", BOLD))
+        print(f"{'id':<26} {'enabled':<9} {'type':<10} {'stack':<18} path")
         for project in config["projects"]:
             flag = colour("EVET", GREEN) if project.get("enabled") else colour("hayir", DIM)
-            print(f"{project['id']:<24} {flag:<9} {project.get('stack',''):<20} {project['path']}")
+            stype = project.get("source_type", "single")
+            print(f"{project['id']:<26} {flag:<9} {stype:<10} {project.get('stack',''):<18} {project['path']}")
         return 0
 
     if not source.is_dir():

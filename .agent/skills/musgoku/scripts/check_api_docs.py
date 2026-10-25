@@ -49,8 +49,17 @@ from pathlib import Path
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
+# Annotation tam nitelikli de yazilabilir:
+#   @org.springframework.web.bind.annotation.PostMapping("/x")
+# Onek grubu olmadan bu satirlar hic gorulmuyordu (3 endpoint kayipti).
 ANNOTATION_RE = re.compile(
-    r"@(GetMapping|PostMapping|PutMapping|PatchMapping|DeleteMapping|RequestMapping)\b")
+    r"@(?:[A-Za-z_][A-Za-z0-9_]*\.)*"
+    r"(GetMapping|PostMapping|PutMapping|PatchMapping|DeleteMapping|RequestMapping)\b")
+CONTROLLER_RE = re.compile(
+    r"@(?:[A-Za-z_][A-Za-z0-9_]*\.)*(?:RestController|Controller)\b")
+# `@RestControllerAdvice` icinde `@RestController` alt dizisi gecer; ayri ele alinir.
+ADVICE_RE = re.compile(
+    r"@(?:[A-Za-z_][A-Za-z0-9_]*\.)*(?:RestControllerAdvice|ControllerAdvice)\b")
 CLASS_RE = re.compile(r"\b(?:public\s+|abstract\s+|final\s+)*(?:class|record)\s+\w+")
 STRING_RE = re.compile(r'"([^"]*)"')
 DOC_ENDPOINT_RE = re.compile(
@@ -79,11 +88,16 @@ def find_project_root() -> Path:
 
 def read_args(text: str, start: int):
     """Annotasyonun '(' ... ')' arguman govdesini dondurur (string farkindali)."""
+    return read_args_span(text, start)[0]
+
+
+def read_args_span(text: str, start: int):
+    """(arguman govdesi, kapanis parantezinden sonraki konum)."""
     i = start
     while i < len(text) and text[i] in " \t\r\n":
         i += 1
     if i >= len(text) or text[i] != "(":
-        return ""
+        return "", i
     depth = 0
     in_string = False
     j = i
@@ -102,9 +116,29 @@ def read_args(text: str, start: int):
         elif ch == ")":
             depth -= 1
             if depth == 0:
-                return text[i + 1:j]
+                return text[i + 1:j], j + 1
         j += 1
-    return ""
+    return "", i
+
+
+def has_operation(text: str, lower: int, ann_start: int, ann_end: int) -> bool:
+    """`@Operation` mapping'in USTUNDE veya ALTINDA olabilir.
+
+    Ust sinir = onceki mapping annotasyonunun sonu. `}` karakterini sinir
+    almak yanlisti: `@Operation` -> `@ApiResponses({...})` -> `@GetMapping`
+    zincirinde dizi literalinin `}`'i @Operation'i pencereden cikariyordu.
+    """
+    if "@Operation" in text[lower:ann_start]:
+        return True
+    stop = len(text)
+    for token in ("{", "}"):
+        found = text.find(token, ann_end)
+        if found != -1:
+            stop = min(stop, found)
+    following = ANNOTATION_RE.search(text, ann_end)
+    if following:
+        stop = min(stop, following.start())
+    return "@Operation" in text[ann_end:stop]
 
 
 def join_paths(*parts) -> str:
@@ -143,9 +177,9 @@ def scan_java(root: Path):
 
         prefixes = []
         annotations = list(ANNOTATION_RE.finditer(text))
+        prev_end = class_pos
         for index, match in enumerate(annotations):
-            args = read_args(text, match.end())
-            end = annotations[index + 1].start() if index + 1 < len(annotations) else class_pos
+            args, ann_end = read_args_span(text, match.end())
             # Sinif seviyesi = annotasyon `class` anahtar kelimesinden once.
             # (Argumanlardaki `{` dizi formu yuzunden `{}` kontrolu burada
             #  kullanilamaz: `@RequestMapping({"/v1/x", "/api/v1/x"})` yalan
@@ -162,11 +196,13 @@ def scan_java(root: Path):
             if is_class_level:
                 if name == "RequestMapping":
                     prefixes = values
+                prev_end = ann_end
                 continue
 
             if name == "RequestMapping":
                 methods = re.findall(r"RequestMethod\.(GET|POST|PUT|PATCH|DELETE)", args)
                 if not methods:
+                    prev_end = ann_end
                     continue
             else:
                 methods = [METHOD_BY_ANNOTATION[name]]
@@ -176,12 +212,13 @@ def scan_java(root: Path):
                     for base in (prefixes or [""]):
                         full_path = join_paths(base, value)
                         endpoints.append((http_method, full_path, path.name))
-                        if "@Operation" not in text[match.end():end]:
+                        if not has_operation(text, prev_end, match.start(), ann_end):
                             missing_operation.append(
                                 f"{http_method} {full_path} ({path.name})")
+            prev_end = ann_end
 
         head = text[:class_pos]
-        if "@RestController" in head or "@Controller" in head:
+        if CONTROLLER_RE.search(head) and not ADVICE_RE.search(head):
             if "@Tag" not in head:
                 missing_tag.append(path.name)
 
