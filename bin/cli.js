@@ -18,7 +18,7 @@ const path = require('path');
 const readline = require('readline');
 const https = require('https');
 
-const VERSION = '1.11.10';
+const VERSION = '1.12.0';
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 const RAW_URL_BASE = `https://raw.githubusercontent.com/${GITHUB_REPO}/main`;
 
@@ -39,7 +39,7 @@ const c = {
   magenta: '\x1b[35m',
 };
 
-// Available 29 skills with descriptions
+// Available 40 skills with descriptions
 const SKILLS_MANIFEST = {
   'musgoku': {
     category: 'Architecture / Fullstack',
@@ -191,6 +191,56 @@ const SKILLS_MANIFEST = {
     desc: 'Pre-launch production audit: 20-point checklist (KVKK m.10, Consent Mode v2, SEO, WCAG 2.2 AA & /prelaunch, /prelaunch-update).',
     triggers: 'prelaunch, canlıya al, go live, yayına alma kontrolü, consent check, axe audit, /prelaunch, /prelaunch-update',
   },
+  'ui-polish': {
+    category: 'Session Commands / Ensemble',
+    desc: 'Distinctive UI polishing orchestrator: anti-slop sweep, 55 component themes, 10 palettes & WCAG 2.2 AA audit.',
+    triggers: '/ui-polish, ui polish, [UI-POLISH], arayuz parlat, polish ui',
+  },
+  'verify-prd': {
+    category: 'Session Commands / Ensemble',
+    desc: 'Sprint and acceptance criteria verification engine: Gherkin AC, 5-layer vertical slice & code smell audit.',
+    triggers: '/verify-prd, verify prd, [VERIFY-PRD], kabul kriterlerini dogrula, prd denetle',
+  },
+  'fix-bug': {
+    category: 'Session Commands / Ensemble',
+    desc: 'Systematic 6-phase debugging loop: red feedback loop before code change, root cause analysis & regression test.',
+    triggers: '/fix-bug, fix bug, [FIX-BUG], hata ayikla, bug coz, neden calismiyor',
+  },
+  'check-security': {
+    category: 'Session Commands / Ensemble',
+    desc: 'OWASP vulnerability hunting, public form abuse defense, rate-limiting & env/secrets leak audit.',
+    triggers: '/check-security, check security, [CHECK-SECURITY], guvenlik acigi tara, guvenlik denetimi',
+  },
+  'council': {
+    category: 'Session Commands / Ensemble',
+    desc: '3-stage LLM council and blind peer review: alternative exploration, Borda count ranking & ADR decision record.',
+    triggers: '/council, llm council, [COUNCIL], konsey topla, hakemlik yap',
+  },
+  'seo-apply': {
+    category: 'Session Commands / Ensemble',
+    desc: 'End-to-end SEO & GEO optimization engine: semantic meta tags, OpenGraph, JSON-LD schemas & crawl validation.',
+    triggers: '/seo-apply, seo apply, [SEO-APPLY], seo uygula, meta tag ekle',
+  },
+  'commitx': {
+    category: 'Session Commands / Ensemble',
+    desc: 'Autonomous semantic release orchestrator: quality gates check, semver bump, commit and remote push.',
+    triggers: '/commitx, commitx, [COMMITX], commitle, commit yap, push to remote',
+  },
+  'gs-update': {
+    category: 'Session Commands / Ensemble',
+    desc: 'Zero-bloat surgical skill set updater: preserves custom project rules and avoids downloading uninstalled skills.',
+    triggers: '/gs-update, gs update, [GS-UPDATE], goku guncelle, skillset guncelle',
+  },
+  'prelaunch': {
+    category: 'Session Commands / Ensemble',
+    desc: '20-point pre-launch audit and GO/NO-GO verdict: KVKK, Consent Mode v2, raw HTML SEO & WCAG 2.2 accessibility.',
+    triggers: '/prelaunch, prelaunch audit, [PRELAUNCH], canliya al, yayina alma kontrolu',
+  },
+  'prelaunch-update': {
+    category: 'Session Commands / Ensemble',
+    desc: 'Dynamic legal penalties and platform rules synchronizer: scans official sources and updates audit thresholds.',
+    triggers: '/prelaunch-update, prelaunch update, [PRELAUNCH-UPDATE], mevzuat guncelle, ceza guncelle',
+  },
 };
 
 // Component themes categories (55 HTML themes)
@@ -210,7 +260,7 @@ const PROFILES = {
   'fullstack': {
     id: 'fullstack',
     name: 'Fullstack / All',
-    desc: 'All 30 skills, 19 rules, 55 component themes & 11 validation gates (~65 MB)',
+    desc: 'All 40 skills, 19 rules, 55 component themes & 11 validation gates (~65 MB)',
     skills: Object.keys(SKILLS_MANIFEST),
     rules: '*',
     templates: '*',
@@ -247,6 +297,16 @@ const PROFILES = {
       'security-audit',
       'seo-growth',
       'prelaunch-audit',
+      'ui-polish',
+      'verify-prd',
+      'fix-bug',
+      'check-security',
+      'council',
+      'seo-apply',
+      'commitx',
+      'gs-update',
+      'prelaunch',
+      'prelaunch-update',
     ],
     rules: [
       'always-read-skills.md',
@@ -300,6 +360,12 @@ const PROFILES = {
       'my-idea',
       'security-audit',
       'seo-growth',
+      'verify-prd',
+      'fix-bug',
+      'check-security',
+      'council',
+      'commitx',
+      'gs-update',
     ],
     rules: [
       'always-read-skills.md',

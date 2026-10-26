@@ -31,6 +31,7 @@ import sys
 import io
 from core import CSV_CONFIG, AVAILABLE_STACKS, MAX_RESULTS, UNTRUNCATED_COLS, search, search_stack
 from design_system import generate_design_system
+from pathlib import Path
 
 # Force UTF-8 for stdout/stderr to handle emojis on Windows (cp1252 default)
 if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
@@ -39,6 +40,73 @@ if sys.stderr.encoding and sys.stderr.encoding.lower() != 'utf-8':
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
 TRUNCATE_AT = 300
+
+def get_local_recommendations(query: str, max_items: int = 3):
+    """Find ready-made component themes and measured palettes from frontend-design."""
+    local_components = []
+    local_palettes = []
+
+    frontend_design_scripts = Path(__file__).resolve().parent.parent.parent / "frontend-design" / "scripts"
+    if not frontend_design_scripts.exists():
+        return {"components": [], "palettes": []}
+
+    try:
+        sys.path.insert(0, str(frontend_design_scripts))
+        import get_component
+        import get_palette
+
+        # Search components
+        matched_comps = get_component.search_themes(query)
+        for c in matched_comps[:max_items]:
+            local_components.append({
+                "theme": c.get("name") or c.get("theme", ""),
+                "category": c.get("category", ""),
+                "title": c.get("title", ""),
+                "path": str(c.get("path", "")),
+            })
+
+        # Search palettes
+        all_palettes = get_palette.parse_catalog()
+        matched_pals = get_palette.search_palettes(all_palettes, query)
+        for p in matched_pals[:max_items]:
+            roles = p.get("roles", {})
+            local_palettes.append({
+                "id": p["id"],
+                "title": p["title"],
+                "mode": p["mode"],
+                "contrast": p.get("contrast", ""),
+                "zemin": roles.get("zemin", {}).get("hex", ""),
+                "metin": roles.get("metin", {}).get("hex", ""),
+                "vurgu": roles.get("vurgu", {}).get("hex", ""),
+            })
+    except Exception:
+        pass
+    finally:
+        if str(frontend_design_scripts) in sys.path:
+            sys.path.remove(str(frontend_design_scripts))
+
+    return {"components": local_components, "palettes": local_palettes}
+
+
+def format_local_recommendations(recs: dict) -> str:
+    components = recs.get("components", [])
+    palettes = recs.get("palettes", [])
+    if not components and not palettes:
+        return ""
+
+    lines = ["\n### 📦 Ready-Made Local Assets (from frontend-design)"]
+    if components:
+        lines.append(f"**Matching Ready-Made Component Templates ({len(components)}):**")
+        for c in components:
+            lines.append(f"- **{c['category']}/{c['theme']}** — {c['title']}")
+            lines.append(f"  *CLI Inspect:* `python .agent/skills/frontend-design/scripts/get_component.py --theme {c['theme']} --html`")
+    if palettes:
+        lines.append(f"**Matching Measured Palettes ({len(palettes)}):**")
+        for p in palettes:
+            lines.append(f"- **[#{p['id']}] {p['title']}** ({p['mode']}) · Kontrast: {p['contrast']}")
+            lines.append(f"  *CSS Variables:* `python .agent/skills/frontend-design/scripts/get_palette.py --id {p['id']} --format css`")
+    lines.append("")
+    return "\n".join(lines)
 
 
 def format_output(result, full=False):
@@ -69,26 +137,31 @@ def format_output(result, full=False):
                 f"`{redirect['domain']}` domain as `{redirect['id']}`. "
                 "Search that domain instead of treating a page composition as a visual style."
             )
-            return "\n".join(output)
-        output.append(
-            "No matches. This is not a match with an empty value -- the query "
-            "did not hit the database. Retry with broader/different keywords "
-            "before falling back to general defaults, and say explicitly that "
-            "no database match was found if you do fall back."
-        )
-        suggestions = result.get("suggestions") or []
-        if suggestions:
-            output.append(f"**Closest known terms:** {', '.join(suggestions)}")
-        return "\n".join(output)
+        else:
+            output.append(
+                "No matches. This is not a match with an empty value -- the query "
+                "did not hit the database. Retry with broader/different keywords "
+                "before falling back to general defaults, and say explicitly that "
+                "no database match was found if you do fall back."
+            )
+            suggestions = result.get("suggestions") or []
+            if suggestions:
+                output.append(f"**Closest known terms:** {', '.join(suggestions)}")
+    else:
+        for i, row in enumerate(result['results'], 1):
+            output.append(f"### Result {i}")
+            for key, value in row.items():
+                value_str = str(value)
+                if not full and key not in UNTRUNCATED_COLS and len(value_str) > TRUNCATE_AT:
+                    value_str = value_str[:TRUNCATE_AT] + "..."
+                output.append(f"- **{key}:** {value_str}")
+            output.append("")
 
-    for i, row in enumerate(result['results'], 1):
-        output.append(f"### Result {i}")
-        for key, value in row.items():
-            value_str = str(value)
-            if not full and key not in UNTRUNCATED_COLS and len(value_str) > TRUNCATE_AT:
-                value_str = value_str[:TRUNCATE_AT] + "..."
-            output.append(f"- **{key}:** {value_str}")
-        output.append("")
+    local_recs = result.get("local_recommendations")
+    if local_recs:
+        rec_text = format_local_recommendations(local_recs)
+        if rec_text:
+            output.append(rec_text)
 
     return "\n".join(output)
 
@@ -139,13 +212,17 @@ if __name__ == "__main__":
             force=args.force,
         )
 
+        local_recs = get_local_recommendations(args.query)
         if args.json:
-            print(json_module.dumps(
-                {"design_system": result["design_system"], "persistence": result["persistence"]},
-                indent=2, ensure_ascii=False,
-            ))
+            payload = {"design_system": result["design_system"], "persistence": result["persistence"]}
+            if local_recs.get("components") or local_recs.get("palettes"):
+                payload["local_recommendations"] = local_recs
+            print(json_module.dumps(payload, indent=2, ensure_ascii=False))
         else:
             print(result["text"])
+            rec_text = format_local_recommendations(local_recs)
+            if rec_text:
+                print(rec_text)
 
             if args.persist:
                 persistence = result["persistence"] or {}
@@ -164,6 +241,9 @@ if __name__ == "__main__":
     # Stack search
     elif args.stack:
         result = search_stack(args.query, args.stack, args.max_results)
+        local_recs = get_local_recommendations(args.query)
+        if local_recs.get("components") or local_recs.get("palettes"):
+            result["local_recommendations"] = local_recs
         if args.json:
             print(json_module.dumps(result, indent=2, ensure_ascii=False))
         else:
@@ -171,6 +251,9 @@ if __name__ == "__main__":
     # Domain search
     else:
         result = search(args.query, args.domain, args.max_results)
+        local_recs = get_local_recommendations(args.query)
+        if local_recs.get("components") or local_recs.get("palettes"):
+            result["local_recommendations"] = local_recs
         if args.json:
             print(json_module.dumps(result, indent=2, ensure_ascii=False))
         else:

@@ -118,10 +118,11 @@ Tüm web arayüzü, frontend bileşeni ve sayfa geliştirmelerinde "generic AI s
 5. **Sıfır-Blur Blok Gölgeler Yasağı (No Hard Offset Shadows):** Açıkça neobrutalist bir dünya tasarlanmıyorsa `box-shadow: 4px 4px 0` gibi sıfır-blur blok gölgeler yasaktır. Gölgeler her zaman yumuşak bir blur (`blur-md`, `blur-lg`) ve doğal bir offset taşımalıdır.
 6. **Yükseltiyi (Elevation) Tek Şey Belirler:** Ya border ya gölge. Geniş yumuşak gölgenin altına 1px border koymak "hayalet kart" (ghost card) hatasıdır. Kart köşe yuvarlaklığı (`border-radius`) 12–16px (`rounded-xl` / `rounded-2xl`) aralığında kalır; tam yuvarlak haplar (pills) sadece minik rozet/kontroller içindir.
 7. **Sistem Display Font Fallback Yasağı:** Karakterli bir display başlık yerine Impact, Arial Black gibi sistem fallback'lerini kullanmak yasaktır. Projeye özgü web fontları veya karakterli tipografi tercih edilmelidir.
-8. **Emoji veya Ham Unicode ile İkon Yasağı:** İkonlar rastgele emoji veya Unicode gliflerinden (`⚡`, `🚀`, `✔`) ibaret olamaz. Tutarlı bir SVG ikon kütüphanesinden (Lucide, Heroicons vb.) tek bir çizgi kalınlığı ve stil ile gelmelidir.
+8. **Emoji veya Ham Unicode ile İkon Yasağı (E8 - emoji-icon):** İkonlar rastgele emoji veya Unicode gliflerinden (`⚡`, `🚀`, `✔`, `🔲`, `🔍` vb.) ibaret olamaz. Arayüzde buton, menü, rozet veya kart içi ikon olarak inline emoji kullanılması KESİNLİKLE YASAKTIR. Tutarlı bir SVG ikon kütüphanesinden (Lucide, Heroicons vb.) tek bir çizgi kalınlığı ve stil ile gelmelidir. `check_design_slop.py` tarafından mekanik olarak engellenir.
 9. **Klişe Hero-Metrik ve Dekoratif Göstergeler Yasağı:** Anlamsız hero-metrik şablonları (dev sayı + minik etiket + gradient), içerik yerine konan sahte sparkline'lar ve içi boş ilerleme halkaları yasaktır. İddia ve veriler gerçek ve dürüst olmalıdır.
 10. **Refleks Modal Yasağı:** Kullanıcı akışını kesintiye uğratması gerekmeyen sıradan işlemler için ezbere modal/dialog açmak yerine yerinde (inline) açılma veya panel geçişi uygulanmalıdır.
 11. **Uydurma Karalama SVG Yasağı (No Doodles/Sketchy SVGs):** `loose-sketch`, `doodle` veya `feTurbulence` gibi amatör karalama SVG'leri yasaktır. Vektör ya net geometridir (diyagram, ikon, shader, animasyonlu çizgi) ya da profesyonel illüstrasyondur.
+12. **Hardcoded Renk ve Başıboş Stil Yasağı (E9 - hardcoded-palette):** HTML veya JSX içinde inline `style="color: #..."` gibi başıboş hex renkler kullanmak yasaktır. Renkler her zaman ölçülmüş token'lardan (`get_palette.py --id <num> --format css` veya CSS değişkenleri / Tailwind sınıfları) gelmelidir. `check_design_slop.py` tarafından mekanik olarak denetlenir.
 
 ### B. Çıktı Üzerinde Zorunlu Zanaat Kontrolleri (Craft Floor Verifications)
 
@@ -133,9 +134,16 @@ Tüm web arayüzü, frontend bileşeni ve sayfa geliştirmelerinde "generic AI s
    - `caret-color`: Input imleç rengi vurgu rengiyle eşleşir.
    - `::-webkit-scrollbar` / `scrollbar-color`: Özel ince kaydırma çubuğu.
    - `focus-visible` & `outline-offset`: Özel odak halkaları (erişilebilir ve token uyumlu).
-   - `font-variant-numeric: tabular-nums`: Tablo, sayaç ve sayısal verilerde sabit genişlikli rakamlar.
+   - `font-variant-numeric: tabular-nums` (W1): Tablo, sayaç ve sayısal verilerde sabit genişlikli rakamlar.
    - `text-underline-offset`: Bağlantı alt çizgilerinde doğal mesafe (`underline-offset-4`).
 5. **Dürüst ve Eyleme Dayalı Metinler (Material & Copy Honesty):** Butonlar ve kontroller yaptıkları eylemi net söyler ("Kaydet", "Projeyi Yayınla"); hatalar sorunun ne olduğunu ve çözümünü kullanıcı diliyle açıklar.
+
+### C. Hazır Bileşen ve Ölçülmüş Palet Önceliği (Zero-Friction Ready-Made Lookup)
+
+⛔ **Ezbere CSS/HTML Üretme Yasağı:** Modelin eğitim hafızasından uydurma ortalama 2023 grid'leri ve renkleri basmasını engellemek için, bir bileşen (sidebar, navbar, card, login, footer, accordion, menu) tasarlanırken veya renklendirilirken **önce** şu araçlar taranmak ZORUNDADIR:
+1. **Hazır Bileşen Şablonları (55 Tema):** `python .agent/skills/frontend-design/scripts/get_component.py --list` veya `--theme <name> --html` ile doğrudan üretim kalitesindeki CSS/HTML referans alınır.
+2. **Ölçülmüş Kontrastlı Paletler (10 Palet):** `python .agent/skills/frontend-design/scripts/get_palette.py --id <1-10> --format css` ile WCAG AA/AAA kontrastı garanti edilmiş CSS değişkenleri projeye aktarılır.
+3. **Merkezi Tasarım Arama Motoru:** `python .agent/skills/ui-ux-pro-max/scripts/search.py "<query>"` araması, sorguya uyan yerel hazır bileşen ve paletleri otomatik olarak yüzeye çıkarır.
 
 ## 2.7 Dört Yüzey Modu Sözleşmesi (The 4 Surface Modes: Persuade, Operate, Read, Experience)
 

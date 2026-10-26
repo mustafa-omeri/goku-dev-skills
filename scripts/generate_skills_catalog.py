@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 """Ajan Skill & Mimari Katalog Üreticisi (Skills Catalog HTML Generator).
 
-`.agent/skills/` altındaki tüm `SKILL.md` dosyalarını ve kural sözlüklerini
-tarayarak kullanıcı dostu, filtrelenebilir, çift görünümlü (Kart Grid & Kompakt Takip Tablosu),
+`.agent/skills/` altındaki tüm `SKILL.md` dosyalarını, kural sözlüklerini ve
+oturum slash komutlarını (Ensemble Slash Commands) tarayarak kullanıcı dostu,
+filtrelenebilir, çift görünümlü (Kart Grid & Kompakt Takip Tablosu),
 kopyalanabilir ve modern `skills-catalog.html` dosyasını derler.
 
 Kullanım:
@@ -52,8 +53,146 @@ CATEGORIES = {
     ],
     "Marka & Doküman": [
         "brand", "doc-coauthoring", "slides", "seo-growth"
+    ],
+    "Oturum Komutları (Ensemble)": [
+        "ui-polish", "verify-prd", "fix-bug", "check-security",
+        "council", "seo-apply", "commitx", "gs-update",
+        "prelaunch", "prelaunch-update"
     ]
 }
+
+SLASH_COMMANDS = [
+    {
+        "command": "/verify-prd",
+        "aliases": ["/verify-prd"],
+        "name": "PRD & Kabul Kriterleri Doğrulama Motoru",
+        "badge": "Kalite & Güven",
+        "badge_class": "badge-info",
+        "skills": ["doc-coauthoring", "code-review", "Katman Bütünlüğü (5-Layer)"],
+        "goal": "\"Bitti ama doğru mu bitti?\" Güven Motoru",
+        "description": "Şartnamedeki kabul kriterlerini (Gherkin AC), 5 Katmanlı Dikey Dilimi (DB Migration, View/RPC, Client API, UI UX, Admin Formu) ve kapsam sapmalarını (Scope Creep) denetleyip kanıt tablosu üretir.",
+        "sample_prompt": "/verify-prd: Son tamamlanan özelliğin kabul kriterlerini, 5 katman dikey dilim bütünlüğünü ve regression risklerini bağımsız denetle.",
+        "protocol": "1. Gherkin AC Denetimi ➜ 2. 5 Katman Analizi ➜ 3. Scope Creep Taraması ➜ 4. Deterministik Test Kanıtı",
+        "category": "Teslimat & Kalite"
+    },
+    {
+        "command": "/ui-polish",
+        "aliases": ["/ui-polish", "[UI-POLISH]", "[DESIGN-REFRESH]"],
+        "name": "Tasarım & UI/UX İnce Ayar Üçlüsü",
+        "badge": "Tasarım & Zanaat",
+        "badge_class": "badge-accent",
+        "skills": ["ui-ux-pro-max", "frontend-design", "ui-styling"],
+        "goal": "Tasarım & Zanaat Üçlüsü (Hazır Bileşen/Palet, Anti-Slop & WCAG 2.2 AA)",
+        "description": "55 hazır bileşen teması (get_component.py) ve 10 ölçülmüş palet (get_palette.py) ile başlayıp, 79 stil ve 192 palet seçimi, generic AI-slop temizliği ve deterministik kontrast/WCAG doğrulaması yapar.",
+        "sample_prompt": "/ui-polish: Arayüzü hazır bileşen ve paletlerden ilhamla zenginleştir, generic AI kalıplarını temizle, tipografi ve boşluk ritmini modernleştir, WCAG kontrastını doğrula.",
+        "protocol": "get_component.py / get_palette.py (hazır yapı) ➜ ui-ux-pro-max ➜ frontend-design ➜ ui-styling + check_design_slop.py",
+        "category": "Tasarım & UI"
+    },
+    {
+        "command": "/check-security",
+        "aliases": ["/check-security"],
+        "name": "Güvenlik, Savunma & İstismar Kalkanı",
+        "badge": "Güvenlik & Savunma",
+        "badge_class": "badge-danger",
+        "skills": ["security-audit", "development-workflow", "prelaunch-audit"],
+        "goal": "OWASP & Public Form Savunması",
+        "description": "OWASP zafiyet avcılığı, public form kalkanı (Turnstile, Rate-limit, Sanitization, Blind Insert RLS) ve secrets/env sızıntı denetimi yürütür.",
+        "sample_prompt": "/check-security: Sistem genelinde yetki aşımı, public form abuse riskleri ve env sızıntılarını derinlemesine tara.",
+        "protocol": "Güvenlik Denetimi ➜ Halka 2 Savunması (Turnstile, Rate-limit, RLS) ➜ Secret/Env Sızıntı Taraması",
+        "category": "Teslimat & Kalite"
+    },
+    {
+        "command": "/fix-bug",
+        "aliases": ["/fix-bug"],
+        "name": "Sistematik Hata Teşhis & Kırmızı Döngü",
+        "badge": "Hata Teşhisi",
+        "badge_class": "badge-warning",
+        "skills": ["diagnosing-bugs", "musgoku", "karpathy-guidelines"],
+        "goal": "Kırmızı Döngü & Cerrahi Onarım",
+        "description": "Kod yazmadan önce hatayı kanıtlayan kırmızı test/kanıt döngüsü kurar, cerrahi onarım yapar, Karpathy gereksiz kod ve yan etki temizliği işletir.",
+        "sample_prompt": "/fix-bug: Çöken endpoint için önce kırmızı geri bildirim döngüsü kur, 3 hipotez üret ve cerrahi düzeltme yap.",
+        "protocol": "diagnosing-bugs (kırmızı döngü) ➜ musgoku (onarım) ➜ karpathy-guidelines (sadeleştirme)",
+        "category": "Teslimat & Kalite"
+    },
+    {
+        "command": "/council",
+        "aliases": ["/council"],
+        "name": "3-Aşamalı Konsey Hakemliği",
+        "badge": "Mimari Hakemlik",
+        "badge_class": "badge-info",
+        "skills": ["karpathy-guidelines", "doc-coauthoring"],
+        "goal": "Kör Akran İncelemesi & ADR Kararı",
+        "description": "Mimari ikilem ve riskli refactoring kararlarında 3 aşamalı anonim körleme (Blind Review, Borda Skoru & Chairman Synthesis) ve ADR mimari karar kaydı üretir.",
+        "sample_prompt": "/council: Mimari ikilem için 3 alternatifli kör hakemlik konseyi topla, Borda puanı hesapla ve ADR kaydı çıkar.",
+        "protocol": "Stage 1 (Alternatifler) ➜ Stage 2 (Kör Hakemlik) ➜ Stage 3 (Chairman Sentezi) ➜ docs/adr/ Karar Kaydı",
+        "category": "Kod & Mimari"
+    },
+    {
+        "command": "/prelaunch",
+        "aliases": ["/prelaunch"],
+        "name": "Canlıya Alma Kalite Denetimi",
+        "badge": "Lansman & Uyum",
+        "badge_class": "badge-success",
+        "skills": ["prelaunch-audit"],
+        "goal": "20 Maddelik Lansman & KVKK/GDPR Kontrolü",
+        "description": "20 maddelik tam kontrol listesi (KVKK m.10, 7499 s. Kanun, Consent Mode v2, ham HTML SEO, WCAG 2.2 AA, robots, sitemap) ve GO/NO-GO karar raporu üretir.",
+        "sample_prompt": "/prelaunch: Sitemizi yayına almaya hazır mıyız? 20 maddelik çekirdek denetimi ve yasal onay mekanizmalarını doğrula.",
+        "protocol": "20 Çekirdek Madde + Yasal/Privacy + SEO/Crawler + Erişilebilirlik (Axe) ➜ GO/NO-GO Karnesi",
+        "category": "Teslimat & Kalite"
+    },
+    {
+        "command": "/prelaunch-update",
+        "aliases": ["/prelaunch-update"],
+        "name": "Mevzuat & Kural Güncelleyici",
+        "badge": "Mevzuat Senkronu",
+        "badge_class": "badge-warning",
+        "skills": ["prelaunch-audit"],
+        "goal": "Dinamik Mevzuat ve Para Cezası Güncelleyici",
+        "description": "İdari para cezaları, KVKK bildirim limitleri ve Google Search kurallarını resmi kaynaklardan sorgulayıp markdown referanslarını cerrahi günceller.",
+        "sample_prompt": "/prelaunch-update: Güncel KVKK ve GDPR idari para cezalarını resmi tebliğlerden sorgula ve dokümanları güncelle.",
+        "protocol": "prelaunch_updater.py (Resmi Kaynak Sorgusu ➜ Diff & Markdown Cerrahi Senkronizasyonu)",
+        "category": "Teslimat & Kalite"
+    },
+    {
+        "command": "/seo-apply",
+        "aliases": ["/seo-apply", "[SEO-APPLY]"],
+        "name": "Uçtan Uca SEO & GEO Altyapısı",
+        "badge": "SEO & Growth",
+        "badge_class": "badge-accent",
+        "skills": ["seo-growth", "frontend-design"],
+        "goal": "Arama Motoru & AI Crawler Altyapısı",
+        "description": "Kod tabanına bizzat girer; semantik meta başlık/açıklama, canonical, OpenGraph, JSON-LD Schema.org, AI crawler robots.txt, sitemap.xml ve /llms.txt dosyalarını üretip seo_checker.py ile doğrular.",
+        "sample_prompt": "/seo-apply: Sitemiz için JSON-LD şemaları, OpenGraph etiketleri, robots.txt ve llms.txt dosyalarını kur ve doğrula.",
+        "protocol": "seo-growth (strateji) ➜ frontend-design (meta/DOM) ➜ seo_checker.py (doğrulama)",
+        "category": "Marka & Doküman"
+    },
+    {
+        "command": "/commitx",
+        "aliases": ["/commitx", "commitx", "commitle"],
+        "name": "Peşin Yetkili Sürüm Yayını",
+        "badge": "Sürüm & Git",
+        "badge_class": "badge-success",
+        "skills": ["git-release-workflow"],
+        "goal": "Ara Onaysız Otomatik Commit, Tag & Push",
+        "description": "Doğrulama kapılarını çalıştırır; ara onay sormadan git add → git commit → git tag → git push zincirini tek nefeste tamamlar.",
+        "sample_prompt": "commitx: Değişiklikleri doğrula, semantik tag artır ve uzak depoya push et.",
+        "protocol": "Kapı Doğrulaması ➜ Semver Artırma ➜ git add . ➜ git commit ➜ git tag ➜ git push HEAD & tags",
+        "category": "Teslimat & Kalite"
+    },
+    {
+        "command": "/gs-update",
+        "aliases": ["/gs-update", "GS güncelle", "skill update"],
+        "name": "Cerrahi Skill Seti Senkronu",
+        "badge": "Bakım & Senkron",
+        "badge_class": "badge-info",
+        "skills": ["musgoku"],
+        "goal": "Sıfır-Şişkinlik ve Proje Kuralı Korumalı Güncelleme",
+        "description": "Proje kuralını koruyarak ve gereksiz dosya indirmeden ajan becerilerini cerrahi olarak en son sürüme senkronlar.",
+        "sample_prompt": "/gs-update: Kurulu skill setini en son sürüme güncelle, proje ek kurallarını koru.",
+        "protocol": "npx goku-dev-skills update (Proje kuralı koruması, yalnızca kurulu olanları güncelleme)",
+        "category": "Kod & Mimari"
+    }
+]
 
 CONFIG_METADATA = {
     "prelaunch-audit": {
@@ -380,19 +519,22 @@ def parse_skill_md(skill_path: Path) -> dict:
 
 def generate_catalog_html(skills: list[dict]) -> str:
     skills_json = json.dumps(skills, ensure_ascii=False)
-    
+    slash_commands_json = json.dumps(SLASH_COMMANDS, ensure_ascii=False)
+
     pkg_json_file = PROJECT_ROOT / "package.json"
-    pkg_version = "1.9.10"
+    pkg_version = "1.12.0"
     if pkg_json_file.is_file():
         try:
-            pkg_version = json.loads(pkg_json_file.read_text(encoding="utf-8")).get("version", "1.9.10")
+            pkg_version = json.loads(pkg_json_file.read_text(encoding="utf-8")).get("version", "1.12.0")
         except Exception:
             pass
+
     cat_badges = {
         "Tasarım & UI": "cat-design",
         "Kod & Mimari": "cat-code",
         "Teslimat & Kalite": "cat-delivery",
-        "Marka & Doküman": "cat-brand"
+        "Marka & Doküman": "cat-brand",
+        "Oturum Komutları (Ensemble)": "cat-ensemble"
     }
 
     cat_buttons = "".join(
@@ -401,85 +543,263 @@ def generate_catalog_html(skills: list[dict]) -> str:
         for cat, skills_in_cat in CATEGORIES.items()
     )
 
+    quick_slash_pills = "".join(
+        f'<button class="quick-slash-pill" onclick="quickSelectSlash(\'{cmd["command"]}\')" title="{cmd["name"]}: {cmd["goal"]}">'
+        f'<svg class="svg-icon svg-slash" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> {cmd["command"]}</button>'
+        for cmd in SLASH_COMMANDS
+    )
+
     return f"""<!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ajan Skill & Mimari Kataloğu — Goku Dev Skills</title>
+  <title>Goku Dev Skills Kataloğu — Ajan Becerileri & Mimari Kurallar</title>
+  
+  <!-- Craft Typography: Plus Jakarta Sans & JetBrains Mono (Operate Surface Mode) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
   <style>
+    /* ==========================================================================
+       3-TIER DESIGN TOKEN ARCHITECTURE (design-system & frontend-design)
+       ========================================================================== */
     :root {{
-      --bg: #080c14;
-      --surface: #0f172a;
-      --surface-hover: #1e293b;
-      --card-bg: #0d1527;
-      --card-border: rgba(255, 255, 255, 0.08);
-      --border: #1e293b;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --primary: #38bdf8;
-      --primary-glow: rgba(56, 189, 248, 0.18);
-      --accent: #818cf8;
-      --success: #34d399;
-      --success-bg: rgba(52, 211, 153, 0.12);
-      --warning: #fbbf24;
-      --warning-bg: rgba(251, 191, 36, 0.12);
-      --info: #60a5fa;
-      --info-bg: rgba(96, 165, 250, 0.12);
-      --danger: #f87171;
-      --danger-bg: rgba(248, 113, 113, 0.12);
-      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      /* --- Layer 1: Primitive Tokens (Foundational Values) --- */
+      --slate-950: #090d16;
+      --slate-900: #0f172a;
+      --slate-850: #131d33;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-400: #94a3b8;
+      --slate-300: #cbd5e1;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50:  #f8fafc;
+      --white:     #ffffff;
+
+      --sky-400:   #38bdf8;
+      --sky-500:   #0ea5e9;
+      --sky-600:   #0284c7;
+
+      --indigo-400: #818cf8;
+      --indigo-500: #6366f1;
+
+      --emerald-400: #34d399;
+      --emerald-500: #10b981;
+      --emerald-600: #059669;
+
+      --amber-400: #fbbf24;
+      --amber-500: #f59e0b;
+      --amber-600: #d97706;
+
+      --rose-400:  #fb7185;
+      --rose-500:  #f43f5e;
+      --rose-600:  #e11d48;
+
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', "SFMono-Regular", Consolas, Menlo, monospace;
+
+      --radius-xs: 4px;
       --radius-sm: 6px;
-      --radius-md: 12px;
-      --radius-lg: 18px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-full: 9999px;
+
+      /* --- Layer 2: Semantic Tokens (Dark Theme - Default) --- */
+      --bg-canvas: #070a12;
+      --bg-surface: #0e1526;
+      --bg-surface-elevated: #131d33;
+      --bg-surface-hover: #18243e;
+      --bg-subtle: rgba(255, 255, 255, 0.04);
+
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --border-hover: rgba(56, 189, 248, 0.4);
+
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-tertiary: #64748b;
+
+      --accent-primary: var(--sky-400);
+      --accent-primary-subtle: rgba(56, 189, 248, 0.1);
+      --accent-primary-border: rgba(56, 189, 248, 0.25);
+
+      --accent-slash: var(--rose-400);
+      --accent-slash-subtle: rgba(244, 63, 94, 0.1);
+      --accent-slash-border: rgba(244, 63, 94, 0.25);
+
+      --status-success: var(--emerald-400);
+      --status-success-subtle: rgba(52, 211, 153, 0.1);
+      --status-success-border: rgba(52, 211, 153, 0.25);
+
+      --status-warning: var(--amber-400);
+      --status-warning-subtle: rgba(251, 191, 36, 0.1);
+      --status-warning-border: rgba(251, 191, 36, 0.25);
+
+      --status-info: var(--sky-400);
+      --status-info-subtle: rgba(56, 189, 248, 0.1);
+      --status-info-border: rgba(56, 189, 248, 0.25);
+
+      --status-danger: var(--rose-400);
+      --status-danger-subtle: rgba(248, 113, 113, 0.1);
+      --status-danger-border: rgba(248, 113, 113, 0.25);
+
+      --ring-focus: var(--sky-400);
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.55);
+
+      /* --- Layer 3: Component Tokens --- */
+      --header-bg: rgba(14, 21, 38, 0.88);
+      --card-bg: var(--bg-surface);
+      --card-border: var(--border-subtle);
+      --search-input-bg: #090e1a;
+      --code-block-bg: #060911;
+      --pill-bg: var(--bg-surface-elevated);
     }}
 
     [data-theme="light"] {{
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --surface-hover: #f1f5f9;
+      /* --- Layer 2: Semantic Tokens (Light Theme - Swiss Clean) --- */
+      --bg-canvas: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #f1f5f9;
+      --bg-surface-hover: #e2e8f0;
+      --bg-subtle: #f8fafc;
+
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --border-hover: var(--sky-600);
+
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-tertiary: #64748b;
+
+      --accent-primary: var(--sky-600);
+      --accent-primary-subtle: rgba(2, 132, 199, 0.08);
+      --accent-primary-border: rgba(2, 132, 199, 0.2);
+
+      --accent-slash: var(--rose-600);
+      --accent-slash-subtle: rgba(225, 29, 72, 0.08);
+      --accent-slash-border: rgba(225, 29, 72, 0.2);
+
+      --status-success: var(--emerald-600);
+      --status-success-subtle: rgba(5, 150, 105, 0.08);
+      --status-success-border: rgba(5, 150, 105, 0.2);
+
+      --status-warning: #b45309;
+      --status-warning-subtle: rgba(217, 119, 6, 0.08);
+      --status-warning-border: rgba(217, 119, 6, 0.2);
+
+      --status-info: var(--sky-600);
+      --status-info-subtle: rgba(2, 132, 199, 0.08);
+      --status-info-border: rgba(2, 132, 199, 0.2);
+
+      --status-danger: var(--rose-600);
+      --status-danger-subtle: rgba(220, 38, 38, 0.08);
+      --status-danger-border: rgba(220, 38, 38, 0.2);
+
+      --ring-focus: var(--sky-600);
+
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12);
+
+      --header-bg: rgba(255, 255, 255, 0.9);
       --card-bg: #ffffff;
       --card-border: #e2e8f0;
-      --border: #e2e8f0;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --primary: #0284c7;
-      --primary-glow: rgba(2, 132, 199, 0.12);
-      --accent: #6366f1;
-      --success: #059669;
-      --success-bg: rgba(5, 150, 105, 0.1);
-      --warning: #d97706;
-      --warning-bg: rgba(217, 119, 6, 0.1);
-      --info: #2563eb;
-      --info-bg: rgba(37, 99, 235, 0.1);
-      --danger: #dc2626;
-      --danger-bg: rgba(220, 38, 38, 0.08);
+      --search-input-bg: #ffffff;
+      --code-block-bg: #f8fafc;
+      --pill-bg: #f1f5f9;
     }}
 
-    * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+    /* ==========================================================================
+       THEMED BROWSER SURFACES (design-skills-enforcement.md §2.6 B.4)
+       ========================================================================== */
+    * {{
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }}
+
+    ::selection {{
+      background: var(--accent-primary-subtle);
+      color: var(--accent-primary);
+    }}
+
+    input, textarea {{
+      caret-color: var(--accent-primary);
+    }}
+
+    ::-webkit-scrollbar {{
+      width: 7px;
+      height: 7px;
+    }}
+    ::-webkit-scrollbar-track {{
+      background: var(--bg-canvas);
+    }}
+    ::-webkit-scrollbar-thumb {{
+      background: var(--border-strong);
+      border-radius: var(--radius-full);
+    }}
+    ::-webkit-scrollbar-thumb:hover {{
+      background: var(--slate-500);
+    }}
+
+    :focus-visible {{
+      outline: 2px solid var(--ring-focus);
+      outline-offset: 2px;
+    }}
+
     body {{
       font-family: var(--font-sans);
-      background-color: var(--bg);
-      color: var(--text-main);
-      line-height: 1.6;
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      line-height: 1.55;
       min-height: 100vh;
-      transition: background-color 0.25s, color 0.25s;
+      transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }}
 
-    /* Sticky Ergonomic Header */
+    /* Vector SVG Icon System (No emojis §2.6 A.8) */
+    .svg-icon {{
+      width: 15px;
+      height: 15px;
+      display: inline-block;
+      vertical-align: -0.15em;
+      stroke: currentColor;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      flex-shrink: 0;
+    }}
+    .svg-icon-lg {{
+      width: 18px;
+      height: 18px;
+    }}
+    .svg-slash {{
+      color: var(--accent-slash);
+    }}
+
+    /* ==========================================================================
+       HEADER & NAVIGATION BAR
+       ========================================================================== */
     header {{
       position: sticky;
       top: 0;
-      z-index: 100;
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border);
-      padding: 1rem 1.5rem;
-    }}
-    [data-theme="light"] header {{
-      background: rgba(255, 255, 255, 0.88);
+      z-index: 1000;
+      background: var(--header-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.75rem 1.75rem;
+      transition: border-color 0.2s;
     }}
 
     .header-content {{
@@ -488,115 +808,162 @@ def generate_catalog_html(skills: list[dict]) -> str:
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 1.5rem;
+      gap: 1.25rem;
       flex-wrap: wrap;
     }}
 
-    .title-area {{
+    .brand-area {{
       display: flex;
       align-items: center;
       gap: 0.85rem;
     }}
-    .title-area h1 {{
-      font-size: 1.45rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
+    .brand-area h1 {{
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--text-primary);
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }}
-    .title-area h1 span.gradient {{
-      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }}
     .version-tag {{
       font-family: var(--font-mono);
-      font-size: 0.725rem;
-      font-weight: 700;
-      background: rgba(56, 189, 248, 0.12);
-      color: var(--primary);
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      padding: 0.2rem 0.55rem;
-      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: var(--accent-primary-subtle);
+      color: var(--accent-primary);
+      border: 1px solid var(--accent-primary-border);
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-full);
+      font-variant-numeric: tabular-nums;
     }}
 
-    .header-actions {{
+    /* View Switcher Tabs */
+    .view-mode-tabs {{
       display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }}
-
-    .view-mode-toggle {{
-      display: flex;
-      background: var(--bg);
-      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-sm);
-      padding: 0.18rem;
+      padding: 0.2rem;
       gap: 0.2rem;
     }}
-    .btn-view {{
+    .tab-btn {{
       background: transparent;
       border: none;
-      color: var(--text-muted);
-      padding: 0.35rem 0.7rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      border-radius: 4px;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      transition: all 0.15s;
-    }}
-    .btn-view.active {{
-      background: var(--surface);
-      color: var(--primary);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    }}
-
-    .btn-action {{
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      padding: 0.45rem 0.85rem;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
+      color: var(--text-secondary);
+      padding: 0.45rem 0.9rem;
       font-size: 0.825rem;
       font-weight: 600;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      border-radius: var(--radius-xs);
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      transition: all 0.15s;
+      gap: 0.45rem;
+      transition: background-color 0.15s, color 0.15s;
     }}
-    .btn-action:hover {{
-      background: var(--surface-hover);
-      border-color: var(--primary);
+    .tab-btn:hover {{
+      color: var(--text-primary);
+      background: var(--bg-surface-hover);
+    }}
+    .tab-btn.active {{
+      background: var(--bg-surface-elevated);
+      color: var(--accent-primary);
+      font-weight: 700;
+    }}
+    .tab-btn.active.slash-active {{
+      color: var(--accent-slash);
+      background: var(--accent-slash-subtle);
+    }}
+    .tab-badge {{
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      padding: 0.08rem 0.35rem;
+      border-radius: var(--radius-full);
+      font-variant-numeric: tabular-nums;
+    }}
+    .tab-btn.active .tab-badge {{
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #090d16;
+    }}
+    .tab-btn.active.slash-active .tab-badge {{
+      background: var(--accent-slash);
+      border-color: var(--accent-slash);
+      color: #ffffff;
     }}
 
-    /* Main Container */
+    .theme-toggle-btn {{
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 0.42rem 0.8rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: border-color 0.15s, color 0.15s;
+    }}
+    .theme-toggle-btn:hover {{
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }}
+
+    /* ==========================================================================
+       CONTAINER & HERO SECTION
+       ========================================================================== */
     .container {{
       max-width: 1440px;
       margin: 0 auto;
-      padding: 2rem 1.5rem 4rem;
+      padding: 2rem 1.75rem 4rem;
     }}
 
-    /* Hero / Subhead */
     .hero-strip {{
       margin-bottom: 1.75rem;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 1.5rem;
     }}
-    .hero-strip p {{
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      max-width: 820px;
-      line-height: 1.55;
+    .hero-desc {{
+      color: var(--text-secondary);
+      font-size: 0.94rem;
+      max-width: 780px;
+      line-height: 1.6;
     }}
+    .hero-command-box {{
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-sm);
+      margin-top: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: border-color 0.15s, background-color 0.15s;
+    }}
+    .hero-command-box:hover {{
+      border-color: var(--accent-primary);
+      background: var(--bg-surface-elevated);
+    }}
+    .hero-command-box .cmd-text {{
+      color: var(--accent-primary);
+      font-weight: 600;
+    }}
+
     .stat-badge-group {{
       display: flex;
       gap: 0.5rem;
@@ -606,31 +973,83 @@ def generate_catalog_html(skills: list[dict]) -> str:
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
       padding: 0.4rem 0.85rem;
-      border-radius: 9999px;
+      border-radius: var(--radius-full);
       font-size: 0.8rem;
       font-weight: 600;
-      color: var(--text-muted);
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
     }}
     .stat-pill .num {{
-      color: var(--primary);
-      font-weight: 800;
+      color: var(--accent-primary);
+      font-weight: 700;
       font-family: var(--font-mono);
     }}
+    .stat-pill.slash-pill .num {{
+      color: var(--accent-slash);
+    }}
 
-    /* Toolbar & Search Hub */
-    .toolbar {{
-      background: var(--surface);
-      border: 1px solid var(--border);
+    /* ==========================================================================
+       QUICK SLASH COMMAND RIBBON
+       ========================================================================== */
+    .quick-slash-ribbon {{
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 1.25rem;
-      margin-bottom: 2rem;
+      padding: 0.75rem 1.15rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }}
+    .quick-ribbon-title {{
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-slash);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-right: 0.25rem;
+      white-space: nowrap;
+    }}
+    .quick-slash-pill {{
+      background: var(--bg-canvas);
+      border: 1px solid var(--accent-slash-border);
+      color: var(--text-primary);
+      padding: 0.3rem 0.6rem;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+    }}
+    .quick-slash-pill:hover {{
+      background: var(--accent-slash-subtle);
+      border-color: var(--accent-slash);
+      color: var(--accent-slash);
+    }}
+
+    /* ==========================================================================
+       TOOLBAR: SEARCH & FILTER HUB
+       ========================================================================== */
+    .toolbar {{
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.15rem;
+      margin-bottom: 1.75rem;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.25);
+      gap: 0.9rem;
     }}
 
     .search-row {{
@@ -644,57 +1063,57 @@ def generate_catalog_html(skills: list[dict]) -> str:
     }}
     .search-input {{
       width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      padding: 0.85rem 2.85rem 0.85rem 2.75rem;
+      background: var(--search-input-bg);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 0.75rem 2.75rem 0.75rem 2.6rem;
       border-radius: var(--radius-sm);
-      font-size: 0.975rem;
+      font-size: 0.92rem;
+      font-family: var(--font-sans);
       outline: none;
-      transition: all 0.2s;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }}
     .search-input:focus {{
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-glow);
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px var(--accent-primary-subtle);
     }}
     .search-icon {{
       position: absolute;
-      left: 1rem;
+      left: 0.9rem;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--text-muted);
+      color: var(--text-tertiary);
       pointer-events: none;
-      font-size: 1rem;
     }}
     .btn-clear-search {{
       position: absolute;
-      right: 0.85rem;
+      right: 0.75rem;
       top: 50%;
       transform: translateY(-50%);
       background: transparent;
       border: none;
-      color: var(--text-muted);
+      color: var(--text-tertiary);
       cursor: pointer;
       font-size: 0.85rem;
       padding: 0.2rem 0.4rem;
-      border-radius: 4px;
+      border-radius: var(--radius-xs);
       display: none;
     }}
     .btn-clear-search:hover {{
-      color: var(--text-main);
+      color: var(--text-primary);
     }}
     .kbd-shortcut {{
       position: absolute;
-      right: 1rem;
+      right: 0.9rem;
       top: 50%;
       transform: translateY(-50%);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-tertiary);
       font-size: 0.7rem;
       font-family: var(--font-mono);
       padding: 0.15rem 0.4rem;
-      border-radius: 4px;
+      border-radius: var(--radius-xs);
       pointer-events: none;
     }}
 
@@ -703,98 +1122,122 @@ def generate_catalog_html(skills: list[dict]) -> str:
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
-      border-top: 1px solid rgba(255,255,255,0.04);
+      gap: 0.9rem;
+      border-top: 1px solid var(--border-subtle);
       padding-top: 0.85rem;
     }}
     .filter-group {{
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0.45rem;
+      gap: 0.4rem;
     }}
     .filter-label {{
-      font-size: 0.775rem;
+      font-size: 0.74rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--text-muted);
-      margin-right: 0.4rem;
+      color: var(--text-tertiary);
+      margin-right: 0.35rem;
     }}
 
     .chip {{
-      background: var(--bg);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      padding: 0.35rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.8rem;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 0.32rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
       font-weight: 600;
+      font-family: var(--font-sans);
       cursor: pointer;
-      transition: all 0.15s;
+      transition: border-color 0.15s, color 0.15s;
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
+      gap: 0.35rem;
+      font-variant-numeric: tabular-nums;
     }}
     .chip:hover {{
-      color: var(--text-main);
-      border-color: var(--primary);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
     }}
     .chip.active {{
-      background: var(--primary);
-      border-color: var(--primary);
-      color: #0b0f19;
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #090d16;
       font-weight: 700;
     }}
     .chip-count {{
       font-size: 0.7rem;
-      opacity: 0.8;
+      opacity: 0.85;
       font-family: var(--font-mono);
     }}
 
-    /* Filter status count text */
     .filter-summary {{
-      font-size: 0.825rem;
-      color: var(--text-muted);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 0.5rem;
+      padding-top: 0.2rem;
     }}
     .btn-reset-filters {{
       background: transparent;
       border: none;
-      color: var(--primary);
+      color: var(--accent-primary);
       text-decoration: underline;
       cursor: pointer;
-      font-size: 0.825rem;
+      font-size: 0.8rem;
+      font-family: var(--font-sans);
     }}
 
-    /* GRID VIEW */
+    /* ==========================================================================
+       SECTION HEADERS
+       ========================================================================== */
+    .view-section-header {{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }}
+    .view-section-title {{
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }}
+
+    /* ==========================================================================
+       CARDS & GRIDS (Craft Floor: No thick stripes, clean 1px borders)
+       ========================================================================== */
     .skills-grid {{
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+      gap: 1.25rem;
     }}
 
     .skill-card {{
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--radius-md);
-      padding: 1.5rem;
+      padding: 1.35rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      transition: border-color 0.15s, box-shadow 0.15s;
       position: relative;
     }}
     .skill-card:hover {{
-      transform: translateY(-2px);
-      border-color: var(--primary);
-      box-shadow: 0 12px 28px -10px var(--primary-glow);
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-sm);
     }}
 
     .card-top {{
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.15rem;
     }}
 
     .card-meta-bar {{
@@ -805,39 +1248,41 @@ def generate_catalog_html(skills: list[dict]) -> str:
     }}
     .card-index {{
       font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 700;
-      opacity: 0.6;
+      font-size: 0.72rem;
+      color: var(--text-tertiary);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
     }}
-    .skill-category-badge {{
-      font-size: 0.725rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 0.2rem 0.55rem;
-      border-radius: 9999px;
+
+    .cat-badge {{
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      padding: 0.18rem 0.5rem;
+      border-radius: var(--radius-xs);
     }}
-    .cat-design {{ background: rgba(56, 189, 248, 0.1); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.25); }}
-    .cat-code {{ background: rgba(52, 211, 153, 0.1); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.25); }}
-    .cat-delivery {{ background: rgba(251, 191, 36, 0.1); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.25); }}
-    .cat-brand {{ background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.25); }}
+    .cat-design {{ background: var(--accent-primary-subtle); color: var(--accent-primary); border: 1px solid var(--accent-primary-border); }}
+    .cat-code {{ background: var(--status-success-subtle); color: var(--status-success); border: 1px solid var(--status-success-border); }}
+    .cat-delivery {{ background: var(--status-warning-subtle); color: var(--status-warning); border: 1px solid var(--status-warning-border); }}
+    .cat-brand {{ background: var(--accent-slash-subtle); color: var(--accent-slash); border: 1px solid var(--accent-slash-border); }}
+    .cat-ensemble {{ background: var(--accent-secondary-subtle); color: var(--accent-secondary); border: 1px solid var(--accent-secondary-border); }}
 
     .card-header {{
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 1rem;
+      gap: 0.85rem;
       margin-bottom: 0.75rem;
     }}
     .skill-name {{
-      font-size: 1.25rem;
-      font-weight: 800;
+      font-size: 1.15rem;
+      font-weight: 700;
       font-family: var(--font-mono);
-      color: var(--text-main);
+      color: var(--text-primary);
       display: flex;
       align-items: center;
       gap: 0.4rem;
+      letter-spacing: -0.02em;
     }}
 
     /* Badges */
@@ -845,58 +1290,62 @@ def generate_catalog_html(skills: list[dict]) -> str:
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      padding: 0.22rem 0.65rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-xs);
+      font-size: 0.72rem;
+      font-weight: 600;
       white-space: nowrap;
     }}
     .badge-success {{
-      background: var(--success-bg);
-      color: var(--success);
-      border: 1px solid rgba(52, 211, 153, 0.25);
+      background: var(--status-success-subtle);
+      color: var(--status-success);
+      border: 1px solid var(--status-success-border);
     }}
     .badge-warning {{
-      background: var(--warning-bg);
-      color: var(--warning);
-      border: 1px solid rgba(251, 191, 36, 0.3);
+      background: var(--status-warning-subtle);
+      color: var(--status-warning);
+      border: 1px solid var(--status-warning-border);
     }}
     .badge-info {{
-      background: var(--info-bg);
-      color: var(--info);
-      border: 1px solid rgba(96, 165, 250, 0.3);
+      background: var(--status-info-subtle);
+      color: var(--status-info);
+      border: 1px solid var(--status-info-border);
+    }}
+    .badge-accent {{
+      background: var(--accent-slash-subtle);
+      color: var(--accent-slash);
+      border: 1px solid var(--accent-slash-border);
     }}
 
-    /* Features Row */
     .features-row {{
       display: flex;
       flex-wrap: wrap;
       gap: 0.35rem;
-      margin: 0.4rem 0 0.85rem;
+      margin: 0.35rem 0 0.85rem;
     }}
     .feature-tag {{
       font-size: 0.7rem;
       font-weight: 600;
-      background: rgba(56, 189, 248, 0.08);
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      color: var(--primary);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
       padding: 0.15rem 0.45rem;
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-xs);
     }}
 
     .skill-purpose {{
-      color: var(--text-main);
-      font-size: 0.925rem;
+      color: var(--text-primary);
+      font-size: 0.88rem;
       line-height: 1.55;
       margin-bottom: 1.15rem;
     }}
 
     .section-title {{
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--text-muted);
+      color: var(--text-tertiary);
       margin-bottom: 0.45rem;
       display: flex;
       align-items: center;
@@ -907,77 +1356,74 @@ def generate_catalog_html(skills: list[dict]) -> str:
       display: flex;
       flex-wrap: wrap;
       gap: 0.35rem;
-      margin-bottom: 0.9rem;
+      margin-bottom: 0.95rem;
     }}
     .trigger-pill {{
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--primary);
-      padding: 0.22rem 0.55rem;
-      border-radius: var(--radius-sm);
+      background: var(--pill-bg);
+      border: 1px solid var(--border-subtle);
+      color: var(--accent-primary);
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-xs);
       font-family: var(--font-mono);
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       cursor: pointer;
-      transition: all 0.15s;
+      transition: background-color 0.15s, border-color 0.15s;
       user-select: none;
     }}
     .trigger-pill:hover {{
-      background: var(--primary);
-      color: #0b0f19;
-      border-color: var(--primary);
+      background: var(--accent-primary-subtle);
+      border-color: var(--accent-primary);
     }}
 
+    /* Config Box (Refined 1px border, no thick side stripe §2.6 A.4) */
     .config-box {{
-      background: var(--surface);
-      border-left: 3px solid var(--border);
-      padding: 0.75rem;
-      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-      font-size: 0.825rem;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      padding: 0.75rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
       margin-bottom: 0.9rem;
     }}
-    .config-box.warning {{ border-left-color: var(--warning); }}
-    .config-box.info {{ border-left-color: var(--info); }}
-    .config-box.success {{ border-left-color: var(--success); }}
     .config-file-name {{
       font-family: var(--font-mono);
-      font-weight: 700;
-      color: var(--text-main);
+      font-weight: 600;
+      color: var(--text-primary);
       display: block;
       margin-bottom: 0.2rem;
     }}
     .config-desc {{
-      color: var(--text-muted);
-      font-size: 0.785rem;
+      color: var(--text-secondary);
+      font-size: 0.77rem;
       line-height: 1.45;
     }}
 
-    /* JSON Accordion */
+    /* JSON Drawer */
     .json-accordion {{
-      margin: 0.6rem 0 0.9rem;
+      margin: 0.5rem 0 0.9rem;
     }}
     .btn-toggle-json {{
       background: transparent;
-      border: 1px dashed var(--border);
-      color: var(--primary);
-      font-size: 0.75rem;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 0.74rem;
       font-weight: 600;
-      padding: 0.35rem 0.65rem;
-      border-radius: var(--radius-sm);
+      padding: 0.32rem 0.65rem;
+      border-radius: var(--radius-xs);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
-      transition: all 0.2s;
+      gap: 0.4rem;
+      transition: color 0.15s, border-color 0.15s;
     }}
     .btn-toggle-json:hover {{
-      background: var(--surface-hover);
-      border-color: var(--primary);
+      color: var(--accent-primary);
+      border-color: var(--accent-primary-border);
     }}
     .json-code-drawer {{
       display: none;
       margin-top: 0.5rem;
-      background: #060911;
-      border: 1px solid var(--border);
+      background: var(--code-block-bg);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-sm);
       padding: 0.75rem;
       position: relative;
@@ -987,8 +1433,8 @@ def generate_catalog_html(skills: list[dict]) -> str:
     }}
     .json-code-drawer pre {{
       font-family: var(--font-mono);
-      font-size: 0.735rem;
-      color: #a5f3fc;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
       overflow-x: auto;
       max-height: 220px;
     }}
@@ -996,91 +1442,223 @@ def generate_catalog_html(skills: list[dict]) -> str:
       position: absolute;
       top: 0.5rem;
       right: 0.5rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
       font-size: 0.7rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: var(--radius-sm);
+      padding: 0.18rem 0.45rem;
+      border-radius: var(--radius-xs);
       cursor: pointer;
     }}
     .btn-copy-code:hover {{
-      color: var(--primary);
-      border-color: var(--primary);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
     }}
 
     .negative-box {{
-      background: var(--danger-bg);
-      border: 1px solid rgba(248, 113, 113, 0.2);
+      background: var(--status-danger-subtle);
+      border: 1px solid var(--status-danger-border);
       border-radius: var(--radius-sm);
       padding: 0.55rem 0.75rem;
-      font-size: 0.785rem;
-      color: var(--danger);
+      font-size: 0.77rem;
+      color: var(--status-danger);
       margin-bottom: 0.9rem;
     }}
 
     .card-footer {{
-      border-top: 1px solid var(--border);
-      padding-top: 1rem;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 0.95rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 0.5rem;
     }}
-    .btn-copy-prompt {{
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      padding: 0.45rem 0.85rem;
-      border-radius: var(--radius-sm);
-      font-size: 0.8rem;
+    .btn-action {{
+      background: var(--pill-bg);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 0.42rem 0.8rem;
+      border-radius: var(--radius-xs);
+      font-size: 0.78rem;
       font-weight: 600;
+      font-family: var(--font-sans);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      transition: all 0.15s;
+      transition: border-color 0.15s, background-color 0.15s;
     }}
-    .btn-copy-prompt:hover {{
-      background: var(--surface-hover);
-      border-color: var(--primary);
-      color: var(--primary);
+    .btn-action:hover {{
+      border-color: var(--accent-primary);
+      background: var(--bg-surface-hover);
+    }}
+    .btn-action-slash {{
+      background: var(--accent-slash-subtle);
+      border: 1px solid var(--accent-slash-border);
+      color: var(--accent-slash);
+      padding: 0.42rem 0.8rem;
+      border-radius: var(--radius-xs);
+      font-size: 0.78rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background-color 0.15s, color 0.15s;
+    }}
+    .btn-action-slash:hover {{
+      background: var(--accent-slash);
+      color: #ffffff;
     }}
 
-    /* TABLE VIEW (Kompakt Takip Modu) */
+    /* ==========================================================================
+       SLASH COMMANDS VIEW
+       ========================================================================== */
+    .slash-grid {{
+      display: none;
+      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+      gap: 1.25rem;
+    }}
+
+    .slash-card {{
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      position: relative;
+    }}
+    .slash-card:hover {{
+      border-color: var(--accent-slash-border);
+      box-shadow: var(--shadow-sm);
+    }}
+
+    .slash-header-row {{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }}
+    .slash-command-title {{
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent-slash);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      letter-spacing: -0.02em;
+    }}
+    .slash-name {{
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.65rem;
+    }}
+
+    .ensemble-chain {{
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      padding: 0.45rem 0.75rem;
+      border-radius: var(--radius-xs);
+      margin-bottom: 0.85rem;
+    }}
+    .chain-label {{
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-tertiary);
+      margin-right: 0.25rem;
+    }}
+    .chain-pill {{
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      color: var(--accent-primary);
+      padding: 0.15rem 0.45rem;
+      border-radius: var(--radius-xs);
+    }}
+    .chain-arrow {{
+      color: var(--text-tertiary);
+    }}
+
+    .slash-goal-box {{
+      background: var(--accent-slash-subtle);
+      border: 1px solid var(--accent-slash-border);
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.85rem;
+    }}
+    .slash-goal-title {{
+      font-weight: 600;
+      font-size: 0.84rem;
+      color: var(--accent-slash);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }}
+
+    .slash-protocol-steps {{
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.95rem;
+      font-family: var(--font-mono);
+    }}
+
+    /* ==========================================================================
+       TABLE VIEW (Operate Mode: Compact Tabular)
+       ========================================================================== */
     .skills-table-wrapper {{
       display: none;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
       overflow-x: auto;
-      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.25);
+      margin-bottom: 2rem;
     }}
     .skills-table {{
       width: 100%;
       border-collapse: collapse;
       text-align: left;
-      font-size: 0.875rem;
+      font-size: 0.84rem;
+      font-variant-numeric: tabular-nums;
     }}
     .skills-table th {{
-      background: rgba(15, 23, 42, 0.7);
-      padding: 0.95rem 1rem;
+      background: var(--bg-surface-elevated);
+      padding: 0.85rem 1rem;
       font-weight: 700;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-subtle);
       text-transform: uppercase;
-      font-size: 0.725rem;
+      font-size: 0.72rem;
       letter-spacing: 0.05em;
     }}
     .skills-table td {{
-      padding: 1rem;
-      border-bottom: 1px solid var(--border);
+      padding: 0.95rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
       vertical-align: top;
     }}
     .skills-table tr:hover td {{
-      background: var(--surface-hover);
+      background: var(--bg-surface-hover);
     }}
+
     .table-skill-cell {{
       display: flex;
       flex-direction: column;
@@ -1090,13 +1668,32 @@ def generate_catalog_html(skills: list[dict]) -> str:
       font-family: var(--font-mono);
       font-weight: 700;
       font-size: 0.95rem;
-      color: var(--text-main);
+      color: var(--text-primary);
     }}
     .table-triggers {{
       display: flex;
       flex-wrap: wrap;
-      gap: 0.25rem;
-      max-width: 380px;
+      gap: 0.3rem;
+    }}
+
+    /* Empty state */
+    .no-results {{
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4.5rem 1.5rem;
+      background: var(--bg-surface);
+      border: 1px dashed var(--border-subtle);
+      border-radius: var(--radius-md);
+    }}
+    .no-results h3 {{
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.4rem;
+    }}
+    .no-results p {{
+      color: var(--text-secondary);
+      font-size: 0.88rem;
     }}
 
     /* Toast Notification */
@@ -1104,92 +1701,118 @@ def generate_catalog_html(skills: list[dict]) -> str:
       position: fixed;
       bottom: 2rem;
       right: 2rem;
-      background: #10b981;
-      color: #ffffff;
-      padding: 0.85rem 1.4rem;
-      border-radius: var(--radius-md);
-      font-size: 0.925rem;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      padding: 0.65rem 1.15rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
       font-weight: 600;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      transform: translateY(100px);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(120%);
       opacity: 0;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
       z-index: 9999;
     }}
     .toast.show {{
       transform: translateY(0);
       opacity: 1;
     }}
-
-    .no-results {{
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 5rem 1rem;
-      color: var(--text-muted);
-    }}
-    .no-results h3 {{
-      font-size: 1.35rem;
-      margin-bottom: 0.5rem;
-      color: var(--text-main);
+    .toast .toast-icon {{
+      color: var(--status-success);
     }}
 
     @media (max-width: 900px) {{
-      .skills-grid {{ grid-template-columns: 1fr; }}
-      .header-content {{ flex-direction: column; align-items: flex-start; }}
+      .skills-grid, .slash-grid {{
+        grid-template-columns: 1fr;
+      }}
+      .header-content {{
+        flex-direction: column;
+        align-items: flex-start;
+      }}
     }}
   </style>
 </head>
-<body data-theme="dark">
+<body>
 
-  <!-- Sticky Top Header -->
+  <!-- Top Sticky Navigation Bar -->
   <header>
     <div class="header-content">
-      <div class="title-area">
-        <h1>🚀 <span class="gradient">Goku Dev Skills</span> Kataloğu</h1>
+      <div class="brand-area">
+        <h1>
+          <svg class="svg-icon svg-icon-lg" style="color:var(--accent-primary)" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+          Goku Dev Skills Kataloğu
+        </h1>
         <span class="version-tag">v{pkg_version}</span>
       </div>
-      <div class="header-actions">
-        <!-- View Mode Switcher -->
-        <div class="view-mode-toggle">
-          <button class="btn-view active" id="btnViewGrid" onclick="setViewMode('grid')">
-            <span>🔲</span> Kart Grid
-          </button>
-          <button class="btn-view" id="btnViewTable" onclick="setViewMode('table')">
-            <span>📑</span> Takip Tablosu
-          </button>
-        </div>
-        <button class="btn-action" id="themeToggleBtn" onclick="toggleTheme()" title="Temayı değiştir (Kısayol: T)">
-          <span id="themeIcon">☀️</span> Açık Tema
+
+      <!-- Primary View Switcher -->
+      <div class="view-mode-tabs" role="tablist">
+        <button class="tab-btn active" id="tabSkills" onclick="switchView('skills')" role="tab">
+          <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Beceriler <span class="tab-badge">{len(skills)}</span>
+        </button>
+        <button class="tab-btn" id="tabSlash" onclick="switchView('slash')" role="tab">
+          <svg class="svg-icon svg-slash" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          Slash Komutları <span class="tab-badge">{len(SLASH_COMMANDS)}</span>
+        </button>
+        <button class="tab-btn" id="tabTable" onclick="switchView('table')" role="tab">
+          <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18"></path><path d="M3 15h18"></path><path d="M9 3v18"></path></svg>
+          Takip Tablosu
         </button>
       </div>
+
+      <!-- Theme Switcher -->
+      <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Temayı Değiştir (Kısayol: T)">
+        <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        <span id="themeToggleLabel">Açık Tema</span>
+      </button>
     </div>
   </header>
 
   <div class="container">
-    
-    <!-- Hero / Summary Strip -->
+
+    <!-- Hero / Header Strip -->
     <div class="hero-strip">
       <div>
-        <p>Yapay zeka kod asistanları (Antigravity, Cursor, Claude Code, Windsurf) için projedeki <strong>{len(skills)} skill</strong>'in sorumluluk sınırları, doğal dil tetikleyici kelimeleri, GitHub/API entegrasyonları ve konfigürasyon gereksinimleri tek bir takip arayüzünde.</p>
+        <p class="hero-desc">
+          Çoklu ajan ekosisteminde çalışan tüm yapay zeka becerileri, kuralları, konfigürasyon gereksinimleri ve
+          çoklu skill zincirleyen oturum slash komutları (Ensemble Protocols) için canlı referans kataloğu.
+        </p>
+        <div class="hero-command-box" onclick="copyToClipboard('npx goku-dev-skills update', 'Güncelleme komutu kopyalandı!')" title="Kopyalamak için tıkla">
+          <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+          <span>Güncelleme:</span>
+          <span class="cmd-text">npx goku-dev-skills update</span>
+          <svg class="svg-icon" style="color:var(--text-tertiary)" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        </div>
       </div>
       <div class="stat-badge-group">
-        <div class="stat-pill">Toplam Skill: <span class="num">{len(skills)}</span></div>
-        <div class="stat-pill">Kategori: <span class="num">{len(CATEGORIES)}</span></div>
-        <div class="stat-pill">Bileşen Teması: <span class="num">55</span></div>
+        <div class="stat-pill">Beceriler: <span class="num">{len(skills)}</span></div>
+        <div class="stat-pill slash-pill">Slash Komutları: <span class="num">{len(SLASH_COMMANDS)}</span></div>
+        <div class="stat-pill">Kategoriler: <span class="num">{len(CATEGORIES)}</span></div>
       </div>
+    </div>
+
+    <!-- Quick Slash Command Ribbon -->
+    <div class="quick-slash-ribbon">
+      <div class="quick-ribbon-title">
+        <svg class="svg-icon svg-slash" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        Oturum Slash Komutları:
+      </div>
+      {quick_slash_pills}
     </div>
 
     <!-- Toolbar: Search & Filter Hub -->
     <div class="toolbar">
       <div class="search-row">
         <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="searchInput" class="search-input" placeholder="Skill adı, 'goku update', 'banner', 'commitx', 'tokens', 'i18n', 'mock görsel' ara... (Kısayol: / veya Ctrl+K)" oninput="filterSkills()">
-          <button class="btn-clear-search" id="btnClearSearch" onclick="clearSearch()">✕</button>
-          <span class="kbd-shortcut">/</span>
+          <svg class="svg-icon search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" class="search-input" id="searchInput" placeholder="Skill adı, tetikleyici, slash komutu, kategori veya açıklama ara... (Kısayol: / veya Ctrl+K)" oninput="filterAll()">
+          <button class="btn-clear-search" id="btnClearSearch" onclick="clearSearch()" title="Aramayı Temizle">✕</button>
+          <span class="kbd-shortcut">Ctrl+K</span>
         </div>
       </div>
 
@@ -1199,112 +1822,228 @@ def generate_catalog_html(skills: list[dict]) -> str:
           <button class="chip active" onclick="setCategoryFilter('all', this)">Tümü <span class="chip-count">({len(skills)})</span></button>
           {cat_buttons}
         </div>
+
         <div class="filter-group">
-          <span class="filter-label">Config:</span>
+          <span class="filter-label">Konfigürasyon:</span>
           <button class="chip active" onclick="setConfigFilter('all', this)">Tümü</button>
-          <button class="chip" onclick="setConfigFilter('Sıfır-Ayar', this)">🟢 Sıfır-Ayar</button>
-          <button class="chip" onclick="setConfigFilter('Opsiyonel Config', this)">🟡 Opsiyonel</button>
-          <button class="chip" onclick="setConfigFilter('Proje Dosyası', this)">🔵 Proje Dosyası</button>
+          <button class="chip" onclick="setConfigFilter('Sıfır-Ayar', this)">Sıfır-Ayar</button>
+          <button class="chip" onclick="setConfigFilter('Opsiyonel Config', this)">Opsiyonel</button>
+          <button class="chip" onclick="setConfigFilter('Proje Dosyası', this)">Proje Dosyası</button>
         </div>
       </div>
 
       <div class="filter-summary" id="filterSummary">
-        <span>Tüm skill'ler listeleniyor ({len(skills)})</span>
+        <span>Tüm skill\'ler listeleniyor ({len(skills)} beceri)</span>
       </div>
     </div>
 
-    <!-- VIEW 1: Grid Mode -->
-    <div class="skills-grid" id="skillsGrid"></div>
+    <!-- VIEW 1: SKILLS GRID -->
+    <div id="viewSkillsSection">
+      <div class="view-section-header">
+        <h2 class="view-section-title">
+          <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Ajan Becerileri & Mimari Kurallar
+        </h2>
+      </div>
+      <div class="skills-grid" id="skillsGrid"></div>
+    </div>
 
-    <!-- VIEW 2: Compact Table Mode (Ultra Scanability) -->
-    <div class="skills-table-wrapper" id="skillsTableWrapper">
-      <table class="skills-table">
-        <thead>
-          <tr>
-            <th style="width: 45px;">#</th>
-            <th style="width: 220px;">Skill & Kategori</th>
-            <th>Temel Görevi & Yetenekleri</th>
-            <th style="width: 360px;">Tetikleyiciler (Triggers)</th>
-            <th style="width: 170px;">Config Durumu</th>
-            <th style="width: 160px; text-align: right;">Hızlı İşlem</th>
-          </tr>
-        </thead>
-        <tbody id="skillsTableBody"></tbody>
-      </table>
+    <!-- VIEW 2: SLASH COMMANDS GRID -->
+    <div id="viewSlashSection" style="display:none;">
+      <div class="view-section-header">
+        <h2 class="view-section-title" style="color:var(--accent-slash);">
+          <svg class="svg-icon svg-slash" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          Oturum Slash Komutları (Ensemble Protocols)
+        </h2>
+      </div>
+      <div class="slash-grid" id="slashGrid" style="display:grid;"></div>
+    </div>
+
+    <!-- VIEW 3: COMPACT TABLE -->
+    <div id="viewTableSection" style="display:none;">
+      <div class="view-section-header">
+        <h2 class="view-section-title">
+          <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18"></path><path d="M3 15h18"></path><path d="M9 3v18"></path></svg>
+          Kompakt Takip Tablosu (Beceriler)
+        </h2>
+      </div>
+      <div class="skills-table-wrapper" style="display:block;">
+        <table class="skills-table">
+          <thead>
+            <tr>
+              <th style="width: 48px;">#</th>
+              <th style="width: 220px;">Beceri & Kategori</th>
+              <th>Amaç & Kapsam</th>
+              <th style="width: 280px;">Öne Çıkan Tetikleyiciler</th>
+              <th style="width: 170px;">Konfigürasyon</th>
+              <th style="width: 130px; text-align: right;">İşlem</th>
+            </tr>
+          </thead>
+          <tbody id="skillsTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="view-section-header" style="margin-top:2.5rem;">
+        <h2 class="view-section-title" style="color:var(--accent-slash);">
+          <svg class="svg-icon svg-slash" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          Oturum Slash Komutları Tablosu
+        </h2>
+      </div>
+      <div class="skills-table-wrapper" style="display:block;">
+        <table class="skills-table">
+          <thead>
+            <tr>
+              <th style="width: 180px;">Komut</th>
+              <th style="width: 220px;">Protokol Adı & Rozet</th>
+              <th>Hedef & Görev Özeti</th>
+              <th style="width: 320px;">Ensemble Zinciri (Beceriler)</th>
+              <th style="width: 160px; text-align: right;">İşlem</th>
+            </tr>
+          </thead>
+          <tbody id="slashTableBody"></tbody>
+        </table>
+      </div>
     </div>
 
   </div>
 
   <!-- Toast Notification -->
   <div class="toast" id="toast">
-    <span>✓</span> <span id="toastMsg">Panoya kopyalandı!</span>
+    <svg class="svg-icon toast-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span id="toastMsg">Panoya kopyalandı!</span>
   </div>
 
   <script>
     const allSkills = {skills_json};
+    const allSlashCommands = {slash_commands_json};
     let currentCategory = 'all';
     let currentConfig = 'all';
     let currentSearch = '';
-    let currentViewMode = localStorage.getItem('agent_catalog_view') || 'grid';
+    let activeView = localStorage.getItem('agent_catalog_view') || 'skills';
 
     const categoryBadgeClassMap = {{
       'Tasarım & UI': 'cat-design',
       'Kod & Mimari': 'cat-code',
       'Teslimat & Kalite': 'cat-delivery',
-      'Marka & Doküman': 'cat-brand'
+      'Marka & Doküman': 'cat-brand',
+      'Oturum Komutları (Ensemble)': 'cat-ensemble'
     }};
 
-    function setViewMode(mode) {{
-      currentViewMode = mode;
-      localStorage.setItem('agent_catalog_view', mode);
-      document.getElementById('btnViewGrid').classList.toggle('active', mode === 'grid');
-      document.getElementById('btnViewTable').classList.toggle('active', mode === 'table');
-      
-      const grid = document.getElementById('skillsGrid');
-      const table = document.getElementById('skillsTableWrapper');
-      
-      if (mode === 'grid') {{
-        grid.style.display = 'grid';
-        table.style.display = 'none';
-      }} else {{
-        grid.style.display = 'none';
-        table.style.display = 'block';
-      }}
+    // SVG icon constants for JS rendering
+    const SVG_COPY = '<svg class="svg-icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+    const SVG_TERMINAL = '<svg class="svg-icon" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>';
+    const SVG_SLASH = '<svg class="svg-icon svg-slash" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>';
+    const SVG_SETTINGS = '<svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>';
+    const SVG_SPARKLES = '<svg class="svg-icon" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>';
+    const SVG_TARGET = '<svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>';
+    const SVG_ALERT = '<svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+    const SVG_SUN = '<svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
+    const SVG_MOON = '<svg class="svg-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+
+    function switchView(view) {{
+      activeView = view;
+      localStorage.setItem('agent_catalog_view', view);
+
+      document.getElementById('tabSkills').classList.toggle('active', view === 'skills');
+      document.getElementById('tabSlash').classList.toggle('active', view === 'slash');
+      document.getElementById('tabSlash').classList.toggle('slash-active', view === 'slash');
+      document.getElementById('tabTable').classList.toggle('active', view === 'table');
+
+      document.getElementById('viewSkillsSection').style.display = view === 'skills' ? 'block' : 'none';
+      document.getElementById('viewSlashSection').style.display = view === 'slash' ? 'block' : 'none';
+      document.getElementById('viewTableSection').style.display = view === 'table' ? 'block' : 'none';
+
       renderAll();
     }}
 
+    function quickSelectSlash(cmdName) {{
+      switchView('slash');
+      const searchInput = document.getElementById('searchInput');
+      searchInput.value = cmdName;
+      currentSearch = cmdName;
+      renderAll();
+      copyToClipboard(cmdName, `Slash komutu kopyalandı: ${{cmdName}}`);
+    }}
+
     function renderAll() {{
-      const filtered = allSkills.filter(s => {{
+      const query = currentSearch.toLowerCase().trim();
+
+      // Filter skills
+      const filteredSkills = allSkills.filter(s => {{
         const matchCategory = (currentCategory === 'all' || s.category === currentCategory);
         const matchConfig = (currentConfig === 'all' || s.config_status.includes(currentConfig));
-        const query = currentSearch.toLowerCase().trim();
         const matchSearch = !query || s.search_index.includes(query);
         return matchCategory && matchConfig && matchSearch;
       }});
 
+      // Filter slash commands
+      const filteredSlash = allSlashCommands.filter(c => {{
+        const matchCategory = (currentCategory === 'all' || c.category === currentCategory);
+        const matchSearch = !query || 
+          c.command.toLowerCase().includes(query) || 
+          c.name.toLowerCase().includes(query) || 
+          c.goal.toLowerCase().includes(query) || 
+          c.description.toLowerCase().includes(query) ||
+          c.skills.some(sk => sk.toLowerCase().includes(query)) ||
+          c.aliases.some(a => a.toLowerCase().includes(query));
+        return matchCategory && matchSearch;
+      }});
+
       // Update Filter Summary
       const summary = document.getElementById('filterSummary');
-      if (filtered.length === allSkills.length) {{
-        summary.innerHTML = `<span>Tüm skill'ler listeleniyor (${{allSkills.length}})</span>`;
+      if (activeView === 'skills') {{
+        summary.innerHTML = filteredSkills.length === allSkills.length
+          ? `<span>Tüm skill\'ler listeleniyor (${{allSkills.length}} beceri)</span>`
+          : `<span><strong>${{filteredSkills.length}}</strong> / ${{allSkills.length}} skill filtrelendi</span>
+             <button class="btn-reset-filters" onclick="resetFilters()">Filtreleri Sıfırla</button>`;
+      }} else if (activeView === 'slash') {{
+        summary.innerHTML = filteredSlash.length === allSlashCommands.length
+          ? `<span>Tüm oturum slash komutları listeleniyor (${{allSlashCommands.length}} komut)</span>`
+          : `<span><strong>${{filteredSlash.length}}</strong> / ${{allSlashCommands.length}} slash komutu filtrelendi</span>
+             <button class="btn-reset-filters" onclick="resetFilters()">Filtreleri Sıfırla</button>`;
       }} else {{
-        summary.innerHTML = `
-          <span><strong>${{filtered.length}}</strong> / ${{allSkills.length}} skill filtrelendi</span>
-          <button class="btn-reset-filters" onclick="resetFilters()">Filtreleri Sıfırla</button>
-        `;
+        summary.innerHTML = `<span>Takip tablosu: ${{filteredSkills.length}} skill ve ${{filteredSlash.length}} slash komutu listeleniyor</span>`;
       }}
 
       // Clear search button visibility
       const clearBtn = document.getElementById('btnClearSearch');
       clearBtn.style.display = currentSearch ? 'block' : 'none';
 
-      if (currentViewMode === 'grid') {{
-        renderCards(filtered);
-      }} else {{
-        renderTable(filtered);
-      }}
+      renderSkillCards(filteredSkills);
+      renderSlashCards(filteredSlash);
+      renderTable(filteredSkills, filteredSlash);
     }}
 
-    function renderCards(filtered) {{
+    function copySkillPromptByName(name) {{
+      const s = allSkills.find(item => item.name === name);
+      if (s) copyToClipboard(s.sample_prompt, 'Örnek prompt panoya kopyalandı: ' + s.name);
+    }}
+
+    function copySkillCliByName(name) {{
+      const s = allSkills.find(item => item.name === name);
+      if (s && s.cli_cmd) copyToClipboard(s.cli_cmd, 'CLI komutu kopyalandı: ' + s.name);
+    }}
+
+    function copySkillConfigByName(name) {{
+      const s = allSkills.find(item => item.name === name);
+      if (s && s.config_snippet) copyToClipboard(s.config_snippet, 'Config şablonu kopyalandı: ' + s.name);
+    }}
+
+    function copySlashCommand(cmdName) {{
+      copyToClipboard(cmdName, 'Slash komutu kopyalandı: ' + cmdName);
+    }}
+
+    function copySlashPromptByName(cmdName) {{
+      const c = allSlashCommands.find(item => item.command === cmdName);
+      if (c) copyToClipboard(c.sample_prompt, 'Örnek prompt kopyalandı: ' + c.command);
+    }}
+
+    function copyTriggerFromEl(el) {{
+      const t = el.getAttribute('data-trigger') || el.innerText.replace(/^"|"$/g, '');
+      copyToClipboard(t, 'Tetikleyici kopyalandı: "' + t + '"');
+    }}
+
+    function renderSkillCards(filtered) {{
       const grid = document.getElementById('skillsGrid');
       grid.innerHTML = '';
 
@@ -1326,23 +2065,20 @@ def generate_catalog_html(skills: list[dict]) -> str:
         card.setAttribute('data-category', s.category);
         
         const triggersHtml = s.triggers.map(t => 
-          `<span class="trigger-pill" title="Kopyalamak için tıkla" onclick="copyToClipboard('${{t.replace(/'/g, "\\\\\\'")}}', 'Tetikleyici kopyalandı: \\'${{t}}\\'')">"${{escapeHtml(t)}}"</span>`
+          `<span class="trigger-pill" data-trigger="${{escapeHtml(t)}}" title="Kopyalamak için tıkla" onclick="copyTriggerFromEl(this)">"${{escapeHtml(t)}}"</span>`
         ).join('');
 
         const featuresHtml = (s.features || []).map(f => 
-          `<span class="feature-tag">✦ ${{escapeHtml(f)}}</span>`
+          `<span class="feature-tag">${{SVG_SPARKLES}} ${{escapeHtml(f)}}</span>`
         ).join('');
-
-        const configType = s.config_status.includes('Sıfır-Ayar') ? 'success' : 
-                           s.config_status.includes('Opsiyonel') ? 'warning' : 'info';
 
         const jsonSnippetHtml = s.config_snippet ? `
           <div class="json-accordion">
             <button class="btn-toggle-json" onclick="toggleJsonDrawer('json-${{idx}}')">
-              <span>⚙️ Config / JSON Şablonunu Göster</span>
+              ${{SVG_SETTINGS}} <span>Config / JSON Şablonu</span>
             </button>
             <div class="json-code-drawer" id="json-${{idx}}">
-              <button class="btn-copy-code" onclick="copyToClipboard('${{s.config_snippet.replace(/'/g, "\\\\'").replace(/\\n/g, "\\\\n")}}', 'Config şablonu kopyalandı!')">Kopyala</button>
+              <button class="btn-copy-code" onclick="copySkillConfigByName('${{escapeHtml(s.name)}}')">Kopyala</button>
               <pre><code>${{escapeHtml(s.config_snippet)}}</code></pre>
             </div>
           </div>
@@ -1355,7 +2091,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
           <div class="card-top">
             <div class="card-meta-bar">
               <span class="card-index">#${{numPadded}}</span>
-              <span class="skill-category-badge ${{catClass}}">${{escapeHtml(s.category)}}</span>
+              <span class="cat-badge ${{catClass}}">${{escapeHtml(s.category)}}</span>
             </div>
 
             <div class="card-header">
@@ -1367,11 +2103,11 @@ def generate_catalog_html(skills: list[dict]) -> str:
             
             <p class="skill-purpose">${{escapeHtml(s.purpose)}}</p>
 
-            <div class="section-title">⚡ Tetikleyiciler (Triggers)</div>
-            <div class="triggers-list">${{triggersHtml || '<span style="color:var(--text-muted);font-size:0.8rem">Genel yönlendirici veya davranışsal</span>'}}</div>
+            <div class="section-title">${{SVG_SLASH}} Tetikleyiciler (Triggers)</div>
+            <div class="triggers-list">${{triggersHtml || '<span style="color:var(--text-tertiary);font-size:0.75rem">Genel yönlendirici veya davranışsal</span>'}}</div>
 
-            <div class="section-title">⚙️ Konfigürasyon Durumu</div>
-            <div class="config-box ${{configType}}">
+            <div class="section-title">${{SVG_SETTINGS}} Konfigürasyon</div>
+            <div class="config-box">
               <span class="config-file-name">${{escapeHtml(s.config_file)}}</span>
               <span class="config-desc">${{escapeHtml(s.config_detail)}}</span>
             </div>
@@ -1379,18 +2115,18 @@ def generate_catalog_html(skills: list[dict]) -> str:
             ${{jsonSnippetHtml}}
 
             ${{s.negative ? `
-              <div class="section-title">⛔ Kapsam Sınırı (Tetiklenmez)</div>
+              <div class="section-title">${{SVG_ALERT}} Kapsam Sınırı (Tetiklenmez)</div>
               <div class="negative-box">${{escapeHtml(s.negative)}}</div>
             ` : ''}}
           </div>
 
           <div class="card-footer">
-            <button class="btn-copy-prompt" onclick="copyToClipboard('${{s.sample_prompt.replace(/'/g, "\\\\\\'")}}', 'Örnek prompt panoya kopyalandı!')">
-              📋 Örnek Prompt Kopyala
+            <button class="btn-action" onclick="copySkillPromptByName('${{escapeHtml(s.name)}}')">
+              ${{SVG_COPY}} Örnek Prompt
             </button>
             ${{s.cli_cmd ? `
-              <button class="btn-copy-prompt" onclick="copyToClipboard('${{s.cli_cmd.replace(/'/g, "\\\\\\'")}}', 'Komut panoya kopyalandı!')">
-                💻 CLI Komutu
+              <button class="btn-action" onclick="copySkillCliByName('${{escapeHtml(s.name)}}')">
+                ${{SVG_TERMINAL}} CLI Komutu
               </button>
             ` : ''}}
           </div>
@@ -1399,63 +2135,178 @@ def generate_catalog_html(skills: list[dict]) -> str:
       }});
     }}
 
-    function renderTable(filtered) {{
-      const tbody = document.getElementById('skillsTableBody');
-      tbody.innerHTML = '';
+    function renderSlashCards(filtered) {{
+      const grid = document.getElementById('slashGrid');
+      grid.innerHTML = '';
 
       if (filtered.length === 0) {{
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="6" style="text-align: center; padding: 4rem 1rem; color: var(--text-muted);">
-              Filtrelere uygun skill bulunamadı.
-            </td>
-          </tr>
+        grid.innerHTML = `
+          <div class="no-results">
+            <h3>Sonuç Bulunamadı</h3>
+            <p>Arama kriterlerine uygun oturum slash komutu bulunamadı.</p>
+            <button class="btn-action" style="margin-top:1rem" onclick="resetFilters()">Filtreleri Sıfırla</button>
+          </div>
         `;
         return;
       }}
 
-      filtered.forEach((s, idx) => {{
-        const tr = document.createElement('tr');
-        tr.setAttribute('data-name', s.name);
+      filtered.forEach((cmd) => {{
+        const card = document.createElement('div');
+        card.className = 'slash-card';
 
-        const triggersHtml = s.triggers.slice(0, 5).map(t => 
-          `<span class="trigger-pill" style="font-size:0.7rem;" title="Kopyalamak için tıkla" onclick="copyToClipboard('${{t.replace(/'/g, "\\\\\\'")}}', 'Tetikleyici kopyalandı!')">"${{escapeHtml(t)}}"</span>`
-        ).join('') + (s.triggers.length > 5 ? `<span style="font-size:0.7rem;color:var(--text-muted);">+${{s.triggers.length - 5}}</span>` : '');
+        const skillsChainHtml = cmd.skills.map((sk, sIdx) => 
+          `<span class="chain-pill">${{escapeHtml(sk)}}</span>` + 
+          (sIdx < cmd.skills.length - 1 ? `<span class="chain-arrow">→</span>` : '')
+        ).join(' ');
 
-        const catClass = categoryBadgeClassMap[s.category] || 'cat-design';
-        const numPadded = String(idx + 1).padStart(2, '0');
-
-        tr.innerHTML = `
-          <td style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);font-weight:700;">#${{numPadded}}</td>
-          <td>
-            <div class="table-skill-cell">
-              <span class="table-skill-name">${{escapeHtml(s.name)}}</span>
-              <span class="skill-category-badge ${{catClass}}" style="display:inline-block;width:max-content;font-size:0.65rem;padding:0.1rem 0.45rem;">${{escapeHtml(s.category)}}</span>
+        card.innerHTML = `
+          <div class="card-top">
+            <div class="slash-header-row">
+              <span class="slash-command-title">${{SVG_SLASH}} ${{escapeHtml(cmd.command)}}</span>
+              <span class="badge ${{cmd.badge_class}}">${{escapeHtml(cmd.badge)}}</span>
             </div>
-          </td>
-          <td>
-            <div style="font-size:0.85rem;color:var(--text-main);line-height:1.45;margin-bottom:0.35rem;">${{escapeHtml(s.purpose)}}</div>
-            ${{s.features && s.features.length ? `<div class="features-row" style="margin:0;">${{s.features.slice(0, 3).map(f => `<span class="feature-tag" style="font-size:0.65rem;">✦ ${{escapeHtml(f)}}</span>`).join('')}}</div>` : ''}}
-          </td>
-          <td>
-            <div class="table-triggers">${{triggersHtml || '<span style="color:var(--text-muted);font-size:0.75rem;">Genel yönlendirici</span>'}}</div>
-          </td>
-          <td>
-            <span class="badge ${{s.badge_class}}" style="font-size:0.7rem;">${{escapeHtml(s.config_status)}}</span>
-            <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted);margin-top:0.3rem;">${{escapeHtml(s.config_file)}}</div>
-          </td>
-          <td style="text-align: right;">
-            <button class="btn-copy-prompt" style="padding:0.35rem 0.65rem;font-size:0.75rem;" onclick="copyToClipboard('${{s.sample_prompt.replace(/'/g, "\\\\\\'")}}', 'Örnek prompt kopyalandı!')">
-              📋 Kopyala
+
+            <div class="slash-name">${{escapeHtml(cmd.name)}}</div>
+
+            <div class="ensemble-chain">
+              <span class="chain-label">Zincir:</span>
+              ${{skillsChainHtml}}
+            </div>
+
+            <div class="slash-goal-box">
+              <div class="slash-goal-title">${{SVG_TARGET}} ${{escapeHtml(cmd.goal)}}</div>
+            </div>
+
+            <p class="skill-purpose" style="margin-bottom:0.75rem;">${{escapeHtml(cmd.description)}}</p>
+
+            <div class="section-title">${{SVG_TERMINAL}} Protokol Akışı</div>
+            <div class="slash-protocol-steps">${{escapeHtml(cmd.protocol)}}</div>
+          </div>
+
+          <div class="card-footer">
+            <button class="btn-action-slash" onclick="copySlashCommand('${{escapeHtml(cmd.command)}}')">
+              ${{SVG_SLASH}} ${{cmd.command}}
             </button>
-          </td>
+            <button class="btn-action" onclick="copySlashPromptByName('${{escapeHtml(cmd.command)}}')">
+              ${{SVG_COPY}} Örnek Prompt
+            </button>
+          </div>
         `;
-        tbody.appendChild(tr);
+        grid.appendChild(card);
       }});
     }}
 
-    function filterSkills() {{
+    function renderTable(filteredSkills, filteredSlash) {{
+      const tbody = document.getElementById('skillsTableBody');
+      tbody.innerHTML = '';
+
+      if (filteredSkills.length === 0) {{
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 4rem 1rem; color: var(--text-secondary);">
+              Filtrelere uygun skill bulunamadı.
+            </td>
+          </tr>
+        `;
+      }} else {{
+        filteredSkills.forEach((s, idx) => {{
+          const tr = document.createElement('tr');
+          tr.setAttribute('data-name', s.name);
+
+          const triggersHtml = s.triggers.slice(0, 5).map(t => 
+            `<span class="trigger-pill" style="font-size:0.7rem;" data-trigger="${{escapeHtml(t)}}" title="Kopyalamak için tıkla" onclick="copyTriggerFromEl(this)">"${{escapeHtml(t)}}"</span>`
+          ).join('') + (s.triggers.length > 5 ? `<span style="font-size:0.7rem;color:var(--text-tertiary);">+${{s.triggers.length - 5}}</span>` : '');
+
+          const catClass = categoryBadgeClassMap[s.category] || 'cat-design';
+          const numPadded = String(idx + 1).padStart(2, '0');
+
+          tr.innerHTML = `
+            <td style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-tertiary);font-weight:600;">#${{numPadded}}</td>
+            <td>
+              <div class="table-skill-cell">
+                <span class="table-skill-name">${{escapeHtml(s.name)}}</span>
+                <span class="cat-badge ${{catClass}}" style="display:inline-block;width:max-content;font-size:0.65rem;padding:0.1rem 0.45rem;">${{escapeHtml(s.category)}}</span>
+              </div>
+            </td>
+            <td>
+              <div style="font-size:0.85rem;color:var(--text-primary);line-height:1.45;margin-bottom:0.35rem;">${{escapeHtml(s.purpose)}}</div>
+              ${{s.features && s.features.length ? `<div class="features-row" style="margin:0;">${{s.features.slice(0, 3).map(f => `<span class="feature-tag" style="font-size:0.65rem;">${{SVG_SPARKLES}} ${{escapeHtml(f)}}</span>`).join('')}}</div>` : ''}}
+            </td>
+            <td>
+              <div class="table-triggers">${{triggersHtml || '<span style="color:var(--text-tertiary);font-size:0.75rem;">Genel yönlendirici</span>'}}</div>
+            </td>
+            <td>
+              <span class="badge ${{s.badge_class}}" style="font-size:0.7rem;">${{escapeHtml(s.config_status)}}</span>
+              <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-tertiary);margin-top:0.3rem;">${{escapeHtml(s.config_file)}}</div>
+            </td>
+            <td style="text-align: right;">
+              <button class="btn-action" style="padding:0.3rem 0.6rem;font-size:0.74rem;" onclick="copySkillPromptByName('${{escapeHtml(s.name)}}')">
+                ${{SVG_COPY}} Kopyala
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }});
+      }}
+
+      // Render Slash Commands in Table
+      const slashTbody = document.getElementById('slashTableBody');
+      if (slashTbody) {{
+        slashTbody.innerHTML = '';
+        if (filteredSlash.length === 0) {{
+          slashTbody.innerHTML = `
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 2rem 1rem; color: var(--text-secondary);">
+                Filtrelere uygun slash komutu bulunamadı.
+              </td>
+            </tr>
+          `;
+        }} else {{
+          filteredSlash.forEach((cmd) => {{
+            const tr = document.createElement('tr');
+            const skillsChainHtml = cmd.skills.map((sk, sIdx) => 
+              `<span class="chain-pill" style="font-size:0.68rem;">${{escapeHtml(sk)}}</span>` + 
+              (sIdx < cmd.skills.length - 1 ? `<span class="chain-arrow">→</span>` : '')
+            ).join(' ');
+
+            tr.innerHTML = `
+              <td>
+                <span class="slash-command-title" style="font-size:0.95rem;cursor:pointer;" onclick="copySlashCommand('${{escapeHtml(cmd.command)}}')">
+                  ${{SVG_SLASH}} ${{escapeHtml(cmd.command)}}
+                </span>
+              </td>
+              <td>
+                <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.25rem;">${{escapeHtml(cmd.name)}}</div>
+                <span class="badge ${{cmd.badge_class}}" style="font-size:0.68rem;">${{escapeHtml(cmd.badge)}}</span>
+              </td>
+              <td>
+                <div style="font-size:0.82rem;font-weight:600;color:var(--accent-slash);margin-bottom:0.2rem;display:flex;align-items:center;gap:0.3rem;">
+                  ${{SVG_TARGET}} ${{escapeHtml(cmd.goal)}}
+                </div>
+                <div style="font-size:0.78rem;color:var(--text-secondary);">${{escapeHtml(cmd.description)}}</div>
+              </td>
+              <td>
+                <div style="display:flex;flex-wrap:wrap;gap:0.25rem;align-items:center;">
+                  ${{skillsChainHtml}}
+                </div>
+              </td>
+              <td style="text-align: right;">
+                <button class="btn-action-slash" style="padding:0.3rem 0.6rem;font-size:0.74rem;" onclick="copySlashCommand('${{escapeHtml(cmd.command)}}')">
+                  ${{SVG_SLASH}} Kopyala
+                </button>
+              </td>
+            `;
+            slashTbody.appendChild(tr);
+          }});
+        }}
+      }}
+    }}
+
+function filterAll() {{
       currentSearch = document.getElementById('searchInput').value;
+      if (currentSearch.trim().startsWith('/') && activeView === 'skills') {{
+        switchView('slash');
+      }}
       renderAll();
     }}
 
@@ -1517,13 +2368,23 @@ def generate_catalog_html(skills: list[dict]) -> str:
     }}
 
     function toggleTheme() {{
-      const body = document.body;
-      const isDark = body.getAttribute('data-theme') === 'dark';
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
       const newTheme = isDark ? 'light' : 'dark';
-      body.setAttribute('data-theme', newTheme);
+      html.setAttribute('data-theme', newTheme);
       localStorage.setItem('agent_catalog_theme', newTheme);
-      document.getElementById('themeIcon').innerText = isDark ? '🌙' : '☀️';
-      document.getElementById('themeToggleBtn').innerHTML = isDark ? '🌙 Koyu Tema' : '☀️ Açık Tema';
+      updateThemeButton(newTheme);
+    }}
+
+    function updateThemeButton(theme) {{
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) {{
+        if (theme === 'light') {{
+          btn.innerHTML = `${{SVG_MOON}} <span id="themeToggleLabel">Koyu Tema</span>`;
+        }} else {{
+          btn.innerHTML = `${{SVG_SUN}} <span id="themeToggleLabel">Açık Tema</span>`;
+        }}
+      }}
     }}
 
     function escapeHtml(str) {{
@@ -1551,20 +2412,23 @@ def generate_catalog_html(skills: list[dict]) -> str:
       if (e.key.toLowerCase() === 't' && document.activeElement.tagName !== 'INPUT') {{
         toggleTheme();
       }}
-      if (e.key.toLowerCase() === 'v' && document.activeElement.tagName !== 'INPUT') {{
-        setViewMode(currentViewMode === 'grid' ? 'table' : 'grid');
+      if (e.key === '1' && document.activeElement.tagName !== 'INPUT') {{
+        switchView('skills');
+      }}
+      if (e.key === '2' && document.activeElement.tagName !== 'INPUT') {{
+        switchView('slash');
+      }}
+      if (e.key === '3' && document.activeElement.tagName !== 'INPUT') {{
+        switchView('table');
       }}
     }});
 
     // Initialize Theme & View
     const savedTheme = localStorage.getItem('agent_catalog_theme') || 'dark';
-    document.body.setAttribute('data-theme', savedTheme);
-    if (savedTheme === 'light') {{
-      document.getElementById('themeIcon').innerText = '🌙';
-      document.getElementById('themeToggleBtn').innerHTML = '🌙 Koyu Tema';
-    }}
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeButton(savedTheme);
 
-    setViewMode(currentViewMode);
+    switchView(activeView);
   </script>
 </body>
 </html>
@@ -1588,12 +2452,12 @@ def main() -> int:
         if disk_content != html_content:
             print(f"HATA: {OUTPUT_HTML} güncel değil! 'python scripts/generate_skills_catalog.py' çalıştırın.")
             return 1
-        print(f"[OK] {OUTPUT_HTML} güncel ({len(skills)} skill).")
+        print(f"[OK] {OUTPUT_HTML} güncel ({len(skills)} skill, {len(SLASH_COMMANDS)} slash komutu).")
         return 0
 
     OUTPUT_HTML.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_HTML.write_text(html_content, encoding="utf-8")
-    print(f"Katalog başarıyla derlendi ({len(skills)} skill): {OUTPUT_HTML}")
+    print(f"Katalog başarıyla derlendi ({len(skills)} skill, {len(SLASH_COMMANDS)} slash komutu): {OUTPUT_HTML}")
     return 0
 
 

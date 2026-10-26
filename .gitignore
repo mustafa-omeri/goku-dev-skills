@@ -50,5 +50,6 @@ specs/
 # Private Scout Tool & Config
 scout/
 temp/
+scratch/
 tests/*scout*
 

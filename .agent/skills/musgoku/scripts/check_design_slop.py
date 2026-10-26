@@ -7,8 +7,8 @@ Neden var?
 `design-skills-enforcement.md` §2.6 "Tasarım Zanaat Tabanı ve Kesin Yasaklar"
 (Craft Floor & Hard Refusals) kuralı; iç içe kartları, gradyan metinleri,
 kalın yan şeritleri (border-l-4), sıfır-blur ofset blok gölgeleri, renkli
-zeminlerde ham gri metinleri ve başlık üstü gereksiz kicker/eyebrow haplarını
-kesin olarak yasaklar.
+zeminlerde ham gri metinleri, başlık üstü gereksiz kicker/eyebrow haplarını,
+ham emoji/unicode ikonları ve token dışı ham hex renklerini kesin olarak yasaklar.
 
 Bu script, kaynak kodda (JSX, TSX, HTML, Vue, Svelte, Astro, CSS) bu yasaklı
 yapay zeka klişelerini (AI slop) deterministik regex ve AST kalıplarıyla denetler.
@@ -16,16 +16,18 @@ yapay zeka klişelerini (AI slop) deterministik regex ve AST kalıplarıyla dene
 Kontroller
 ----------
 E1 (nested-card)            İç içe kart (Card içinde Card veya .card içinde card/border-rounded)
-E2 (gradient-text)          Gradyan metin (bg-clip-text, text-transparent bg-gradient-)
+E2 (gradient-text)          Gradyan metin (bg-clip-text, text-transparent bg-gradient-, background-clip: text)
 E3 (side-accent)            Yuvarlatılmış kartta kalın renkli kenar şeridi (border-l-4 vb. + rounded)
 E4 (block-shadow)           Sıfır-blur ofset blok gölge (box-shadow: 4px 4px 0, shadow-[4px_4px_0px...])
 E5 (gray-on-color)          Renkli/kromatik zeminde ham gri metin (bg-blue/indigo/... + text-gray/slate/zinc)
 E6 (display-fallback)       Display fontta generic/sistem fontu (Impact, Comic Sans veya eksik fallback)
 E7 (eyebrow-spam)           Başlık üstü büyük harfli süs hapı (uppercase tracking-widest kicker + h1/h2)
+E8 (emoji-icon)             İkon, buton veya rozet olarak ham emoji/unicode kullanımı (§2.6 A.8)
+E9 (hardcoded-palette)      Inline style veya kuralda token dışı ham hex kodu kullanımı (§2.6 A.7)
 W1 (missing-tabular-nums)   Tablo veya sayaç/istatistik rakamlarında tabular-nums eksikliği
 
 Çıkış Kodları:
-- E1-E7 varsa: exit 1
+- E1-E9 varsa: exit 1
 - Yalnız W1 varsa: exit 0 (varsayılan) / exit 1 (--strict bayrağıyla)
 - Frontend kodu yoksa: kapsam dışı exit 0
 
@@ -33,6 +35,8 @@ Kullanım:
     python .agent/skills/musgoku/scripts/check_design_slop.py
     python .agent/skills/musgoku/scripts/check_design_slop.py --json
     python .agent/skills/musgoku/scripts/check_design_slop.py --strict
+    python .agent/skills/musgoku/scripts/check_design_slop.py --file path/to/file.html
+    python .agent/skills/musgoku/scripts/check_design_slop.py --include-agent
 """
 
 from __future__ import annotations
@@ -51,7 +55,7 @@ FRONTEND_DIRS = ("src", "app", "pages", "components", "site", "views", "ui")
 FRONTEND_EXTS = (".tsx", ".jsx", ".html", ".vue", ".svelte", ".astro", ".css")
 IGNORE_DIRS = {
     "node_modules", "dist", "build", ".git", "coverage", ".next", ".astro",
-    "__pycache__", ".pytest_cache", "target", "vendor", "public", ".agent"
+    "__pycache__", ".pytest_cache", "target", "vendor", "public"
 }
 
 # --- REGEX KALIPLARI ---
@@ -72,7 +76,6 @@ GRADIENT_TEXT_CSS_RE = re.compile(
 )
 
 # E3: Side Accent on Rounded Card (border-l-4 veya benzeri ile rounded- aynı sınıf kümesinde)
-# İstisna: Callout, quote veya border-radius taşımayan düz yapılar
 SIDE_ACCENT_TW_RE = re.compile(
     r"""\b(?=.*?\b(?:border-[lr][-_]?(?:[2-8]|4px|8px)|border-[tb][-_]?(?:[2-8]|4px|8px))\b)(?=.*?\brounded(?:-[a-z0-9]+)?\b)[^"'>`]*"""
 )
@@ -108,6 +111,27 @@ EYEBROW_SPAM_RE = re.compile(
     re.IGNORECASE | re.MULTILINE
 )
 
+# E8: Emoji used as an icon or standalone badge in HTML/JSX tags
+EMOJI_GLYPHS = r"[🚀⚡🔲📑🔍📋📦💡❌✓🎨🛠️🎯🔥💎⭐🌟📌⚠️💬📊🎉✨🚨🔔]"
+EMOJI_STANDALONE_TAG_RE = re.compile(
+    rf"""<(span|button|a|div|p|h[1-6])\b[^>]*>\s*({EMOJI_GLYPHS})\s*</\1>""",
+    re.UNICODE
+)
+EMOJI_ICON_CLASS_RE = re.compile(
+    rf"""<(?:span|div|button|a)\b[^>]*class=["'][^"']*\b(?:icon|badge|pill|btn|symbol|trigger)[^"']*["'][^>]*>[^<]*({EMOJI_GLYPHS})[^<]*</(?:span|div|button|a)>""",
+    re.IGNORECASE | re.UNICODE
+)
+EMOJI_HEADING_BUTTON_RE = re.compile(
+    rf"""<(button|h[1-6]|a)\b[^>]*>\s*({EMOJI_GLYPHS})\s+[^<]+</\1>""",
+    re.UNICODE
+)
+
+# E9: Inline style with hardcoded hex color
+INLINE_HEX_STYLE_RE = re.compile(
+    r"""style=["'][^"']*?\b(?:color|background|border-color):\s*(#[0-9a-fA-F]{3,8})\b""",
+    re.IGNORECASE
+)
+
 # W1: Missing tabular-nums on tables
 TABLE_TAG_RE = re.compile(r"""<table\b[^>]*>""")
 TABULAR_NUMS_RE = re.compile(r"""\b(?:tabular-nums|font-variant-numeric:\s*tabular-nums)\b""")
@@ -121,7 +145,7 @@ def find_project_root() -> Path:
     return Path(__file__).resolve().parents[4]
 
 
-def iter_source_files(root: Path):
+def iter_source_files(root: Path, include_agent: bool = False):
     """Projedeki taranacak frontend kaynak dosyalarını listeler."""
     found_any = False
     for folder in FRONTEND_DIRS:
@@ -132,6 +156,8 @@ def iter_source_files(root: Path):
             if not path.is_file() or path.suffix.lower() not in FRONTEND_EXTS:
                 continue
             if any(part in IGNORE_DIRS for part in path.parts):
+                continue
+            if not include_agent and ".agent" in path.parts:
                 continue
             # Test dosyalarını tarama dışı bırak
             stem_lower = path.stem.lower()
@@ -145,6 +171,14 @@ def iter_source_files(root: Path):
         for path in sorted(root.glob("*")):
             if path.is_file() and path.suffix.lower() in (".html", ".astro", ".svelte", ".vue"):
                 yield path
+
+    # Eğer include_agent bayrağı açıksa .agent altındaki HTML dosyalarını da tara
+    if include_agent:
+        agent_dir = root / ".agent"
+        if agent_dir.is_dir():
+            for path in sorted(agent_dir.glob("*.html")):
+                if path.is_file():
+                    yield path
 
 
 def check_file(path: Path) -> tuple[list[dict], list[dict]]:
@@ -288,6 +322,48 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
             "message": "Başlık üzerinde jenerik büyük harfli süs hapı (uppercase tracking-widest kicker) tespit edildi. Başlığı doğrudan konuşturun."
         })
 
+    # E8: Emoji used as icon / badge / button prefix
+    for idx, line in enumerate(lines, start=1):
+        if EMOJI_STANDALONE_TAG_RE.search(line):
+            m = EMOJI_STANDALONE_TAG_RE.search(line)
+            errors.append({
+                "code": "E8",
+                "rule": "emoji-icon",
+                "file": str(path),
+                "line": idx,
+                "message": f"İkon/rozet olarak ham emoji ('{m.group(2)}') tespit edildi. SVG vektör ikon (Lucide / Heroicons) kullanın (§2.6 A.8)."
+            })
+        elif EMOJI_ICON_CLASS_RE.search(line):
+            m = EMOJI_ICON_CLASS_RE.search(line)
+            errors.append({
+                "code": "E8",
+                "rule": "emoji-icon",
+                "file": str(path),
+                "line": idx,
+                "message": f"İkon/rozet sınıfında ham emoji ('{m.group(1)}') tespit edildi. SVG vektör ikon kullanın (§2.6 A.8)."
+            })
+        elif EMOJI_HEADING_BUTTON_RE.search(line):
+            m = EMOJI_HEADING_BUTTON_RE.search(line)
+            errors.append({
+                "code": "E8",
+                "rule": "emoji-icon",
+                "file": str(path),
+                "line": idx,
+                "message": f"Başlık veya butonda önek emoji ('{m.group(2)}') tespit edildi. SVG vektör ikon kullanın (§2.6 A.8)."
+            })
+
+    # E9: Inline style with hardcoded hex color
+    for idx, line in enumerate(lines, start=1):
+        m = INLINE_HEX_STYLE_RE.search(line)
+        if m:
+            errors.append({
+                "code": "E9",
+                "rule": "hardcoded-palette",
+                "file": str(path),
+                "line": idx,
+                "message": f"Inline style içinde ham renk hex kodu ('{m.group(1)}') tespit edildi. CSS değişkeni (var(--...)) veya token skalası kullanın."
+            })
+
     # W1: Missing tabular-nums in table tag
     if TABLE_TAG_RE.search(content) and not TABULAR_NUMS_RE.search(content):
         errors_in_table = [e for e in errors if e["rule"] == "missing-tabular-nums"]
@@ -305,8 +381,12 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
     return errors, warnings
 
 
-def run_checks(root: Path) -> dict:
-    files = list(iter_source_files(root))
+def run_checks(root: Path, specific_files: list[Path] = None, include_agent: bool = False) -> dict:
+    if specific_files:
+        files = [f.resolve() for f in specific_files if f.is_file()]
+    else:
+        files = list(iter_source_files(root, include_agent=include_agent))
+
     if not files:
         return {
             "scope": "out_of_scope",
@@ -321,19 +401,19 @@ def run_checks(root: Path) -> dict:
     all_errors = []
     all_warnings = []
 
-    for file_path in files:
-        errs, warns = check_file(file_path)
-        all_errors.extend(errs)
-        all_warnings.extend(warns)
+    for path in files:
+        errors, warnings = check_file(path)
+        all_errors.extend(errors)
+        all_warnings.extend(warnings)
 
     rel_errors = []
-    for e in all_errors:
-        e_copy = dict(e)
+    for err in all_errors:
+        err_copy = dict(err)
         try:
-            e_copy["file"] = os.path.relpath(e_copy["file"], root).replace("\\", "/")
+            err_copy["file"] = os.path.relpath(err_copy["file"], root).replace("\\", "/")
         except Exception:
             pass
-        rel_errors.append(e_copy)
+        rel_errors.append(err_copy)
 
     rel_warnings = []
     for w in all_warnings:
@@ -360,10 +440,14 @@ def main(argv=None) -> int:
     parser.add_argument("--json", action="store_true", help="Makine okunur JSON çıktısı üretir")
     parser.add_argument("--strict", action="store_true", help="Uyarıları (W1) da hata sayarak exit 1 döndürür")
     parser.add_argument("--path", type=str, default=None, help="Denetlenecek proje kök dizini")
+    parser.add_argument("--file", type=str, action="append", default=None, help="Doğrudan denetlenecek spesifik dosya yolu")
+    parser.add_argument("--include-agent", action="store_true", help=".agent klasörü altındaki HTML dosyalarını da taramaya dahil eder")
     args = parser.parse_args(argv)
 
     root = Path(args.path).resolve() if args.path else find_project_root()
-    res = run_checks(root)
+    specific_files = [Path(f) for f in args.file] if args.file else None
+
+    res = run_checks(root, specific_files=specific_files, include_agent=args.include_agent)
 
     exit_code = res["exit"]
     if args.strict and res["warnings"] and exit_code == 0:

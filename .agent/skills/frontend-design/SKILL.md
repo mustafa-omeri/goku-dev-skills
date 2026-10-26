@@ -60,6 +60,12 @@ Similar to searching `./canvas-fonts` in `canvas-design` for typographic depth, 
 - **Curated Palette Cards**: The `./themes/` folder contains curated high-contrast color cards (`frontend-design-skill-theme-*.jpg`) providing intentional, masterfully paired HEX color palettes (e.g., Tiffany `#21F1A8` & Dark Gray `#171717`, True Pink `#FD1843` & Chill White `#FFF9FA`, Lime Sprout `#E4FD97` & Fresh Canopy `#2D3E2C`, etc.).
 - **Dashboard Layout References**: The `./dashboard-theme/` folder contains 18 curated dashboard screenshots (`dashboard-theme-01.webp` → `dashboard-theme-18.webp`) plus a `README.md` guide. **When the user asks for a dashboard, always inspect this folder first** and borrow layout patterns (sidebar + topbar + card grid, KPI cards, tables, progress rings) instead of inventing a generic admin layout.
 - **Curated Component Themes**: The `./component-themes/` folder contains 55 production-ready HTML/CSS themes across 8 core categories (sidebars, navbars, menus, parallax, logins, footers, cards, accordions). **When the user asks for a sidebar, navbar, login, footer, card, accordion, menu, or parallax, always inspect `./component-themes/` first.** Each theme folder contains its standalone working code and a dedicated `<theme-name>.design.md` detailing aesthetic tone, layout anatomy, agent selection criteria, and framework adaptation.
+- **Zero-Friction CLI Bridges:**
+  * Component Picker: `python .agent/skills/frontend-design/scripts/get_component.py --list` (or `--theme <name> --html` / `--type sidebars`)
+  * Palette Picker: `python .agent/skills/frontend-design/scripts/get_palette.py --list` (or `--id <1-10> --format css`)
+- **Zero-Friction CLI Bridges:**
+  * Component Picker: `python .agent/skills/frontend-design/scripts/get_component.py --list` (or `--theme <name> --html` / `--type sidebars`)
+  * Palette Picker: `python .agent/skills/frontend-design/scripts/get_palette.py --list` (or `--id <1-10> --format css`)
 - **How to Use**:
   1. Before picking random colors or falling back to generic blues/purples, inspect the `./themes` folder.
   2. Select a theme card that matches the tone, mood, and brand requirements of the interface.
