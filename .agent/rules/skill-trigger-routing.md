@@ -125,6 +125,7 @@ Kullanıcının belirli bir isteği doğrudan ve kestirmeden ajana bildirmesini 
 | fikirlerime bak, fikirlerimi incele, fikir havuzu, yeni fikir seç, ne yapabiliriz, myidea, my idea / review ideas, idea backlog, brainstorm ideas | `my-idea` | `skills/my-idea/SKILL.md` |
 | güvenlik denetimi, security audit, güvenlik açığı tara, vulnerability scan, pen test, sızma testi, güvenlik incelemesi, yetki aşımı kontrolü / security audit, vulnerability scan, pen test, security review, audit security, exploit check | `security-audit` | `skills/security-audit/SKILL.md` |
 | Goku skill güncelle, skill update, GS update, GS güncelle, goku update, skillset güncelle, skill'leri güncelle, goku skills update, ajan yeteneklerini güncelle / update skills, goku update, update skill set, upgrade skills, sync skills | `musgoku` | `skills/musgoku/SKILL.md` |
+| prelaunch, canlıya al, go live, yayına alma kontrolü, consent check, axe audit, /prelaunch, /prelaunch-update / prelaunch audit, go live checklist, prelaunch checklist | `prelaunch-audit` | `skills/prelaunch-audit/SKILL.md` |
 
 ### A5. Prompt Makroları ve Kısayol Etiketleri (Prompt Shorthands)
 
@@ -135,6 +136,8 @@ Kullanıcının detaylı ve uzun prompt yazmadan doğrudan tam kapsamlı revizyo
 | `[DESIGN-REFRESH]` / `[UI-POLISH]` | `frontend-design` + `ui-ux-pro-max` + `ui-styling` | Kullanıcı tek satırda revizyon ister. Ajan ek açıklama beklemeden; belirtilen sayfalarda generic AI-slop şablonlarını temizler, görsel hiyerarşi, boşluk ritmi, scanning ergonomisi ve rozet revizyonunu mevcut veri akışını bozmadan tamamlar. |
 | `[DASHBOARD-POLISH]` | `ui-ux-pro-max` + `frontend-design` + `ui-styling` | Yönetim, onay ve metrik masalarının bilgi mimarisi, kart ve tablo ergonomisini profesyonel seviyeye çıkarır. |
 | `commitx`, `commitle` / `[COMMITX]` | `git-release-workflow` | Peşin tam yetkili (express) sürüm yayını: commit ve push için ayrı ayrı ara onay sormadan `git add` → `git commit` → `git tag` → `git push` zincirini tek nefeste tamamlar ve doğrudan sonucu raporlar. |
+| `/prelaunch`, `prelaunch` | `prelaunch-audit` | Canlıya alma öncesi 20 maddelik tam kontrol listesi (KVKK, çerez onayı, meta, sitemap, robots, WCAG 2.2 AA, hız, formlar vb.) denetimini yürütür ve PRELAUNCH-REPORT.md üretir. |
+| `/prelaunch-update` | `prelaunch-audit` | İdari para cezaları, KVKK bildirim limitleri ve Google/AI bot arama kurallarını resmi kaynaklardan sorgulayıp cerrahi olarak günceller. |
 
 ---
 

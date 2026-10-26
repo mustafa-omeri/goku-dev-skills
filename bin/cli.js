@@ -18,7 +18,7 @@ const path = require('path');
 const readline = require('readline');
 const https = require('https');
 
-const VERSION = '1.11.6';
+const VERSION = '1.11.7';
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 const RAW_URL_BASE = `https://raw.githubusercontent.com/${GITHUB_REPO}/main`;
 
@@ -186,6 +186,11 @@ const SKILLS_MANIFEST = {
     desc: 'Search Engine Optimization (SEO), GEO (AI Search) & Growth: technical SEO, meta tags, schema markup, topic clusters, GTM launches & CRO.',
     triggers: 'seo, teknik seo, geo, ai search, meta tag, sitemap, schema markup, urun lansmani, seo optimization, technical seo, gtm strategy, product launch',
   },
+  'prelaunch-audit': {
+    category: 'Delivery & Quality',
+    desc: 'Pre-launch production audit: 20-point checklist (KVKK m.10, Consent Mode v2, SEO, WCAG 2.2 AA & /prelaunch, /prelaunch-update).',
+    triggers: 'prelaunch, canlıya al, go live, yayına alma kontrolü, consent check, axe audit, /prelaunch, /prelaunch-update',
+  },
 };
 
 // Component themes categories (55 HTML themes)
@@ -205,7 +210,7 @@ const PROFILES = {
   'fullstack': {
     id: 'fullstack',
     name: 'Fullstack / All',
-    desc: 'All 29 skills, 19 rules, 55 component themes & 11 validation gates (~65 MB)',
+    desc: 'All 30 skills, 19 rules, 55 component themes & 11 validation gates (~65 MB)',
     skills: Object.keys(SKILLS_MANIFEST),
     rules: '*',
     templates: '*',
@@ -241,6 +246,7 @@ const PROFILES = {
       'my-idea',
       'security-audit',
       'seo-growth',
+      'prelaunch-audit',
     ],
     rules: [
       'always-read-skills.md',

@@ -47,7 +47,8 @@ CATEGORIES = {
     "Teslimat & Kalite": [
         "git-release-workflow", "production-docker-architect",
         "karpathy-guidelines", "task-observer",
-        "diagnosing-bugs", "code-review", "my-idea", "security-audit"
+        "diagnosing-bugs", "code-review", "my-idea", "security-audit",
+        "prelaunch-audit"
     ],
     "Marka & Doküman": [
         "brand", "doc-coauthoring", "slides", "seo-growth"
@@ -55,6 +56,24 @@ CATEGORIES = {
 }
 
 CONFIG_METADATA = {
+    "prelaunch-audit": {
+        "status": "Production Ready",
+        "badge_class": "badge-success",
+        "file": ".agent/skills/prelaunch-audit/SKILL.md",
+        "features": [
+            "20 Maddelik Çekirdek Denetim",
+            "KVKK m.10 & 7499 s. Kanun Yurt Dışı Aktarımı",
+            "Google Consent Mode v2 & Çerez Doğrulama",
+            "WCAG 2.2 AA Headless Axe Taraması",
+            "Ham HTML & AI Bot Taksonomisi (llms.txt)",
+            "/prelaunch & /prelaunch-update Komutları"
+        ],
+        "detail": "Canlıya çıkış (production launch) öncesi yasal, gizlilik, SEO, erişilebilirlik ve altyapı denetimi. /prelaunch ile kapsamlı denetim raporu üretir; /prelaunch-update ile mevzuat ve platform değişikliklerini AI modeliyle günceller.",
+        "sample_prompt": "/prelaunch: Sitemizi canlıya almaya hazır mıyız? 20 maddelik çekirdek denetimi ve consent kontrolünü çalıştır.",
+        "config_snippet": """# /prelaunch veya /prelaunch-update komutu ile doğrudan tetiklenebilir
+python .agent/skills/prelaunch-audit/scripts/prelaunch_checker.py --url https://example.com
+node .agent/skills/prelaunch-audit/scripts/consent-check.mjs https://example.com"""
+    },
     "mock-asset-provider": {
         "status": "Opsiyonel Config",
         "badge_class": "badge-warning",

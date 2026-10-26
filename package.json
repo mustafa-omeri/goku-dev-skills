@@ -1,6 +1,6 @@
 {
   "name": "goku-dev-skills",
-  "version": "1.11.6",
+  "version": "1.11.7",
   "description": "Install battle-tested skills, rules, and component themes into any AI coding workspace (Antigravity, Cursor, Claude Code, Windsurf).",
   "main": "bin/cli.js",
   "bin": {

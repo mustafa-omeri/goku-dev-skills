@@ -2,8 +2,8 @@
 
 <div align="center">
 
-[![Version](https://img.shields.io/badge/version-1.11.5-blue.svg?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/goku-dev-skills)
-[![Skills](https://img.shields.io/badge/skills-29%20battle--tested-8A2BE2.svg?style=for-the-badge&logo=expertsexchange)](./.agent/skills/)
+[![Version](https://img.shields.io/badge/version-1.11.7-blue.svg?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/goku-dev-skills)
+[![Skills](https://img.shields.io/badge/skills-30%20battle--tested-8A2BE2.svg?style=for-the-badge&logo=expertsexchange)](./.agent/skills/)
 [![Rules](https://img.shields.io/badge/rules-19%20enforced-orange.svg?style=for-the-badge&logo=codereview)](./.agent/rules/)
 [![Gates](https://img.shields.io/badge/gates-11%20deterministic-success.svg?style=for-the-badge&logo=checkmarx)](./.agent/skills/musgoku/scripts/)
 [![Tests](https://img.shields.io/badge/tests-100%25%20green-brightgreen.svg?style=for-the-badge&logo=pytest)](./tests/)
@@ -20,9 +20,9 @@
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                              GOKU DEV SKILLS ECOSYSTEM v1.11.5                         │
+│                              GOKU DEV SKILLS ECOSYSTEM v1.11.7                         │
 ├──────────────────────────────┬─────────────────────────────┬───────────────────────────┤
-│    29 PRODUCTION SKILLS      │     19 ENFORCED RULES       │   55 COMPONENT THEMES     │
+│    30 PRODUCTION SKILLS      │     19 ENFORCED RULES       │   55 COMPONENT THEMES     │
 │ Architecture · Design · TDD  │ 11 Deterministic Gates      │ Standalone HTML/CSS/JS    │
 │ Security · SEO · Backlog AI  │ Full-Stack Vertical Slice   │ Bespoke Rationale Docs    │
 │ LLM Council · Docker · i18n  │ Zero-Slop · WCAG AA Parity  │ Micro-Interactions        │
@@ -56,7 +56,7 @@ Most AI coding assistants produce **"Skin-Deep Code"**: they scaffold quick Reac
 
 ---
 
-## 🧠 The 29 Production Skills & Developer Archetypes
+## 🧠 The 30 Production Skills & Developer Archetypes
 
 The 29 production skills are organized into 5 cohesive **Developer Archetypes**:
 
@@ -105,6 +105,7 @@ The 29 production skills are organized into 5 cohesive **Developer Archetypes**:
 - [`seo-growth`](.agent/skills/seo-growth/SKILL.md) — Technical SEO, Generative Engine Optimization (GEO/AI search), AI Crawler Matrix (`/llms.txt`), robots.txt directives, and GTM playbooks.
 - [`i18n-localization`](.agent/skills/i18n-localization/SKILL.md) — Multi-language translation key parity, hardcoded text detection, and elimination of silent default-value fallbacks.
 - [`git-release-workflow`](.agent/skills/git-release-workflow/SKILL.md) — User-approved atomic release workflow: semantic version tagging, commit generation, and remote push.
+- [`prelaunch-audit`](.agent/skills/prelaunch-audit/SKILL.md) — Pre-launch production audit: 20-point checklist (KVKK m.10, Consent Mode v2, raw HTML SEO, WCAG 2.2 AA, AI crawlers) with `/prelaunch` and `/prelaunch-update` commands.
 
 ### 5. 🚀 The Product, Ideation & Growth Catalyst
 *Autonomous backlog innovation, interactive user tours, creative direction, and technical documentation.*
@@ -136,7 +137,7 @@ npx goku-dev-skills init -p frontend -m
 # 🌟 Full Frontend Profile (Includes all 55 HTML/CSS component themes) (~60 MB)
 npx goku-dev-skills init -p frontend
 
-# 🚀 Fullstack Profile (All 29 skills, 55 themes, 19 rules & 11 verification gates) (~65 MB)
+# 🚀 Fullstack Profile (All 30 skills, 55 themes, 19 rules & 11 verification gates) (~65 MB)
 npx goku-dev-skills init -p fullstack
 
 # 🔍 Auto-Detect Stack (Inspects pom.xml, package.json, requirements.txt and selects optimal profile)
