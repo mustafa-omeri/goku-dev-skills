@@ -32,7 +32,11 @@ sinif: TUTUM
 
 1. `knowledge-base.md`'ye bu adımda çözülen kalıcı hataları ve kararları yaz (append).
 2. `HANDOFF.md`'yi güncelle (§0 tuzaklar, §1 yapılanlar, §2 kanıt metrikleri, §3 sıradaki işler, §4 kararlar, §5 ortam).
-   - **Sıradaki işler kuralı:** Her iş numaralı ve tek cümlelik somut hedef olmalıdır. Açık iş kalmadıysa `Açık iş yok — proje tamamlandı.` ifadesi zorunludur.
+   - **Sıradaki işler kuralı (Canlı Görev Panosu & Kapsam Ayrımı):**
+     * Canlı görev panosu tablosunda (`| # | Durum | İş / Hedef | Kapsam / PRD Referansı |`) her zaman bir sonraki oturumun başlayacağı somut 1-3 hedef (1. ⏭️ ..., 2. ⬜ ...) listelenir.
+     * ⛔ **Sprint Bitişi ≠ Ürün/Proje Bitişi:** "Mevcut sprint / görev bitti" ile "tüm proje tamamlandı" kesinlikle birbirine karıştırılamaz! Üzerinde çalışılan sprint veya özellik bittiğinde, PRD veya Yol Haritasındaki (Backlog) sıradaki sprint/özellik canlı panoya taşınır.
+     * ⛔ **Biten İşlerin Sıradaki Bölümünü Kirletmesi Yasağı:** Tamamlanan işler `Sıradaki` bölümünde `✅ BİTTİ` olarak biriktirilmez; doğrudan `§1 Yapılanlar` veya `Geçmiş Sprintler Arşivi`ne aktarılır. `Sıradaki` tablosu yalnızca geleceğe ait açık işleri barındırır.
+     * `Açık iş yok — proje tamamlandı.` ifadesi **yalnızca ve yalnızca** PRD ve yol haritasındaki tüm fazlar %100 bittiğinde yazılabilir.
    - **Güncellik kanıtı kuralı:** Gerçekte ölçülmüş sayılar (test sayısı, 0 typecheck hatası, chunk kB boyutları) yazılır.
    - ⛔ **Katman Bütünlüğü & Sahte Bitti Yasağı:** Bir sprint veya özelliğin 'BİTTİ / TAMAMLANDI' olarak kaydedilebilmesi için Katman Denetimi Matrisinde (DB, View/RPC, İstemci, UI, Yönetim/Admin Formu) hiçbir '❌ Yok' veya '⚠️ Yarım' bulunmaması şarttır. Herhangi bir katmanı eksik veya TODO olan bir iş için 'BİTTİ' yazılamaz; durum açıkça 'YARIM (Eksik Katman: ...)' olarak belirtilmeli ve eksik katman §3 Sıradaki İşler tablosuna ilk sıradan kaydedilmelidir.
 3. Kullanıcıya **HANDOFF & KB RAPORU** bloğunu yanıtta açıkça göster.

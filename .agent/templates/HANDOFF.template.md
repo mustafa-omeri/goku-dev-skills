@@ -67,17 +67,18 @@
 [doğrulama komutu 2]
 ```
 
-### Sıradaki işler
+### Sıradaki işler (Canlı Görev Panosu)
 
 > 💡 Bu bölüm projenin canlı görev panosudur. Ayrı bir `TASK.md` veya `TODO.md` açılmaz; tüm aktif ve sıradaki adımlar burada takip edilir.
+> ⛔ **Sprint Bitişi ≠ Proje Bitişi:** Mevcut sprint bittiğinde PRD/Yol Haritasındaki sıradaki sprinti buraya ekleyin. Biten işleri bu tabloda tutmayın, §1'e aktarın. Yalnızca tüm PRD fazları %100 bittiğinde "Açık iş yok — proje tamamlandı." yazılabilir.
 
-| # | Durum | İş |
-|---|---|---|
-| 1 | ⏭️ | _(bir sonraki oturumun ilk somut hedefi)_ |
-| 2 | ⬜ | _(sıradaki iş)_ |
-| 3 | ⬜ | _(sıradaki iş)_ |
+| # | Durum | İş / Hedef | Kapsam / PRD Referansı |
+|---|---|---|---|
+| 1 | ⏭️ | _(bir sonraki oturumun ilk somut hedefi)_ | _(Sprint / Modül / PRD §X)_ |
+| 2 | ⬜ | _(sıradaki iş)_ | _(Sprint / Modül / PRD §X)_ |
+| 3 | ⬜ | _(sıradaki iş)_ | _(Sprint / Modül / PRD §X)_ |
 
-**Açık iş kalmadıysa şunu yaz ve boş bırakma:**
+**YALNIZCA tüm PRD/ürün fazları %100 bittiğinde şunu yazın:**
 `Açık iş yok — proje tamamlandı.`
 
 ### Sağlık durumu — dikkat gerektiren noktalar

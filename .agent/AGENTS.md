@@ -96,7 +96,7 @@ ve [`.agent\rules\db-migration-enforcement.md`](rules/db-migration-enforcement.m
   * Sıradaki İş: [Yeni oturumun başlayacağı ilk somut hedef]
   * Bu Projede Düşülen Hatalar: [Yeni ders/tuzak veya "yeni yok"]
   * Bu Projede Alınan Kararlar: [Yeni karar veya "yeni yok"]
-- **Sonraki işler:** [Varsa numaralı liste — açık iş kalmadıysa "Açık iş yok — proje tamamlandı"]
+- **Sonraki işler (Backlog):** [Varsa numaralı liste (1. ⏭️ ..., 2. ⬜ ...). Yalnızca mevcut sprint bittiyse PRD/Yol Haritasına göre sıradaki hedefi belirtin (örn. "Mevcut sprint tamamlandı. PRD'ye göre sıradaki: Sprint X"). YALNIZCA tüm PRD ve ürün fazları %100 bittiğinde "Açık iş yok — proje tamamlandı" yazılabilir.]
 - **Kullanılan MCP:** [context7 / sequential-thinking — ne için kullanıldı veya "kullanılmadı"]
 - **Aktif skill'ler:** [Okunan skill adları]
 ```
