@@ -12,11 +12,15 @@
 **Universal, Agent-Agnostic Intelligence & Production Workflow Engine for AI Coding Assistants**  
 *Turning stochastic language models into senior software architects, meticulous UI/UX craftspeople, and disciplined QA sentinels.*
 
-[Overview](#-overview) • [Why Goku?](#-why-goku-dev-skills-anti-slop-matrix) • [Developer Archetypes](#-the-29-production-skills--developer-archetypes) • [Quickstart](#-quick-start--installation) • [Interactive Catalog](#-interactive-visual-skills-catalog) • [Verification Gates](#-the-11-deterministic-verification-gates)
+[Overview](#-overview) • [Why Goku?](#-why-goku-dev-skills-anti-slop-matrix) • [Developer Archetypes](#-the-30-production-skills--developer-archetypes) • [Quickstart](#-quick-start--installation) • [Interactive Catalog](#-interactive-visual-skills-catalog) • [Verification Gates](#-the-11-deterministic-verification-gates)
 
 </div>
 
 ---
+
+<p align="center">
+  <img src=".github/assets/social-preview.png" alt="Goku Dev Skills Social Preview" width="100%" style="border-radius: 12px; max-width: 900px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+</p>
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
@@ -28,6 +32,32 @@
 │ LLM Council · Docker · i18n  │ Zero-Slop · WCAG AA Parity  │ Micro-Interactions        │
 └──────────────────────────────┴─────────────────────────────┴───────────────────────────┘
 ```
+
+### ⚡ 10-Second Instant Setup (Zero-Friction One-Liner)
+
+Run inside **any** project root — auto-detects your technology stack (`pom.xml`, `package.json`, `requirements.txt`) and equips your AI coding assistant with production skills and quality gates in seconds:
+
+```bash
+npx goku-dev-skills init --detect
+```
+
+<details>
+<summary><b>☕ Or choose a specialized profile (Backend, Frontend Minimal, Fullstack)</b></summary>
+
+```bash
+# ☕ Backend Profile (Java, Spring Boot, Python, APIs, DB Migrations — ~2.5 MB, zero UI clutter)
+npx goku-dev-skills init -p backend
+
+# 🎨 Minimal Frontend Profile (React, Vite, Next.js, Tailwind, Anti-slop — ~5 MB)
+npx goku-dev-skills init -p frontend -m
+
+# 🌟 Full Frontend Profile (Includes all 55 HTML/CSS component themes — ~60 MB)
+npx goku-dev-skills init -p frontend
+
+# 🚀 Fullstack Profile (All 30 skills, 55 component themes & 11 verification gates — ~65 MB)
+npx goku-dev-skills init -p fullstack
+```
+</details>
 
 ---
 
