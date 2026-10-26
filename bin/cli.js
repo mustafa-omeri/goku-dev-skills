@@ -18,7 +18,7 @@ const path = require('path');
 const readline = require('readline');
 const https = require('https');
 
-const VERSION = '1.11.8';
+const VERSION = '1.11.9';
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 const RAW_URL_BASE = `https://raw.githubusercontent.com/${GITHUB_REPO}/main`;
 
@@ -184,7 +184,7 @@ const SKILLS_MANIFEST = {
   'seo-growth': {
     category: 'Marketing & SEO',
     desc: 'Search Engine Optimization (SEO), GEO (AI Search) & Growth: technical SEO, meta tags, schema markup, topic clusters, GTM launches & CRO.',
-    triggers: 'seo, teknik seo, geo, ai search, meta tag, sitemap, schema markup, urun lansmani, seo optimization, technical seo, gtm strategy, product launch',
+    triggers: '/seo-apply, [SEO-APPLY], seo, teknik seo, geo, ai search, meta tag, sitemap, schema markup, urun lansmani, seo optimization, technical seo, gtm strategy, product launch',
   },
   'prelaunch-audit': {
     category: 'Delivery & Quality',

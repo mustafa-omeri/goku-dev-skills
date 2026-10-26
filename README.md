@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Version](https://img.shields.io/badge/version-1.11.8-blue.svg?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/goku-dev-skills)
+[![Version](https://img.shields.io/badge/version-1.11.9-blue.svg?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/goku-dev-skills)
 [![Skills](https://img.shields.io/badge/skills-30%20battle--tested-8A2BE2.svg?style=for-the-badge&logo=expertsexchange)](./.agent/skills/)
 [![Rules](https://img.shields.io/badge/rules-19%20enforced-orange.svg?style=for-the-badge&logo=codereview)](./.agent/rules/)
 [![Gates](https://img.shields.io/badge/gates-11%20deterministic-success.svg?style=for-the-badge&logo=checkmarx)](./.agent/skills/musgoku/scripts/)
@@ -24,7 +24,7 @@
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                              GOKU DEV SKILLS ECOSYSTEM v1.11.8                         │
+│                              GOKU DEV SKILLS ECOSYSTEM v1.11.9                         │
 ├──────────────────────────────┬─────────────────────────────┬───────────────────────────┤
 │    30 PRODUCTION SKILLS      │     19 ENFORCED RULES       │   55 COMPONENT THEMES     │
 │ Architecture · Design · TDD  │ 11 Deterministic Gates      │ Standalone HTML/CSS/JS    │
@@ -258,6 +258,7 @@ Rather than executing fragmented, isolated actions, Goku Dev Skills introduces *
 | **`/council`** | `karpathy-guidelines` (Council) → `doc-coauthoring` (ADR) | **3-Stage LLM Council:** Multi-agent blind peer review and deliberation for complex refactoring and architectural crossroads, codified into an ADR. |
 | **`/prelaunch`** | `prelaunch-audit` (Orchestrator) + 4 Modules | **Production Launch Audit:** 20-point compliance audit (KVKK m.10, Consent Mode v2, raw HTML SEO, WCAG 2.2 AA) with a definitive GO/NO-GO scorecard. |
 | **`/prelaunch-update`** | `prelaunch-audit` (`prelaunch_updater.py`) | **Regulatory Compliance Sync:** Live regulatory fine thresholds, notification limits, and search engine bot rules updated surgically. |
+| **`/seo-apply`** | `seo-growth` → `frontend-design` + `seo_checker.py` | **End-to-End SEO & GEO Builder:** Injects semantic HTML head tags (title, description, canonical, OpenGraph, Twitter card), JSON-LD Schema.org, AI crawler `robots.txt`, `sitemap.xml`, and `/llms.txt`, followed by deterministic `seo_checker.py` audit. |
 | **`/commitx`** | `git-release-workflow` | **Express Release:** Runs quality gates, stages changes, generates semantic tags (`vX.Y.Z`), commits, and pushes to remote in a single autonomous flow. |
 | **`/gs-update`** | `musgoku` (`references/skill-set-update.md`) | **Surgical Zero-Bloat Sync:** Synchronizes installed skills and rules with upstream repository without downloading unneeded modules. |
 

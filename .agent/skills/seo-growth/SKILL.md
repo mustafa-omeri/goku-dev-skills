@@ -1,7 +1,7 @@
 ---
 name: seo-growth
 description: >
-  Arama motoru optimizasyonu (SEO), yapay zeka araması (GEO) ve büyüme: teknik SEO, meta etiketler, JSON-LD, SERP, E-E-A-T, topic cluster, GTM lansmanı ve CRO formülleri. Tetikleyiciler: "seo", "teknik seo", "geo", "ai search", "meta tag", "sitemap", "schema markup", "ürün lansmanı", "seo optimization", "technical seo", "product launch", "growth marketing". Tetiklenmez: marka görsel kimliği `brand`'e, PRD yazım süreci `doc-coauthoring`'e aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
+  Arama motoru optimizasyonu (SEO), yapay zeka araması (GEO) ve büyüme: teknik SEO, meta etiketler, JSON-LD, SERP, E-E-A-T, topic cluster, GTM lansmanı ve CRO formülleri. Tetikleyiciler: "/seo-apply", "seo", "teknik seo", "geo", "ai search", "meta tag", "sitemap", "schema markup", "ürün lansmanı", "seo optimization", "technical seo", "product launch", "growth marketing". Tetiklenmez: marka görsel kimliği `brand`'e, PRD yazım süreci `doc-coauthoring`'e aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
 ---
 
 # 🚀 seo-growth — SEO, GEO & Büyüme (Growth) Stratejisi
@@ -69,6 +69,7 @@ python .agent/skills/seo-growth/scripts/seo_checker.py public/ --json
 
 Detaylı teknik standartlar, şablonlar ve lansman taktikleri için alt kılavuzları inceleyin:
 
+- **/seo-apply Protokolü:** `references/seo-apply-protocol.md` (Uçtan uca SEO/GEO uygulama, enjeksiyon ve doğrulama akışı).
 - **Teknik SEO & Şablonlar:** `references/technical-seo.md` (JSON-LD şablonları, robots.txt, sitemap.xml, canonical).
 - **Yapay Zeka Araması (GEO):** `references/geo-ai-search.md` (Google AI Overviews, Perplexity, ChatGPT Search, FAQPage).
 - **AI Crawler & Bot Politikası:** `references/ai-crawler-matrix.md` (ChatGPT-User, PerplexityBot, ClaudeBot, robots.txt ve /llms.txt).
