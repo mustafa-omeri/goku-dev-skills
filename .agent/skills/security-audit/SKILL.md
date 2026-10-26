@@ -1,6 +1,6 @@
 ---
 name: security-audit
-description: Sistem ve kod tabanlarında zafiyet avcılığı, sınır ihlalleri, yetki aşımı, sızma testi ve güvenlik denetimi disiplini; guidance ve full-audit modlarında izole alt-ajan doğrulaması yürütür. Tetikleyiciler: "güvenlik denetimi", "security audit", "güvenlik açığı tara", "vulnerability scan", "pen test", "sızma testi", "güvenlik incelemesi", "security review", "audit security". Tetiklenmez: kod kokusu ve smell taraması `code-review`'e, hata teşhisi `diagnosing-bugs`'a aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
+description: Sistem ve kod tabanlarında zafiyet avcılığı, sınır ihlalleri, yetki aşımı, sızma testi ve güvenlik denetimi disiplini; guidance ve full-audit modlarında izole alt-ajan doğrulaması yürütür. Tetikleyiciler: "/check-security", "güvenlik denetimi", "security audit", "güvenlik açığı tara", "vulnerability scan", "pen test", "sızma testi", "güvenlik incelemesi", "security review", "audit security". Tetiklenmez: kod kokusu ve smell taraması `code-review`'e, hata teşhisi `diagnosing-bugs`'a aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
 ---
 
 # Security Audit

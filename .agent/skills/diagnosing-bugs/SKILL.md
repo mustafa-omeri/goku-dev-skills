@@ -1,6 +1,6 @@
 ---
 name: diagnosing-bugs
-description: Sistematik 6 aşamalı hata ayıklama disiplini; kod değiştirmeden önce hatayı kanıtlayan kırmızı geri bildirim döngüsü kurar, hipotezleri sınar ve regresyon testi ekler. Tetikleyiciler: "hata ayıkla", "bug çöz", "neden çalışmıyor", "kök neden", "diagnose bug", "debug issue", "root cause". Tetiklenmez: genel refactoring ve yeni özellik ekleme `musgoku` kapsamındadır. Tam sözlük: .agent/rules/skill-trigger-routing.md
+description: Sistematik 6 aşamalı hata ayıklama disiplini; kod değiştirmeden önce hatayı kanıtlayan kırmızı geri bildirim döngüsü kurar, hipotezleri sınar ve regresyon testi ekler. Tetikleyiciler: "/fix-bug", "hata ayıkla", "bug çöz", "neden çalışmıyor", "kök neden", "diagnose bug", "debug issue", "root cause". Tetiklenmez: genel refactoring ve yeni özellik ekleme `musgoku` kapsamındadır. Tam sözlük: .agent/rules/skill-trigger-routing.md
 ---
 
 # Diagnosing Bugs

@@ -1,7 +1,7 @@
 ---
 name: karpathy-guidelines
 description: >
-  Yaygın kodlama hatalarını azaltan davranış kuralları ve hakemlik: gereksiz karmaşıklıktan kaçınma, cerrahi değişiklik, varsayımları yüzeye çıkarma, 3 aşamalı konsensüs (council). Tetikleyiciler: "bu çok karmaşık", "basitleştir", "gereksiz kod", "varsayım ne", "llm council", "overcomplicated", "simplify this", "surface assumptions", "peer review". Tetiklenmez: mimari kararlar `musgoku`, tasarım kararları tasarım skill setine aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
+  Yaygın kodlama hatalarını azaltan davranış kuralları ve hakemlik: gereksiz karmaşıklıktan kaçınma, cerrahi değişiklik, varsayımları yüzeye çıkarma, 3 aşamalı konsensüs (council). Tetikleyiciler: "/council", "bu çok karmaşık", "basitleştir", "gereksiz kod", "varsayım ne", "llm council", "overcomplicated", "simplify this", "surface assumptions", "peer review". Tetiklenmez: mimari kararlar `musgoku`, tasarım kararları tasarım skill setine aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
 license: MIT
 ---
 

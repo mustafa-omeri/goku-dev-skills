@@ -127,17 +127,21 @@ Kullanıcının belirli bir isteği doğrudan ve kestirmeden ajana bildirmesini 
 | Goku skill güncelle, skill update, GS update, GS güncelle, goku update, skillset güncelle, skill'leri güncelle, goku skills update, ajan yeteneklerini güncelle / update skills, goku update, update skill set, upgrade skills, sync skills | `musgoku` | `skills/musgoku/SKILL.md` |
 | prelaunch, canlıya al, go live, yayına alma kontrolü, consent check, axe audit, /prelaunch, /prelaunch-update / prelaunch audit, go live checklist, prelaunch checklist | `prelaunch-audit` | `skills/prelaunch-audit/SKILL.md` |
 
-### A5. Prompt Makroları ve Kısayol Etiketleri (Prompt Shorthands)
+### A5. Bağlayıcı Oturum Slash Komutları ve Prompt Makroları (Ensemble Slash Commands)
 
-Kullanıcının detaylı ve uzun prompt yazmadan doğrudan tam kapsamlı revizyon talep edebilmesi için tasarlanmış kısayollardır:
+Yapay zeka asistanlarının tekil ve birbirinden kopuk araçlar çalıştırmasını engellemek; **birbirini zorunlu kılan becerileri tek bir oturum komutunda zincirlemek** ve geliştiricinin tek kelimeyle tam teşekküllü kalite protokollerini başlatmasını sağlamak için tasarlanmıştır:
 
-| Makro / Etiket | Açılan Skill'ler | Yürütülen Protokol |
+| Slash Komut / Makro | Bağlanan Beceriler (Ensemble) | Yürütülen Bağlayıcı Protokol & Kanıt |
 |---|---|---|
-| `[DESIGN-REFRESH]` / `[UI-POLISH]` | `frontend-design` + `ui-ux-pro-max` + `ui-styling` | Kullanıcı tek satırda revizyon ister. Ajan ek açıklama beklemeden; belirtilen sayfalarda generic AI-slop şablonlarını temizler, görsel hiyerarşi, boşluk ritmi, scanning ergonomisi ve rozet revizyonunu mevcut veri akışını bozmadan tamamlar. |
-| `[DASHBOARD-POLISH]` | `ui-ux-pro-max` + `frontend-design` + `ui-styling` | Yönetim, onay ve metrik masalarının bilgi mimarisi, kart ve tablo ergonomisini profesyonel seviyeye çıkarır. |
-| `commitx`, `commitle` / `[COMMITX]` | `git-release-workflow` | Peşin tam yetkili (express) sürüm yayını: commit ve push için ayrı ayrı ara onay sormadan `git add` → `git commit` → `git tag` → `git push` zincirini tek nefeste tamamlar ve doğrudan sonucu raporlar. |
-| `/prelaunch`, `prelaunch` | `prelaunch-audit` | Canlıya alma öncesi 20 maddelik tam kontrol listesi (KVKK, çerez onayı, meta, sitemap, robots, WCAG 2.2 AA, hız, formlar vb.) denetimini yürütür ve PRELAUNCH-REPORT.md üretir. |
-| `/prelaunch-update` | `prelaunch-audit` | İdari para cezaları, KVKK bildirim limitleri ve Google/AI bot arama kurallarını resmi kaynaklardan sorgulayıp cerrahi olarak günceller. |
+| **`/verify-prd`** | `doc-coauthoring` + `code-review` + Katman Bütünlüğü (5-Layer Vertical Slice) | **"Bitti ama doğru mu bitti?" Güven Motoru:** Şartnamedeki kabul kriterlerini (Gherkin AC), 5 Katmanlı Dikey Dilimi (DB migration, View/RPC, Client API, UI UX, Admin Formu) ve kapsam sapmalarını (Scope Creep) denetleyip kanıt tablosu üretir. |
+| **`/ui-polish`** / `[UI-POLISH]` / `[DESIGN-REFRESH]` | `ui-ux-pro-max` → `frontend-design` → `ui-styling` + `check_design_slop.py` | **Tasarım & Zanaat Üçlüsü:** 79 stil ve 192 palet seçimi, generic AI-slop temizliği, tipografi hiyerarşisi, boşluk ritmi ve deterministik kontrast/WCAG doğrulaması. |
+| **`/check-security`** | `security-audit` + `development-workflow` (Halka 2 Kalkanı) + `prelaunch-audit` | **Güvenlik & İstismar Savunması:** OWASP zafiyet avcılığı, public form kalkanı (Turnstile, Rate-limit, RLS) ve secrets/env sızıntı denetimi. |
+| **`/fix-bug`** | `diagnosing-bugs` → `musgoku` → `karpathy-guidelines` | **Kırmızı Döngü & Hata Teşhisi:** Kod yazmadan önce hatayı kanıtlayan kırmızı test/kanıt döngüsü kurar, cerrahi onarım yapar, Karpathy gereksiz kod ve yan etki temizliği işletir. |
+| **`/council`** | `karpathy-guidelines` (Council) → `doc-coauthoring` (ADR) | **3 Aşamalı Konsey Hakemliği:** Mimari ikilem ve riskli refactoring kararlarında 3 aşamalı anonim körleme (Blind Review & Chairman Synthesis) ve ADR mimari karar kaydı üretir. |
+| **`/prelaunch`** | `prelaunch-audit` (Orkestratör) + 4 Referans Modülü | **Canlıya Alma Kalite Denetimi:** 20 maddelik tam kontrol listesi (KVKK m.10, Consent Mode v2, ham HTML SEO, WCAG 2.2 AA, robots, sitemap) ve GO/NO-GO karar raporu üretir. |
+| **`/prelaunch-update`** | `prelaunch-audit` (`scripts/prelaunch_updater.py`) | **Mevzuat & Platform Güncellemesi:** İdari para cezaları, KVKK bildirim limitleri ve Google Search kurallarını resmi kaynaklardan sorgulayıp cerrahi günceller. |
+| **`/commitx`** / `commitle` / `[COMMITX]` | `git-release-workflow` | **Peşin Tam Yetkili Sürüm Yayını:** Doğrulama kapılarını çalıştırır; ara onay sormadan `git add` → `git commit` → `git tag` → `git push` zincirini tek nefeste tamamlar. |
+| **`/gs-update`** / `"GS güncelle"` | `musgoku` | **Sıfır-Şişkinlik Skill Senkronu:** Proje kuralını koruyarak ve gereksiz dosya indirmeden ajan becerilerini cerrahi olarak en son sürüme senkronlar. |
 
 ---
 

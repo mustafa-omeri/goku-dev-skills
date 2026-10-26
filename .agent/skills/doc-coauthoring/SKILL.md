@@ -1,6 +1,6 @@
 ---
 name: doc-coauthoring
-description: Doküman **yazma sürecini** yönetir: bağlam toplama → bölüm bölüm iyileştirme → bağlamsız okur testi. PRD, proposal, teknik spec, karar dokümanı ve RFC yazımı. Tetikleyiciler: "doküman yaz", "spec çıkar", "proposal hazırla", "karar dokümanı", "bunu belgele", "write a doc", "draft a proposal", "technical spec", "decision doc". Tetiklenmez: marka içeriğinin sahibi `brand`'dir; bu skill süreci yönetir. Tam sözlük: `.agent/rules/skill-trigger-routing.md`
+description: Doküman **yazma sürecini** yönetir: bağlam toplama → bölüm bölüm iyileştirme → bağlamsız okur testi. PRD, proposal, teknik spec, karar dokümanı ve RFC yazımı. Tetikleyiciler: "/verify-prd", "doküman yaz", "spec çıkar", "proposal hazırla", "karar dokümanı", "bunu belgele", "write a doc", "draft a proposal", "technical spec", "decision doc". Tetiklenmez: marka içeriğinin sahibi `brand`'dir; bu skill süreci yönetir. Tam sözlük: `.agent/rules/skill-trigger-routing.md`
 ---
 
 # Doc Co-Authoring Workflow

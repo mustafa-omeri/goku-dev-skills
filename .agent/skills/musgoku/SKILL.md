@@ -3,7 +3,7 @@ name: musgoku
 description: >-
   Global geliştirme yönlendiricisi. Backend (Java, Spring Boot, REST) ve frontend
   (React, TypeScript, bundle) taleplerini doğru sub-skill'e yönlendirir; kalite
-  kapılarını tanımlar. Tetikleyiciler: "API yaz", "endpoint ekle", "refactor",
+  kapılarını tanımlar. Tetikleyiciler: "/gs-update", "API yaz", "endpoint ekle", "refactor",
   "fix bug", "Goku skill güncelle", "skill update", "GS update", "GS güncelle",
   "add endpoint", "create entity". Tetiklenmez: tek satırlık kod düzeltmesi veya
   planlama gerektirmeyen işler. Tam sözlük: .agent/rules/skill-trigger-routing.md

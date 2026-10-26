@@ -18,7 +18,7 @@ const path = require('path');
 const readline = require('readline');
 const https = require('https');
 
-const VERSION = '1.11.7';
+const VERSION = '1.11.8';
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 const RAW_URL_BASE = `https://raw.githubusercontent.com/${GITHUB_REPO}/main`;
 
@@ -44,7 +44,7 @@ const SKILLS_MANIFEST = {
   'musgoku': {
     category: 'Architecture / Fullstack',
     desc: 'Global orchestrator for Java 21, Spring Boot 3, REST, JPA, WebSocket & React/TypeScript.',
-    triggers: 'API yaz, endpoint ekle, entity olustur, pagination, backend mimari, add endpoint',
+    triggers: '/gs-update, GS guncelle, API yaz, endpoint ekle, entity olustur, pagination, backend mimari, add endpoint',
   },
   'ui-ux-pro-max': {
     category: 'Design Intelligence',
@@ -54,7 +54,7 @@ const SKILLS_MANIFEST = {
   'frontend-design': {
     category: 'UI Code & Themes',
     desc: 'Distinctive, production-grade web interfaces avoiding AI-slop; hosts 55 component themes & dashboard layouts.',
-    triggers: 'arayuz yap, sayfa tasarla, landing page, dashboard tasarimi, build a component',
+    triggers: '/ui-polish, [DESIGN-REFRESH], [UI-POLISH], arayuz yap, sayfa tasarla, landing page, dashboard tasarimi, build a component',
   },
   'canvas-design': {
     category: 'Visual Art',
@@ -74,7 +74,7 @@ const SKILLS_MANIFEST = {
   'git-release-workflow': {
     category: 'DevOps / Release',
     desc: 'Autonomous semantic release, user-approved commits, version tagging (vX.Y.Z) & remote pushes.',
-    triggers: 'commit yap, surum yayinla, release cikar, tag at, commit this, tag a release',
+    triggers: '/commitx, commitx, commitle, [COMMITX], commit yap, surum yayinla, release cikar, tag at, commit this, tag a release',
   },
   'i18n-localization': {
     category: 'Localization',
@@ -114,12 +114,12 @@ const SKILLS_MANIFEST = {
   'doc-coauthoring': {
     category: 'Documentation',
     desc: 'Collaborative RFC drafting, architecture decision records (ADR) and technical specs.',
-    triggers: 'dokuman yaz, spec hazirla, RFC olustur, PRD drafting, technical spec',
+    triggers: '/verify-prd, dokuman yaz, spec hazirla, RFC olustur, PRD drafting, technical spec',
   },
   'karpathy-guidelines': {
     category: 'Code Standards',
     desc: 'Radical simplicity, zero speculation, minimal abstraction and maximum code readability.',
-    triggers: 'karpathy, clean architecture, overengineering fix, simplify code',
+    triggers: '/council, karpathy, llm council, clean architecture, overengineering fix, simplify code',
   },
   'design': {
     category: 'Creative Direction',
@@ -149,7 +149,7 @@ const SKILLS_MANIFEST = {
   'diagnosing-bugs': {
     category: 'Engineering / Debugging',
     desc: 'Systematic 6-phase debugging loop: red feedback loop before code change, ranked falsifiable hypotheses & regression tests.',
-    triggers: 'hata ayikla, bug coz, neden calismiyor, kok neden, diagnose bug, debug issue, root cause',
+    triggers: '/fix-bug, hata ayikla, bug coz, neden calismiyor, kok neden, diagnose bug, debug issue, root cause',
   },
   'tdd': {
     category: 'Engineering / TDD',
@@ -179,7 +179,7 @@ const SKILLS_MANIFEST = {
   'security-audit': {
     category: 'Security & Vulnerability',
     desc: 'Offensive & defensive security harness: boundary crossing, vulnerability hunting, candidate verification, coverage ledger & findings schema.',
-    triggers: 'guvenlik denetimi, security audit, guvenlik acigi tara, vulnerability scan, pen test, sizma testi, security review',
+    triggers: '/check-security, guvenlik denetimi, security audit, guvenlik acigi tara, vulnerability scan, pen test, sizma testi, security review',
   },
   'seo-growth': {
     category: 'Marketing & SEO',

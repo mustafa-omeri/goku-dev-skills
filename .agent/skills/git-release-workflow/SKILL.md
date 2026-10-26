@@ -3,7 +3,7 @@ name: git-release-workflow
 description: >-
   Kullanıcı onayından sonra değişiklikleri hazırlama, semantik sürüm etiketi artırma,
   commit oluşturma ve dal ile etiketleri uzak depoya gönderme akışını kesintisiz
-  otomatik yürütür. Tetikleyiciler: "commitx", "commitle", "commit yap", "sürüm yayınla",
+  otomatik yürütür. Tetikleyiciler: "/commitx", "commitx", "commitle", "commit yap", "sürüm yayınla",
   "release çıkar", "tag at", "gönder", "push", "yayına al", "commit this", "tag a
   release", "push to remote". Her commit/tag/push öncesi onay zorunludur; onaysız çalışmaz.
   Tetiklenmez: "git durumu nedir", "diff göster", "log" gibi salt okuma istekleri.

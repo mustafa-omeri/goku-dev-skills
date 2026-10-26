@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Version](https://img.shields.io/badge/version-1.11.7-blue.svg?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/goku-dev-skills)
+[![Version](https://img.shields.io/badge/version-1.11.8-blue.svg?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/goku-dev-skills)
 [![Skills](https://img.shields.io/badge/skills-30%20battle--tested-8A2BE2.svg?style=for-the-badge&logo=expertsexchange)](./.agent/skills/)
 [![Rules](https://img.shields.io/badge/rules-19%20enforced-orange.svg?style=for-the-badge&logo=codereview)](./.agent/rules/)
 [![Gates](https://img.shields.io/badge/gates-11%20deterministic-success.svg?style=for-the-badge&logo=checkmarx)](./.agent/skills/musgoku/scripts/)
@@ -12,7 +12,7 @@
 **Universal, Agent-Agnostic Intelligence & Production Workflow Engine for AI Coding Assistants**  
 *Turning stochastic language models into senior software architects, meticulous UI/UX craftspeople, and disciplined QA sentinels.*
 
-[Overview](#-overview) • [Why Goku?](#-why-goku-dev-skills-anti-slop-matrix) • [Developer Archetypes](#-the-30-production-skills--developer-archetypes) • [Quickstart](#-quick-start--installation) • [Interactive Catalog](#-interactive-visual-skills-catalog) • [Verification Gates](#-the-11-deterministic-verification-gates)
+[Overview](#-overview) • [Why Goku?](#-why-goku-dev-skills-anti-slop-matrix) • [Developer Archetypes](#-the-30-production-skills--developer-archetypes) • [Quickstart](#-quick-start--installation) • [Interactive Catalog](#-interactive-visual-skills-catalog) • [Slash Commands](#-session-slash-commands-ensemble-workflows) • [Verification Gates](#-the-11-deterministic-verification-gates)
 
 </div>
 
@@ -24,7 +24,7 @@
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                              GOKU DEV SKILLS ECOSYSTEM v1.11.7                         │
+│                              GOKU DEV SKILLS ECOSYSTEM v1.11.8                         │
 ├──────────────────────────────┬─────────────────────────────┬───────────────────────────┤
 │    30 PRODUCTION SKILLS      │     19 ENFORCED RULES       │   55 COMPONENT THEMES     │
 │ Architecture · Design · TDD  │ 11 Deterministic Gates      │ Standalone HTML/CSS/JS    │
@@ -242,6 +242,24 @@ open .agent/skills-catalog.html
 # Linux
 xdg-open .agent/skills-catalog.html
 ```
+
+---
+
+## ⚡ Session Slash Commands (Ensemble Workflows)
+
+Rather than executing fragmented, isolated actions, Goku Dev Skills introduces **Ensemble Slash Commands** — chaining complementary disciplines together into high-certainty workflows where one capability naturally necessitates the other:
+
+| Slash Command | Ensemble Skills Chained | Workflow & Evidence Produced |
+| :--- | :--- | :--- |
+| **`/verify-prd`** | `doc-coauthoring` + `code-review` + 5-Layer Vertical Slice | **"Done with Proof" Verification Engine:** Eliminates "Phantom Done" by inspecting Gherkin acceptance criteria, 5-layer full-stack completion (DB migration, View/RPC, Client API, UI UX, Admin Form), and scope creep before giving release confidence. |
+| **`/ui-polish`** | `ui-ux-pro-max` → `frontend-design` → `ui-styling` + `check_design_slop.py` | **Aesthetic Craft Triad:** Eliminates AI-slop, refines typographic scale, spacing rhythms, scanning ergonomics, and verifies WCAG contrast compliance. |
+| **`/check-security`** | `security-audit` + `development-workflow` + `prelaunch-audit` | **Hardened Security Harness:** OWASP vulnerability scan, public form abuse shield (Turnstile, Rate-limit, RLS), and sensitive secret/env leakage audit. |
+| **`/fix-bug`** | `diagnosing-bugs` → `musgoku` → `karpathy-guidelines` | **Root-Cause Feedback Loop:** Forces a reproducible red test before touching code, implements the surgical fix, and cleans up speculative side-effects. |
+| **`/council`** | `karpathy-guidelines` (Council) → `doc-coauthoring` (ADR) | **3-Stage LLM Council:** Multi-agent blind peer review and deliberation for complex refactoring and architectural crossroads, codified into an ADR. |
+| **`/prelaunch`** | `prelaunch-audit` (Orchestrator) + 4 Modules | **Production Launch Audit:** 20-point compliance audit (KVKK m.10, Consent Mode v2, raw HTML SEO, WCAG 2.2 AA) with a definitive GO/NO-GO scorecard. |
+| **`/prelaunch-update`** | `prelaunch-audit` (`prelaunch_updater.py`) | **Regulatory Compliance Sync:** Live regulatory fine thresholds, notification limits, and search engine bot rules updated surgically. |
+| **`/commitx`** | `git-release-workflow` | **Express Release:** Runs quality gates, stages changes, generates semantic tags (`vX.Y.Z`), commits, and pushes to remote in a single autonomous flow. |
+| **`/gs-update`** | `musgoku` (`references/skill-set-update.md`) | **Surgical Zero-Bloat Sync:** Synchronizes installed skills and rules with upstream repository without downloading unneeded modules. |
 
 ---
 
