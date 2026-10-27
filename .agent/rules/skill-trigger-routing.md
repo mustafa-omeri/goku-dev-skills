@@ -133,7 +133,9 @@ Yapay zeka asistanlarının tekil ve birbirinden kopuk araçlar çalıştırmas�
 
 | Slash Komut / Makro | Bağlanan Beceriler (Ensemble) | Yürütülen Bağlayıcı Protokol & Kanıt | Gövde yolu |
 |---|---|---|---|
-| **`/verify-prd`** | `doc-coauthoring` + `code-review` + Katman Bütünlüğü (5-Layer Vertical Slice) | **"Bitti ama doğru mu bitti?" Güven Motoru:** Şartnamedeki kabul kriterlerini (Gherkin AC), 5 Katmanlı Dikey Dilimi (DB migration, View/RPC, Client API, UI UX, Admin Formu) ve kapsam sapmalarını (Scope Creep) denetleyip kanıt tablosu üretir. | `skills/verify-prd/SKILL.md` |
+| **`/verify-prd`** / `/prd-verify` / `[VERIFY-PRD]` | `doc-coauthoring` + `code-review` + Katman Bütünlüğü (5-Layer Vertical Slice) | **Tüm Proje & PRD Retrospektif Güven Motoru:** Şartnamedeki kabul kriterlerini (Gherkin AC), geçmişten bugüne tüm özelliklerin 5 Katmanlı Dikey Dilimini (DB migration, View/RPC, Client API, UI UX, Admin Formu), Sahte Bitti (Phantom Done) ve mock kalıntılarını tarar. | `skills/verify-prd/SKILL.md` |
+| **`/verify-sprint`** / `[VERIFY-SPRINT]` | `sprint-delivery-workflow` + `tdd` + Katman Bütünlüğü | **Sprint Kapanış & Kabul Motoru:** Aktif sprint ve en son biten sprintteki kartların Gherkin kabul kriterlerini (`specs/*.feature`), 5 katmanlı dikey dilimini ve kullanıcı test adımlarını doğrular. | `skills/verify-sprint/SKILL.md` |
+| **`/verify-last`** / `[VERIFY-LAST]` | `musgoku` + `development-workflow` + Kapsam-Duyarlı Kapılar | **Son Geliştirmeler Cerrahi Doğrulama Motoru:** Anlık çalışma ağacındaki uncommitted değişiklikleri veya son commit'i (`HEAD~1..HEAD`) derleme, tip, etkilenen katmanlar ve kullanıcı gözle testiyle hızla doğrular. | `skills/verify-last/SKILL.md` |
 | **`/ui-polish`** / `[UI-POLISH]` / `[DESIGN-REFRESH]` | `ui-ux-pro-max` → `frontend-design` → `ui-styling` + `check_design_slop.py` | **Tasarım & Zanaat Üçlüsü:** 79 stil ve 192 palet seçimi, generic AI-slop temizliği, tipografi hiyerarşisi, boşluk ritmi ve deterministik kontrast/WCAG doğrulaması. | `skills/ui-polish/SKILL.md` |
 | **`/check-security`** | `security-audit` + `development-workflow` (Halka 2 Kalkanı) + `prelaunch-audit` | **Güvenlik & İstismar Savunması:** OWASP zafiyet avcılığı, public form kalkanı (Turnstile, Rate-limit, RLS) ve secrets/env sızıntı denetimi. | `skills/check-security/SKILL.md` |
 | **`/fix-bug`** | `diagnosing-bugs` → `musgoku` → `karpathy-guidelines` | **Kırmızı Döngü & Hata Teşhisi:** Kod yazmadan önce hatayı kanıtlayan kırmızı test/kanıt döngüsü kurar, cerrahi onarım yapar, Karpathy gereksiz kod ve yan etki temizliği işletir. | `skills/fix-bug/SKILL.md` |
@@ -172,6 +174,7 @@ haritasından** gelir ([`design-skills-enforcement.md`](./design-skills-enforcem
 
 | Belirsizlik | Karar |
 |---|---|
+| "Doğrula / Test et / Bitti mi" — hangi seviye? | Anlık son değişiklik / uncommitted ➔ `/verify-last` · Aktif/son sprint ➔ `/verify-sprint` · Tüm proje / PRD kabulü ➔ `/verify-prd` |
 | "Tasarım yap" — ne tür? | Sabit px ölçü varsa `banner-design` · `.png/.pdf` çıktı varsa `canvas-design` · web arayüzü ise `frontend-design` + `ui-ux-pro-max` |
 | "Poster" mi "banner" mı? | Ölçüsüz sanat → `canvas-design`. Platform ölçüsü (1080×1080, 820×312) → `banner-design` |
 | "Palet" mi "token" mı? | Hazır tema seçimi → `theme-factory`. Ürüne özel palet → `ui-ux-pro-max`. Üç katmanlı token → `design-system` |
