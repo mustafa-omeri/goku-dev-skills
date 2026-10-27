@@ -183,6 +183,20 @@ Feature: Kullanıcı test rehberi
 ```
 
 - `Feature` + `Scenario` zorunlu; en az bir `Given` / `When` / **`Then`** adımı.
+
+### 3.4 Kurumsal Gereksinim & RTM Eşleşmesi (Requirements Traceability)
+
+Kurumsal projelerde sprint kartları bağımsız ad-hoc işler değildir; PRD ve RTM matrisindeki gereksinimlere dayanır:
+
+1. **Sprint Kartı Başlığı & Referans:**
+   - Bir sprint kartı PRD'deki bir fonksiyonel gereksinimi (`FR`) veya yol haritasındaki bir parking lot (`PL`) maddesini karşılıyorsa, başlıkta veya açıklamada gereksinim ID'si açıkça belirtilir:
+     `### S25-01 · KS-PL-001: Otomatik dış kaynak çekici edge function servisi`
+2. **BDD / Gherkin Senaryo Numaralandırma Standardı:**
+   - Gherkin senaryoları ilgili gereksinim ID'siyle izlenebilir formatta etiketlenir:
+     `@[Gereksinim ID] - SC[Sıra No] : [Senaryo Başlığı]`
+     Örnek: `@KS-FR-038.1-SC01: Anonim kullanıcının sayaç favorilemesi`
+3. **İzlenebilirlik Matrisi Güncellemesi:**
+   - Kart `Yapıldı` sütununa geçtiğinde, `HANDOFF.md` içindeki RTM tablosunda ilgili `FR` veya `PL` maddesinin durumu `✅ Done` veya `vX.Y.Z` sürümüne bağlanır. Gereksinim asla tablodan silinmez.
 - **Tek davranış = tek `Scenario`.** "Ve" ile bağlanmış iki davranış iki
   `Scenario`'dur.
 - `Then` adımı gözlenebilir olmalı: *"ekran açılır"* değil, *"hata mesajı görünür"*.

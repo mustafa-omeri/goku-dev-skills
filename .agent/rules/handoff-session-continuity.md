@@ -32,8 +32,13 @@ sinif: TUTUM
 
 1. `knowledge-base.md`'ye bu adımda çözülen kalıcı hataları ve kararları yaz (append).
 2. `HANDOFF.md`'yi güncelle (§0 tuzaklar, §1 yapılanlar, §2 kanıt metrikleri, §3 sıradaki işler, §4 kararlar, §5 ortam).
-   - **Sıradaki işler kuralı (Canlı Görev Panosu & Kapsam Ayrımı):**
-     * Canlı görev panosu tablosunda (`| # | Durum | İş / Hedef | Kapsam / PRD Referansı |`) her zaman bir sonraki oturumun başlayacağı somut 1-3 hedef (1. ⏭️ ..., 2. ⬜ ...) listelenir.
+   - **Sıradaki işler kuralı (Canlı Görev Panosu, RTM & Kapsam Ayrımı):**
+     * Canlı görev panosu tablosunda (`| ID | Durum | İş / Hedef | Kapsam / PRD Referansı | Hedef Sürüm |`) her zaman bir sonraki oturumun başlayacağı somut 1-3 hedef (1. ⏭️ ..., 2. ⬜ ...) listelenir.
+     * ⭐ **Kurumsal ID Standardı ve Deterministik RTM Sözleşmesi:**
+       1. Her iş ve gereksinim `[DOM]-[TIP]-[NO]` hiyerarşisinde sabit bir kimlik taşır (örn: `KS-US-039`, `BM-PL-001`, `OCAI-BUG-045`, `GSW-FR-001`).
+       2. **Statik ID & Metadata Kuralı:** Faz ve versiyon bilgisi ID'ye kodlanamaz (`PHASE3-01`, `V2.2-A` vb. yasaktır). Faz/sürüm değişikliklerinde yalnızca `Hedef Faz` ve `Hedef Sürüm` metadata sütunları güncellenir; ID asla değişmez.
+       3. ⛔ **Devir Raporunda Keyfi Harf/Madde Uydurma Yasağı:** Oturum devir raporundaki `Sonraki işler (Backlog)` bölümünde ajanlar serbest harflerle (`A`, `B`, `C`...) veya numarasız/başlıksız listeler türetemez. Raporlanan her backlog maddesi `HANDOFF.md` veya PRD'deki sabit ID'yi (`[DOM]-PL-XXX` veya `[DOM]-US-XXX`) referans almak zorundadır.
+       4. **Deprecation Kuralı:** İptal edilen veya ötelenen gereksinimler tablodan silinmez; durumu `Deprecated` veya `Deferred` yapılır, numara korunur ve boş bırakılmaz.
      * ⛔ **Sprint Bitişi ≠ Ürün/Proje Bitişi:** "Mevcut sprint / görev bitti" ile "tüm proje tamamlandı" kesinlikle birbirine karıştırılamaz! Üzerinde çalışılan sprint veya özellik bittiğinde, PRD veya Yol Haritasındaki (Backlog) sıradaki sprint/özellik canlı panoya taşınır.
      * ⛔ **Biten İşlerin Sıradaki Bölümünü Kirletmesi Yasağı:** Tamamlanan işler `Sıradaki` bölümünde `✅ BİTTİ` olarak biriktirilmez; doğrudan `§1 Yapılanlar` veya `Geçmiş Sprintler Arşivi`ne aktarılır. `Sıradaki` tablosu yalnızca geleceğe ait açık işleri barındırır.
      * `Açık iş yok — proje tamamlandı.` ifadesi **yalnızca ve yalnızca** PRD ve yol haritasındaki tüm fazlar %100 bittiğinde yazılabilir.

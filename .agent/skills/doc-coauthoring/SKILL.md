@@ -252,6 +252,16 @@ Provide any final suggestions.
 
 Ask if ready to move to Reader Testing, or if they want to refine anything else.
 
+### Kurumsal ID ve Gereksinim İzlenebilirliği (RTM) Standardı (PRD / Spec Yazımında Zorunlu)
+
+PRD, Teknik Spec veya Mimari RFC yazılırken gereksinimler ve gelecek faz havuzu serbest tireli liste (`- madde 1`) olarak yazılamaz:
+1. **Statik ID & Metadata Kuralı:** Her gereksinim `[DOM]-[TIP]-[NO]` formatında statik kimlik taşır. Faz veya versiyon bilgisi ID'ye gömülmez (`PHASE3-01` yasaktır); `Hedef Faz` ve `Hedef Sürüm` öznitelik olarak tutulur.
+   - `[DOM]-FR-[NO]`: Fonksiyonel Gereksinimler (Alt kurallar için ondalık kuralı: `[DOM]-FR-[NO].[ALT_NO]`)
+   - `[DOM]-NFR-[NO]`: Non-Functional Requirement (SLA, Güvenlik, Performans)
+   - `[DOM]-PL-[NO]`: Parking Lot / Gelecek Faz Fikir Havuzu
+2. **Değişiklik Tarihçesi (Change Log):** Dokümanın başında Değişiklik Tarihçesi tablosu (`Versiyon | Tarih | Değiştiren | İlgili Madde ID | Açıklama`) yer almalıdır.
+3. **Deprecation Kuralı:** Kapsamdan çıkarılan veya iptal edilen madde tablodan silinmez; `[Deprecated]` veya `[Cancelled]` yapılır, gerekçesi Change Log'a işlenir, numarası korunur.
+
 ## Stage 3: Reader Testing
 
 **Goal:** Test the document with a fresh Claude (no context bleed) to verify it works for readers.

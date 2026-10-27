@@ -67,16 +67,28 @@
 [doğrulama komutu 2]
 ```
 
-### Sıradaki işler (Canlı Görev Panosu)
+### Sıradaki işler (Canlı Görev Panosu & RTM İzlenebilirlik Matrisi)
 
 > 💡 Bu bölüm projenin canlı görev panosudur. Ayrı bir `TASK.md` veya `TODO.md` açılmaz; tüm aktif ve sıradaki adımlar burada takip edilir.
 > ⛔ **Sprint Bitişi ≠ Proje Bitişi:** Mevcut sprint bittiğinde PRD/Yol Haritasındaki sıradaki sprinti buraya ekleyin. Biten işleri bu tabloda tutmayın, §1'e aktarın. Yalnızca tüm PRD fazları %100 bittiğinde "Açık iş yok — proje tamamlandı." yazılabilir.
+>
+> ⭐ **Kurumsal ID Standardı (Statik ID & Metadata Ayrımı):**
+> 1. Her iş `[DOM]-[TIP]-[NO]` formatında sabit kimlik taşır (örn: `[DOM]-US-001`, `[DOM]-PL-001`, `[DOM]-BUG-001`).
+> 2. ID'ye asla faz veya sürüm gömülmez (`PHASE3-01` yasaktır). Faz/sürüm değişikliğinde yalnızca `Hedef Faz` ve `Hedef Sürüm` sütunları güncellenir.
+> 3. İptal edilen veya ertelenen işler silinmez; durum `Deprecated` veya `Deferred` yapılır.
 
-| # | Durum | İş / Hedef | Kapsam / PRD Referansı |
-|---|---|---|---|
-| 1 | ⏭️ | _(bir sonraki oturumun ilk somut hedefi)_ | _(Sprint / Modül / PRD §X)_ |
-| 2 | ⬜ | _(sıradaki iş)_ | _(Sprint / Modül / PRD §X)_ |
-| 3 | ⬜ | _(sıradaki iş)_ | _(Sprint / Modül / PRD §X)_ |
+#### 🎯 Aktif Sprint / Anlık Görev Panosu (WIP Maks 3)
+| ID | Durum | İş / Hedef | Kapsam / PRD Referansı | Hedef Sürüm |
+|---|---|---|---|---|
+| [DOM]-US-001 | ⏭️ | _(bir sonraki oturumun ilk somut hedefi)_ | _(Sprint / Modül / PRD §X)_ | vX.Y.Z |
+| [DOM]-TASK-002 | ⬜ | _(sıradaki iş)_ | _(Sprint / Modül / PRD §X)_ | vX.Y.Z |
+| [DOM]-BUG-003 | ⬜ | _(sıradaki iş)_ | _(Hata / Regresyon Ref)_ | vX.Y.Z |
+
+#### 📌 Gelecek Fazlar & Parking Lot Yol Haritası (Product Roadmap Backlog)
+| Gereksinim ID | Açıklama | Hedef Faz | Hedef Sürüm | PRD / Kaynak Ref | Durum |
+|---|---|---|---|---|---|
+| [DOM]-PL-001 | _(Gelecek faz gereksinimi / özellik)_ | Phase 2+ | vX.Y.0 | `docs/*-prd.md §X` | ⬜ Bekliyor |
+| [DOM]-PL-002 | _(Gelecek faz gereksinimi / özellik)_ | Phase 3+ | vX.Y.0 | `docs/*-prd.md §X` | ⬜ Bekliyor |
 
 **YALNIZCA tüm PRD/ürün fazları %100 bittiğinde şunu yazın:**
 `Açık iş yok — proje tamamlandı.`

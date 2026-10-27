@@ -63,3 +63,16 @@ Temel Seviye: WCAG 2.1 AA (Tüm sayfalarda ve durumlarda).
 - Tüm etkileşimli kontroller klavye ile erişilebilir olmalı ve görünür `focus-visible` taşımalıdır.
 - `prefers-reduced-motion` her animasyon ve geçişte eksiksiz uygulanmalıdır.
 - Semantik HTML (`button`, `a`, `main`, `nav`, `h1-h6`) esastır; ARIA eksik semantiğin yaması olarak değil, yalnızca ek zenginleştirme için kullanılır.
+
+## Requirements & Traceability Standard (Kurumsal ID Sözleşmesi)
+
+Gereksinimler ve yol haritası maddeleri `[DOM]-[TIP]-[NO]` formatında statik kimlik taşır (faz/sürüm bilgisi ID'ye gömülmez, metadata olarak izlenir):
+- **FR (Functional Requirement):** `[DOM]-FR-[NO]` (Alt kurallar için ondalık standardı: `[DOM]-FR-[NO].[ALT_NO]`)
+- **NFR (Non-Functional Requirement):** `[DOM]-NFR-[NO]` (SLA, Güvenlik, Performans)
+- **PL (Parking Lot / Backlog):** `[DOM]-PL-[NO]` (Gelecek faz fikir ve yetenek havuzu)
+
+| Gereksinim ID | Açıklama | Hedef Faz | Hedef Sürüm | Durum |
+|---|---|---|---|---|
+| [DOM]-FR-001 | [Temel Fonksiyonel Yetenek] | Phase 1 (MVP) | v1.0.0 | [Approved] |
+| [DOM]-NFR-001 | [Performans / SLA veya Güvenlik Standardı] | Phase 1 (MVP) | v1.0.0 | [Approved] |
+| [DOM]-PL-001 | [Gelecek Faz Fikri / Kapsam Dışı Aday] | Phase 2+ | v1.1.0 | [Deferred] |
