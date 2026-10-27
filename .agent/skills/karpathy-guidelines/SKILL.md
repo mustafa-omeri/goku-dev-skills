@@ -122,3 +122,19 @@ Derived from [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) and [ju
 Detaylı rehberler:
 - **Action-First & ADHD Formatting:** `references/action-first-communication.md`
 - **Token-Efficient Prose Compression:** `references/token-efficient-communication.md`
+
+---
+
+## 7. Context Compression & Headroom Principles (Live-Zone & Cache Safety)
+
+**Prompt önbelleğini (cache) koru, bağlam penceresi şişkinliğini önle, kritik hataları kayıpsız tut.**
+
+Derived from [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom):
+
+1. **Sacred Hot Zone:** Sistem promptu, anayasal kurallar ve araç tanımları oturum içinde dinamik değiştirilmez; prompt önbellek (prompt cache) vuruş oranı tavizsiz korunur.
+2. **Live-Zone Target:** Sıkıştırma geçmiş konuşmaları silerek değil, yalnızca en son araç çıktısına (`tool_result`, terminal stdout/stderr) ve kullanıcı komutuna uygulanır.
+3. **Pre-Context Admission Control:** Devasa ham loglar veya komut çıktıları context'e sokulmadan önce `grep` ve satır filtreleriyle upstream'de filtrelenir.
+4. **Byte-Accurate Fatal Lines:** Hata çıktıları sıkıştırılırken `FATAL`, `FAIL`, `Error:`, `Exception` ve satır numaraları karakteri karakterine korunur.
+
+Detaylı rehber:
+- **Context Compression & Headroom:** `references/context-compression-headroom.md`

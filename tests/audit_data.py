@@ -183,12 +183,15 @@ def run_audit():
             lic = json.loads(raw.decode("utf-8"))
             ok("JSON ayristirma tam")
             if isinstance(lic, dict):
-                print(f"  kayit sayisi: {len(lic)}")
-                families = set()
-                for v in lic.values():
-                    if isinstance(v, dict) and "family" in v:
-                        families.add(v["family"])
-                print(f"  kapsanan aile: {len(families)}")
+                print(f"  kok anahtar sayisi: {len(lic)}")
+                items = lic.get("families", []) if isinstance(lic, dict) else []
+                if isinstance(items, list):
+                    families = {item.get("name") for item in items if isinstance(item, dict) and item.get("name")}
+                    print(f"  kapsanan aile: {len(families)}")
+                    if len(families) >= 1900:
+                        ok(f"aile lisans kapsami tam ({len(families):,})")
+                    else:
+                        fail(f"kapsanan aile sayisi beklenenden az: {len(families)}")
         except Exception as e:
             fail(f"JSON ayristirma basarisiz: {e}")
     else:

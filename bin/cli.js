@@ -18,7 +18,7 @@ const path = require('path');
 const readline = require('readline');
 const https = require('https');
 
-const VERSION = '1.12.0';
+const VERSION = '1.12.1';
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 const RAW_URL_BASE = `https://raw.githubusercontent.com/${GITHUB_REPO}/main`;
 
@@ -505,6 +505,7 @@ function listFilesRecursive(dir, baseDir = dir, ignoreDirs = ['__pycache__', '.p
 // Helper: Copy directory recursively with optional ignore
 function copyDirSync(src, dest, options = {}) {
   const ignoreDirs = options.ignoreDirs || [];
+  const ignoreFiles = options.ignoreFiles || [];
   fs.mkdirSync(dest, { recursive: true });
   const entries = fs.readdirSync(src, { withFileTypes: true });
 
@@ -514,6 +515,7 @@ function copyDirSync(src, dest, options = {}) {
 
     if (entry.name === '__pycache__' || entry.name === '.pytest_cache') continue;
     if (entry.isDirectory() && ignoreDirs.includes(entry.name)) continue;
+    if (entry.isFile() && ignoreFiles.includes(entry.name)) continue;
 
     if (entry.isDirectory()) {
       copyDirSync(srcPath, destPath, options);
@@ -891,6 +893,9 @@ async function cmdInit(options) {
       const copyOptions = {};
       if (options.minimal && skill === 'frontend-design') {
         copyOptions.ignoreDirs = ['component-themes'];
+      }
+      if (options.minimal && skill === 'ui-ux-pro-max') {
+        copyOptions.ignoreFiles = ['phosphor-icons-upstream.json', 'google-font-licenses.json'];
       }
       copyDirSync(srcSkill, destSkill, copyOptions);
       copiedSkillsCount++;
