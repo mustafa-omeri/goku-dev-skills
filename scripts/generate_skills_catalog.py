@@ -76,6 +76,32 @@ SLASH_COMMANDS = [
         "category": "Teslimat & Kalite"
     },
     {
+        "command": "/verify-sprint",
+        "aliases": ["/verify-sprint", "verify sprint", "[VERIFY-SPRINT]"],
+        "name": "Aktif & Son Sprint Hedefleri Kabul Denetimi",
+        "badge": "Mezo Kalite",
+        "badge_class": "badge-warning",
+        "skills": ["verify-sprint", "sprint-delivery-workflow", "tdd"],
+        "goal": "Gherkin AC & Kart Başına 5 Katmanlı Dilim",
+        "description": "Aktif sprinti (SPRINT_PLAN.md) ve tamamlanan sprint sınırındaki kartları denetler; Gherkin senaryolarını, 5 katmanlı dikey dilimi ve kullanıcı test rehberini doğrular.",
+        "sample_prompt": "/verify-sprint: Aktif sprint hedeflerini, kart kabul kriterlerini (Gherkin) ve 5 katman dikey dilim bütünlüğünü denetle.",
+        "protocol": "Gherkin AC Doğrulaması ➜ 5 Katman Denetimi ➜ KULLANICI_TEST_REHBERI ➜ Pano & Plan Senkronizasyonu",
+        "category": "Teslimat & Kalite"
+    },
+    {
+        "command": "/verify-last",
+        "aliases": ["/verify-last", "verify last", "[VERIFY-LAST]"],
+        "name": "Son Geliştirmeler & Çalışma Ağacı Doğrulama",
+        "badge": "Mikro Kalite",
+        "badge_class": "badge-info",
+        "skills": ["verify-last", "musgoku", "development-workflow"],
+        "goal": "Uncommitted Çalışma Ağacı & Cerrahi Regresyon Denetimi",
+        "description": "Anlık oturumda en son yapılan değişiklikleri, git status / uncommitted çalışma ağacını veya en son commit'i (HEAD~1..HEAD) derleme, tip ve katman bütünlüğü açısından doğrular.",
+        "sample_prompt": "/verify-last: Son yapılan geliştirmeleri, uncommitted dosyaları ve regresyon riskini cerrahi olarak denetle.",
+        "protocol": "git status ➜ Kapsam-Duyarlı Kalite Kapısı (build/test) ➜ Cerrahi Katman Analizi ➜ Hızlı Kullanıcı Test Adımı",
+        "category": "Teslimat & Kalite"
+    },
+    {
         "command": "/ui-polish",
         "aliases": ["/ui-polish", "[UI-POLISH]", "[DESIGN-REFRESH]"],
         "name": "Tasarım & UI/UX İnce Ayar Üçlüsü",
@@ -422,7 +448,19 @@ SAMPLE_PROMPTS = {
     "my-idea": "Fikirlerime bak ve güncel proje durumuna göre sıradaki en mantıklı 3 adımı öner.",
     "brand": "Marka kılavuzunu, ton ve mesaj çerçevesini docs/brand-guidelines.md olarak oluştur.",
     "doc-coauthoring": "Teknik mimari karar dokümanı (RFC / Decision Doc) taslağı oluştur.",
-    "slides": "Yatırımcı sunumu için PAS formülüyle 10 slaytlık pitch deck metni ve düzeni çıkar."
+    "slides": "Yatırımcı sunumu için PAS formülüyle 10 slaytlık pitch deck metni ve düzeni çıkar.",
+    "verify-last": "/verify-last: Son yapılan geliştirmeleri, uncommitted dosyaları ve regresyon riskini cerrahi olarak denetle.",
+    "verify-sprint": "/verify-sprint: Aktif sprint hedeflerini, kart kabul kriterlerini (Gherkin) ve 5 katman dikey dilim bütünlüğünü denetle.",
+    "verify-prd": "/verify-prd: Son tamamlanan özelliğin kabul kriterlerini, 5 katman dikey dilim bütünlüğünü ve regression risklerini bağımsız denetle.",
+    "check-security": "/check-security: Sistem genelinde yetki aşımı, public form abuse riskleri ve env sızıntılarını derinlemesine tara.",
+    "fix-bug": "/fix-bug: Çöken endpoint için önce kırmızı geri bildirim döngüsü kur, 3 hipotez üret ve cerrahi düzeltme yap.",
+    "council": "/council: Mimari ikilem için 3 alternatifli kör hakemlik konseyi topla, Borda puanı hesapla ve ADR kaydı çıkar.",
+    "prelaunch": "/prelaunch: Sitemizi yayına almaya hazır mıyız? 20 maddelik çekirdek denetimi ve yasal onay mekanizmalarını doğrula.",
+    "prelaunch-update": "/prelaunch-update: Güncel KVKK ve GDPR idari para cezalarını resmi tebliğlerden sorgula ve dokümanları güncelle.",
+    "seo-apply": "/seo-apply: Sitemiz için JSON-LD şemaları, OpenGraph etiketleri, robots.txt ve llms.txt dosyalarını kur ve doğrula.",
+    "commitx": "commitx: Değişiklikleri doğrula, semantik tag artır ve uzak depoya push et.",
+    "gs-update": "/gs-update: Kurulu skill setini en son sürüme güncelle, proje ek kurallarını koru.",
+    "ui-polish": "/ui-polish: Arayüzü hazır bileşen ve paletlerden ilhamla zenginleştir, generic AI kalıplarını temizle, tipografi ve boşluk ritmini modernleştir, WCAG kontrastını doğrula."
 }
 
 
@@ -522,10 +560,10 @@ def generate_catalog_html(skills: list[dict]) -> str:
     slash_commands_json = json.dumps(SLASH_COMMANDS, ensure_ascii=False)
 
     pkg_json_file = PROJECT_ROOT / "package.json"
-    pkg_version = "1.12.0"
+    pkg_version = "1.14.3"
     if pkg_json_file.is_file():
         try:
-            pkg_version = json.loads(pkg_json_file.read_text(encoding="utf-8")).get("version", "1.12.0")
+            pkg_version = json.loads(pkg_json_file.read_text(encoding="utf-8")).get("version", "1.14.3")
         except Exception:
             pass
 
@@ -648,6 +686,10 @@ def generate_catalog_html(skills: list[dict]) -> str:
       --status-danger-subtle: rgba(248, 113, 113, 0.1);
       --status-danger-border: rgba(248, 113, 113, 0.25);
 
+      --accent-secondary: var(--indigo-400);
+      --accent-secondary-subtle: rgba(129, 140, 248, 0.12);
+      --accent-secondary-border: rgba(129, 140, 248, 0.28);
+
       --ring-focus: var(--sky-400);
 
       --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
@@ -683,9 +725,9 @@ def generate_catalog_html(skills: list[dict]) -> str:
       --accent-primary-subtle: rgba(2, 132, 199, 0.08);
       --accent-primary-border: rgba(2, 132, 199, 0.2);
 
-      --accent-slash: var(--rose-600);
-      --accent-slash-subtle: rgba(225, 29, 72, 0.08);
-      --accent-slash-border: rgba(225, 29, 72, 0.2);
+      --accent-slash: #be123c;
+      --accent-slash-subtle: rgba(190, 18, 60, 0.08);
+      --accent-slash-border: rgba(190, 18, 60, 0.22);
 
       --status-success: var(--emerald-600);
       --status-success-subtle: rgba(5, 150, 105, 0.08);
@@ -699,9 +741,13 @@ def generate_catalog_html(skills: list[dict]) -> str:
       --status-info-subtle: rgba(2, 132, 199, 0.08);
       --status-info-border: rgba(2, 132, 199, 0.2);
 
-      --status-danger: var(--rose-600);
-      --status-danger-subtle: rgba(220, 38, 38, 0.08);
-      --status-danger-border: rgba(220, 38, 38, 0.2);
+      --status-danger: #9f1239;
+      --status-danger-subtle: #fff1f2;
+      --status-danger-border: #fecdd3;
+
+      --accent-secondary: #4f46e5;
+      --accent-secondary-subtle: rgba(79, 70, 229, 0.08);
+      --accent-secondary-border: rgba(79, 70, 229, 0.22);
 
       --ring-focus: var(--sky-600);
 
@@ -1151,7 +1197,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
       font-weight: 600;
       font-family: var(--font-sans);
       cursor: pointer;
-      transition: border-color 0.15s, color 0.15s;
+      transition: all 0.15s ease;
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
@@ -1160,12 +1206,47 @@ def generate_catalog_html(skills: list[dict]) -> str:
     .chip:hover {{
       color: var(--text-primary);
       border-color: var(--border-strong);
+      transform: translateY(-1px);
     }}
+    .chip:active {{
+      transform: translateY(0);
+    }}
+    .chip.cat-design:hover {{ border-color: var(--accent-primary); color: var(--accent-primary); }}
+    .chip.cat-code:hover {{ border-color: var(--status-success); color: var(--status-success); }}
+    .chip.cat-delivery:hover {{ border-color: var(--status-warning); color: var(--status-warning); }}
+    .chip.cat-brand:hover {{ border-color: var(--accent-slash); color: var(--accent-slash); }}
+    .chip.cat-ensemble:hover {{ border-color: var(--accent-secondary); color: var(--accent-secondary); }}
+
     .chip.active {{
       background: var(--accent-primary);
       border-color: var(--accent-primary);
       color: #090d16;
       font-weight: 700;
+    }}
+    .chip.cat-design.active {{
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #090d16;
+    }}
+    .chip.cat-code.active {{
+      background: var(--status-success);
+      border-color: var(--status-success);
+      color: #090d16;
+    }}
+    .chip.cat-delivery.active {{
+      background: var(--status-warning);
+      border-color: var(--status-warning);
+      color: #090d16;
+    }}
+    .chip.cat-brand.active {{
+      background: var(--accent-slash);
+      border-color: var(--accent-slash);
+      color: #ffffff;
+    }}
+    .chip.cat-ensemble.active {{
+      background: var(--accent-secondary);
+      border-color: var(--accent-secondary);
+      color: #ffffff;
     }}
     .chip-count {{
       font-size: 0.7rem;
@@ -1228,12 +1309,13 @@ def generate_catalog_html(skills: list[dict]) -> str:
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
       position: relative;
     }}
     .skill-card:hover {{
       border-color: var(--border-hover);
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
     }}
 
     .card-top {{
@@ -1530,12 +1612,13 @@ def generate_catalog_html(skills: list[dict]) -> str:
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
       position: relative;
     }}
     .slash-card:hover {{
       border-color: var(--accent-slash-border);
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
     }}
 
     .slash-header-row {{
@@ -1645,10 +1728,13 @@ def generate_catalog_html(skills: list[dict]) -> str:
       padding: 0.85rem 1rem;
       font-weight: 700;
       color: var(--text-secondary);
-      border-bottom: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-strong);
       text-transform: uppercase;
       font-size: 0.72rem;
       letter-spacing: 0.05em;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }}
     .skills-table td {{
       padding: 0.95rem 1rem;
