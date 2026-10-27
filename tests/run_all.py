@@ -27,6 +27,7 @@ TEST_SCRIPTS = [
     ("Test CLI Update", HERE / "test_cli_update.py"),
     ("Test Design Slop", HERE / "test_design_slop.py"),
     ("Test Theme Bridge", HERE / "test_theme_bridge.py"),
+    ("Test Project Brief", HERE / "test_project_brief.py"),
 ]
 
 

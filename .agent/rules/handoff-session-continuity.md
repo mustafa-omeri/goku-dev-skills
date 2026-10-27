@@ -17,14 +17,14 @@ sinif: TUTUM
 
 ## Zorunlu akış
 
-1. **İlk iş:** repo kökündeki `HANDOFF.md`'yi oku.
-   - Kalan işlerin sırası, kanıtlanmış tuzaklar ve ortam bilgisi **yalnızca** orada durur.
+1. **İlk iş:** repo kökündeki `HANDOFF.md`'yi ve canlı mimari haritasını (`PROJECT_BRIEF.md`) oku.
+   - Kalan işlerin sırası, kanıtlanmış tuzaklar ve ortam bilgisi `HANDOFF.md`'de; projenin dili, kütüphaneleri ve bağlayıcı kararları `PROJECT_BRIEF.md`'de yer alır.
 2. ⛔ **Okunmadan** kod yazma, düzeltme yapma, test koşma, migration üretme.
 3. ⛔ Dosya **yoksa veya boşsa** (yalnız başlık/şablon) → süreci **kendin devir al**:
    `git log`, `git status`, mevcut testler ve gerçek koddan durumu çıkar, sonra
    eksiksiz bir `HANDOFF.md` **yaz**. "Dosya yok, devam edemiyorum" deme —
    bu kuralın kendisi o dosyayı yeniden yaratmanı emreder.
-4. ✅ **Her iş bittiğinde** ve **oturum kapanırken** `HANDOFF.md`'yi güncelle.
+4. ✅ **Her iş bittiğinde** ve **oturum kapanırken** `HANDOFF.md`'yi ve gerekiyorsa (stack/DB/karar değişimi) `PROJECT_BRIEF.md`'yi güncelle.
 5. ⛔ `git commit` / `push` / `tag` yapma; kullanıcı açıkça istemedikçe
    değişiklikler working tree'de bırakılır.
 

@@ -126,6 +126,7 @@ Mevcut `DB_MIGRATIONS.md` dosyasını güncellerken:
 - ✅ Yeni revizyonu daima `## 2. Revizyon Geçmişi` başlığının hemen altına ekle.
 - ✅ `## 1. Proje Veritabanı Özeti` bölümündeki "Son Revizyon Numarası" ve "Son Güncelleme Tarihi" alanlarını güncelle.
 - ✅ Varsa diskteki migration dosyasının (`V...__*.sql`) adını revizyonda birebir belirt.
+- ✅ Veritabanı altyapısı, yeni bir tablo veya ana veri modeli değiştiğinde, kökteki canlı mimari belgesi olan `PROJECT_BRIEF.md` dosyasının §4 Veritabanı Modeli bölümü ve frontmatter'daki `database` listesi de taze tutulur (Bkz: `project-brief-maintenance.md`).
 
 ---
 

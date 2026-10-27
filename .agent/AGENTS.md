@@ -12,12 +12,13 @@
 |---|-----|--------|
 | 1 | Oturum devri — nerede kaldık, sıradaki iş, düşülen tuzaklar | `<repo-kök>\HANDOFF.md` |
 | 2 | Geliştirici profili ve kanıtlı ders kütüphanesi | `DEV_BRIEF.md` (varsa), yoksa vault `profile\` + `projects\_STANDARTLAR\decisions\` |
-| 3 | Ürün gerçeği ve kısıtlar (varsa) | `<repo-kök>\PRODUCT.md` |
-| 4 | İş alanı terimleri ve ortak dil sözlüğü (varsa) | `<repo-kök>\GLOSSARY.md` |
-| 5 | Tasarım dili ve token sözleşmesi (UI/UX işlerinde) | `<repo-kök>\DESIGN.md` |
-| 6 | Vault kararları (salt okunur) | `<vault>\CLAUDE.md`, `<vault>\profile\`, `<vault>\projects\_STANDARTLAR\decisions\` |
-| 7 | Proje kararları | `<vault>\projects\<proje-slug>\` |
-| 8 | Bu dizindeki kurallar | `.agent\rules\` (bkz. `trigger-rule-action.md`) |
+| 3 | Canlı proje mimarisi, teknoloji yığını ve bağlayıcı kararlar | `<repo-kök>\PROJECT_BRIEF.md` (varsa) |
+| 4 | Ürün gerçeği ve kısıtlar (varsa) | `<repo-kök>\PRODUCT.md` |
+| 5 | İş alanı terimleri ve ortak dil sözlüğü (varsa) | `<repo-kök>\GLOSSARY.md` |
+| 6 | Tasarım dili ve token sözleşmesi (UI/UX işlerinde) | `<repo-kök>\DESIGN.md` |
+| 7 | Vault kararları (salt okunur) | `<vault>\CLAUDE.md`, `<vault>\profile\`, `<vault>\projects\_STANDARTLAR\decisions\` |
+| 8 | Proje kararları | `<vault>\projects\<proje-slug>\` |
+| 9 | Bu dizindeki kurallar | `.agent\rules\` (bkz. `trigger-rule-action.md`) |
 
 **Okuma kanıtı:** koda geçmeden önce geçerli kararları başlıklarıyla özetle ya da
 *"bu iş için geçerli bir karar bulamadım"* de. Hatırladığını yazma, uydurma.
@@ -34,6 +35,7 @@
 | Çözdüğün kalıcı hata | `<repo-kök>\knowledge-base.md` |
 | Verdiğin kalıcı karar | `<repo-kök>\knowledge-base.md` |
 | Durum, sıradaki iş, tuzaklar | `<repo-kök>\HANDOFF.md` |
+| Teknoloji, stack, DB veya mimari karar revizyonu | `<repo-kök>\PROJECT_BRIEF.md` |
 | DB revizyonu (şema, tablo, kolon) | `<repo-kök>\DB_MIGRATIONS.md` |
 | Ürün gerçeği (kitle, amaç, kısıtlar) | `<repo-kök>\PRODUCT.md` |
 | İş alanı kavramı ve terimler | `<repo-kök>\GLOSSARY.md` |
@@ -49,12 +51,14 @@
 Formatlar ve "ne yazılır / ne yazılmaz" listesi:
 [`.agent\rules\knowledge-base-management.md`](rules/knowledge-base-management.md),
 [`.agent\rules\handoff-session-continuity.md`](rules/handoff-session-continuity.md),
-[`.agent\rules\design-skills-enforcement.md`](rules/design-skills-enforcement.md)
-ve [`.agent\rules\db-migration-enforcement.md`](rules/db-migration-enforcement.md).
+[`.agent\rules\design-skills-enforcement.md`](rules/design-skills-enforcement.md),
+[`.agent\rules\db-migration-enforcement.md`](rules/db-migration-enforcement.md)
+ve [`.agent\rules\project-brief-maintenance.md`](rules/project-brief-maintenance.md).
 
 Şablonlar (ilk kez oluşturulurken kopyalanır, sonra dosyanın kendisi güncellenir):
 [`templates\HANDOFF.template.md`](templates/HANDOFF.template.md) ·
 [`templates\knowledge-base.template.md`](templates/knowledge-base.template.md) ·
+[`templates\PROJECT_BRIEF.template.md`](templates/PROJECT_BRIEF.template.md) ·
 [`templates\DB_MIGRATIONS.template.md`](templates/DB_MIGRATIONS.template.md) ·
 [`templates\PRODUCT.template.md`](templates/PRODUCT.template.md) ·
 [`templates\GLOSSARY.template.md`](templates/GLOSSARY.template.md) ·
@@ -77,21 +81,23 @@ ve [`.agent\rules\db-migration-enforcement.md`](rules/db-migration-enforcement.m
    - Mock verili testlerin yeşil olmasına aldanıp gerçek view/endpoint bağlantısını kurmamak (canlıda view'da kolon yoksa `undefined` döner ve bileşen sessizce hiç çizilmez),
    - Verinin sisteme nasıl gireceğini (admin formu, submission ekranı, döngü kapanışı) yapmadan özelliği tamamlandı saymak
    **AĞIR İHLAL (Phantom Done)** sayılır. Katmanlardan biri eksikse iş "BİTTİ" ilan edilemez; durum açıkça **"YARIM (Eksik Katman: ...)"** olarak kaydedilir ve eksik parça `HANDOFF.md` §3 Sıradaki İşler tablosuna ilk sıradan eklenir.
-4. Veritabanı revizyonu (tablo, kolon, indeks, entity) yapıldıysa `DB_MIGRATIONS.md` dosyasını güncelle (yoksa `.agent/templates/DB_MIGRATIONS.template.md` şablonundan oluştur).
-5. `knowledge-base.md`'ye bu adımda çözülen hataları ve verilen kararları **yaz**.
-6. `HANDOFF.md`'yi güncelle: kanıt metrikleri, katman denetimi matrisi, nerede kaldık, **sıradaki iş**,
+4. Bağımlılık (paket/kütüphane), DB şeması veya mimari karar revizyonu yapıldıysa `PROJECT_BRIEF.md` dosyasını güncelle (yoksa `.agent/templates/PROJECT_BRIEF.template.md` şablonundan oluştur).
+5. Veritabanı revizyonu (tablo, kolon, indeks, entity) yapıldıysa `DB_MIGRATIONS.md` dosyasını güncelle (yoksa `.agent/templates/DB_MIGRATIONS.template.md` şablonundan oluştur).
+6. `knowledge-base.md`'ye bu adımda çözülen hataları ve verilen kararları **yaz**.
+7. `HANDOFF.md`'yi güncelle: kanıt metrikleri, katman denetimi matrisi, nerede kaldık, **sıradaki iş**,
    varsa yeni düşülen hata ve "Nasıl Test Edilir (kullanıcı)" bölümü.
-7. ⛔ **"Sıradaki İş" Terminoloji ve Tekillik İlkesi (Anti-Conflict Next Work Rule):**
+8. ⛔ **"Sıradaki İş" Terminoloji ve Tekillik İlkesi (Anti-Conflict Next Work Rule):**
    - **İcra Edilen İşe "Sıradaki İş" Başlığı Koyma Yasağı:** Oturumda veya yanıtta tamamlanan/geliştirilen adımları anlatırken ASLA `### Sıradaki İş: [İş]` başlığı kullanılamaz! Bu bölümler daima **"İcra Edilen Görev / Yapılan Geliştirme: [İş Tanımı]"** olmalıdır. Çünkü kullanıcı o işi henüz yapılmamış, sırada bekleyen iş zannederek çelişkiye düşer.
    - **Yanıt Boyunca Tek ve Tutarlı "Sıradaki İş" Beyanı:** Bir yanıtta "Sıradaki İş(ler)" ifadesi YALNIZCA VE YALNIZCA bir sonraki oturumda/adımda başlanacak açık işleri ifade eder. Yanıt içerisinde aynı veya çelişkili iki farklı "sıradaki iş" bilgisi yer alamaz.
    - **Devir Raporunda Tekillik:** Devir raporu bloğunda sıradaki işler tek bir maddede (`- **Sıradaki İşler (Canlı Görev Panosu):** 1. ⏭️ ..., 2. ⬜ ...`) sunulur; `HANDOFF.md` altında mükerrer `* Sıradaki İş:` açılmaz.
-8. Kullanıcıya şeffaf rapor ver — aşağıdaki blok **zorunludur**.
-9. Commit istenmedikçe `git commit` / `push` / `tag` **yapma**.
+9. Kullanıcıya şeffaf rapor ver — aşağıdaki blok **zorunludur**.
+10. Commit istenmedikçe `git commit` / `push` / `tag` **yapma**.
 
 ```markdown
 ### 📝 OTURUM DEVİR & BİLGİ TABANI GÜNCELLEMESİ (HANDOFF & KB RAPORU)
 - **Kullanıcı Test Rehberi:** [KULLANICI_TEST_REHBERI.md güncellendi mi? Eklenen test senaryoları/adımları veya "Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"]
 - **Katman Bütünlüğü (Full-Stack Slice):** [5 Katman doğrulandı mı? (DB, View/RPC, API, UI, Admin/Giriş Formu) veya "Salt UI/İstemci (DB bağımlılığı yok)" veya "YARIM (Eksik: ...)"]
+- **PROJECT_BRIEF.md:** [Güncellendi mi? (Stack/DB/Karar revizyonu) veya "Değişiklik yok / stabil"]
 - **knowledge-base.md:** [Eklenen hata/karar başlıkları ve kısa özeti (yoksa "yeni yok")]
 - **DB Migrations:** [DB_MIGRATIONS.md güncellendi mi? Eklenen revizyonlar veya "DB değişikliği yok / kapsam dışı"]
 - **HANDOFF.md:**
@@ -144,6 +150,7 @@ kanıtlayamazsın — sadece beyan edersin.** Bu ayrım gizli değildir.
 | TypeScript / React | `npx tsc --noEmit` | [`no-unused-code.md`](rules/no-unused-code.md) |
 | Java / Spring derleme | `mvn clean compile -DskipTests` | [`no-unused-code.md`](rules/no-unused-code.md) |
 | Java / kullanılmayan kod | `pwsh -NoProfile -File .agent/skills/musgoku/scripts/check-unused.ps1` | [`no-unused-code.md`](rules/no-unused-code.md) |
+| Proje Mimarisi / Canlı Brief | `python .agent/skills/musgoku/scripts/check_project_brief.py` | [`project-brief-maintenance.md`](rules/project-brief-maintenance.md) |
 | Skill sözleşmesi / tetikleyici sözlüğü | `cd .agent/skills/ui-ux-pro-max/scripts/tests && python -m unittest test_skill_contracts` | [`skill-trigger-routing.md`](rules/skill-trigger-routing.md) |
 | Sprint / kanban / MVP | `python .agent/skills/musgoku/scripts/check_sprint_board.py` | [`sprint-delivery-workflow.md`](rules/sprint-delivery-workflow.md) |
 | Frontend / Vite SPA | `python .agent/skills/musgoku/scripts/check_vite_spa.py` | [`vite-spa-enforcement.md`](rules/vite-spa-enforcement.md) |
