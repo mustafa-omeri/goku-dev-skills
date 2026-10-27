@@ -241,6 +241,16 @@ const SKILLS_MANIFEST = {
     desc: 'Dynamic legal penalties and platform rules synchronizer: scans official sources and updates audit thresholds.',
     triggers: '/prelaunch-update, prelaunch update, [PRELAUNCH-UPDATE], mevzuat guncelle, ceza guncelle',
   },
+  'verify-last': {
+    category: 'Session Commands / Ensemble',
+    desc: 'Micro session verification orchestrator: audits recent changes, working tree, compile, types, affected layers & regression risk.',
+    triggers: '/verify-last, verify last, [VERIFY-LAST], son gelistirmeleri denetle, son isi dogrula, verify recent changes',
+  },
+  'verify-sprint': {
+    category: 'Session Commands / Ensemble',
+    desc: 'Meso active sprint verification orchestrator: validates sprint goals, Gherkin acceptance criteria & 5-layer vertical slice.',
+    triggers: '/verify-sprint, verify sprint, [VERIFY-SPRINT], sprinti dogrula, sprint bitti mi, verify active sprint',
+  },
 };
 
 // Component themes categories (55 HTML themes)

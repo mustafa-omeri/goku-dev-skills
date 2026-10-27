@@ -55,7 +55,7 @@ CATEGORIES = {
         "brand", "doc-coauthoring", "slides", "seo-growth"
     ],
     "Oturum Komutları (Ensemble)": [
-        "ui-polish", "verify-prd", "fix-bug", "check-security",
+        "ui-polish", "verify-prd", "verify-last", "verify-sprint", "fix-bug", "check-security",
         "council", "seo-apply", "commitx", "gs-update",
         "prelaunch", "prelaunch-update"
     ]

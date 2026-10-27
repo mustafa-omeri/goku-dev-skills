@@ -212,6 +212,10 @@ Yukarıdaki ölçülebilir kapı komutları (`npm run build`, `pnpm test`, `npx 
    §3.1 nasıl test edilir (kullanıcı) · §4 yeni ders · §5 yeni karar · §6 ortam bilgisi
 3. Yanıtta `### 📝 OTURUM DEVİR & BİLGİ TABANI GÜNCELLEMESİ` bloğunu göster.
 4. Açık iş kalmadıysa bunu açıkça yaz.
+5. ⛔ **"Sıradaki İş" Terminoloji ve Tekillik İlkesi (Anti-Conflict Next Work Rule):**
+   - **İcra Edilen İşe "Sıradaki İş" Başlığı Koyma Yasağı:** Oturumda veya yanıtta icra edilip tamamlanan çalışmalara ASLA `### Sıradaki İş: ...` başlığı verilemez. Başlık daima **"İcra Edilen Görev / Tamamlanan Geliştirme: [İş Tanımı]"** olmalıdır. Aksi halde kullanıcı o işin henüz yapılmadığını ve sırada beklediğini düşünerek çelişkiye düşer.
+   - **Yanıt Boyunca Tek ve Tutarlı "Sıradaki İş" Beyanı:** Bir yanıtta "Sıradaki İş" veya "Sıradaki İşler" ifadesi YALNIZCA VE YALNIZCA bir sonraki oturumda/adımda başlanacak açık işleri ifade eder. Yanıt içerisinde aynı veya çelişkili iki farklı "sıradaki iş" bilgisi yer alamaz.
+   - **Devir Raporunda Tekillik:** Devir raporu bloğunda sıradaki işler tek bir maddede (`- **Sıradaki İşler (Canlı Görev Panosu):** 1. ⏭️ ..., 2. ⬜ ...`) sunulur; `HANDOFF.md` altında mükerrer `* Sıradaki İş:` açılmaz.
 
 Ayrıntı: [knowledge-base-management.md](./knowledge-base-management.md)
 
@@ -264,6 +268,7 @@ Ayrıntı: [no-unauthorized-commit.md](./no-unauthorized-commit.md) ·
 5. Mevcut kodun akışı ve iş mantığı bozulmadan revize edilir.
 6. Entegrasyon testi kapatmak kural değildir; "test devre dışı bırakıldı" notunu
    `knowledge-base.md`'ye yaz ve geçici çözüm olarak işaretle.
+7. "Sıradaki İş" terminolojisi tutarlılığı — yapılan işe "Sıradaki İş" başlığı verilmez; devir raporundaki sıradaki işler tekil ve kesin kaynaktır.
 
 ---
 

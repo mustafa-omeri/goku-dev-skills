@@ -140,10 +140,9 @@ yanıtta ayrı bir blok halinde göster:
 - **HANDOFF.md:**
   * Güncellik Kanıtı: [Ölçülen gerçek sayılar — test, assert, derleme, chunk boyutları]
   * Nerede Kaldık: [Tamamlanan adım ve durum]
-  * Sıradaki İş: [Yeni oturumun başlayacağı ilk somut hedef]
   * Bu Projede Düşülen Hatalar: [Yeni ders/tuzak veya "yeni yok"]
   * Bu Projede Alınan Kararlar: [Yeni karar veya "yeni yok"]
-- **Sonraki işler:** [Numaralı liste — açık iş kalmadıysa "Açık iş yok — proje tamamlandı"]
+- **Sıradaki İşler (Canlı Görev Panosu):** [Numaralı liste (1. ⏭️ ..., 2. ⬜ ...) — açık iş kalmadıysa "Açık iş yok — proje tamamlandı"]
 - **Kullanılan MCP:** [context7 / sequential-thinking — ne için kullanıldı veya "kullanılmadı"]
 - **Aktif skill'ler:** [Okunan skill adları]
 ```

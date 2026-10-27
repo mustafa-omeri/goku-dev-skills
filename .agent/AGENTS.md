@@ -81,8 +81,12 @@ ve [`.agent\rules\db-migration-enforcement.md`](rules/db-migration-enforcement.m
 5. `knowledge-base.md`'ye bu adımda çözülen hataları ve verilen kararları **yaz**.
 6. `HANDOFF.md`'yi güncelle: kanıt metrikleri, katman denetimi matrisi, nerede kaldık, **sıradaki iş**,
    varsa yeni düşülen hata ve "Nasıl Test Edilir (kullanıcı)" bölümü.
-7. Kullanıcıya şeffaf rapor ver — aşağıdaki blok **zorunludur**.
-8. Commit istenmedikçe `git commit` / `push` / `tag` **yapma**.
+7. ⛔ **"Sıradaki İş" Terminoloji ve Tekillik İlkesi (Anti-Conflict Next Work Rule):**
+   - **İcra Edilen İşe "Sıradaki İş" Başlığı Koyma Yasağı:** Oturumda veya yanıtta tamamlanan/geliştirilen adımları anlatırken ASLA `### Sıradaki İş: [İş]` başlığı kullanılamaz! Bu bölümler daima **"İcra Edilen Görev / Yapılan Geliştirme: [İş Tanımı]"** olmalıdır. Çünkü kullanıcı o işi henüz yapılmamış, sırada bekleyen iş zannederek çelişkiye düşer.
+   - **Yanıt Boyunca Tek ve Tutarlı "Sıradaki İş" Beyanı:** Bir yanıtta "Sıradaki İş(ler)" ifadesi YALNIZCA VE YALNIZCA bir sonraki oturumda/adımda başlanacak açık işleri ifade eder. Yanıt içerisinde aynı veya çelişkili iki farklı "sıradaki iş" bilgisi yer alamaz.
+   - **Devir Raporunda Tekillik:** Devir raporu bloğunda sıradaki işler tek bir maddede (`- **Sıradaki İşler (Canlı Görev Panosu):** 1. ⏭️ ..., 2. ⬜ ...`) sunulur; `HANDOFF.md` altında mükerrer `* Sıradaki İş:` açılmaz.
+8. Kullanıcıya şeffaf rapor ver — aşağıdaki blok **zorunludur**.
+9. Commit istenmedikçe `git commit` / `push` / `tag` **yapma**.
 
 ```markdown
 ### 📝 OTURUM DEVİR & BİLGİ TABANI GÜNCELLEMESİ (HANDOFF & KB RAPORU)
@@ -93,10 +97,9 @@ ve [`.agent\rules\db-migration-enforcement.md`](rules/db-migration-enforcement.m
 - **HANDOFF.md:**
   * Güncellik Kanıtı: [Ölçülen gerçek sayılar — test, assert, derleme, chunk boyutları]
   * Nerede Kaldık: [Tamamlanan adım ve durum]
-  * Sıradaki İş: [Yeni oturumun başlayacağı ilk somut hedef]
   * Bu Projede Düşülen Hatalar: [Yeni ders/tuzak veya "yeni yok"]
   * Bu Projede Alınan Kararlar: [Yeni karar veya "yeni yok"]
-- **Sonraki işler (Backlog):** [Varsa numaralı liste (1. ⏭️ ..., 2. ⬜ ...). Yalnızca mevcut sprint bittiyse PRD/Yol Haritasına göre sıradaki hedefi belirtin (örn. "Mevcut sprint tamamlandı. PRD'ye göre sıradaki: Sprint X"). YALNIZCA tüm PRD ve ürün fazları %100 bittiğinde "Açık iş yok — proje tamamlandı" yazılabilir.]
+- **Sıradaki İşler (Canlı Görev Panosu):** [Varsa numaralı liste (1. ⏭️ ..., 2. ⬜ ...). Yalnızca mevcut sprint bittiyse PRD/Yol Haritasına göre sıradaki hedefi belirtin (örn. "Mevcut sprint tamamlandı. PRD'ye göre sıradaki: Sprint X"). YALNIZCA tüm PRD ve ürün fazları %100 bittiğinde "Açık iş yok — proje tamamlandı" yazılabilir.]
 - **Kullanılan MCP:** [context7 / sequential-thinking — ne için kullanıldı veya "kullanılmadı"]
 - **Aktif skill'ler:** [Okunan skill adları]
 ```
