@@ -16,6 +16,7 @@
 | 4 | Ürün gerçeği ve kısıtlar (varsa) | `<repo-kök>\PRODUCT.md` |
 | 5 | İş alanı terimleri ve ortak dil sözlüğü (varsa) | `<repo-kök>\GLOSSARY.md` |
 | 6 | Tasarım dili ve token sözleşmesi (UI/UX işlerinde) | `<repo-kök>\DESIGN.md` |
+| Projenin kısa/uzun kapsamlı konsolide özeti | docs/<SLUG>_PROJECT_SUMMARY_SHORT.md veya docs/<SLUG>_PROJECT_SUMMARY_LONG.md |
 | 7 | Vault kararları (salt okunur) | `<vault>\CLAUDE.md`, `<vault>\profile\`, `<vault>\projects\_STANDARTLAR\decisions\` |
 | 8 | Proje kararları | `<vault>\projects\<proje-slug>\` |
 | 9 | Bu dizindeki kurallar | `.agent\rules\` (bkz. `trigger-rule-action.md`) |
@@ -41,6 +42,7 @@
 | İş alanı kavramı ve terimler | `<repo-kök>\GLOSSARY.md` |
 | Mimari karar kaydı (ADR) | `docs/adr/` |
 | Tasarım dili, token'lar ve kurallar | `<repo-kök>\DESIGN.md` |
+| Projenin kısa/uzun kapsamlı konsolide özeti | docs/<SLUG>_PROJECT_SUMMARY_SHORT.md veya docs/<SLUG>_PROJECT_SUMMARY_LONG.md |
 
 - ⛔ Başka hiçbir yere yazma. Bu dosyaların **tek ve zorunlu yeri repo köküdür** (veya DB dokümantasyonu için `docs/database/DB_MIGRATIONS.md`, ADR için `docs/adr/`).
 - ⛔ `knowledge-base.md`'yi baştan sona okuma; yalnız yaz (append). Boyutu büyüyebilir.

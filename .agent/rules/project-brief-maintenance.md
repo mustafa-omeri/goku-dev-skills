@@ -37,6 +37,8 @@ Ajan aşağıdaki 4 temel durumda `PROJECT_BRIEF.md` dosyasını senkronize etme
 4. **Oturum Başlangıcı ve Kapanışı:**
    - **Başlangıç:** Ajan oturum başında `PROJECT_BRIEF.md` dosyasını okuyarak projenin güncel dilini, kütüphanelerini ve anayasal standartlarını öğrenir (`AGENTS.md` §0 Okuma Sırası).
    - **Kapanış:** `HANDOFF.md` teslim edilmeden önce `PROJECT_BRIEF.md`'nin mevcut kod gerçekliğini yansıttığı doğrulanır ve devir raporunda durumu açıkça belirtilir.
+5. **Proje Özet Dokümanları Senkronizasyonu:**
+   - Projenin kısa veya kapsamlı özet dokümanları (`docs/<SLUG>_PROJECT_SUMMARY_SHORT.md` veya `docs/<SLUG>_PROJECT_SUMMARY_LONG.md`) üretildiğinde veya güncellendiğinde, dosya yolu `PROJECT_BRIEF.md` içindeki `related_docs:` listesine otomatik eklenir ve senkron tutulur.
 
 ⛔ **Sahte 'Stabil' Beyanı Yasağı (Anti-Lazy Stabil Declaration):**
 Git çalışma ağacında bağımlılık manifesti (`package.json`, `pom.xml`, `requirements.txt` vb.), yeni bir servis/sunucusuz fonksiyon (örn. Edge Function, worker) veya veritabanı şeması/migration'ı değiştirilmişken devir raporunda `PROJECT_BRIEF.md: Değişiklik yok / stabil` beyanında bulunmak ağır kural ihlalidir. Bu dosya canlı mimariyi yansıtmak zorundadır.

@@ -127,6 +127,7 @@ Kullanıcının belirli bir isteği doğrudan ve kestirmeden ajana bildirmesini 
 | güvenlik denetimi, security audit, güvenlik açığı tara, vulnerability scan, pen test, sızma testi, güvenlik incelemesi, yetki aşımı kontrolü / security audit, vulnerability scan, pen test, security review, audit security, exploit check | `security-audit` | `skills/security-audit/SKILL.md` |
 | /goku-skills-update, /gs-update, Goku skill güncelle, skill update, GS update, GS güncelle, goku update, skillset güncelle, skill'leri güncelle, goku skills update, ajan yeteneklerini güncelle / update skills, goku update, update skill set, upgrade skills, sync skills | `musgoku` | `skills/musgoku/SKILL.md` |
 | prelaunch, canlıya al, go live, yayına alma kontrolü, consent check, axe audit, /prelaunch, /prelaunch-update / prelaunch audit, go live checklist, prelaunch checklist | `prelaunch-audit` | `skills/prelaunch-audit/SKILL.md` |
+| projenin kapsamlı özetini çıkar, proje özeti çıkar, proje özeti, /project-summary, /proje-ozeti, project summary, summarize project / project summary, summarize project | `project-summary` | `skills/project-summary/SKILL.md` |
 
 ### A5. Bağlayıcı Oturum Slash Komutları ve Prompt Makroları (Ensemble Slash Commands)
 
@@ -134,8 +135,10 @@ Yapay zeka asistanlarının tekil ve birbirinden kopuk araçlar çalıştırmas�
 
 | Slash Komut / Makro | Bağlanan Beceriler (Ensemble) | Yürütülen Bağlayıcı Protokol & Kanıt | Gövde yolu |
 |---|---|---|---|
-| **`/verify-prd`** / `/prd-verify` / `[VERIFY-PRD]` | `doc-coauthoring` + `code-review` + Katman Bütünlüğü (5-Layer Vertical Slice) | **Tüm Proje & PRD Retrospektif Güven Motoru:** Şartnamedeki kabul kriterlerini (Gherkin AC), geçmişten bugüne tüm özelliklerin 5 Katmanlı Dikey Dilimini (DB migration, View/RPC, Client API, UI UX, Admin Formu), Sahte Bitti (Phantom Done) ve mock kalıntılarını tarar. | `skills/verify-prd/SKILL.md` |
-| **`/verify-sprint`** / `[VERIFY-SPRINT]` | `sprint-delivery-workflow` + `tdd` + Katman Bütünlüğü | **Sprint Kapanış & Kabul Motoru:** Aktif sprint ve en son biten sprintteki kartların Gherkin kabul kriterlerini (`specs/*.feature`), 5 katmanlı dikey dilimini ve kullanıcı test adımlarını doğrular. | `skills/verify-sprint/SKILL.md` |
+| **`/verify-prd`** / `/prd-verify` / `[VERIFY-PRD]` | `doc-coauthoring` + `code-review` + Katman Bütünlüğü (5-Layer Vertical Slice) | **Tüm Proje & PRD Retrospektif Güven Motoru:** Şartnamedeki kabul kriterlerini (Gherkin AC), geçmişten bugüne tüm özelliklerin 5 Katmanlı Dikey Dilimini (DB migration, View/RPC, Client API, UI UX, Admin Formu), Sahte Bitti (Phantom Done) ve mock kalıntılarını tarar. | `skills/verify-prd/SKILL.md` |
+
+| **`/verify-sprint`** / `[VERIFY-SPRINT]` | `sprint-delivery-workflow` + `tdd` + Katman Bütünlüğü | **Sprint Kapanış & Kabul Motoru:** Aktif sprint ve en son biten sprintteki kartların Gherkin kabul kriterlerini (`specs/*.feature`), 5 katmanlı dikey dilimini ve kullanıcı test adımlarını doğrular. | `skills/verify-sprint/SKILL.md` |
+
 | **`/verify-last`** / `[VERIFY-LAST]` | `musgoku` + `development-workflow` + Kapsam-Duyarlı Kapılar | **Son Geliştirmeler Cerrahi Doğrulama Motoru:** Anlık çalışma ağacındaki uncommitted değişiklikleri veya son commit'i (`HEAD~1..HEAD`) derleme, tip, etkilenen katmanlar ve kullanıcı gözle testiyle hızla doğrular. | `skills/verify-last/SKILL.md` |
 | **`/ui-polish`** / `[UI-POLISH]` / `[DESIGN-REFRESH]` | `canvas-design` → `design-system` → `ui-ux-pro-max` → `frontend-design` → `ui-styling` → `banner-design` + `check_design_contract.py` | **DESIGN.md Sözleşme & Zanaat Orkestratörü:** Mevcut projelerde UI'ı bozmadan `DESIGN.md` baseline'ı çıkarır; yeni/yeniden tasarımda 3 alternatif yön ve Reddedilen Varsayılanlar tablosuyla `DESIGN.md` üretir, 11 tasarım becerisini koordine eder ve 3 mekanik kapıyla (`contract`, `slop`, `contrast`) doğrular. | `skills/ui-polish/SKILL.md` |
 | **`/check-security`** | `security-audit` + `development-workflow` (Halka 2 Kalkanı) + `prelaunch-audit` | **Güvenlik & İstismar Savunması:** OWASP zafiyet avcılığı, public form kalkanı (Turnstile, Rate-limit, RLS) ve secrets/env sızıntı denetimi. | `skills/check-security/SKILL.md` |
@@ -146,6 +149,7 @@ Yapay zeka asistanlarının tekil ve birbirinden kopuk araçlar çalıştırmas�
 | **`/seo-apply`** / `[SEO-APPLY]` | `seo-growth` → `frontend-design` + `seo_checker.py` | **Uçtan Uca SEO & GEO Uygulama:** Kod tabanına bizzat girer; semantik meta başlık/açıklama, canonical, OpenGraph, JSON-LD Schema.org, AI crawler `robots.txt`, `sitemap.xml` ve `/llms.txt` dosyalarını üretip `seo_checker.py` ile doğrular. | `skills/seo-apply/SKILL.md` |
 | **`/commitx`** / `commitle` / `[COMMITX]` | `git-release-workflow` | **Peşin Tam Yetkili Sürüm Yayını:** Doğrulama kapılarını çalıştırır; ara onay sormadan `git add` → `git commit` → `git tag` → `git push` zincirini tek nefeste tamamlar. | `skills/commitx/SKILL.md` |
 | **`/goku-skills-update`** / **`/gs-update`** / `"GS güncelle"` | `gs-update` (`musgoku`) | **Sıfır-Şişkinlik Skill Senkronu:** Kullanıcıya workspace veya global kapsamını sorarak proje kuralını korur ve kurulu olmayan becerileri indirmeden cerrahi güncelleme yapar. | `skills/gs-update/SKILL.md` |
+| **`/project-summary`** / `/proje-ozeti` / `"projenin kapsamlı özetini çıkar"` | `project-summary` (`doc-coauthoring` + `domain-modeling` + `codebase-design`) | **Proje Konsolide Özeti & PRD Sentez Motoru:** Projenin kısa (`short`) veya kapsamlı (`long`) özetini çıkarır. Long modunda projedeki tüm PRD ve referans dokümanlarını tek bir `docs/<SLUG>_PROJECT_SUMMARY_LONG.md` dosyasında konsolide eder; dil uyumu, versiyonlama damgası ve `PROJECT_BRIEF.md` senkronizasyonunu zorunlu kılar. | `skills/project-summary/SKILL.md` |
 
 ---
 
@@ -175,7 +179,8 @@ haritasından** gelir ([`design-skills-enforcement.md`](./design-skills-enforcem
 
 | Belirsizlik | Karar |
 |---|---|
-| "Doğrula / Test et / Bitti mi" — hangi seviye? | Anlık son değişiklik / uncommitted ➔ `/verify-last` · Aktif/son sprint ➔ `/verify-sprint` · Tüm proje / PRD kabulü ➔ `/verify-prd` |
+| "Doğrula / Test et / Bitti mi" — hangi seviye? | Anlık son değişiklik / uncommitted ➔ `/verify-last` · Aktif/son sprint ➔ `/verify-sprint` · Tüm proje / PRD kabulü ➔ `/verify-prd` |
+
 | "Tasarım yap" — ne tür? | Sabit px ölçü varsa `banner-design` · `.png/.pdf` çıktı varsa `canvas-design` · web arayüzü ise `frontend-design` + `ui-ux-pro-max` |
 | "Poster" mi "banner" mı? | Ölçüsüz sanat → `canvas-design`. Platform ölçüsü (1080×1080, 820×312) → `banner-design` |
 | "Palet" mi "token" mı? | Hazır tema seçimi → `theme-factory`. Ürüne özel palet → `ui-ux-pro-max`. Üç katmanlı token → `design-system` |

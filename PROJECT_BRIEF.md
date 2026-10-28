@@ -27,7 +27,7 @@ related_docs:
 
 ## 1. Teknoloji Yığını & Altyapı
 - **Proje Adı / Slug:** skillSetWorks (`skillSetWorks`)
-- **Paket / Sürüm:** `goku-dev-skills` v1.16.1 (`package.json`)
+- **Paket / Sürüm:** `goku-dev-skills` v1.17.0 (`package.json`)
 - **Birincil Dil:** Python 3.11 / Node.js 18+ / Markdown
 - **Frameworkler & Kütüphaneler:** Python `unittest`, `pytest`, `pytest-cov`, `argparse`, Node.js CLI runtime
 - **Veritabanı / Altyapı:** Yok (Uygulama kodu içermez; kural, skill ve dağıtım motorudur)
@@ -39,11 +39,11 @@ related_docs:
 | Dizin / Modül | Sorumluluk & Kapsam | Kritik Notlar |
 |---|---|---|
 | `.agent/` | Tüm projelerin tek gerçek kaynak (single source of truth) kural ve skill ağacı | Dağıtım kaynağıdır |
-| `.agent/skills/` | Ajan beceri paketleri (musgoku, ui-ux-pro-max, tdd, council, seo-growth vb.) | 42 skill |
+| `.agent/skills/` | Ajan beceri paketleri (musgoku, project-summary, ui-ux-pro-max, tdd, council vb.) | 43 skill |
 | `.agent/rules/` | Ajan kuralları ve anayasal sözleşmeler (sinif: OLCULEBILIR/TUTUM/SUREC) | 20 kural (11 ölçülebilir) |
-| `.agent/templates/` | Projelerde açılacak living markdown şablonları | Kök şablonları |
+| `.agent/templates/` | Projelerde açılacak living markdown şablonları | Kök şablonları (PROJECT_SUMMARY dahil) |
 | `bin/` | `goku-dev-skills` npm CLI paket yürütücüsü (`cli.js`) | CLI arabirimi |
-| `tests/` | Depo bütünlüğü, drift, sızıntı ve kural kapısı regresyon testleri | 16 test paketi |
+| `tests/` | Depo bütünlüğü, drift, sızıntı ve kural kapısı regresyon testleri | 17 test paketi |
 | `scripts/` | Skill kataloğu ve yardımcı üretim betikleri | Otomasyon araçları |
 
 ---
@@ -61,12 +61,6 @@ related_docs:
 
 ---
 
-## 4. Veritabanı Modeli & Migration Politikası
-- **Altyapı:** Yok / Uygulama veritabanı bulunmamaktadır.
-- **Şema & Tablolar:** Kapsam dışı.
-- **Migration Konumu:** Kapsam dışı.
-
----
-
-## 5. Yaşatma ve Senkronizasyon Kuralı
-⛔ **Bu dosya asla bayat bırakılamaz.** Yeni bir skill veya kural eklendiğinde, bağımlılık manifestosu (`package.json`) veya dağıtım yapısı güncellendiğinde senkronize edilmelidir (Bkz: `.agent/rules/project-brief-maintenance.md`).
+## 4. Yaşayan Durum ve Doğrulama
+- **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `test_skills_catalog.py`, `test_project_summary.py`
+- **Son Başarılı Doğrulama:** 2026-10-28 · 17/17 test paketi PASS · 8/8 kapı PASS
