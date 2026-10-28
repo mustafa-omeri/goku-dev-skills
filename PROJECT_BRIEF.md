@@ -4,7 +4,7 @@ type: project-brief
 project: skillSetWorks
 status: active
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-10-28
 primary_language: Python 3.11 / Markdown
 frameworks: ["pytest", "unittest"]
 database: ["Yok / Kural ve Dağıtım Deposu"]

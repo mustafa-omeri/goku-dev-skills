@@ -198,6 +198,38 @@ def parse_color(raw_val: str, var_store: Optional[Dict[str, str]] = None) -> Opt
         r, g, b = hsl_to_rgb(h, s, l)
         return ColorRGBA(r, g, b, 1.0)
 
+    # oklch(L% C H [/ A])
+    oklch_match = re.match(
+        r"""^oklch\(\s*([0-9.]+%?)\s+([0-9.]+%?)\s+([0-9.]+)(?:deg)?(?:\s*/\s*([0-9.]+%?))?\s*\)$""",
+        val,
+        re.IGNORECASE,
+    )
+    if oklch_match:
+        l_str, c_str, h_str, a_str = oklch_match.group(1), oklch_match.group(2), oklch_match.group(3), oklch_match.group(4)
+        L = float(l_str[:-1]) / 100.0 if l_str.endswith("%") else float(l_str)
+        C = float(c_str[:-1]) * 0.4 / 100.0 if c_str.endswith("%") else float(c_str)
+        H = float(h_str)
+        alpha = 1.0
+        if a_str:
+            alpha = float(a_str[:-1]) / 100.0 if a_str.endswith("%") else float(a_str)
+        h_rad = math.radians(H)
+        a_lab = C * math.cos(h_rad)
+        b_lab = C * math.sin(h_rad)
+        l_ = L + 0.3963377774 * a_lab + 0.2158037573 * b_lab
+        m_ = L - 0.1055613458 * a_lab - 0.0638541728 * b_lab
+        s_ = L - 0.0894841775 * a_lab - 1.2914855480 * b_lab
+        l_c, m_c, s_c = l_ ** 3, m_ ** 3, s_ ** 3
+        r_lin = +4.0767416621 * l_c - 3.3077115913 * m_c + 0.2309699292 * s_c
+        g_lin = -1.2684380046 * l_c + 2.6097574011 * m_c - 0.3413193965 * s_c
+        b_lin = -0.0041960863 * l_c - 0.7034186147 * m_c + 1.7076147010 * s_c
+
+        def _lin_to_byte(x: float) -> int:
+            x = max(0.0, min(1.0, x))
+            v = 12.92 * x if x <= 0.0031308 else 1.055 * math.pow(x, 1.0 / 2.4) - 0.055
+            return round(max(0.0, min(1.0, v)) * 255.0)
+
+        return ColorRGBA(_lin_to_byte(r_lin), _lin_to_byte(g_lin), _lin_to_byte(b_lin), alpha)
+
     # Named color
     low_val = val.lower()
     if low_val in NAMED_COLORS:
@@ -257,60 +289,69 @@ class Finding:
 
 
 def extract_theme_blocks(css_path: Path) -> List[ThemeBlock]:
-    """CSS dosyasındaki tema seçicilerini ve değişkenlerini çıkarır."""
+    """CSS dosyasındaki (veya HTML <style> bloklarındaki) tema seçicilerini ve değişkenlerini çıkarır."""
     try:
-        content = css_path.read_text(encoding="utf-8", errors="replace")
+        raw_file_content = css_path.read_text(encoding="utf-8", errors="replace")
     except Exception:
         return []
 
+    chunks: List[Tuple[int, str]] = []
+    if css_path.suffix.lower() in (".html", ".vue", ".svelte", ".astro"):
+        for sm in re.finditer(r"""<style\b[^>]*>([\s\S]*?)</style>""", raw_file_content, re.IGNORECASE):
+            base_ln = raw_file_content[: sm.start(1)].count("\n") + 1
+            chunks.append((base_ln, sm.group(1)))
+    else:
+        chunks.append((1, raw_file_content))
+
     blocks: List[ThemeBlock] = []
-    clean_content = re.sub(r"""/\*[\s\S]*?\*/""", "", content)
-
     rule_re = re.compile(r"""([^{}]+)\{([^{}]+)\}""")
-    for m in rule_re.finditer(clean_content):
-        raw_selector = m.group(1).strip()
-        body = m.group(2).strip()
-        line_num = content[: m.start()].count("\n") + 1
 
-        is_theme_selector = bool(
-            re.search(
-                r"""(?::root|\[data-theme[^\]]*\]|\[data-mode[^\]]*\]|\.dark|\.light|body\.dark|html\.dark)""",
-                raw_selector,
-            )
-        )
-        if not is_theme_selector:
-            continue
+    for base_ln, content in chunks:
+        clean_content = re.sub(r"""/\*[\s\S]*?\*/""", "", content)
+        for m in rule_re.finditer(clean_content):
+            raw_selector = m.group(1).strip()
+            body = m.group(2).strip()
+            line_num = base_ln + content[: m.start()].count("\n")
 
-        vars_dict: Dict[str, str] = {}
-        direct_bg = None
-        direct_color = None
-
-        for decl in body.split(";"):
-            decl = decl.strip()
-            if not decl or ":" not in decl:
-                continue
-            prop, val = decl.split(":", 1)
-            prop = prop.strip()
-            val = val.strip()
-
-            if prop.startswith("--"):
-                vars_dict[prop] = val
-            elif prop in ("background-color", "background"):
-                direct_bg = val
-            elif prop == "color":
-                direct_color = val
-
-        if vars_dict or direct_bg or direct_color:
-            blocks.append(
-                ThemeBlock(
-                    selector=raw_selector,
-                    file_path=css_path,
-                    line_number=line_num,
-                    variables=vars_dict,
-                    direct_bg=direct_bg,
-                    direct_color=direct_color,
+            is_theme_selector = bool(
+                re.search(
+                    r"""(?::root|\[data-theme[^\]]*\]|\[data-mode[^\]]*\]|\.dark|\.light|body\.dark|html\.dark)""",
+                    raw_selector,
                 )
             )
+            if not is_theme_selector:
+                continue
+
+            vars_dict: Dict[str, str] = {}
+            direct_bg = None
+            direct_color = None
+
+            for decl in body.split(";"):
+                decl = decl.strip()
+                if not decl or ":" not in decl:
+                    continue
+                prop, val = decl.split(":", 1)
+                prop = prop.strip()
+                val = val.strip()
+
+                if prop.startswith("--"):
+                    vars_dict[prop] = val
+                elif prop in ("background-color", "background"):
+                    direct_bg = val
+                elif prop == "color":
+                    direct_color = val
+
+            if vars_dict or direct_bg or direct_color:
+                blocks.append(
+                    ThemeBlock(
+                        selector=raw_selector,
+                        file_path=css_path,
+                        line_number=line_num,
+                        variables=vars_dict,
+                        direct_bg=direct_bg,
+                        direct_color=direct_color,
+                    )
+                )
 
     return blocks
 
@@ -340,7 +381,7 @@ def categorize_variables(
             continue
 
         # Hariç tutulanlar
-        if any(ex in low for ex in ("border", "line", "shadow", "glow", "radius", "font", "size", "caret", "accent")):
+        if any(ex in low for ex in ("border", "line", "shadow", "glow", "radius", "font", "size", "caret", "accent", "on-", "inverse")):
             continue
 
         # Zemin adayları
@@ -355,7 +396,7 @@ def categorize_variables(
             continue
 
         # Muted / İkincil metin
-        if any(m in low for m in ("muted", "secondary")):
+        if any(m in low for m in ("muted", "secondary", "tertiary")):
             muted_text.append(name)
             continue
 
@@ -391,16 +432,28 @@ def audit_theme_block(
     bg_vars, primary_vars, muted_vars, faint_vars, selection_pair = categorize_variables(block.variables)
 
     # Zemin adaylarını derle
-    resolved_bgs: List[Tuple[str, ColorRGBA]] = []
+    raw_bgs: List[Tuple[str, ColorRGBA]] = []
+    base_opaque_bg: Optional[ColorRGBA] = None
     for bg_name in bg_vars:
         c = parse_color(block.variables[bg_name], combined_store)
         if c:
-            resolved_bgs.append((bg_name, c))
+            if c.a >= 0.95 and base_opaque_bg is None:
+                base_opaque_bg = c
+            raw_bgs.append((bg_name, c))
 
     if block.direct_bg:
         c = parse_color(block.direct_bg, combined_store)
         if c:
-            resolved_bgs.append(("direct-background", c))
+            if c.a >= 0.95 and base_opaque_bg is None:
+                base_opaque_bg = c
+            raw_bgs.append(("direct-background", c))
+
+    resolved_bgs: List[Tuple[str, ColorRGBA]] = []
+    for bg_name, c in raw_bgs:
+        if c.a < 1.0 and base_opaque_bg is not None:
+            resolved_bgs.append((bg_name, c.composite_over(base_opaque_bg)))
+        elif c.a >= 0.5:
+            resolved_bgs.append((bg_name, c))
 
     # Eğer blokta açık zemin yoksa parent tema veya root'tan al
     if not resolved_bgs:
@@ -576,29 +629,49 @@ def find_project_root() -> Path:
     return Path.cwd()
 
 
-def collect_css_files(root: Path) -> List[Path]:
-    """Taranacak CSS dosyalarını toplar."""
+def collect_css_files(root: Path, include_agent: bool = False) -> List[Path]:
+    """Taranacak CSS ve HTML dosyalarını toplar."""
     css_files: List[Path] = []
+    effective_ignore = IGNORE_DIRS - {".agent"} if include_agent else IGNORE_DIRS
     for d in CSS_SEARCH_DIRS:
         target_dir = root / d
         if not target_dir.exists():
             continue
-        for p in target_dir.rglob("*.css"):
-            if any(ign in p.parts for ign in IGNORE_DIRS):
+        for p in target_dir.rglob("*"):
+            if p.suffix.lower() not in (".css", ".html", ".vue", ".svelte", ".astro"):
+                continue
+            if any(ign in p.parts for ign in effective_ignore):
                 continue
             css_files.append(p)
 
-    for p in root.glob("*.css"):
-        if any(ign in p.parts for ign in IGNORE_DIRS):
+    for p in root.glob("*"):
+        if p.suffix.lower() not in (".css", ".html"):
+            continue
+        if any(ign in p.parts for ign in effective_ignore):
             continue
         css_files.append(p)
+
+    if include_agent:
+        agent_dir = root / ".agent"
+        if agent_dir.is_dir():
+            for p in sorted(agent_dir.glob("*.html")):
+                if p.is_file():
+                    css_files.append(p)
 
     return sorted(set(css_files))
 
 
-def check(root: Path, strict: bool = False) -> Tuple[List[Finding], List[Finding], int, int]:
+def check(
+    root: Path,
+    strict: bool = False,
+    specific_files: Optional[List[Path]] = None,
+    include_agent: bool = False,
+) -> Tuple[List[Finding], List[Finding], int, int]:
     """Tüm projeyi denetler."""
-    css_files = collect_css_files(root)
+    if specific_files:
+        css_files = [f.resolve() for f in specific_files if f.is_file()]
+    else:
+        css_files = collect_css_files(root, include_agent=include_agent)
     if not css_files:
         return [], [], 0, 0
 
@@ -642,12 +715,19 @@ def check(root: Path, strict: bool = False) -> Tuple[List[Finding], List[Finding
 def main() -> int:
     parser = argparse.ArgumentParser(description="Deterministik Tema Kontrastı ve WCAG Uyumu Denetleyicisi")
     parser.add_argument("--root", type=Path, default=None, help="Proje kök dizini")
+    parser.add_argument("--file", type=Path, action="append", default=None, help="Denetlenecek spesifik dosya yolu")
+    parser.add_argument("--include-agent", action="store_true", help=".agent klasörü altındaki HTML dosyalarını da tarar")
     parser.add_argument("--strict", action="store_true", help="W1-W3 uyarılarını da hata sayarak exit 1 ver")
     parser.add_argument("--json", action="store_true", help="Sonuçları JSON formatında bas")
     args = parser.parse_args()
 
     root = args.root.resolve() if args.root else find_project_root()
-    errors, warnings, block_count, pair_count = check(root, strict=args.strict)
+    errors, warnings, block_count, pair_count = check(
+        root,
+        strict=args.strict,
+        specific_files=args.file,
+        include_agent=args.include_agent,
+    )
 
     if block_count == 0:
         if args.json:

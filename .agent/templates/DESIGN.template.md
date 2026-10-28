@@ -1,29 +1,31 @@
 ---
-name: [Tasarım Sistemi Adı]
-description: [Görsel dünyanın 1-2 cümlelik özeti; kreatif kuzey yıldızı ve renk karakteri.]
+name: "<doldur: Tasarım Sistemi Adı>"
+description: "<doldur: Görsel dünyanın 1-2 cümlelik özeti; kreatif kuzey yıldızı ve renk karakteri>"
+mode: "<doldur: baseline | crafted | redesign>"
+last_reviewed: "<doldur: YYYY-MM-DD>"
 
 colors:
-  # Brand anchors (Marka Çapaları)
-  primary: "oklch(84% 0.19 80)"             # Birincil marka vurgusu / ana CTA
-  secondary: "oklch(70% 0.12 188)"          # İkincil vurgu / onay ve canlı durum
-  accent: "oklch(60% 0.15 35)"              # Uyarı / dikkat çekici kritik an
+  # Brand anchors (Marka Çapaları — OKLCH veya HEX)
+  primary: "<doldur: birincil marka vurgusu / ana CTA; şablondan kopyalama>"
+  secondary: "<doldur: ikincil vurgu / onay ve canlı durum>"
+  accent: "<doldur: uyarı / dikkat çekici kritik an>"
 
-  # Surfaces (Zemin & Katmanlar - Asla saf #000 veya #fff kullanılmaz)
-  surface-ground: "oklch(7% 0.006 95)"      # Sayfa ana zemini (mineral/sıcak koyu veya kağıt açık)
-  surface-inset: "oklch(4% 0.004 95)"       # En derin oyuk zemin (inputlar, alt bilgi derinliği)
-  surface-raised: "oklch(11% 0.006 95)"     # Yükseltilmiş paneller, kartlar
-  surface-overlay: "oklch(15% 0.008 95)"    # Modal, popover, aktif durum pencereleri
+  # Surfaces (Zemin & Katmanlar — Asla saf #000000 veya #ffffff kullanılmaz)
+  surface-ground: "<doldur: sayfa ana zemini>"
+  surface-inset: "<doldur: en derin oyuk zemin (inputlar, kod kutuları)>"
+  surface-raised: "<doldur: yükseltilmiş paneller, kartlar>"
+  surface-overlay: "<doldur: modal, popover, aktif durum pencereleri>"
 
-  # Text & Content (Metin Rampası - Zemin tonuyla hafif renklenmiş veya nötr; asla jenerik soluk gri değil)
-  text-primary: "oklch(91% 0 0)"            # Başlıklar, güçlü vurgular (contrast >= 7:1)
-  text-body: "oklch(88% 0 0)"               # Gövde metni, okunabilir netlik (contrast >= 4.5:1)
-  text-muted: "oklch(72% 0 0)"              # İkincil metin, meta veriler
-  text-faint: "oklch(62% 0 0)"              # Arka plan etiketleri
-  text-disabled: "oklch(52% 0 0)"           # Devre dışı durumlar
+  # Text & Content (Metin Rampası — Zemin tonuyla hafif renklenmiş; WCAG AA zorunlu)
+  text-primary: "<doldur: başlıklar, güçlü vurgular (kontrast >= 7:1)>"
+  text-body: "<doldur: gövde metni, okunabilir netlik (kontrast >= 4.5:1)>"
+  text-muted: "<doldur: ikincil metin, meta veriler (kontrast >= 3.0:1)>"
+  text-faint: "<doldur: arka plan etiketleri>"
+  text-disabled: "<doldur: devre dışı durumlar>"
 
-  # Borders & Rules (Çizgiler - Hairline First ilkesi)
-  border-subtle: "oklch(78% 0 0 / 0.16)"    # Varsayılan 1px nötr ayırıcı çizgi
-  border-strong: "oklch(74% 0.09 82 / 0.6)" # Aktif / odaklanmış marka kenarlığı
+  # Borders & Rules (Çizgiler — Hairline First ilkesi)
+  border-subtle: "<doldur: varsayılan 1px nötr ayırıcı çizgi>"
+  border-strong: "<doldur: aktif / odaklanmış marka kenarlığı>"
 
 typography:
   scale:
@@ -37,33 +39,28 @@ typography:
     "36": "2.25rem"      # Sayfa ana başlıkları (h1)
     "48": "3rem"         # Display başlıklar
   display:
-    fontFamily: "[Display Font], [Fallback Sans], sans-serif"
-    fontSize: "clamp(2.5rem, 5vw, 4.5rem)"
-    fontWeight: 300
-    letterSpacing: "-0.01em"
-    lineHeight: 1.05
-  headline:
-    fontFamily: "[Display Font / Sans], sans-serif"
-    fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)"
-    fontWeight: 400
-    lineHeight: 1.15
+    fontFamily: "<doldur: Display Font, Fallback Sans, sans-serif>"
+    fontSize: "clamp(2.25rem, 4vw, 3.75rem)"
+    fontWeight: 600
+    letterSpacing: "-0.02em"
+    lineHeight: 1.1
   body:
-    fontFamily: "[Body Sans Font], system-ui, sans-serif"
+    fontFamily: "<doldur: Body Sans Font, system-ui, sans-serif>"
     fontSize: "1rem"
     fontWeight: 400
-    lineHeight: 1.65
-  mono:
-    fontFamily: "[Mono Font], monospace"
+    lineHeight: 1.6
+  code:
+    fontFamily: "<doldur: Mono Font, monospace>"
     fontSize: "0.8125rem"
     fontWeight: 500
-    letterSpacing: "0.05em"
+    allowedSelectors: ["code", "pre", "kbd", "samp"]
 
 rounded:
   none: "0"
-  xs: "2px"
-  sm: "4px"
-  md: "6px"
-  lg: "8px"
+  xs: "<doldur: ör. 4px>"
+  sm: "<doldur: ör. 6px>"
+  md: "<doldur: ör. 8px>"
+  lg: "<doldur: ör. 12px>"
   pill: "999px"
 
 spacing:
@@ -78,105 +75,143 @@ components:
   button-primary:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.surface-ground}"
-    rounded: "{rounded.xs}"
-    padding: "0 28px"
+    rounded: "{rounded.sm}"
+    padding: "0 20px"
   button-secondary:
     backgroundColor: "transparent"
-    textColor: "{colors.primary}"
+    textColor: "{colors.text-primary}"
     borderColor: "{colors.border-strong}"
-    rounded: "{rounded.xs}"
-    padding: "0 28px"
+    rounded: "{rounded.sm}"
+    padding: "0 20px"
   card:
     backgroundColor: "{colors.surface-raised}"
     textColor: "{colors.text-body}"
     borderColor: "{colors.border-subtle}"
-    rounded: "{rounded.sm}"
+    rounded: "{rounded.lg}"
     padding: "24px"
   input-text:
     backgroundColor: "{colors.surface-inset}"
     textColor: "{colors.text-primary}"
     borderColor: "{colors.border-subtle}"
-    rounded: "{rounded.xs}"
+    rounded: "{rounded.sm}"
     padding: "10px 14px"
 ---
 
-# Design System: [Proje Adı]
+# Design System & Görsel Sözleşme: <doldur: Proje Adı>
+
+> ⛔ **Mod Seçimi ve Mevcut Projeleri Koruma Kuralı (Brownfield vs Greenfield):**
+> - **`mode: baseline` (Mevcut Projeler):** Halihazırda çalışan bir arayüzü olan projede `DESIGN.md` ilk kez oluşturulurken **mevcut tasarım ASLA değiştirilmez**. Önce projenin mevcut renkleri, fontları, yüzeyleri ve bileşenleri olduğu gibi analiz edilerek bu dosyaya kayıt altına alınır. Tasarımın değiştirilmesi yalnızca kullanıcı açıkça talep ettiğinde (`--redesign`, `[OVERDRIVE]`, `"tasarımı değiştir / yeniden tasarla"`) yapılır.
+> - **`mode: crafted` / `mode: redesign`:** Sıfırdan kurulan projelerde veya kullanıcının açıkça tasarım yenilemesi istediği durumlarda F1 Keşif → F2 3 Alternatif Yön Seçimi → F3 Token Üretimi zinciriyle doldurulur.
+
+## 0. Proje Kanıtı (Project Evidence)
+
+- **Ürün & Hedef Kitle Özeti:** `<doldur: PRODUCT.md veya README.md'den çıkarılan gerçek kullanıcı ve kullanım senaryosu>`
+- **Teknoloji & Stil Yığını:** `<doldur: ör. React + Vite + Tailwind v4 / Saf HTML+CSS>`
+- **Ekran Envanteri & Yüzey Modu Sınıflaması:**
+  | Ekran / Rota | Yüzey Modu (`Persuade` / `Operate` / `Read` / `Experience`) | Birincil Kullanıcı Görevi |
+  |---|---|---|
+  | `<doldur: ekran>` | `<doldur: mod>` | `<doldur: görev>` |
+- **Mevcut Token / CSS Envanteri Özeti:** `<doldur: kod tabanında tespit edilen mevcut renkler, fontlar, yarıçaplar>`
+- **Görsel Kanıt (Screenshots):** `<doldur: incelenen 1440 / 834 / 390 ekran görüntüsü referansları>`
 
 ## 1. Genel Bakış & Kreatif Kuzey Yıldızı (Creative North Star)
 
-**Kreatif Kuzey Yıldızı:** "[Örn: Neo Kinpaku, Precision Industrial, Swiss Editorial, Dark Glass Minimalist vb.]"
-
-[Tasarım felsefesinin, atmosferinin ve hissiyatının 2-3 paragraflık detaylı tanımı. Hangi klişelerden kaçınıldığı, ne tür bir fiziksel veya editoryal deneyim hedeflendiği.]
+**Kreatif Kuzey Yıldızı:** `<doldur: Projenin iş alanına özgü kreatif yön adı ve 1 paragraflık tasarım felsefesi (canvas-design disipliniyle)>`
 
 ### Temel Karakteristikler:
-- [Karakteristik 1: Zemin ve yüzey yaklaşımı]
-- [Karakteristik 2: Vurgu renkleri ve hiyerarşi]
-- [Karakteristik 3: Tipografi sesi ve ağırlık dengeleri]
-- [Karakteristik 4: Kenarlıklar, derinlik ve malzeme felsefesi]
+- **Zemin ve Yüzey Yaklaşımı:** `<doldur>`
+- **Vurgu Renkleri ve Hiyerarşi:** `<doldur>`
+- **Tipografi Sesi ve Ağırlık Dengeleri:** `<doldur>`
+- **Kenarlıklar, Derinlik ve Malzeme Felsefesi:** `<doldur>`
 
-## 2. Seçilen Yüzey Modu (Surface Mode)
+## 2. Değerlendirilen Yönler (veya Mevcut Baseline Özeti)
 
-Bu projenin/ekranın temel yüzey modu: **[`Persuade` / `Operate` / `Read` / `Experience`]**
+> `mode: baseline` ise burada mevcut tasarımın karakteristik özeti yazılır. `mode: crafted` veya `mode: redesign` ise F2 aşamasında değerlendirilen 3 alternatif yön ve seçilen yönün gerekçesi belgelenir.
 
-- **Mod Hedefi:** [Ziyaretçinin temel başarısı ve odak noktası]
+| Yön | Felsefe & Atmosfer | Aday Palet & Font Çifti | Karar & Gerekçe |
+|---|---|---|---|
+| **Yön A** | `<doldur>` | `<doldur>` | `<doldur: Seçildi / Elendi — neden?>` |
+| **Yön B** | `<doldur>` | `<doldur>` | `<doldur: Seçildi / Elendi — neden?>` |
+| **Yön C** | `<doldur>` | `<doldur>` | `<doldur: Seçildi / Elendi — neden?>` |
+
+## 3. Reddedilen Varsayılanlar (Rejected Defaults)
+
+> ⛔ Araçların (`ui-ux-pro-max`, `get_palette.py` vb.) veya LLM eğitim ortalamasının önerdiği jenerik kalıplardan hangilerinin bu proje için neden reddedildiği aşağıda kayıt altına alınır:
+
+| Reddedilen Aday / Varsayılan | Kaynak | Neden Reddedildi? | Yerine Ne Seçildi? |
+|---|---|---|---|
+| `<doldur: ör. Slate #0f172a + Sky #38bdf8>` | `<doldur: LLM / search.py>` | `<doldur: Jenerik AI dashboard klişesi>` | `<doldur: Seçilen karakterli alternatif>` |
+| `<doldur: ör. Etiketlerde JetBrains Mono>` | `<doldur: Mevcut kod / varsayılan>` | `<doldur: Mono yalnızca kod bloklarında kullanılır>` | `<doldur: Gövde sans fontu + ağırlık kontrastı>` |
+
+## 4. Seçilen Yüzey Modu (Surface Mode)
+
+Bu projenin temel yüzey modu: **`<doldur: Persuade | Operate | Read | Experience>`**
+
+- **Mod Hedefi:** `<doldur: Ziyaretçinin temel başarısı ve odak noktası>`
 - **Kısıtlar & Kurallar:**
-  - *Operate modundaysa:* Tek bir kurumsal Sans-serif ailesi kullanılır, form ve tablo etiketlerinde süslü display font yasaktır. 150–250ms hızlı geçişler uygulanır, yavaş giriş koreografileri (fade-in) yasaktır. Yüksek bilgi yoğunluğu esastır.
+  - *Operate modundaysa:* Tek bir kurumsal Sans-serif ailesi (artı yalnızca kod/komut için Mono) kullanılır; form ve tablo etiketlerinde süslü display font yasaktır. 150–250ms hızlı geçişler uygulanır, yavaş giriş koreografileri (fade-in) yasaktır. Yüksek bilgi yoğunluğu esastır.
   - *Persuade modundaysa:* Display ve body font kontrastı, tek ve amaca yönelik giriş koreografisi, ferah negatif alan.
   - *Read modundaysa:* 65–75ch okuma satır genişliği, net h1-h6 ritmi, yapışkan içindekiler tablosu (TOC).
 
-## 3. Primitif Kiti Sözleşmesi (The Kit: Primitives First)
+## 5. Primitif Kiti Sözleşmesi (The Kit: Primitives First)
 
 Her sayfa veya bileşen için sıfırdan rastgele CSS sınıfları icat etmek YASAKTIR. Önce kitteki ortak primitifler kullanılır:
 
 - **Butonlar:** `.btn` + `.btn-primary` / `.btn-secondary` / `.btn-ghost` / `[disabled]`
-- **İçerik Gruplama (Bento Grid):** `.bento-grid` + `.bento-tile` (`--span-4`, `--span-6`, `--span-8`). İç içe kart yuvalama (nested cards) kesinlikle yasaktır; hiyerarşi bento düzeniyle kurulur.
-- **Bölüm İskeleti:** `.section-container`, `.section-head`, `.section-sub`. Başlıkların üzerine ezbere süs etiketleri (`eyebrow/kicker`) konulmaz.
+- **İçerik Gruplama (Bento / Grid):** İç içe kart yuvalama (nested cards) kesinlikle yasaktır; hiyerarşi yüzey tonu ve negatif alanla kurulur.
+- **Bölüm İskeleti:** Başlıkların üzerine ezbere süs etiketleri (`eyebrow/kicker`) konulmaz.
 - **Durum ve Geri Bildirim:** `.badge`, `.tag`, `.toast`, `.modal`, `.skeleton`, `.empty-state`.
 
-## 4. Renk & Zemin Sözleşmesi
+## 6. Renk & Zemin Sözleşmesi
 
-- **Ground & Surfaces:** Sayfa zemini mineral veya sıcak tonludur; saf kömür siyahı (`#000000`) veya saf beyaz (`#ffffff`) kullanılmaz.
+- **Ground & Surfaces:** Sayfa zemini mineral veya sıcak/soğuk tonludur; saf kömür siyahı (`#000000`) veya saf beyaz (`#ffffff`) kullanılmaz.
 - **Primary Accent:** Markayı ve temel aksiyonu temsil eder.
-- **Secondary Accent:** İkincil durumları, canlılığı (live state) veya onay durumunu temsil eder. Süsleme amacıyla her yere dağıtılamaz.
-- **Metin Kontrastı:** WCAG AA (min 4.5:1 normal metin, min 3:1 büyük metin). Renkli zeminlerde saf nötr gri metin YASAKTIR; metin rengi zemin renginin hafif tonunu (hue tint) almalıdır.
-- **OKLCH Standardı:** Tüm renkler ve ton rampaları OKLCH cinsinden tanımlanır.
+- **Secondary Accent:** İkincil durumları, canlılığı (live state) veya onay durumunu temsil eder.
+- **Metin Kontrastı:** WCAG AA (min 4.5:1 normal metin, min 3.0:1 ikincil/muted metin). Renkli zeminlerde saf nötr gri metin YASAKTIR; metin rengi zemin renginin hafif tonunu (hue tint) almalıdır.
 
-## 5. Tipografi & Ritim
+## 7. Tipografi & Ritim
 
-- **Display vs Body:** Display font büyük başlıklarda (`h1`, `h2`), Body font ise gövde ve kontrollerde (`h3-h6`, `body`, butonlar, inputlar) kullanılır. Gövde fontu asla küçük boyutta display font olamaz.
-- **Ağırlık Dengesi (Weight Inversion):** Hero h1 ince ve nefes alan (örn. 300), alt bölüm h2 başlıkları ise bölümü yere sabitleyen tok ağırlıkta (örn. 400-500) kurgulanabilir.
+- **En Fazla 2 Font Ailesi (+ Kod için Mono):** Display ve Body (veya tek bir Sans ailesi) dışında sayfa genelinde üçüncü bir yazı tipi kullanılamaz. Monospace font yalnızca gerçek kod, terminal komutu, kısayol (`code`, `pre`, `kbd`, `samp`) ve frontmatter'da açıkça izin verilen teknik seçicilerde kullanılır.
 - **Okuma Genişliği:** Gövde metin blokları her zaman 65–75ch genişliğinde sınırlandırılır.
 
-## 6. Derinlik, Malzeme ve Çizgi (Elevation & Material)
+## 8. Derinlik, Malzeme ve Tarayıcı Yüzeyleri
 
 - **Hairline First:** Derinlik için ağır gölgeler yerine önce 1px net kenarlıklar (`border`) ve ton kontrastı kullanılır.
-- **Tek Işık Kaynağı & No Ghost Cards:** Zemin rengi olmayan ama havada duran gölgeli kartlar yasaktır. Her yükseltinin gerçek bir yüzey zemini olmalıdır.
-- **0-Blur Blok Gölge Yasağı:** `box-shadow: 4px 4px 0 ...` gibi neobrutalist blok gölgeler veya yapay zeka klişesi renkli gölgeler yasaktır.
-- **No-Glass:** Zorunlu olmayan süs amaçlı cam/buzlu panel (`backdrop-blur`) ve parlayan neon parçacıklar kullanılmaz.
+- **0-Blur Blok Gölge Yasağı:** `box-shadow: 4px 4px 0 ...` gibi neobrutalist blok gölgeler yasaktır.
+- **Tarayıcı Yüzeyleri (Themed Browser Surfaces):**
+  - `::selection`: Marka rengi ve zemin kontrastı ile uyumlu seçim arka planı ve metin rengi.
+  - `caret-color`: Input odaklandığında marka aksan rengi.
+  - `::-webkit-scrollbar`: Sayfa ve panel temasıyla bütünleşik özel kaydırma çubuğu.
+  - `:focus-visible`: 2px marka vurgulu outline ve 2-4px ofset.
+  - `font-variant-numeric: tabular-nums`: Tablolar, sayaçlar ve sayısal veriler için hizalı rakamlar.
 
-## 7. Tarayıcı Yüzeyleri (Themed Browser Surfaces)
+## 9. Bileşen Durum Matrisi (4 UX States)
 
-- `::selection`: Marka rengi ve zemin kontrastı ile uyumlu seçim arka planı ve metin rengi.
-- `caret-color`: Input odaklandığında parlayan marka aksan rengi.
-- `::-webkit-scrollbar`: Sayfa ve panel temasıyla bütünleşik özel kaydırma çubuğu.
-- `:focus-visible`: 2px marka vurgulu outline ve 2-4px ofset.
-- `font-variant-numeric: tabular-nums`: Tablolar, sayaçlar ve sayısal veriler için hizalı rakamlar.
+| Bileşen / Görünüm | Default | Hover / Focus | Loading / Active | Empty / Error |
+|---|---|---|---|---|
+| `<doldur: ör. Arama & Filtre>` | `<doldur>` | `<doldur: 2px focus ring>` | `<doldur>` | `<doldur: Sıfır sonuç + Filtreyi Temizle CTA>` |
+| `<doldur: ör. Kart / Satır>` | `<doldur>` | `<doldur>` | `<doldur>` | `<doldur>` |
 
-## 8. Kesin Yasaklar ve Kurallar (Do & Do Not)
+## 10. Responsive Davranış (390 / 834 / 1440)
 
-### Do (Yapılacaklar)
-- Do: Tüm renk tanımlarında OKLCH kullan.
-- Do: Gölgelerden önce 1px net çizgi sınırları (`border`) kullan.
-- Do: Tablo ve sayısal verilerde `tabular-nums` uygula.
-- Do: Renkli zeminlerdeki metinlere zemin tonundan hafif hue kat.
-- Do: Düğme ve geçişlerde `prefers-reduced-motion` kuralına tam uy.
+| Kırılım (Viewport) | Düzen & Kolon Yapısı | Navigasyon & Filtre Ergonomisi | Dokunma Hedefi & Taşma Koruması |
+|---|---|---|---|
+| **Mobil (`390px`)** | `<doldur: tek sütun / kart görünümü>` | `<doldur: yatay kaydırılabilir çipler / alt bar>` | `<doldur: min 44x44px dokunma hedefi>` |
+| **Tablet (`834px`)** | `<doldur: 2 sütun dengeli ızgara>` | `<doldur: hover-bağımsız kontroller>` | `<doldur>` |
+| **Masaüstü (`1440px`)** | `<doldur: 3+ sütun yoğun ızgara + tablo>` | `<doldur: klavye kısayolları + sticky bar>` | `<doldur>` |
 
-### Do Not (Kesinlikle Yasaklar)
+## 11. Karar Günlüğü & Kesin Yasaklar (Decision Log & Redlines)
+
+### Karar Günlüğü
+| Tarih | Karar Özeti | Kanıt / Gerekçe | Etkilenen Token / Seçici |
+|---|---|---|---|
+| `<doldur: YYYY-MM-DD>` | `<doldur: İlk sözleşme oluşturuldu>` | `<doldur>` | `<doldur: Tüm tokenlar>` |
+
+### Kesin Yasaklar (Do Not)
 - Do Not: Kart içinde kart (nested cards) kullanma.
 - Do Not: Başlıkların üzerine ezbere büyük harfli süs hapları (eyebrow/kicker) ekleme.
 - Do Not: Metinlerde veya başlıklarda gradyan (`bg-clip-text`) kullanma.
 - Do Not: Kart kenarlarına 3-4px dikey renk şeritleri (`border-l-4`) koyma.
-- Do Not: 0-blur ofset blok gölgeler (`box-shadow: 4px 4px 0`) uygulama.
-- Do Not: Yüzey zemini olmayan hayalet kartlara gölge verme.
+- Do Not: Kod/komut (`code`, `pre`, `kbd`) dışındaki başlık, rozet veya etiketlerde monospace font kullanma.
 - Do Not: İkon yerine emoji veya Unicode karakteri kullanma; standart SVG ikon kütüphanesi kullan.
-- Do Not: Sahte süs SVG karalamaları veya rastgele noktalar ekleme.
+- Do Not: Sözleşmede (`DESIGN.md`) tanımlı olmayan ham hex/rgb renkleri CSS veya bileşen içine gömme.

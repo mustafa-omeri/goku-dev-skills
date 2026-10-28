@@ -23,8 +23,10 @@ E5 (gray-on-color)          Renkli/kromatik zeminde ham gri metin (bg-blue/indig
 E6 (display-fallback)       Display fontta generic/sistem fontu (Impact, Comic Sans veya eksik fallback)
 E7 (eyebrow-spam)           Başlık üstü büyük harfli süs hapı (uppercase tracking-widest kicker + h1/h2)
 E8 (emoji-icon)             İkon, buton veya rozet olarak ham emoji/unicode kullanımı (§2.6 A.8)
-E9 (hardcoded-palette)      Inline style veya kuralda token dışı ham hex kodu kullanımı (§2.6 A.7)
+E9 (hardcoded-palette)      Inline style veya CSS kuralında token dışı ham hex kodu kullanımı (§2.6 A.12)
+E10 (mono-outside-code)     Kod/komut seçicileri (code/pre/kbd/samp) dışında monospace font kullanımı
 W1 (missing-tabular-nums)   Tablo veya sayaç/istatistik rakamlarında tabular-nums eksikliği
+W2 (label-uppercase-spam)   Sayfada 3'ten fazla seçicide uppercase + letter-spacing etiket kullanımı
 
 Çıkış Kodları:
 - E1-E9 varsa: exit 1
@@ -136,6 +138,19 @@ INLINE_HEX_STYLE_RE = re.compile(
 TABLE_TAG_RE = re.compile(r"""<table\b[^>]*>""")
 TABULAR_NUMS_RE = re.compile(r"""\b(?:tabular-nums|font-variant-numeric:\s*tabular-nums)\b""")
 
+# W3: Horizontal Scroll Slop (A.13 / Kural B)
+ALLOWED_SCROLL_SELECTORS = {
+    "table", "thead", "tbody", "tfoot", "tr", "th", "td",
+    "pre", "code", "kbd", "samp",
+    ".table-wrap", ".table-container", ".table-card", ".table-scroll",
+    ".code-block", ".code-view", ".terminal-content", ".log-container",
+    ".highlight", ".terminal", ".gantt", ".timeline", ".canvas-wrapper",
+    ".table-responsive", ".overflow-x-auto-table"
+}
+SCROLL_SLOP_TW_RE = re.compile(
+    r"""\b(?:overflow-x-(?:auto|scroll)\s+[^"'>`]*\bwhitespace-nowrap|whitespace-nowrap\s+[^"'>`]*\boverflow-x-(?:auto|scroll))\b"""
+)
+
 
 def find_project_root() -> Path:
     env = os.environ.get("AGENTS_PROJECT_ROOT")
@@ -229,6 +244,21 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
 
     # E2: Gradient Text (Tailwind & CSS)
     for idx, line in enumerate(lines, start=1):
+        # W3: horizontal-scroll-slop in Tailwind classes
+        if ('overflow-x-auto' in line or 'overflow-x-scroll' in line) and 'whitespace-nowrap' in line:
+            lower_line = line.lower()
+            if not any(exempt in lower_line for exempt in ("<table", "<pre", "<code", "table-", "code-", "timeline", "gantt")):
+                warnings.append({
+                    "code": "W3",
+                    "rule": "horizontal-scroll-slop",
+                    "file": str(path),
+                    "line": idx,
+                    "message": (
+                        "Yapay yatay kaydırma (overflow-x-auto/scroll + whitespace-nowrap) tespit edildi (A.13 / Kural B). "
+                        "Yatay kaydırma yerine responsive sarma (flex-wrap) veya açılır komut paleti/modal kullanın."
+                    ),
+                })
+
         if GRADIENT_TEXT_TW_RE.search(line):
             errors.append({
                 "code": "E2",
@@ -362,6 +392,164 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
                 "file": str(path),
                 "line": idx,
                 "message": f"Inline style içinde ham renk hex kodu ('{m.group(1)}') tespit edildi. CSS değişkeni (var(--...)) veya token skalası kullanın."
+            })
+
+    # CSS bloklarını (<style> veya .css) E9 (kural içi ham hex), E10 (mono-outside-code) ve W2 (label-uppercase-spam) için tara
+    css_chunks = []
+    if path.suffix.lower() == ".css":
+        css_chunks.append((1, content))
+    else:
+        for sm in re.finditer(r"""<style\b[^>]*>([\s\S]*?)</style>""", content, re.IGNORECASE):
+            start_ln = content[: sm.start(1)].count("\n") + 1
+            css_chunks.append((start_ln, sm.group(1)))
+
+    if css_chunks:
+        allowed_mono_sels = {
+            "code", "pre", "kbd", "samp", ".kbd", ".kbd-shortcut", ".cmd-code",
+            ".trigger-chip", ".trigger-pill", ".slash-cmd-name", ".slash-command-title",
+            ".hero-command-box", ".quick-slash-pill", ".skill-name", ".config-file-name",
+            ".table-skill-name",
+        }
+        # DESIGN.md içinde tanımlı allowedSelectors varsa ekle
+        for cand_root in (path.parent, path.parent.parent, find_project_root()):
+            d_md = cand_root / "DESIGN.md"
+            if d_md.is_file():
+                try:
+                    d_txt = d_md.read_text(encoding="utf-8", errors="replace")
+                    m_sel = re.search(r"""allowedSelectors:\s*\[([^\]]+)\]""", d_txt)
+                    if m_sel:
+                        for item in m_sel.group(1).split(","):
+                            s_clean = item.strip().strip("\"'")
+                            if s_clean:
+                                allowed_mono_sels.add(s_clean)
+                except Exception:
+                    pass
+                break
+        rule_re = re.compile(r"""([^{}]+)\{([^{}]+)\}""")
+        color_prop_re = re.compile(
+            r"""^(?:color|background|background-color|border-color|border-(?:top|bottom|left|right)-color)$""",
+            re.IGNORECASE,
+        )
+        hex_val_re = re.compile(r"""(?<![&\w])(#[0-9a-fA-F]{3,8})\b""")
+        uppercase_count = 0
+        first_uppercase_line = 1
+
+        for base_ln, raw_css in css_chunks:
+            clean_css = re.sub(r"""/\*[\s\S]*?\*/""", "", raw_css)
+            for rm in rule_re.finditer(clean_css):
+                selector = rm.group(1).strip()
+                body = rm.group(2)
+                rule_line = base_ln + raw_css[: rm.start()].count("\n")
+
+                is_theme_root = bool(
+                    re.search(
+                        r"""(?::root|\[data-theme[^\]]*\]|\[data-mode[^\]]*\]|\.dark\b|\.light\b|@keyframes)""",
+                        selector,
+                    )
+                )
+
+                has_uppercase = False
+                has_tracking = False
+                has_overflow_x = False
+                has_nowrap = False
+
+                for decl in body.split(";"):
+                    decl_s = decl.strip()
+                    if not decl_s or ":" not in decl_s:
+                        continue
+                    prop, val = decl_s.split(":", 1)
+                    prop = prop.strip()
+                    val = val.strip()
+
+                    if prop.startswith("--"):
+                        continue
+
+                    # E9 in CSS rule
+                    if not is_theme_root and color_prop_re.match(prop):
+                        # var(--foo, #hex) fallback olmayan doğrudan ham hex kullanımını yakala
+                        val_without_var = re.sub(r"""var\([^)]*\)""", "", val)
+                        hm = hex_val_re.search(val_without_var)
+                        if hm:
+                            errors.append({
+                                "code": "E9",
+                                "rule": "hardcoded-palette",
+                                "file": str(path),
+                                "line": rule_line,
+                                "message": (
+                                    f"CSS kuralında ('{selector}') token dışı ham hex kodu ('{hm.group(1)}') tespit edildi. "
+                                    f":root / [data-theme] altında CSS değişkeni tanımlayıp var(--...) kullanın."
+                                ),
+                            })
+
+                    # E10: mono-outside-code
+                    if prop.lower() == "font-family":
+                        uses_mono = bool(
+                            re.search(r"""var\(\s*--font-(?:mono|code)\b""", val)
+                            or re.search(r"""\b(?:monospace|JetBrains Mono|Fira Code|SFMono-Regular|Consolas)\b""", val, re.IGNORECASE)
+                        )
+                        if uses_mono and not is_theme_root and not selector.startswith("@"):
+                            sel_parts = [sp.strip() for sp in selector.split(",") if sp.strip()]
+                            all_allowed = True
+                            for sp in sel_parts:
+                                tokens = set(re.split(r"""[\s>+~]+""", sp))
+                                if not any(a in tokens or sp.endswith(a) or a in sp for a in allowed_mono_sels):
+                                    all_allowed = False
+                                    break
+                            if not all_allowed:
+                                errors.append({
+                                    "code": "E10",
+                                    "rule": "mono-outside-code",
+                                    "file": str(path),
+                                    "line": rule_line,
+                                    "message": (
+                                        f"Monospace yazı tipi kod/komut seçicileri dışında kullanıldı ('{selector}'). "
+                                        f"Mono yalnızca code, pre, kbd, samp veya gerçek komut/tetikleyici seçicilerinde kullanılabilir."
+                                    ),
+                                })
+
+                    prop_l = prop.lower()
+                    val_l = val.lower()
+                    if prop_l in ("overflow-x", "overflow") and any(s in val_l for s in ("auto", "scroll")):
+                        has_overflow_x = True
+                    if prop_l == "white-space" and "nowrap" in val_l:
+                        has_nowrap = True
+
+                    if prop_l == "text-transform" and "uppercase" in val_l:
+                        has_uppercase = True
+                    if prop_l == "letter-spacing":
+                        has_tracking = True
+
+                if has_overflow_x and has_nowrap:
+                    sel_l = selector.lower()
+                    is_exempt = any(exempt in sel_l for exempt in ALLOWED_SCROLL_SELECTORS)
+                    if not is_exempt:
+                        warnings.append({
+                            "code": "W3",
+                            "rule": "horizontal-scroll-slop",
+                            "file": str(path),
+                            "line": rule_line,
+                            "message": (
+                                f"Görev veya eylem alanında yapay yatay kaydırma ('{selector}' -> overflow-x + nowrap) tespit edildi (A.13 / Kural B). "
+                                f"Yatay scrollbar yerine responsive sarma (flex-wrap: wrap) veya açılır bir komut paleti/modal kullanın."
+                            ),
+                        })
+
+                if has_uppercase and has_tracking:
+                    if uppercase_count == 0:
+                        first_uppercase_line = rule_line
+                    uppercase_count += 1
+
+        if uppercase_count > 3:
+            warnings.append({
+                "code": "W2",
+                "rule": "label-uppercase-spam",
+                "file": str(path),
+                "line": first_uppercase_line,
+                "message": (
+                    f"Sayfada {uppercase_count} farklı seçicide 'text-transform: uppercase' + 'letter-spacing' "
+                    f"kullanımı tespit edildi (sınır: <= 3). Aşırı büyük harfli etiket (uppercase spam) yerine "
+                    f"doğal tümce düzeni (sentence case) ve ağırlık kontrastı kullanın."
+                ),
             })
 
     # W1: Missing tabular-nums in table tag

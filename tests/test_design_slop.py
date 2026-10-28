@@ -120,11 +120,99 @@ class TestCheckDesignSlop(unittest.TestCase):
         errors, _ = check_file(f)
         self.assertIn("hardcoded-palette", [e["rule"] for e in errors])
 
+    def test_e9_hardcoded_css_rule_hex_but_exempts_root_tokens(self):
+        content = """
+        <style>
+          :root {
+            --bg-primary: #0f172a;
+            --accent: #38bdf8;
+          }
+          .active-btn {
+            background: var(--accent);
+            color: #090d16;
+          }
+        </style>
+        <button class="active-btn">Aktif</button>
+        """
+        f = self._write_file("CssRuleHex.html", content)
+        errors, _ = check_file(f)
+        e9_hits = [e for e in errors if e["rule"] == "hardcoded-palette"]
+        self.assertEqual(len(e9_hits), 1, f"Beklenen 1 E9 hatası (#090d16), gelen: {e9_hits}")
+        self.assertIn("#090d16", e9_hits[0]["message"])
+
+    def test_e10_mono_font_outside_code_selectors(self):
+        content = """
+        <style>
+          :root { --font-mono: 'JetBrains Mono', monospace; }
+          pre code, kbd { font-family: var(--font-mono); }
+          .card-badge { font-family: var(--font-mono); }
+        </style>
+        """
+        f = self._write_file("MonoLeak.html", content)
+        errors, _ = check_file(f)
+        e10_hits = [e for e in errors if e["rule"] == "mono-outside-code"]
+        self.assertEqual(len(e10_hits), 1, f"Beklenen 1 E10 hatası (.card-badge), gelen: {e10_hits}")
+        self.assertIn(".card-badge", e10_hits[0]["message"])
+
+    def test_w2_uppercase_label_spam(self):
+        content = """
+        <style>
+          .lbl-1 { text-transform: uppercase; letter-spacing: 0.08em; }
+          .lbl-2 { text-transform: uppercase; letter-spacing: 0.06em; }
+          .lbl-3 { text-transform: uppercase; letter-spacing: 0.05em; }
+          .lbl-4 { text-transform: uppercase; letter-spacing: 0.1em; }
+        </style>
+        """
+        f = self._write_file("UppercaseSpam.html", content)
+        _, warnings = check_file(f)
+        self.assertIn("label-uppercase-spam", [w["rule"] for w in warnings])
+
     def test_w1_missing_tabular_nums_on_table(self):
         content = """<table><thead><tr><th>Fiyat</th></tr></thead><tbody><tr><td>120 TL</td></tr></tbody></table>"""
         f = self._write_file("Table.html", content)
         _, warnings = check_file(f)
         self.assertIn("missing-tabular-nums", [w["rule"] for w in warnings])
+
+    def test_w3_horizontal_scroll_slop_detected_in_css(self):
+        content = """
+        <style>
+          .quick-slash-ribbon {
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+          }
+        </style>
+        """
+        f = self._write_file("Ribbon.html", content)
+        _, warnings = check_file(f)
+        rules = [w["rule"] for w in warnings]
+        self.assertIn("horizontal-scroll-slop", rules)
+
+    def test_w3_horizontal_scroll_slop_exemptions(self):
+        content = """
+        <style>
+          .table-card { overflow-x: auto; white-space: nowrap; }
+          pre.code-block { overflow-x: auto; white-space: nowrap; }
+        </style>
+        """
+        f = self._write_file("Exemptions.html", content)
+        _, warnings = check_file(f)
+        w3_warnings = [w for w in warnings if w["rule"] == "horizontal-scroll-slop"]
+        self.assertEqual(len(w3_warnings), 0, f"İstisnalar muaf tutulmalıydı: {w3_warnings}")
+
+    def test_w3_horizontal_scroll_slop_tailwind(self):
+        # 1. Violated
+        bad_tw = '<div className="chip-list overflow-x-auto whitespace-nowrap"><span>Item</span></div>'
+        f_bad = self._write_file("BadTw.tsx", bad_tw)
+        _, warnings = check_file(f_bad)
+        self.assertIn("horizontal-scroll-slop", [w["rule"] for w in warnings])
+
+        # 2. Exempted (table container)
+        good_tw = '<div className="table-wrap overflow-x-auto whitespace-nowrap"><table className="tabular-nums"><tbody><tr><td>Data</td></tr></tbody></table></div>'
+        f_good = self._write_file("GoodTw.tsx", good_tw)
+        _, warnings_good = check_file(f_good)
+        w3_good = [w for w in warnings_good if w["rule"] == "horizontal-scroll-slop"]
+        self.assertEqual(len(w3_good), 0)
 
     def test_accepts_clean_craft_code(self):
         clean_content = """

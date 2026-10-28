@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adaptive Overflow Card Hub Demo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="hub-demo-page">
+
+  <div class="hub-demo-container">
+    <header class="hub-demo-header">
+      <h1 class="hub-demo-title">Adaptive Action Hub &amp; Bottom-Sheet Card Panel</h1>
+      <p class="hub-demo-desc">
+        Kural B.9 / A.13: Yatay scroll slop'u ve dağınık hap buton dizilimini engelleyen, 100 öğeye ölçeklenebilir çift modlu eylem merkezi standardı.
+      </p>
+    </header>
+
+    <!-- Interactive Mode & Scale Controls -->
+    <div class="hub-demo-controls">
+      <div class="hub-control-group">
+        <span class="hub-control-label">Sunum Modu:</span>
+        <button type="button" id="btnModePreview" class="hub-btn-toggle active">Çözüm 2: Preview + Panel</button>
+        <button type="button" id="btnModePanel" class="hub-btn-toggle">Çözüm 1: Panel-Only</button>
+      </div>
+      <div class="hub-control-group" style="margin-left: auto;">
+        <span class="hub-control-label">Ölçek Testi (100 Öğe Sorusu):</span>
+        <button type="button" id="btnScale12" class="hub-btn-toggle active">12 Öğe (Normal)</button>
+        <button type="button" id="btnScale100" class="hub-btn-toggle">100 Öğe (Stres Testi)</button>
+      </div>
+    </div>
+
+    <!-- The Adaptive Action Ribbon -->
+    <div class="hub-ribbon" id="hubRibbon">
+      <!-- Group Launch Button (Çözüm 1 & 2 Anchor) -->
+      <button type="button" class="hub-btn-group-launcher" id="hubGroupLauncher">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+        <span>Oturum Komutları</span>
+        <span class="hub-badge-count" id="hubLauncherCount">12</span>
+      </button>
+
+      <!-- Preview Chips Strip (Çözüm 2: Dynamically calculated based on available width) -->
+      <div class="hub-preview-strip" id="hubPreviewStrip">
+        <!-- Rendered via adaptive-overflow-hub.js -->
+      </div>
+
+      <!-- More Overflow Button (Çözüm 2) -->
+      <button type="button" class="hub-btn-more" id="hubBtnMore">
+        <span>...</span>
+        <span id="hubMoreCount">+7</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Bottom-Sheet Modal Backdrop -->
+  <div class="hub-backdrop" id="hubBackdrop" aria-hidden="true"></div>
+
+  <!-- Bottom-Sheet Modal Container -->
+  <div class="hub-sheet" id="hubSheet" role="dialog" aria-modal="true" aria-labelledby="hubSheetTitle" aria-hidden="true">
+    <div class="hub-sheet-handle-wrap">
+      <div class="hub-sheet-handle"></div>
+    </div>
+
+    <div class="hub-sheet-header">
+      <div class="hub-sheet-title-area">
+        <h2 class="hub-sheet-title" id="hubSheetTitle">Tüm Oturum Komutları</h2>
+        <span class="hub-sheet-badge" id="hubSheetCount">12 Komut</span>
+      </div>
+
+      <div class="hub-sheet-search-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="hubSearchInput" class="hub-sheet-search-input" placeholder="Komut veya açıklama ara (örn: /plan, /fix)..." autocomplete="off" spellcheck="false">
+      </div>
+
+      <button type="button" class="hub-sheet-btn-close" id="hubBtnClose" aria-label="Paneli Kapat">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="hub-sheet-body" id="hubSheetBody">
+      <!-- Domain panels inserted here -->
+      <div class="hub-empty-state" id="hubEmptyState">
+        <p class="hub-empty-title">Eşleşen komut bulunamadı</p>
+        <p class="hub-empty-desc">Farklı bir anahtar kelime aramayı deneyebilirsiniz.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="adaptive-overflow-hub.js"></script>
+</body>
+</html>

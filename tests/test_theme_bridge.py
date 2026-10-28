@@ -21,7 +21,7 @@ import get_palette
 class TestComponentThemes(unittest.TestCase):
     def test_get_all_themes_count_and_structure(self):
         themes = get_component.get_all_themes()
-        self.assertEqual(len(themes), 55, f"Expected 55 themes, found {len(themes)}")
+        self.assertEqual(len(themes), 56, f"Expected 56 themes, found {len(themes)}")
 
         categories = set()
         for t in themes:

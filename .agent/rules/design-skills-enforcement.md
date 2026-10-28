@@ -3,6 +3,8 @@ name: Mandatory Design Skills
 description: Tasarım, UI/UX ve görsel yerleşim taleplerinde canvas-design, frontend-design ve ui-ux-pro-max skillerinin birlikte okunmasını zorunlu kılar; ayrıca 13 skill'in sahiplik (tek sahip) haritasını tanımlar.
 sinif: OLCULEBILIR
 kapi:
+  - yigin: "Tasarım / sözleşme ve DESIGN.md uyumu"
+    komut: "python .agent/skills/musgoku/scripts/check_design_contract.py"
   - yigin: "Tasarım / skill sahipliği"
     komut: "python .agent/skills/musgoku/scripts/check_design_skills.py"
   - yigin: "Tasarım / zanaat tabanı ve anti-slop"
@@ -123,6 +125,7 @@ Tüm web arayüzü, frontend bileşeni ve sayfa geliştirmelerinde "generic AI s
 10. **Refleks Modal Yasağı:** Kullanıcı akışını kesintiye uğratması gerekmeyen sıradan işlemler için ezbere modal/dialog açmak yerine yerinde (inline) açılma veya panel geçişi uygulanmalıdır.
 11. **Uydurma Karalama SVG Yasağı (No Doodles/Sketchy SVGs):** `loose-sketch`, `doodle` veya `feTurbulence` gibi amatör karalama SVG'leri yasaktır. Vektör ya net geometridir (diyagram, ikon, shader, animasyonlu çizgi) ya da profesyonel illüstrasyondur.
 12. **Hardcoded Renk ve Başıboş Stil Yasağı (E9 - hardcoded-palette):** HTML veya JSX içinde inline `style="color: #..."` gibi başıboş hex renkler kullanmak yasaktır. Renkler her zaman ölçülmüş token'lardan (`get_palette.py --id <num> --format css` veya CSS değişkenleri / Tailwind sınıfları) gelmelidir. `check_design_slop.py` tarafından mekanik olarak denetlenir.
+13. **Yatay Scroll Slop'u Yasağı (W3 / A.13 - No Horizontal Scroll Slop):** Görev ve eylem alanlarında (navigasyon, komut şeridi, filtre çubuğu, etiketler veya sayfa gövdesinde) seçeneklere erişmek için yapay yatay kaydırma zorunluluğu (`overflow-x: auto; white-space: nowrap;`) oluşturulamaz. Bu durum tembelce tasarlanmış bir "AI slop" belirtisidir. Çözüm; gereksiz boşlukları azaltmak, responsive sarma (`flex-wrap: wrap`) uygulamak ve ikincil seçenekleri açılır bir komut paleti/popover veya gruplanmış bir kontrol altına almaktır. *İstisnalar:* Çok kolonlu geniş veri tabloları (`table`, `.table-card`, `.table-wrap`) ve kod/log blokları (`pre`, `code`, `.code-block`) doğası gereği geniş olduğu için yatay kaydırma gerekçesiyle korunur.
 
 ### B. Çıktı Üzerinde Zorunlu Zanaat Kontrolleri (Craft Floor Verifications)
 
@@ -137,6 +140,20 @@ Tüm web arayüzü, frontend bileşeni ve sayfa geliştirmelerinde "generic AI s
    - `font-variant-numeric: tabular-nums` (W1): Tablo, sayaç ve sayısal verilerde sabit genişlikli rakamlar.
    - `text-underline-offset`: Bağlantı alt çizgilerinde doğal mesafe (`underline-offset-4`).
 5. **Dürüst ve Eyleme Dayalı Metinler (Material & Copy Honesty):** Butonlar ve kontroller yaptıkları eylemi net söyler ("Kaydet", "Projeyi Yayınla"); hatalar sorunun ne olduğunu ve çözümünü kullanıcı diliyle açıklar.
+6. **İşlevsel Tamamlanma (Kural A — Complete Visible Interaction):** Kullanıcıya etkileşim vaat eden her kontrol (buton, sekme, filtre, görünüm seçici), açıkça tanımlı bir eylemi ve doğrulanabilir bir sonucu sağlamalıdır. Kontrolün görünümü, iç durumu (`aria-pressed`, `aria-selected`) ve ekranda ürettiği sonuç birbiriyle tutarlı olmalıdır. Boş handler, yalnızca console çıktısı, `href="#"`, sonucu etkilemeyen state değişikliği ve gerçek işlem yerine sahte başarı bildirimi teslim edilemez. Bir görünüm veya özellik desteklenmiyorsa o bağlamda yanıltıcı bir kontrol sunulamaz.
+7. **Akıcı Responsive Kullanım (Kural C — Fluid Adaptive Layout):** Her tasarım mobil (320px–390px), tablet (768px–834px) ve masaüstü (1024px–1440px+) kullanımını desteklemelidir. Breakpoint'ler sabit piksel etiketlerine göre değil, sidebar/dock çıktıktan sonra ana içeriğe kalan net kullanılabilir alana göre akıcı hesaplanmalıdır (`minmax(min(100%, 320px), 1fr)`). Görünüm değişikliği kullanıcı girdisini, filtreyi veya seçili kaydı kaybettiremez; mobilde dar alanlarda off-canvas çekmece (`drawer`) ve en az 44 × 44 CSS px dokunma hedefleri sağlanmalıdır.
+8. **Doğrulama Olmadan Tamamlandı Denilemez (Kural D — Real Interaction Proof):** Kritik kullanıcı akışları gerçek tarayıcı etkileşimleriyle (`chrome-devtools-mcp` ile tıklama, odak ve 0px yatay taşma ölçümü) kanıtlanmalıdır. Yalnızca statik tarama, hatasız derleme veya ekran görüntüsü tek başına işlevsellik kanıtı sayılmaz.
+9. **Ölçeklenebilir Eylem Grupları ve Alttan Açılan Kart Paneli Standardı (Kural B.9 — Scalable Action Groups & Bottom-Sheet Card Hub):**
+   Eylem, araç veya komut koleksiyonlarının tasarımında sistem şu soruyu sormak zorundadır: *"Burada 12 değil 100 öğe olsaydı ne olacaktı?"*. Tembelce onlarca butonu yan yana dizip ekranı boğmak veya yatay kaydırma çubuğuna (horizontal scroll slop) hapsetmek kesinlikle yasaktır.
+   - **Drop-down Yasağı:** Çoklu eylem veya komut keşfinde native `<select>` veya sıkışık tek boyutlu dropdown listeler KESİNLİKLE KULLANILAMAZ ("drop&down mu kesinlikle hayır").
+   - **İki Bağımsız Sunum Modu (Dual Modes):**
+     * **Mod 1 (`panel-only`):** Tek bir anlamlı grup butonu (örn. `⚡ Oturum Komutları (12)`). Tıklandığında animasyonlu alttan açılan kart panelini doğrudan açar.
+     * **Mod 2 (`preview-and-panel`):** Konteynerin kullanılabilir genişliğini dinamik hesaplar (`ResizeObserver` / layout hesabı). Ekrana sığan ilk N öğeyi önizleme çipi olarak gösterir; sığmayanları ise sağa eklenen `... (+K)` overflow butonu ile alttan açılan karta yönlendirir.
+   - **Alttan Açılan Kart Paneli (Bottom-Sheet Card Hub):**
+     * Ekranın altından animasyonla (`translateY(0)`, backdrop-filter blur) yükselir.
+     * Ögeleri anlamsal alanlara (domain/kategori) göre gruplar; her alan tema uyumlu renkli rozet/kenarlık taşır.
+     * **Eşit Boyutlu Kart Sözleşmesi (Equal Dimensions Card Contract):** Tüm kartlar eşit minimum yükseklik ve genişlik matrisinde (`grid-template-columns: repeat(auto-fill, minmax(260px, 1fr))`) yer alır; tek öğeli kategorilerde kart tüm satıra yayılmaz (`subgrid` veya tutarlı track).
+     * **Erişilebilir Odak İadesi:** Panel `ESC` veya kapat butonuyla kapandığında klavye odağı paneli tetikleyen asıl butona (grup butonu veya `... (+K)` butonu) iade edilir.
 
 ### C. Hazır Bileşen ve Ölçülmüş Palet Önceliği (Zero-Friction Ready-Made Lookup)
 
@@ -174,6 +191,12 @@ Frontend ve arayüz projelerinde tutarlılık, keyfi kararlarla değil çift kat
 
 ### İyileştirme (Refinement) vs Yeniden Tasarım (Redesign) Semantiği
 Ajan tasarım üzerinde çalışırken bu ayrımı kesinlikle gözetir:
+### Baseline Çıkarma (Brownfield), İyileştirme (Refinement) ve Yeniden Tasarım (Redesign) Semantiği
+Ajan tasarım üzerinde çalışırken bu üç modu kesinlikle gözetir:
+0. **Mevcut Projelerde Baseline Çıkarma (`mode: baseline` — İlk Adım):**
+   - Halihazırda çalışan bir arayüzü olan projede (`kalansure`, `ocai`, `FEProjectv1`, `bookmarkManagerProject` vb.) `<repo-kök>/DESIGN.md` henüz yoksa, ajan **mevcut tasarımı ve UI kodunu ASLA kendi başına değiştirmez**.
+   - Önce projenin mevcut renkleri, fontları, yüzeyleri ve bileşenleri olduğu gibi analiz edilerek `DESIGN.md` (`mode: baseline`) olarak kayıt altına alınır.
+   - Mevcut tasarımın değiştirilmesi yalnızca kullanıcı açıkça talep ettiğinde / zorladığında (`--redesign`, `[OVERDRIVE]`, `"tasarımı değiştir / yeniden tasarla"`) gerçekleşir.
 1. **İyileştirme (Refinement - `[POLISH]`, `[AUDIT]`, `[HARDEN]`, `[DISTILL]`, `[CLARIFY]`):**
    - Hem `PRODUCT.md` hem de `DESIGN.md` korunur.
    - Mevcut tasarım diline, token'larına ve kreatif kuzey yıldızına sadık kalınarak cerrahi iyileştirmeler yapılır.
