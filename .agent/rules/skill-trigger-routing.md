@@ -125,7 +125,7 @@ Kullanıcının belirli bir isteği doğrudan ve kestirmeden ajana bildirmesini 
 | gözlem kaydet, skill geliştir, süreç analizi, yeni skill öner / log observation, improve skill, observe task | `task-observer` | `skills/task-observer/SKILL.md` |
 | fikirlerime bak, fikirlerimi incele, fikir havuzu, yeni fikir seç, ne yapabiliriz, myidea, my idea / review ideas, idea backlog, brainstorm ideas | `my-idea` | `skills/my-idea/SKILL.md` |
 | güvenlik denetimi, security audit, güvenlik açığı tara, vulnerability scan, pen test, sızma testi, güvenlik incelemesi, yetki aşımı kontrolü / security audit, vulnerability scan, pen test, security review, audit security, exploit check | `security-audit` | `skills/security-audit/SKILL.md` |
-| Goku skill güncelle, skill update, GS update, GS güncelle, goku update, skillset güncelle, skill'leri güncelle, goku skills update, ajan yeteneklerini güncelle / update skills, goku update, update skill set, upgrade skills, sync skills | `musgoku` | `skills/musgoku/SKILL.md` |
+| /goku-skills-update, /gs-update, Goku skill güncelle, skill update, GS update, GS güncelle, goku update, skillset güncelle, skill'leri güncelle, goku skills update, ajan yeteneklerini güncelle / update skills, goku update, update skill set, upgrade skills, sync skills | `musgoku` | `skills/musgoku/SKILL.md` |
 | prelaunch, canlıya al, go live, yayına alma kontrolü, consent check, axe audit, /prelaunch, /prelaunch-update / prelaunch audit, go live checklist, prelaunch checklist | `prelaunch-audit` | `skills/prelaunch-audit/SKILL.md` |
 
 ### A5. Bağlayıcı Oturum Slash Komutları ve Prompt Makroları (Ensemble Slash Commands)
@@ -145,7 +145,7 @@ Yapay zeka asistanlarının tekil ve birbirinden kopuk araçlar çalıştırmas�
 | **`/prelaunch-update`** | `prelaunch-audit` (`scripts/prelaunch_updater.py`) | **Mevzuat & Platform Güncellemesi:** İdari para cezaları, KVKK bildirim limitleri ve Google Search kurallarını resmi kaynaklardan sorgulayıp cerrahi günceller. | `skills/prelaunch/SKILL.md` |
 | **`/seo-apply`** / `[SEO-APPLY]` | `seo-growth` → `frontend-design` + `seo_checker.py` | **Uçtan Uca SEO & GEO Uygulama:** Kod tabanına bizzat girer; semantik meta başlık/açıklama, canonical, OpenGraph, JSON-LD Schema.org, AI crawler `robots.txt`, `sitemap.xml` ve `/llms.txt` dosyalarını üretip `seo_checker.py` ile doğrular. | `skills/seo-apply/SKILL.md` |
 | **`/commitx`** / `commitle` / `[COMMITX]` | `git-release-workflow` | **Peşin Tam Yetkili Sürüm Yayını:** Doğrulama kapılarını çalıştırır; ara onay sormadan `git add` → `git commit` → `git tag` → `git push` zincirini tek nefeste tamamlar. | `skills/commitx/SKILL.md` |
-| **`/gs-update`** / `"GS güncelle"` | `musgoku` | **Sıfır-Şişkinlik Skill Senkronu:** Proje kuralını koruyarak ve gereksiz dosya indirmeden ajan becerilerini cerrahi olarak en son sürüme senkronlar. | `skills/gs-update/SKILL.md` |
+| **`/goku-skills-update`** / **`/gs-update`** / `"GS güncelle"` | `gs-update` (`musgoku`) | **Sıfır-Şişkinlik Skill Senkronu:** Kullanıcıya workspace veya global kapsamını sorarak proje kuralını korur ve kurulu olmayan becerileri indirmeden cerrahi güncelleme yapar. | `skills/gs-update/SKILL.md` |
 
 ---
 
