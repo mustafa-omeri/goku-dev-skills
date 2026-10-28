@@ -58,3 +58,9 @@ Bir ajan şu durumlarda `adaptive-overflow-card-hub` bileşenini seçmelidir:
 - Odak tuzağı (focus trap): Modal açıldığında odak arama kutusuna gider.
 - Escape tuşu: Modalı kapatır.
 - Odak İadesi: Modal kapandığında klavye odağı modalı tetikleyen asıl butona (grup butonu veya `... (+K)` butonu) döner.
+
+
+## Kural B.10 ve A.14 Sözleşmesi (Framed Containment & Proportional Sizing)
+- **Modal Genişlik Tavanı:** `.hub-sheet` genişliği 1100px gibi kontrolsüz boyutlara açılamaz; `max-width: min(94vw, 780px)` ile sınırlıdır.
+- **Çerçeveli Kategori İzolasyonu:** Her kategori `.hub-domain-frame` kutusu içine alınır (`border: 1px solid var(--hub-border)`, `background-color: var(--hub-surface-subtle)`, `padding: 14px 16px`).
+- **Simetrik 2-Kolon Izgara:** Masaüstünde `repeat(2, 1fr)`, mobilde tek kolon (`1fr`) ile kartlar çerçevenin içinde dengeli ve simetrik konumlandırılır.

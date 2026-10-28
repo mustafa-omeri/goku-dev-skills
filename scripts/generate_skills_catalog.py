@@ -1223,7 +1223,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
             )
         cards_joined = "".join(cards_html)
         panel_chunks.append(
-            f'<div class="sheet-domain-panel" data-domain="{d["id"]}">'
+            f'<div class="sheet-domain-frame sheet-domain-panel" data-domain="{d["id"]}">'
             f'<div class="sheet-domain-header">'
             f'<span class="sheet-domain-pill" style="background:{d["subtle_var"]};color:{d["color_var"]};border:1px solid {d["border_var"]};">{d["title"]}</span>'
             f'<span class="sheet-domain-count">({len(d["commands"])})</span>'
@@ -2162,8 +2162,8 @@ def generate_catalog_html(skills: list[dict]) -> str:
       bottom: 0;
       transform: translate(-50%, 100%);
       width: 100%;
-      max-width: 1100px;
-      max-height: 86vh;
+      max-width: min(94vw, 780px);
+      max-height: 80vh;
       background: var(--bg-surface-elevated);
       border-top-left-radius: var(--radius-lg);
       border-top-right-radius: var(--radius-lg);
@@ -2273,15 +2273,24 @@ def generate_catalog_html(skills: list[dict]) -> str:
       gap: 1.5rem;
       overscroll-behavior: contain;
     }}
+    .sheet-domain-frame,
     .sheet-domain-panel {{
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem 1rem 1rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      box-sizing: border-box;
     }}
     .sheet-domain-header {{
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 0.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-subtle);
     }}
     .sheet-domain-pill {{
       display: inline-flex;
@@ -2298,11 +2307,11 @@ def generate_catalog_html(skills: list[dict]) -> str:
       font-weight: 600;
     }}
 
-    /* Equal Dimensions Card Grid Contract (B.9) */
+    /* Framed Symmetrical Card Grid (B.9 & B.10) */
     .sheet-card-grid {{
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 0.75rem;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.65rem;
     }}
     .sheet-card {{
       display: flex;

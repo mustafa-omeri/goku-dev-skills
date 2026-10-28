@@ -301,8 +301,8 @@
   bottom: 0;
   transform: translate(-50%, 100%);
   width: 100%;
-  max-width: 1100px;
-  max-height: 88vh;
+  max-width: min(94vw, 780px);
+  max-height: 80vh;
   background-color: var(--hub-surface);
   border-top-left-radius: var(--hub-radius-lg);
   border-top-right-radius: var(--hub-radius-lg);
@@ -435,16 +435,24 @@
 }
 
 /* Domain Panels */
+.hub-domain-frame,
 .hub-domain-panel {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  padding: 14px 16px 16px 16px;
+  background-color: var(--hub-surface-subtle);
+  border: 1px solid var(--hub-border);
+  border-radius: var(--hub-radius-md);
+  box-sizing: border-box;
 }
 
 .hub-domain-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--hub-border);
 }
 
 .hub-domain-pill {
@@ -470,11 +478,17 @@
   color: var(--hub-text-muted);
 }
 
-/* Equal Dimensions Card Grid Contract (B.9) */
+/* Framed Symmetrical Card Grid (B.9 & B.10) */
 .hub-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .hub-card-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .hub-card {

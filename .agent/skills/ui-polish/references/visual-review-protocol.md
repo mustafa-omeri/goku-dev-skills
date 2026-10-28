@@ -34,6 +34,7 @@ Her madde `0` (Kusurlu / P0), `1` (Kabul Edilebilir / P1) veya `2` (Üretim Kali
 | 5 | **Tipografi Disiplini** | En fazla 2 font ailesi (+ yalnızca kod/komut için Mono); aşırı UPPERCASE etiket kirliliği yok |
 | 6 | **4 UX Durumu (States)** | Default, Hover/Focus, Active/Filtered ve Empty State (+ Sıfırla CTA) eksiksiz çalışıyor |
 | 7 | **3 Viewport Ergonomisi** | 390px, 834px ve 1440px'te yatay taşma yok; mobilde dokunma hedefleri ≥ 44px |
+| 7b | **Modal & Popup Çerçeveleme (Kural B.10)** | Popup paneller gereksiz devasa değil (max 780px); ayrı gösterimler/kategoriler çerçeveli (framed) ve simetrik |
 | 8 | **`DESIGN.md` Sözleşme Uyumu** | Kodda kullanılan tüm renkler ve fontlar `DESIGN.md` frontmatter token'larıyla birebir uyumlu |
 | 9 | **Tarayıcı Yüzeyleri & Mikro-Etkileşim** | `::selection`, `caret-color`, `:focus-visible`, `tabular-nums` ve `prefers-reduced-motion` tam |
 | 10 | **Sıfır Konsol & Mekanik Hata** | Tarayıcı konsolunda 0 JS hatası; 3 tasarım kapısı (`contract`, `slop`, `contrast`) 0 hata |

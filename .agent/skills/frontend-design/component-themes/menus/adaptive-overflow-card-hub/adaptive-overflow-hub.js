@@ -89,7 +89,7 @@
       const domainItems = groups[domainKey];
 
       const panel = document.createElement('section');
-      panel.className = 'hub-domain-panel';
+      panel.className = 'hub-domain-frame hub-domain-panel';
       panel.dataset.domain = domainKey;
 
       if (domainItems.length === 0) {
