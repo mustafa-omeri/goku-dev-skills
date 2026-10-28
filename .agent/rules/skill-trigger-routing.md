@@ -33,6 +33,7 @@ Ajan, kullanıcının belirli bir sihirli kelimeyi (trigger) yazmasını **asla 
 | **Refactoring & Sadeleştirme:** Kod karmaşıklığı, uzun fonksiyonlar, ortak kod değişiklikleri | `karpathy-guidelines` + `codebase-design` | Ön etki analizi (blast radius), derin modül ve cerrahi değişiklik disiplini zorunludur. |
 | **Landing Page / Web / robots.txt:** Yeni web sayfası, SEO, sitemap, crawler politikaları | `seo-growth` (`seo_checker.py`) | Arama motoru ve AI bot görünürlüğü için standart denetim esastır. |
 | **Güvenlik / Yetki / Token / Hassas Veri:** Auth, role, input sanitization, API anahtarı | `security-audit` | Güvenlik kalkanı ve yetki aşımı denetimi tavizsizdir. |
+| **Görev Planlama / Mimari Parçalama / "Nasıl Yapılacak?":** Yeni özellik kurgusu, mimari fazlara bölme, sprint/dilim planı, "nasıl yapacaksın?", kabul kriterleri | `doc-coauthoring` + `musgoku` + `tdd` + `sprint-delivery-workflow` | Serbest metinli yüzeysel planları (ad-hoc planning slop) ve phantom done riskini önlemek; 5 katmanlı dikey dilim, TDD dikiş noktaları ve Gherkin kriterlerini zorunlu kılmak için esastır. |
 | **Yeni Paket / Dokümantasyon / API İsmi:** Harici kütüphane ekleme veya API kullanımı | `context7` MCP | Sürüm farkları ve doğru API parametrelerini doğrulamak için zorunludur. |
 | **3+ Adımlı Plan / Belirsiz Mantık:** Karmaşık mimari akıl yürütme veya strateji | `sequential-thinking` MCP | Düşünce zincirinin dağılmasını önlemek için zorunludur. |
 

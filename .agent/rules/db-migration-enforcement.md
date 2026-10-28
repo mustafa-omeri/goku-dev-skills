@@ -59,13 +59,17 @@ Bir veritabanı işlemi yapılırken ajan sırasıyla şu adımları işletmek *
 2. **Kodu ve Migration Dosyasını Yaz:**
    - Projenin migration aracına uygun scripti oluştur (Flyway `V...__*.sql`, Prisma `migration.sql` vb.).
    - İlgili Entity / Model sınıflarını ve DTO'ları senkronize et.
-3. **`DB_MIGRATIONS.md` Dosyasını Aynı Değişiklikte Güncelle:**
-   - Yeni revizyon kaydını şablon formatına uygun olarak en üste ekle.
+3. **`DB_MIGRATIONS.md` ve `PROJECT_BRIEF.md` Dosyalarını İkili Eşleme (Dual Mapping) ile Güncelle:**
+   - Yeni revizyon kaydını `DB_MIGRATIONS.md` şablon formatına uygun olarak en üste ekle.
    - Değişiklik detay tablosunu, geriye uyumluluk notunu ve rollback scriptini eksiksiz doldur.
+   - ⛔ **İkili Eşleme Zorunluluğu (Dual Mapping):** Veritabanı şeması veya altyapısı değiştiğinde canlı mimari belgesi olan `PROJECT_BRIEF.md` dosyasının §4 Veritabanı Modeli / Şema bölümünü ve frontmatter'daki `database:` listesini de eşzamanlı güncelle (Bkz: `project-brief-maintenance.md`).
 4. **Test ve Doğrulama:**
    - Migration komutunu çalıştır ve başarılı uygulandığını doğrula.
-   - Doğrulama kapısını çalıştır:
-     `python .agent/skills/musgoku/scripts/check_db_migrations.py`
+   - İkili doğrulama kapılarını çalıştır:
+     ```bash
+     python .agent/skills/musgoku/scripts/check_db_migrations.py
+     python .agent/skills/musgoku/scripts/check_project_brief.py
+     ```
 
 ---
 
@@ -146,6 +150,7 @@ python .agent/skills/musgoku/scripts/check_db_migrations.py
 | **E2** | Hata (Exit 1) | Diskteki migration scripti `DB_MIGRATIONS.md` içinde belgelenmemiş. |
 | **E3** | Hata (Exit 1) | `DB_MIGRATIONS.md` boş (<80 bayt) veya yetersiz içerik barındırıyor. |
 | **E4** | Hata (Exit 1) | **Dinamik Git-Diff Koruması:** Git çalışma ağacında (staged/unstaged) veritabanı, migration veya şema dosyası değiştirildi ancak `DB_MIGRATIONS.md` aynı oturumda güncellenmedi. |
+| **E5** | Hata (Exit 1) | **Dinamik Git-Diff Çift Yönlü Eşleme Koruması (Dual Mapping Guard):** Git çalışma ağacında veritabanı/migration dosyası değiştirildi ancak `PROJECT_BRIEF.md` güncellenmedi. Canlı mimari ve DB şeması eşzamanlı senkronize edilmelidir. |
 | **W1** | Uyarı | Entity/Model sınıfları tespit edildi ancak dokümanda anılmamış. |
 | **W2** | Uyarı | `DB_MIGRATIONS.md` içinde standart `### [REV-...]` revizyon başlığı bulunamadı. |
 | **W3** | Uyarı | Kural öncesi geçmiş (legacy) migration'lar mevcut ve baseline olarak kabul edildi. |

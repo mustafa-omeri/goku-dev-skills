@@ -46,12 +46,18 @@ Tetikleyici tablosu ve sınırlar: [mcp-usage-enforcement.md](./mcp-usage-enforc
 ⛔ **KESİN VE NET KURAL:** İster bir sprint planı dahilinde olsun, ister sprint dışı küçük dilimlere (slice'lara) veya task listesine bölünmüş olsun:
 **"Ne yapılacağı" (what) bilinse dahi, "nasıl yapılacağı" (how) planlanmadan DOĞRUDAN KODA BAŞLAMAK KESİNLİKLE YASAKTIR.**
 
+⛔ **Serbest Metin Plan Yasağı ve Otonom Beceri Devreye Alma (Anti-Adhoc-Planning Slop):**
+Kullanıcı işin nasıl yapılacağını sorduğunda, mimari plan istendiğinde veya yeni bir özellik geliştirme bağlamına girildiğinde; ajanın skillset kurallarından ve şablonlarından kopuk, ad-hoc, serbest metinli yüzeysel bir yapılacaklar listesi çıkarması **KESİNLİKLE YASAKTIR**.
+Ajan kullanıcının herhangi bir hatırlatma yapmasını beklemeden; `doc-coauthoring` (mimari plan ve şartname kurgusu), `musgoku` (5 katmanlı dikey dilim mimarisi), `tdd` (test odaklı faz ve dikiş noktası planlama) ve (varsa) `sprint-delivery-workflow` (Gherkin kabul kriterleri & Kanban kartları) yeteneklerini **otonom olarak (unprompted)** devreye sokar ve planını bu standart yapı taşlarıyla sunar.
+
 Geliştirmeye başlamadan önce ajan sırasıyla şu adımları işletmek zorundadır:
 
 1. **Detaylı Uygulama Planı ("Nasıl Yapılacak?"):**
-   - Değişecek, oluşturulacak veya silinecek dosyalar,
-   - Mimari yaklaşım, tasarım desenleri ve bileşen sınırları,
-   - Varsa state yönetimi, veri akışı ve endpoint bağlantı adımları çıkarılır.
+   - **5 Katmanlı Dikey Dilim (Full-Stack Vertical Slice):** DB Şeması/Migration → Backend View/RPC → İstemci API Entegrasyonu → Arayüz/UX → Döngü Kapanışı / Admin Formu.
+   - **TDD Dikiş Noktaları (Seams) ve Kırmızı-Yeşil Fazları:** Hangi dikiş noktasında kırmızı test yazılacak, minimal geçiş kodu ne olacak.
+   - **Gherkin Kabul Kriterleri:** `Feature` ve `Scenario` (`Given ... When ... Then ...`) somut test adımları.
+   - **WIP Uyumlu Faz / Kart Dökümü:** `KANBAN.md` ve `SPRINT_PLAN.md` yapısına oturacak aşamalar (WIP limiti maksimum 3).
+   - Değişecek, oluşturulacak veya silinecek dosyalar, modül sınırları, state yönetimi ve veri akışı adımları çıkarılır.
 
 2. ⛔ **Uçtan Uca Veri Döngüsü (E2E Data Lifecycle) ve 5 Zorunlu Halka:**
    Veri üreten veya toplayan her özellik (form, bildirim, geri bildirim, kayıt vb.) için şu 5 halka planda eksiksiz tanımlanmalıdır:
@@ -110,9 +116,10 @@ Geliştirmeye başlamadan önce ajan sırasıyla şu adımları işletmek zorund
 3. Kodu yaz — DRY, guard clauses, erken return, tip güvenliği.
 4. Frontend projesi ise i18n anahtarlarını **her iki dil dosyasına** ekle.
 5. Backend projesi ise API dokümantasyon dosyasını aynı değişiklikte güncelle.
-6. Veritabanı şeması, tablo, kolon veya entity revizyonu yapıldıysa `DB_MIGRATIONS.md` dosyasını aynı değişiklikte güncelle.
-7. Mevcut kodun akışını ve iş mantığını bozma; refactor'ı ayrı adımda yap (`code-review` ve `codebase-design` ilkeleriyle).
-8. Frontend projesinde yeni veya güncellenen bir arayüz (sayfa, dashboard, form, tablo, bileşen) üretiliyorsa; `frontend-design`, `ui-ux-pro-max` ve (Tailwind ise) `ui-styling` kurallarına uymak zorunludur. Tekdüze "AI-slop" arayüzler testler geçse dahi teslim edilemez (bkz. `sprint-delivery-workflow.md` §6.1).
+6. Veritabanı şeması, tablo, kolon veya entity revizyonu yapıldıysa `DB_MIGRATIONS.md` dosyasını VE canlı mimari belgesi olan `PROJECT_BRIEF.md` (Veritabanı Modeli / Şema) dosyasını eşzamanlı (İkili Eşleme - Dual Mapping) güncelle.
+7. Yeni paket/bağımlılık (`package.json`, `pom.xml`, `requirements.txt`), yeni altyapı bileşeni veya sunucusuz işlev (Edge Function, worker, Lambda) eklendiyse `PROJECT_BRIEF.md` dosyasını aynı değişiklikte güncelle.
+8. Mevcut kodun akışını ve iş mantığını bozma; refactor'ı ayrı adımda yap (`code-review` ve `codebase-design` ilkeleriyle).
+9. Frontend projesinde yeni veya güncellenen bir arayüz (sayfa, dashboard, form, tablo, bileşen) üretiliyorsa; `frontend-design`, `ui-ux-pro-max` ve (Tailwind ise) `ui-styling` kurallarına uymak zorunludur. Tekdüze "AI-slop" arayüzler testler geçse dahi teslim edilemez (bkz. `sprint-delivery-workflow.md` §6.1).
 
 ---
 

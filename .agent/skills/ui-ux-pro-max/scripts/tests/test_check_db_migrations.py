@@ -212,5 +212,56 @@ class TestCheckDbMigrations(unittest.TestCase):
         self.assertEqual(ret, 1)  # E4 ve E2 nedeniyle hata vermeli
 
 
+    def test_git_working_tree_e5_project_brief_dual_mapping_guard(self):
+        """Git çalışma ağacında SQL eklenip DB_MIGRATIONS.md güncellense bile PROJECT_BRIEF.md ellenmediğinde E5 vermelidir."""
+        subprocess.run(["git", "init"], cwd=str(self.tmp_dir), capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.name", "Test"], cwd=str(self.tmp_dir), check=True)
+        subprocess.run(["git", "config", "user.email", "test@test.com"], cwd=str(self.tmp_dir), check=True)
+
+        brief_file = self.tmp_dir / "PROJECT_BRIEF.md"
+        brief_file.write_text(
+            "---\ntitle: Test Brief\ntype: project-brief\nproject: test\nstatus: active\n"
+            "created: 2026-10-28\nupdated: 2026-10-28\nprimary_language: Python\n"
+            "frameworks: []\ndatabase: [MySQL]\n---\n# Test Brief\n",
+            encoding="utf-8"
+        )
+
+        doc_file = self.tmp_dir / "DB_MIGRATIONS.md"
+        doc_file.write_text(
+            "# DB_MIGRATIONS.md\n\n## 1. Proje Veritabanı Özeti\n- Motor: MySQL\n"
+            "### [REV-20261016-01] Initial\n- Migration: V1__init.sql\n| Tablo | Kolon | İşlem |\n| a | b | c |\n",
+            encoding="utf-8"
+        )
+        mig_dir = self.tmp_dir / "migrations"
+        mig_dir.mkdir(parents=True, exist_ok=True)
+        (mig_dir / "V1__init.sql").write_text("CREATE TABLE a (b INT);", encoding="utf-8")
+
+        subprocess.run(["git", "add", "."], cwd=str(self.tmp_dir), check=True)
+        subprocess.run(["git", "commit", "-m", "init"], cwd=str(self.tmp_dir), check=True)
+
+        # Yeni migration ekle ve DB_MIGRATIONS.md'ye yaz (E4 çözüldü, E2 çözüldü)
+        (mig_dir / "V2__add_status.sql").write_text("ALTER TABLE a ADD COLUMN status VARCHAR;", encoding="utf-8")
+        doc_file.write_text(
+            "# DB_MIGRATIONS.md\n\n## 1. Proje Veritabanı Özeti\n- Motor: MySQL\n"
+            "### [REV-20261016-02] Add Status\n- Migration Dosyası: V2__add_status.sql\n| Tablo | Kolon | İşlem |\n| a | status | ADD |\n"
+            "### [REV-20261016-01] Initial\n- Migration: V1__init.sql\n| Tablo | Kolon | İşlem |\n| a | b | c |\n",
+            encoding="utf-8"
+        )
+
+        # PROJECT_BRIEF.md güncellenmedi! E5 vermeli
+        ret_fail = check_db_migrations.main(["--json"])
+        self.assertEqual(ret_fail, 1)
+
+        # Şimdi PROJECT_BRIEF.md'yi de güncelle (İkili Eşleme / Dual Mapping sağlandı)
+        brief_file.write_text(
+            "---\ntitle: Test Brief\ntype: project-brief\nproject: test\nstatus: active\n"
+            "created: 2026-10-28\nupdated: 2026-10-28\nprimary_language: Python\n"
+            "frameworks: []\ndatabase: [MySQL, 'v2 status']\n---\n# Test Brief (Updated)\n",
+            encoding="utf-8"
+        )
+        ret_pass = check_db_migrations.main(["--json"])
+        self.assertEqual(ret_pass, 0)
+
+
 if __name__ == "__main__":
     unittest.main()

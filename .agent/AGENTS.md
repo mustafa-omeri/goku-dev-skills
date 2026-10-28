@@ -81,7 +81,8 @@ ve [`.agent\rules\project-brief-maintenance.md`](rules/project-brief-maintenance
    - Mock verili testlerin yeşil olmasına aldanıp gerçek view/endpoint bağlantısını kurmamak (canlıda view'da kolon yoksa `undefined` döner ve bileşen sessizce hiç çizilmez),
    - Verinin sisteme nasıl gireceğini (admin formu, submission ekranı, döngü kapanışı) yapmadan özelliği tamamlandı saymak
    **AĞIR İHLAL (Phantom Done)** sayılır. Katmanlardan biri eksikse iş "BİTTİ" ilan edilemez; durum açıkça **"YARIM (Eksik Katman: ...)"** olarak kaydedilir ve eksik parça `HANDOFF.md` §3 Sıradaki İşler tablosuna ilk sıradan eklenir.
-4. Bağımlılık (paket/kütüphane), DB şeması veya mimari karar revizyonu yapıldıysa `PROJECT_BRIEF.md` dosyasını güncelle (yoksa `.agent/templates/PROJECT_BRIEF.template.md` şablonundan oluştur).
+4. Bağımlılık (paket/kütüphane), DB şeması, yeni servis/sunucusuz işlev (Edge Function, worker) veya mimari karar revizyonu yapıldıysa `PROJECT_BRIEF.md` dosyasını güncelle (yoksa `.agent/templates/PROJECT_BRIEF.template.md` şablonundan oluştur).
+   ⛔ **Sahte 'Stabil' Beyanı Yasağı (Anti-Lazy Stabil Declaration):** Git çalışma ağacında bağımlılık manifesti (`package.json`, `pom.xml`, `requirements.txt`), veritabanı şeması/migration'ı (`*.sql`, `schema.prisma`, entity'ler) veya altyapı işlevi (Edge Function, worker) değiştiği halde raporda `PROJECT_BRIEF.md: Değişiklik yok / stabil` yazmak **AĞIR İHLALDIR**. Canlı mimari şema senkronize edilmelidir; `check_project_brief.py` (E3, E4) ve `check_db_migrations.py` (E5) kapıları bu durumu otomatik tespit ederek işlemi bloke eder.
 5. Veritabanı revizyonu (tablo, kolon, indeks, entity) yapıldıysa `DB_MIGRATIONS.md` dosyasını güncelle (yoksa `.agent/templates/DB_MIGRATIONS.template.md` şablonundan oluştur).
 6. `knowledge-base.md`'ye bu adımda çözülen hataları ve verilen kararları **yaz**.
 7. `HANDOFF.md`'yi güncelle: kanıt metrikleri, katman denetimi matrisi, nerede kaldık, **sıradaki iş**,
@@ -207,7 +208,7 @@ Ayrıntı: [`rules/no-silent-wait.md`](rules/no-silent-wait.md).
 - Kod yazmadan önce `.agent/skills/` altındaki ilgili skill'i oku.
 - Yönlendirme: [`.agent\skills\musgoku\SKILL.md`](skills/musgoku/SKILL.md)
 - Kurallar dizini tek kaynaktır: [`.agent\rules/`](rules/) — `trigger-rule-action.md` hepsini bağlar.
-- 💡 **Otonom Bağlamsal Tetikleme (Autonomous Activation):** Ajan, kullanıcının belirli bir sihirli kelimeyi (trigger) yazmasını **pasifçe beklemez.** Görevin bağlamı (UI değişikliği, 2+ alternatifli mimari ikilem, bug çözümü, SEO, güvenlik vb.) ilgili alana girdiği anda kullanıcı o kelimeyi unutsa dahi ilgili skill'i (`karpathy-guidelines` Council, `diagnosing-bugs`, tasarım üçlüsü, `seo-growth`, `security-audit`) **otonom olarak** devreye alır. (Bkz. [`rules/skill-trigger-routing.md`](rules/skill-trigger-routing.md) §0).
+- 💡 **Otonom Bağlamsal Tetikleme (Autonomous Activation):** Ajan, kullanıcının belirli bir sihirli kelimeyi (trigger) yazmasını **pasifçe beklemez.** Görevin bağlamı (UI değişikliği, 2+ alternatifli mimari ikilem, bug çözümü, SEO, güvenlik, görev planlama/parçalama vb.) ilgili alana girdiği anda kullanıcı o kelimeyi unutsa dahi ilgili skill'i (`karpathy-guidelines` Council, `diagnosing-bugs`, tasarım üçlüsü, `seo-growth`, `security-audit`, `doc-coauthoring` + `musgoku` + `tdd`) **otonom olarak** devreye alır. (Bkz. [`rules/skill-trigger-routing.md`](rules/skill-trigger-routing.md) §0).
 - Yeni iş mantığı, servis veya endpoint geliştirmede `tdd` (kırmızı → yeşil döngüsü); hata ayıklamada ise `bug-diagnosis-enforcement` (önce kırmızı geri bildirim döngüsü) tavizsiz uygulanır.
 - Tasarım/UI taleplerinde `canvas-design` + `frontend-design` + `ui-ux-pro-max`
   birlikte okunur; hangi konunun sahibi olduğunu `design-skills-enforcement.md`

@@ -19,10 +19,11 @@ Bu kapı scripti, çok dilli ve çok yığınlı (multi-ecosystem) evrensel mima
 2. Evrensel Migration Dizin Tespiti:
    - supabase/migrations, prisma/migrations, drizzle, alembic/versions, hasura/migrations
    - db/migrations, database/migrations, migrations, src/main/resources/db/migration
-3. Dinamik Git Çalışma Ağacı Koruması (E4):
+3. Dinamik Git Çalışma Ağacı Koruması (E4, E5):
    - Git çalışma ağacında (staged / unstaged) veritabanı/migration/şema dosyası
      değiştirilmişse, DB_MIGRATIONS.md dosyasının da aynı oturumda güncellendiğini
-     matematiksel olarak zorunlu kılar.
+     (E4) ve projenin canlı mimari belgesi PROJECT_BRIEF.md dosyasının da
+     eşzamanlı senkronize edildiğini (E5 - İkili Eşleme / Dual Mapping) zorunlu kılar.
 4. Brownfield / Legacy Desteği:
    - Kural öncesi geçmiş (legacy) migration'lar için baseline desteği.
 
@@ -32,12 +33,13 @@ E1 zorunlu dosya eksik      DB_MIGRATIONS.md (veya docs/database/DB_MIGRATIONS.m
 E2 migration belgelenmemiş  disk üzerindeki migration scripti DB_MIGRATIONS.md içinde yok
 E3 boş veya yetersiz içerik DB_MIGRATIONS.md boş veya revizyon/tablo kaydı içermiyor
 E4 git diff eşzamansızlığı  git çalışma ağacında DB/migration değişti ama DB_MIGRATIONS.md güncellenmedi
+E5 mimari senkronizasyon    git çalışma ağacında DB/migration değişti ama PROJECT_BRIEF.md güncellenmedi
 W1 entity belgelenmemiş     Entity/Model sınıfı var ama DB_MIGRATIONS.md içinde anılmamış
 W2 standart başlık eksik    Standart revizyon başlığı (### [REV-...] veya ### [V...]) bulunamadı
 W3 legacy migration uyarısı Eski migration'lar baseline olarak belirtilmemiş
 W4 çoklu dosya uyarısı      Birden fazla DB_MIGRATIONS.md tespit edildi
 
-E1-E4 hata (exit 1) · W1-W4 uyarı · exit 2 = araç hatası.
+E1-E5 hata (exit 1) · W1-W4 uyarı · exit 2 = araç hatası.
 Veritabanı varlığı bulunamayan projelerde (frontend-only vb.) kapsam dışı: exit 0.
 """
 
@@ -313,7 +315,7 @@ def check_db_scope(project_root: Path, migration_files: list[Path], entities: li
     return False, "Veritabanı varlığı veya bağımlılığı bulunamadı"
 
 
-def check_git_working_tree_changes(project_root: Path, doc_paths: list[Path]) -> list[str]:
+def check_git_working_tree_changes(project_root: Path, doc_paths: list[Path]) -> tuple[list[str], bool, bool]:
     """Git çalışma ağacında DB/migration dosyası değiştiğinde DB_MIGRATIONS.md'nin de değiştiğini doğrular (E4)."""
     try:
         res = subprocess.run(
@@ -324,16 +326,13 @@ def check_git_working_tree_changes(project_root: Path, doc_paths: list[Path]) ->
             check=False
         )
         if res.returncode != 0:
-            return []
+            return [], True, True
     except Exception:
-        return []
-
-    lines = res.stdout.strip().splitlines()
-    if not lines:
-        return []
+        return [], True, True
 
     changed_files: list[str] = []
     doc_changed = False
+    brief_changed = False
 
     doc_rel_names = {
         "db_migrations.md",
@@ -342,10 +341,14 @@ def check_git_working_tree_changes(project_root: Path, doc_paths: list[Path]) ->
         "database/db_migrations.md"
     }
 
-    for line in lines:
-        if len(line) < 4:
+    for raw_line in res.stdout.splitlines():
+        line = raw_line.strip()
+        if not line:
             continue
-        file_part = line[3:].strip()
+        parts = line.split(maxsplit=1)
+        if len(parts) < 2:
+            continue
+        file_part = parts[1].strip()
         # Yeniden adlandırma: "R  old -> new"
         if " -> " in file_part:
             file_part = file_part.split(" -> ")[1].strip()
@@ -354,6 +357,10 @@ def check_git_working_tree_changes(project_root: Path, doc_paths: list[Path]) ->
 
         if norm_path in doc_rel_names:
             doc_changed = True
+            continue
+
+        if norm_path == "project_brief.md":
+            brief_changed = True
             continue
 
         # DB / migration dosyası mı?
@@ -374,11 +381,7 @@ def check_git_working_tree_changes(project_root: Path, doc_paths: list[Path]) ->
             if not any(norm_path.startswith(d) for d in (".agent/", "yedekler/", "docs/", ".git/")):
                 changed_files.append(file_part)
 
-    # Eğer DB/migration dosyası değişmiş ama DB_MIGRATIONS.md değişmemişse E4 ihlali
-    if changed_files and not doc_changed:
-        return changed_files
-
-    return []
+    return changed_files, doc_changed, brief_changed
 
 
 def main(argv=None) -> int:
@@ -470,14 +473,24 @@ def main(argv=None) -> int:
             if not REVISION_HEADER_RE.search(combined_content) and "REV-" not in combined_content:
                 warnings.append(("W2", f"{doc_path.name} içinde standart revizyon başlığı (### [REV-...] veya ### [V...]) bulunamadı."))
 
-    # Dinamik Git Çalışma Ağacı Koruması (E4)
-    touched_db_files = check_git_working_tree_changes(project_root, all_doc_paths)
+    # Dinamik Git Çalışma Ağacı Koruması (E4: DB_MIGRATIONS.md, E5: PROJECT_BRIEF.md Dual Mapping)
+    touched_db_files, doc_changed, brief_changed = check_git_working_tree_changes(project_root, all_doc_paths)
     if touched_db_files:
-        errors.append((
-            "E4",
-            f"Git çalışma ağacında veritabanı/migration/şema dosyası değiştirildi ancak DB_MIGRATIONS.md güncellenmedi! "
-            f"Değişen dosyalar: {', '.join(touched_db_files[:5])}{' (...)' if len(touched_db_files) > 5 else ''}"
-        ))
+        if not doc_changed:
+            errors.append((
+                "E4",
+                f"Git çalışma ağacında veritabanı/migration/şema dosyası değiştirildi ancak DB_MIGRATIONS.md güncellenmedi! "
+                f"Değişen dosyalar: {', '.join(touched_db_files[:5])}{' (...)' if len(touched_db_files) > 5 else ''}"
+            ))
+        has_brief = (project_root / "PROJECT_BRIEF.md").is_file()
+        if has_brief and not brief_changed:
+            errors.append((
+                "E5",
+                f"Git çalışma ağacında veritabanı/migration/şema dosyası değiştirildi ancak 'PROJECT_BRIEF.md' güncellenmedi! "
+                f"Veritabanı şema ve mimari değişiklikleri hem DB_MIGRATIONS.md hem de PROJECT_BRIEF.md (Veritabanı Modeli) "
+                f"dosyalarına eşzamanlı işlenmek zorundadır (İkili Eşleme Sözleşmesi - Dual Mapping). "
+                f"Değişen dosyalar: {', '.join(touched_db_files[:5])}{' (...)' if len(touched_db_files) > 5 else ''}"
+            ))
 
     if args.json:
         out = {

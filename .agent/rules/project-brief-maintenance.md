@@ -38,6 +38,9 @@ Ajan aşağıdaki 4 temel durumda `PROJECT_BRIEF.md` dosyasını senkronize etme
    - **Başlangıç:** Ajan oturum başında `PROJECT_BRIEF.md` dosyasını okuyarak projenin güncel dilini, kütüphanelerini ve anayasal standartlarını öğrenir (`AGENTS.md` §0 Okuma Sırası).
    - **Kapanış:** `HANDOFF.md` teslim edilmeden önce `PROJECT_BRIEF.md`'nin mevcut kod gerçekliğini yansıttığı doğrulanır ve devir raporunda durumu açıkça belirtilir.
 
+⛔ **Sahte 'Stabil' Beyanı Yasağı (Anti-Lazy Stabil Declaration):**
+Git çalışma ağacında bağımlılık manifesti (`package.json`, `pom.xml`, `requirements.txt` vb.), yeni bir servis/sunucusuz fonksiyon (örn. Edge Function, worker) veya veritabanı şeması/migration'ı değiştirilmişken devir raporunda `PROJECT_BRIEF.md: Değişiklik yok / stabil` beyanında bulunmak ağır kural ihlalidir. Bu dosya canlı mimariyi yansıtmak zorundadır.
+
 ---
 
 ## 2. Dosya Konumu ve Şablonu
@@ -65,6 +68,8 @@ python .agent/skills/musgoku/scripts/check_project_brief.py
 - **W1 (Tarih Sapması):** Dosya içeriği değiştiği halde frontmatter'daki `updated` alanı bugünün tarihini taşımıyor.
 
 E1-E5 kodları **hata (exit 1)** üretir ve commit/handoff sürecini bloke eder.
+
+- 💡 **Çift Yönlü Güvenlik Ağı (Dual Mapping Guard):** `check_db_migrations.py` kapısı da simetrik olarak `E5` (Dual Mapping Drift Guard) denetimiyle donatılmıştır; dolayısıyla bir ajan yalnızca veritabanı kapısını çalıştırsa dahi `PROJECT_BRIEF.md` güncellenmeden `exit 0` alamaz. Mimari ve şema asla birbirinden kopamaz.
 
 ---
 
