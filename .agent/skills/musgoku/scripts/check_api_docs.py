@@ -21,11 +21,12 @@ Kontroller
 ----------
 E1 endpoint belgelenmemis        her METHOD /path `docs/APIs/` altinda olmali
 E2 docs/APIs dizini yok         endpoint varsa dokumantasyon dizini zorunlu
+E3 git-diff API sapmasi          Git diff'te controller/route degisti ama docs/APIs guncellenmedi
 W1 @Tag eksik                   controller sinifinda @Tag olmali
 W2 @Operation eksik             endpoint metodunda @Operation olmali
 
-E1-E2 hata (exit 1) · W1-W2 uyari · exit 2 arac hatasi
-Backend projesi degilse (pom.xml yok, controller yok) kapsam disi: exit 0.
+E1-E3 hata (exit 1) · W1-W2 uyari · exit 2 arac hatasi
+Backend projesi degilse (pom.xml yok, controller/route yok) kapsam disi: exit 0.
 
 Kullanim
 --------
@@ -43,6 +44,7 @@ import argparse
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -225,6 +227,112 @@ def scan_java(root: Path):
     return endpoints, missing_tag, missing_operation
 
 
+NEXT_EXPORT_RE = re.compile(
+    r"\bexport\s+(?:async\s+)?function\s+(GET|POST|PUT|PATCH|DELETE)\b"
+    r"|\bexport\s+const\s+(GET|POST|PUT|PATCH|DELETE)\s*="
+)
+FASTAPI_ROUTE_RE = re.compile(
+    r"@(?:app|router)\.(get|post|put|patch|delete)\(\s*[\"']([^\"']+)[\"']",
+    re.IGNORECASE,
+)
+
+
+def scan_multi_stack_routes(root: Path):
+    """Next.js App Router (app/api/**/route.ts) ve FastAPI rotalarini tarar."""
+    endpoints = []
+
+    # 1. Next.js App Router: app/api/**/route.{ts,js,tsx,jsx} veya src/app/api/**
+    for base_rel in ("app/api", "src/app/api"):
+        api_dir = root / base_rel
+        if not api_dir.is_dir():
+            continue
+        app_root = api_dir.parent  # app veya src/app
+        for route_file in sorted(api_dir.rglob("route.*")):
+            if route_file.suffix not in {".ts", ".js", ".tsx", ".jsx"}:
+                continue
+            if any(part in IGNORE_DIRS for part in route_file.parts):
+                continue
+            rel_dir = route_file.parent.relative_to(app_root).as_posix()
+            # Next.js [id] -> {id}
+            norm_route = "/" + re.sub(r"\[([^\]]+)\]", r"{\1}", rel_dir)
+            text = route_file.read_text(encoding="utf-8", errors="replace")
+            for m in NEXT_EXPORT_RE.finditer(text):
+                method = (m.group(1) or m.group(2)).upper()
+                endpoints.append((method, norm_route, route_file.name))
+
+    # 2. FastAPI: routers/ veya app/ altindaki .py dosyalari
+    for py_dir_name in ("app", "routers", "src/api"):
+        py_dir = root / py_dir_name
+        if not py_dir.is_dir():
+            continue
+        for py_file in sorted(py_dir.rglob("*.py")):
+            if any(part in IGNORE_DIRS for part in py_file.parts):
+                continue
+            text = py_file.read_text(encoding="utf-8", errors="replace")
+            for m in FASTAPI_ROUTE_RE.finditer(text):
+                endpoints.append((m.group(1).upper(), join_paths(m.group(2)), py_file.name))
+
+    return endpoints
+
+
+def check_git_diff_api_drift(root: Path) -> list[str]:
+    """Git calisma agacinda API controller/route degisip docs/APIs guncellenmemisse yakalar."""
+    if not (root / ".git").exists():
+        return []
+    try:
+        proc = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=str(root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=5,
+        )
+        if proc.returncode != 0:
+            return []
+
+        changed_routes: list[str] = []
+        docs_updated = False
+
+        for raw_line in proc.stdout.splitlines():
+            line = raw_line.strip()
+            if not line:
+                continue
+            parts = line.split(maxsplit=1)
+            if len(parts) < 2:
+                continue
+            file_part = parts[1].strip().strip('"')
+            if " -> " in file_part:
+                file_part = file_part.split(" -> ", 1)[1].strip().strip('"')
+            norm = file_part.replace("\\", "/")
+            norm_lower = norm.lower()
+
+            if (
+                norm_lower.startswith("docs/apis/")
+                or norm_lower.endswith("api_docs.md")
+                or norm_lower.endswith("openapi.yaml")
+                or norm_lower.endswith("openapi.json")
+                or norm_lower.endswith("swagger.json")
+            ):
+                docs_updated = True
+                continue
+
+            is_route = (
+                (norm.endswith("Controller.java") and "src/main/java" in norm)
+                or re.search(r"(?:^|/)app/api/.+/route\.(?:ts|js|tsx|jsx)$", norm)
+                or (norm_lower.startswith("routers/") and norm_lower.endswith(".py"))
+            )
+            if is_route:
+                changed_routes.append(norm)
+
+        if docs_updated:
+            return []
+        return changed_routes
+    except Exception:
+        return []
+
+
 def strip_decorators(path: str) -> str:
     return path.rstrip(".,;)`*_ \t")
 
@@ -276,7 +384,9 @@ def check(root: Path):
     errors = []
     warnings = []
 
-    endpoints, missing_tag, missing_operation = scan_java(root)
+    java_endpoints, missing_tag, missing_operation = scan_java(root)
+    other_endpoints = scan_multi_stack_routes(root)
+    endpoints = java_endpoints + other_endpoints
     documented = collect_doc_paths(root)
     docs_dir = root / "docs" / "APIs"
 
@@ -297,6 +407,16 @@ def check(root: Path):
                        for m, p in doc_index):
                 errors.append(("E1", "docs/APIs",
                                f"{method} {api_path} belgelenmemis ({source})"))
+
+    # E3: Git çalışma ağacında API controller/route değişti ama docs/APIs güncellenmedi
+    drift_routes = check_git_diff_api_drift(root)
+    if drift_routes:
+        errors.append((
+            "E3",
+            "docs/APIs",
+            f"Git calisma agacinda API rotasi/controller degisti ({', '.join(drift_routes[:2])}) "
+            f"ancak docs/APIs/ dokumantasyonu guncellenmedi!",
+        ))
 
     for name in missing_tag:
         warnings.append(("W1", name, "controller sinifinda @Tag yok"))

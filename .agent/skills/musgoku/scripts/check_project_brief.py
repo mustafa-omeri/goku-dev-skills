@@ -30,10 +30,12 @@ E2 geçersiz frontmatter     YAML frontmatter eksik veya zorunlu alanlar (title,
 E3 bağımlılık sapması       Git diff'te paket/manifest değişti ama PROJECT_BRIEF.md güncellenmedi
 E4 veritabanı sapması       Git diff'te DB/migration değişti ama PROJECT_BRIEF.md güncellenmedi
 E5 kırık doküman linki      related_docs listesindeki dosya diskte bulunamadı
+E6 altyapı/edge sapması     Git diff'te Edge Function / Serverless / Infra değişti ama PROJECT_BRIEF.md güncellenmedi
+E7 şablon yer tutucusu      PROJECT_BRIEF.md içinde doldurulmamış şablon yer tutucusu ([PROJE_ADI], [proje-slug] vb.)
 W1 tarih sapması            updated tarihi bugünün tarihi değil
 W2 eksik mimari bölümü      5 standart mimari bölümünden biri eksik
 
-E1-E5 hata (exit 1) · W1-W2 uyarı · exit 2 = araç hatası.
+E1-E7 hata (exit 1) · W1-W2 uyarı · exit 2 = araç hatası.
 Manifest içermeyen projelerde kapsam dışı: exit 0.
 """
 
@@ -62,6 +64,30 @@ DB_INDICATORS = {
     "supabase/migrations", "prisma/schema.prisma", "migrations",
     "schema.sql", "database.sql"
 }
+
+INFRA_EDGE_PREFIXES = (
+    "supabase/functions/",
+    "netlify/functions/",
+    "amplify/backend/",
+)
+
+INFRA_EDGE_FILES = {
+    "supabase/config.toml",
+    "wrangler.toml",
+    "dockerfile",
+    "docker-compose.yml",
+    "docker-compose.yaml",
+    "vercel.json",
+    "netlify.toml",
+    "fly.toml",
+}
+
+BRIEF_PLACEHOLDERS = (
+    "[PROJE_ADI]",
+    "[proje-slug]",
+    "[YYYY-MM-DD]",
+    "[Ana Dil / Çerçeve]",
+)
 
 STANDARD_SECTIONS = [
     "Teknoloji Yığını",
@@ -151,12 +177,12 @@ def parse_frontmatter(content: str) -> tuple[dict[str, any] | None, str]:
     return data, body
 
 
-def check_git_diff_drift(project_root: Path) -> tuple[list[str], list[str]]:
-    """Git diff üzerinden bağımlılık veya DB değişip PROJECT_BRIEF.md değişmemişse yakalar."""
+def check_git_diff_drift(project_root: Path) -> tuple[list[str], list[str], list[str]]:
+    """Git diff üzerinden bağımlılık, DB veya Edge/Altyapı değişip PROJECT_BRIEF.md değişmemişse yakalar."""
     try:
         git_dir = project_root / ".git"
         if not git_dir.exists():
-            return [], []
+            return [], [], []
 
         cmd = ["git", "status", "--porcelain"]
         proc = subprocess.run(
@@ -164,10 +190,11 @@ def check_git_diff_drift(project_root: Path) -> tuple[list[str], list[str]]:
             stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace"
         )
         if proc.returncode != 0:
-            return [], []
+            return [], [], []
 
         changed_deps: list[str] = []
         changed_db: list[str] = []
+        changed_infra: list[str] = []
         brief_changed = False
 
         for raw_line in proc.stdout.splitlines():
@@ -179,9 +206,9 @@ def check_git_diff_drift(project_root: Path) -> tuple[list[str], list[str]]:
             parts = line.split(maxsplit=1)
             if len(parts) < 2:
                 continue
-            file_part = parts[1].strip()
+            file_part = parts[1].strip().strip('"')
             if " -> " in file_part:
-                file_part = file_part.split(" -> ")[1].strip()
+                file_part = file_part.split(" -> ")[1].strip().strip('"')
 
             norm_path = file_part.replace("\\", "/").lower()
 
@@ -199,13 +226,22 @@ def check_git_diff_drift(project_root: Path) -> tuple[list[str], list[str]]:
             if is_db and not any(norm_path.startswith(d) for d in (".agent/", "yedekler/", "docs/")):
                 changed_db.append(file_part)
 
-        if brief_changed:
-            return [], []
+            # Edge Function / Serverless / Altyapı kontrolü (E6)
+            is_infra = (
+                any(norm_path.startswith(p) for p in INFRA_EDGE_PREFIXES)
+                or norm_path in INFRA_EDGE_FILES
+                or basename in INFRA_EDGE_FILES
+            )
+            if is_infra and not any(norm_path.startswith(d) for d in (".agent/", "yedekler/", "docs/")):
+                changed_infra.append(file_part)
 
-        return changed_deps, changed_db
+        if brief_changed:
+            return [], [], []
+
+        return changed_deps, changed_db, changed_infra
 
     except Exception:
-        return [], []
+        return [], [], []
 
 
 def validate_project_brief(project_root: Path) -> tuple[list[tuple[str, str]], list[tuple[str, str]]]:
@@ -264,8 +300,17 @@ def validate_project_brief(project_root: Path) -> tuple[list[tuple[str, str]], l
         if section.lower() not in body.lower():
             warnings.append(("W2", f"Standart mimari bölümü eksik veya başlığı değiştirilmiş: '## {section}'"))
 
-    # 3. Git Diff Drift denetimi (E3, E4)
-    changed_deps, changed_db = check_git_diff_drift(project_root)
+    # 2.5 Şablon yer tutucusu kontrolü (E7)
+    clean_text = re.sub(r"`[^`]+`", "", content)
+    for token in BRIEF_PLACEHOLDERS:
+        if token in clean_text:
+            errors.append((
+                "E7",
+                f"PROJECT_BRIEF.md içinde doldurulmamış şablon yer tutucusu bulundu: '{token}'"
+            ))
+
+    # 3. Git Diff Drift denetimi (E3, E4, E6)
+    changed_deps, changed_db, changed_infra = check_git_diff_drift(project_root)
     if changed_deps:
         errors.append((
             "E3",
@@ -278,6 +323,13 @@ def validate_project_brief(project_root: Path) -> tuple[list[tuple[str, str]], l
             "E4",
             f"Git çalışma ağacında veritabanı/migration dosyası değişti ({', '.join(changed_db[:2])}) "
             "ancak 'PROJECT_BRIEF.md' güncellenmedi! Mimariyi senkronize edin."
+        ))
+
+    if changed_infra:
+        errors.append((
+            "E6",
+            f"Git çalışma ağacında sunucusuz işlev (Edge Function) veya altyapı yapılandırması değişti "
+            f"({', '.join(changed_infra[:2])}) ancak 'PROJECT_BRIEF.md' güncellenmedi! Mimariyi senkronize edin."
         ))
 
     return errors, warnings

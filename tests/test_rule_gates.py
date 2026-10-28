@@ -275,6 +275,42 @@ def test_api_docs_violations():
         check("satir ici format tanindi", "E1" in codes(errors),
               "POST belgelenmemis olmali")
 
+    # Multi-stack (Next.js App Router) + E3 Git-Diff API Drift Guard
+    import subprocess
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp = Path(tmpdir)
+        subprocess.run(["git", "init"], cwd=str(tmp), capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=str(tmp), capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.name", "Test User"], cwd=str(tmp), capture_output=True, check=True)
+
+        route_dir = tmp / "app" / "api" / "items"
+        route_dir.mkdir(parents=True)
+        route_file = route_dir / "route.ts"
+        route_file.write_text("export async function GET() { return Response.json([]); }\n", encoding="utf-8")
+        docs_dir = tmp / "docs" / "APIs"
+        docs_dir.mkdir(parents=True)
+        doc_file = docs_dir / "items.md"
+        doc_file.write_text("GET /api/items\n", encoding="utf-8")
+
+        subprocess.run(["git", "add", "."], cwd=str(tmp), capture_output=True, check=True)
+        subprocess.run(["git", "commit", "-m", "init"], cwd=str(tmp), capture_output=True, check=True)
+
+        # Modify route without updating docs/APIs/ -> E3
+        route_file.write_text(
+            "export async function GET() { return Response.json([]); }\n"
+            "export async function POST() { return Response.json({ok: true}); }\n",
+            encoding="utf-8",
+        )
+        errors, _warnings, stats = check_api_docs.check(tmp)
+        check("Next.js App Router endpointleri bulundu (2)", stats["endpoints"] == 2, str(stats["endpoints"]))
+        check("E3 git-diff API drift tetiklendi", "E3" in codes(errors))
+
+        # Update docs/APIs/items.md -> E1 & E3 kalkmali
+        doc_file.write_text("GET /api/items\nPOST /api/items\n", encoding="utf-8")
+        errors2, _warnings2, _stats2 = check_api_docs.check(tmp)
+        check("docs/APIs guncellenince E1 ve E3 kalkti", not errors2,
+              "; ".join(f"{c} {m}" for c, _n, m in errors2))
+
 
 def make_vite_project(tmp: Path, next_dep=False, files=None) -> Path:
     deps = {"react": "^19.0.0", "react-router-dom": "^7.0.0"}

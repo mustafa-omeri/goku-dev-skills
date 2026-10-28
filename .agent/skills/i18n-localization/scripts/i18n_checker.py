@@ -46,8 +46,9 @@ import re
 import sys
 from pathlib import Path
 
-if hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
 
 # --- Türkçe tespiti -------------------------------------------------------------
 # Kural: bir metin Türkçedir en az biri doğruysa.

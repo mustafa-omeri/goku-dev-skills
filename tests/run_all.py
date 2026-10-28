@@ -29,6 +29,7 @@ TEST_SCRIPTS = [
     ("Test Theme Bridge", HERE / "test_theme_bridge.py"),
     ("Test Project Brief", HERE / "test_project_brief.py"),
     ("Test Design Contract", HERE / "test_design_contract.py"),
+    ("Test Check Handoff & All Gates", HERE / "test_check_handoff.py"),
 ]
 
 

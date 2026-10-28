@@ -1,7 +1,10 @@
 ---
 name: Handoff Session Continuity
 description: Yeni oturumda HANDOFF.md okunmadan kod yazılmasını, düzeltme yapılmamasını ve test koşulmamasını zorunlu kılar. Dosya yoksa ajanın kendisinin yazmasını emreder.
-sinif: TUTUM
+sinif: OLCULEBILIR
+kapi:
+  - yigin: "Proje Yönetimi / Oturum Devri ve Görev Panosu"
+    komut: "python .agent/skills/musgoku/scripts/check_handoff.py"
 ---
 
 # 🔄 Oturum Köprüsü (HANDOFF) — En Yüksek Öncelik
@@ -61,6 +64,21 @@ sinif: TUTUM
 Ayrıntılı format ve mükerrerlik sınırları:
 [knowledge-base-management.md](./knowledge-base-management.md) ·
 [.agent/AGENTS.md](../AGENTS.md)
+
+## Doğrulama Kapısı (Mekanik Denetim)
+
+```bash
+python .agent/skills/musgoku/scripts/check_handoff.py
+```
+
+| Kod | Seviye | Anlamı |
+|---|---|---|
+| `E1` | Hata (exit 1) | Repo kökünde yasaklı mükerrer görev takip dosyası (`TASK.md`, `ACTIVE_TASK.md`, `TODO.md`, `TASKS.md`) bulundu. |
+| `E2` | Hata (exit 1) | Kapsam içi projede `<repo-kök>/HANDOFF.md` mevcut değil veya içi boş (< 50 karakter). |
+| `E3` | Hata (exit 1) | Git çalışma ağacında uygulama kaynak kodu (`src/`, `app/`, `components/`, `api/`, `supabase/` vb.) değiştiği halde `HANDOFF.md` güncellenmedi. |
+| `E4` | Hata (exit 1) | `HANDOFF.md` başlık/özet alanında doldurulmamış şablon yer tutucusu (`[YYYY-MM-DD]`, `[Ajan Adı]` vb.) bırakıldı. |
+| `W1` | Uyarı | `§3 Sıradaki İşler` aktif görev panosunda tamamlanmış (`✅ BİTTİ` / `TAMAMLANDI`) satır temizlenmeden bırakıldı. |
+| `W2` | Uyarı | Git çalışma ağacında arayüz bileşeni (`.tsx`, `.jsx`, `.vue`, `.svelte`) değiştiği halde `KULLANICI_TEST_REHBERI.md` mevcut değil. |
 
 ## Bu kuralın istisnası
 

@@ -178,6 +178,43 @@ Sadece bir bölüm var.
         errors, warnings = gate.validate_project_brief(tmp_root)
         check("W2 tetikleniyor (eksik mimari bölüm)", "W2" in codes(warnings))
 
+        # 7. E7: Doldurulmamış şablon yer tutucusu ([PROJE_ADI] / [proje-slug])
+        placeholder_fm = VALID_BRIEF.replace("TestProj", "[PROJE_ADI]")
+        brief_file.write_text(placeholder_fm, encoding="utf-8")
+        (tmp_root / "README.md").write_text("# Readme", encoding="utf-8")
+        errors, _ = gate.validate_project_brief(tmp_root)
+        check("E7 tetikleniyor ([PROJE_ADI] şablon yer tutucusu)", "E7" in codes(errors))
+
+
+def test_git_diff_e6_serverless_infra():
+    print("=== TEST 3B: Git çalışma ağacında Edge Function / Altyapı değiştiğinde E6 ===")
+    import subprocess
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_root = Path(tmp_dir)
+        subprocess.run(["git", "init"], cwd=str(tmp_root), capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=str(tmp_root), capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.name", "Test User"], cwd=str(tmp_root), capture_output=True, check=True)
+
+        (tmp_root / "README.md").write_text("# Readme", encoding="utf-8")
+        (tmp_root / "PROJECT_BRIEF.md").write_text(VALID_BRIEF, encoding="utf-8")
+        edge_dir = tmp_root / "supabase" / "functions" / "webhook-dispatcher"
+        edge_dir.mkdir(parents=True)
+        edge_file = edge_dir / "index.ts"
+        edge_file.write_text("Deno.serve(() => new Response('ok'));\n", encoding="utf-8")
+
+        subprocess.run(["git", "add", "."], cwd=str(tmp_root), capture_output=True, check=True)
+        subprocess.run(["git", "commit", "-m", "init"], cwd=str(tmp_root), capture_output=True, check=True)
+
+        # Edge Function değişti ama PROJECT_BRIEF.md güncellenmedi -> E6
+        edge_file.write_text("Deno.serve(() => new Response('v2'));\n", encoding="utf-8")
+        errors, _ = gate.validate_project_brief(tmp_root)
+        check("E6 tetikleniyor (Edge Function değişti ama PROJECT_BRIEF.md güncellenmedi)", "E6" in codes(errors))
+
+        # PROJECT_BRIEF.md güncellendiğinde E6 kalkmalı
+        (tmp_root / "PROJECT_BRIEF.md").write_text(VALID_BRIEF + "\n<!-- edge updated -->\n", encoding="utf-8")
+        errors2, _ = gate.validate_project_brief(tmp_root)
+        check("PROJECT_BRIEF.md güncellenince E6 kalkıyor", "E6" not in codes(errors2))
+
 
 def test_valid_project():
     print("=== TEST 4: Geçerli proje testi (false positive kontrolü) ===")
@@ -198,6 +235,7 @@ def main():
     test_real_repo()
     test_scope()
     test_error_scenarios()
+    test_git_diff_e6_serverless_infra()
     test_valid_project()
 
     print("\n" + "=" * 60)

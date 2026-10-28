@@ -52,9 +52,13 @@ Here's what happens when you first install this skill.
 3. **Do a real task.** Complete any substantive piece of engineering or design work while the skill is active.
 4. **See your first observation.** At the end of the session, the skill surfaces any observations it logged.
 
-### What is `[workspace folder]`?
+### What is `[workspace folder]` & Storage Target?
 
-Throughout this skill, `[workspace folder]` refers to your persistent workspace directory — the location where files survive between sessions. In repo environments, this is your project root or `.agent/observations/`. In web-based chat interfaces without file system access, the skill shifts into handoff doc mode.
+Throughout this skill, `[workspace folder]` refers to your persistent repository root (`<repo-kök>`).
+- ⛔ **Strict Single-Source Storage Rule (`AGENTS.md` §1):** Never write observations to `.agent/observations/` or `skill-observations/` in target repositories—`.agent/` is a derived distribution tree that gets overwritten by `delivery.py`, and `AGENTS.md` §1 forbids ad-hoc tracking files.
+- ✅ **Canonical Targets:**
+  1. **Permanent Observations & Cross-Cutting Principles:** Append to `<repo-kök>/knowledge-base.md`.
+  2. **Proven Project Traps & Lessons:** Record in `<repo-kök>/HANDOFF.md` (§0 Kanıtlanmış Tuzaklar).
 
 ---
 
@@ -206,13 +210,12 @@ describe the scope and key components.]
 specific instance. This turns a single observation into a reusable insight.]
 ```
 
-### Archival on Write
+### Storage & Archival on Write
 
-The observation log is kept lean through event-driven archival:
-- Active log path: `[workspace folder]/skill-observations/log.md` (or `.agent/observations/log.md`)
-- Archive path: `[workspace folder]/skill-observations/archive/log-[date].md`
-- Active log retains header and all `OPEN` entries plus recently marked `ACTIONED`/`DECLINED` entries.
-- Old resolved entries from previous sessions move to the archive.
+Per `AGENTS.md` §1 and `knowledge-base-management.md`, observations are persisted in the repository root's canonical memory files rather than separate `.agent/observations/` files:
+- **Active observation & decision log:** `<repo-kök>/knowledge-base.md` (append-only)
+- **Project-specific traps & recurring pitfalls:** `<repo-kök>/HANDOFF.md` (§0 Tuzaklar tablosu)
+- **Global skill promotion:** When an observation proves universal across projects, promote it into `skillSetWorks/.agent/rules/` or the relevant skill's `SKILL.md` and distribute via `delivery.py`.
 
 ---
 
@@ -236,8 +239,7 @@ Four layers prevent sensitive information from leaking into open-source skills:
 
 ## Principle Propagation & Cross-Cutting Principles
 
-When an observation reveals a general principle that applies across multiple skills, track it in:
-`[workspace folder]/skill-observations/cross-cutting-principles.md` (or `.agent/observations/cross-cutting-principles.md`).
+When an observation reveals a general principle that applies across multiple skills, record it as a permanent architectural decision in `<repo-kök>/knowledge-base.md` and, if universal, promote it to `.agent/AGENTS.md` or `.agent/rules/`.
 
 This file serves as a checklist during any skill creation or updating. Before delivering an updated skill, verify that it complies with all active cross-cutting principles.
 

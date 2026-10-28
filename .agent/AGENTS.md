@@ -148,6 +148,7 @@ kanıtlayamazsın — sadece beyan edersin.** Bu ayrım gizli değildir.
 | Tasarım / zanaat tabanı ve anti-slop | `python .agent/skills/musgoku/scripts/check_design_slop.py` | [`design-skills-enforcement.md`](rules/design-skills-enforcement.md) |
 | Tasarım / tema kontrastı ve WCAG uyumu | `python .agent/skills/musgoku/scripts/check_theme_contrast.py` | [`design-skills-enforcement.md`](rules/design-skills-enforcement.md) |
 | Frontend / bundle bütçesi | `python .agent/skills/musgoku/scripts/check_bundle_limits.py` | [`frontend-bundle-limits.md`](rules/frontend-bundle-limits.md) |
+| Proje Yönetimi / Oturum Devri ve Görev Panosu | `python .agent/skills/musgoku/scripts/check_handoff.py` | [`handoff-session-continuity.md`](rules/handoff-session-continuity.md) |
 | Frontend / i18n | `python .agent/skills/i18n-localization/scripts/i18n_checker.py` | [`i18n-enforcement.md`](rules/i18n-enforcement.md) |
 | TypeScript / React | `npx tsc --noEmit` | [`no-unused-code.md`](rules/no-unused-code.md) |
 | Java / Spring derleme | `mvn clean compile -DskipTests` | [`no-unused-code.md`](rules/no-unused-code.md) |
@@ -176,7 +177,6 @@ Ek kapı (tek kural dosyasına bağlı değildir):
 | `no-unauthorized-commit.md` | SUREC |
 | `trigger-rule-action.md` | SUREC |
 | `always-read-skills.md` | TUTUM |
-| `handoff-session-continuity.md` | TUTUM |
 | `knowledge-base-management.md` | TUTUM |
 | `mcp-usage-enforcement.md` | TUTUM |
 | `no-silent-wait.md` | TUTUM |

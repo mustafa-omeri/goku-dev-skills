@@ -65,9 +65,11 @@ python .agent/skills/musgoku/scripts/check_project_brief.py
 - **E3 (Bağımlılık Sapması - Git Diff Drift):** Git çalışma ağacında `package.json`, `pom.xml`, `requirements.txt` vb. değişmiş ama `PROJECT_BRIEF.md` güncellenmemiş!
 - **E4 (DB / Şema Sapması - Git Diff Drift):** Git çalışma ağacında migration veya DB modelleri değişmiş ama `PROJECT_BRIEF.md` güncellenmemiş!
 - **E5 (Kırık Dosya Bağlantısı):** Frontmatter'daki `related_docs` listesindeki dosya yolları diskte mevcut değil.
+- **E6 (Edge Function / Altyapı Sapması - Git Diff Drift):** Git çalışma ağacında sunucusuz işlev (`supabase/functions/**`, `netlify/functions/**`) veya altyapı yapılandırması (`Dockerfile`, `docker-compose.yml`, `wrangler.toml`, `supabase/config.toml`) değişmiş ama `PROJECT_BRIEF.md` güncellenmemiş!
+- **E7 (Şablon Yer Tutucusu):** `PROJECT_BRIEF.md` içinde doldurulmamış şablon yer tutucusu (`[PROJE_ADI]`, `[proje-slug]`, `[YYYY-MM-DD]`) bırakılmış.
 - **W1 (Tarih Sapması):** Dosya içeriği değiştiği halde frontmatter'daki `updated` alanı bugünün tarihini taşımıyor.
 
-E1-E5 kodları **hata (exit 1)** üretir ve commit/handoff sürecini bloke eder.
+E1-E7 kodları **hata (exit 1)** üretir ve commit/handoff sürecini bloke eder.
 
 - 💡 **Çift Yönlü Güvenlik Ağı (Dual Mapping Guard):** `check_db_migrations.py` kapısı da simetrik olarak `E5` (Dual Mapping Drift Guard) denetimiyle donatılmıştır; dolayısıyla bir ajan yalnızca veritabanı kapısını çalıştırsa dahi `PROJECT_BRIEF.md` güncellenmeden `exit 0` alamaz. Mimari ve şema asla birbirinden kopamaz.
 

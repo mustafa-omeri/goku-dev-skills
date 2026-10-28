@@ -139,6 +139,7 @@ front matter `sinif:` / `kapi:` alanları.
 | Tasarım / zanaat tabanı ve anti-slop | `python .agent/skills/musgoku/scripts/check_design_slop.py` | [`design-skills-enforcement.md`](./design-skills-enforcement.md) |
 | Tasarım / tema kontrastı ve WCAG uyumu | `python .agent/skills/musgoku/scripts/check_theme_contrast.py` | [`design-skills-enforcement.md`](./design-skills-enforcement.md) |
 | Frontend / bundle bütçesi | `python .agent/skills/musgoku/scripts/check_bundle_limits.py` | [`frontend-bundle-limits.md`](./frontend-bundle-limits.md) |
+| Proje Yönetimi / Oturum Devri ve Görev Panosu | `python .agent/skills/musgoku/scripts/check_handoff.py` | [`handoff-session-continuity.md`](./handoff-session-continuity.md) |
 | Frontend / i18n | `python .agent/skills/i18n-localization/scripts/i18n_checker.py` | [`i18n-enforcement.md`](./i18n-enforcement.md) |
 | TypeScript / React | `npx tsc --noEmit` | [`no-unused-code.md`](./no-unused-code.md) |
 | Java / Spring derleme | `mvn clean compile -DskipTests` | [`no-unused-code.md`](./no-unused-code.md) |

@@ -136,13 +136,17 @@ yanıtta ayrı bir blok halinde göster:
 
 ```markdown
 ### 📝 OTURUM DEVİR & BİLGİ TABANI GÜNCELLEMESİ (HANDOFF & KB RAPORU)
-- **knowledge-base.md:** [Eklenen karar veya hata başlıkları ve kısa özeti (yoksa "yeni yok")]
+- **Kullanıcı Test Rehberi:** [KULLANICI_TEST_REHBERI.md güncellendi mi? Eklenen test senaryoları/adımları veya "Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"]
+- **Katman Bütünlüğü (Full-Stack Slice):** [5 Katman doğrulandı mı? (DB, View/RPC, API, UI, Admin/Giriş Formu) veya "Salt UI/İstemci (DB bağımlılığı yok)" veya "YARIM (Eksik: ...)"]
+- **PROJECT_BRIEF.md:** [Güncellendi mi? (Stack/DB/Karar revizyonu) veya "Değişiklik yok / stabil"]
+- **knowledge-base.md:** [Eklenen hata/karar başlıkları ve kısa özeti (yoksa "yeni yok")]
+- **DB Migrations:** [DB_MIGRATIONS.md güncellendi mi? Eklenen revizyonlar veya "DB değişikliği yok / kapsam dışı"]
 - **HANDOFF.md:**
   * Güncellik Kanıtı: [Ölçülen gerçek sayılar — test, assert, derleme, chunk boyutları]
   * Nerede Kaldık: [Tamamlanan adım ve durum]
   * Bu Projede Düşülen Hatalar: [Yeni ders/tuzak veya "yeni yok"]
   * Bu Projede Alınan Kararlar: [Yeni karar veya "yeni yok"]
-- **Sıradaki İşler (Canlı Görev Panosu):** [Numaralı liste (1. ⏭️ ..., 2. ⬜ ...) — açık iş kalmadıysa "Açık iş yok — proje tamamlandı"]
+- **Sıradaki İşler (Canlı Görev Panosu):** [Varsa numaralı liste (1. ⏭️ ..., 2. ⬜ ...). Yalnızca mevcut sprint bittiyse PRD/Yol Haritasına göre sıradaki hedefi belirtin (örn. "Mevcut sprint tamamlandı. PRD'ye göre sıradaki: Sprint X"). YALNIZCA tüm PRD ve ürün fazları %100 bittiğinde "Açık iş yok — proje tamamlandı" yazılabilir.]
 - **Kullanılan MCP:** [context7 / sequential-thinking — ne için kullanıldı veya "kullanılmadı"]
 - **Aktif skill'ler:** [Okunan skill adları]
 ```

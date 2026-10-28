@@ -332,6 +332,7 @@ const PROFILES = {
       'no-silent-wait.md',
       'no-unauthorized-commit.md',
       'no-unused-code.md',
+      'project-brief-maintenance.md',
       'skill-trigger-routing.md',
       'sprint-delivery-workflow.md',
       'trigger-rule-action.md',
@@ -347,6 +348,7 @@ const PROFILES = {
       'PRODUCT.template.md',
       'GLOSSARY.template.md',
       'DESIGN.template.md',
+      'PROJECT_BRIEF.template.md',
       'myidea.template.md',
     ],
     minimalAllowed: true,
@@ -390,6 +392,7 @@ const PROFILES = {
       'no-silent-wait.md',
       'no-unauthorized-commit.md',
       'no-unused-code.md',
+      'project-brief-maintenance.md',
       'skill-trigger-routing.md',
       'sprint-delivery-workflow.md',
       'trigger-rule-action.md',
@@ -403,6 +406,7 @@ const PROFILES = {
       'KULLANICI_TEST_REHBERI.template.md',
       'DB_MIGRATIONS.template.md',
       'GLOSSARY.template.md',
+      'PROJECT_BRIEF.template.md',
       'myidea.template.md',
     ],
     minimalAllowed: false,
@@ -659,7 +663,9 @@ function filterAgentsMd(content, profileId) {
         return (
           line.includes('Backend /') ||
           line.includes('Java /') ||
-          line.includes('Sprint /')
+          line.includes('Sprint /') ||
+          line.includes('Proje Mimarisi /') ||
+          line.includes('Proje Yönetimi /')
         );
       } else if (profileId === 'frontend') {
         return (
@@ -667,10 +673,16 @@ function filterAgentsMd(content, profileId) {
           line.includes('Frontend /') ||
           line.includes('TypeScript /') ||
           line.includes('Skill sözleşmesi') ||
-          line.includes('Sprint /')
+          line.includes('Sprint /') ||
+          line.includes('Proje Mimarisi /') ||
+          line.includes('Proje Yönetimi /')
         );
       } else if (profileId === 'creative') {
-        return line.includes('Tasarım / skill sahipliği') || line.includes('Sprint /');
+        return (
+          line.includes('Tasarım / skill sahipliği') ||
+          line.includes('Sprint /') ||
+          line.includes('Proje Yönetimi /')
+        );
       }
       return true;
     });
@@ -958,6 +970,49 @@ async function cmdInit(options) {
     let agentsContent = fs.readFileSync(srcAgents, 'utf8');
     agentsContent = filterAgentsMd(agentsContent, profile.id);
     fs.writeFileSync(path.join(destAgent, 'AGENTS.md'), agentsContent, 'utf8');
+
+    // Regenerate exact gate and attitude tables in target using rules_gates.py if python is available
+    const destRulesGates = path.join(destAgent, 'skills', 'musgoku', 'scripts', 'rules_gates.py');
+    if (fs.existsSync(destRulesGates)) {
+      try {
+        const child_process = require('child_process');
+        const emitTable = child_process.execSync(`python "${destRulesGates}" --emit-table`, { cwd: targetDir, encoding: 'utf8' }).trim();
+        const emitAttitude = child_process.execSync(`python "${destRulesGates}" --emit-attitude`, { cwd: targetDir, encoding: 'utf8' }).trim();
+
+        const agentsPath = path.join(destAgent, 'AGENTS.md');
+        let agentsTxt = fs.readFileSync(agentsPath, 'utf8');
+        const bMark = '<!-- GATE-TABLE:BEGIN -->';
+        const eMark = '<!-- GATE-TABLE:END -->';
+        if (agentsTxt.includes(bMark) && agentsTxt.includes(eMark)) {
+          const s = agentsTxt.indexOf(bMark) + bMark.length;
+          const e = agentsTxt.indexOf(eMark);
+          agentsTxt = agentsTxt.substring(0, s) + '\n' + emitTable + '\n' + agentsTxt.substring(e);
+        }
+        const attStart = agentsTxt.indexOf('### 3.2');
+        if (attStart !== -1) {
+          const attEnd = agentsTxt.indexOf('### 3.3', attStart);
+          if (attEnd !== -1) {
+            agentsTxt = agentsTxt.substring(0, attStart) + '### 3.2 Ölçülemeyen kurallar\n\n> ⛔ Bu tablo **elle yazılmaz.** `rules_gates.py --emit-attitude` ile üretilir.\n\n' + emitAttitude + '\n\n' + agentsTxt.substring(attEnd);
+          }
+        }
+        fs.writeFileSync(agentsPath, agentsTxt, 'utf8');
+        agentsContent = agentsTxt;
+
+        const wfPath = path.join(rulesDest, 'development-workflow.md');
+        if (fs.existsSync(wfPath)) {
+          let wfTxt = fs.readFileSync(wfPath, 'utf8');
+          if (wfTxt.includes(bMark) && wfTxt.includes(eMark)) {
+            const emitWfTable = child_process.execSync(`python "${destRulesGates}" --emit-table --prefix ./`, { cwd: targetDir, encoding: 'utf8' }).trim();
+            const s = wfTxt.indexOf(bMark) + bMark.length;
+            const e = wfTxt.indexOf(eMark);
+            wfTxt = wfTxt.substring(0, s) + '\n' + emitWfTable + '\n' + wfTxt.substring(e);
+            fs.writeFileSync(wfPath, wfTxt, 'utf8');
+          }
+        }
+      } catch (err) {
+        // Fallback to static filtered content
+      }
+    }
 
     const rootAgents = path.join(targetDir, 'AGENTS.md');
     if (!fs.existsSync(rootAgents)) {
