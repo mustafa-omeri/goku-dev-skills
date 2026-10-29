@@ -212,6 +212,32 @@ Yukarıdaki ölçülebilir kapı komutları (`npm run build`, `pnpm test`, `npx 
 
 ---
 
+## Adım 4.2 — İnteraktif Özellik ve Kullanım HTML Rehberi (docs/kullanici-rehberi.html)
+
+1. **Kalıcı ve Detaylı Özellik Dokümantasyonu:** Her gerekli ve anlamlı geliştirme sonrasında, geliştirilen veya revize edilen tüm özelliklerin mimari yapılışını ve adım adım kullanımını anlatan `docs/kullanici-rehberi.html` (veya İngilizce projelerde `docs/user-guide.html`) dosyası güncellenir (yoksa `.agent/templates/KULLANICI_REHBERI.template.html` şablonundan oluşturulur).
+2. **Her Özellikte 4 Zorunlu Bölüm:**
+   - **1. Ne İşe Yarar / Amaç:** İş değeri, hangi problemi çözdüğü ve kullanıcının ne kazandığı.
+   - **2. Nasıl Yapıldı? (5 Katmanlı Dikey Dilim):**
+     * *Veritabanı:* Tablo, kolon, migration veya entity detayları.
+     * *Backend / API / RPC:* Endpoint metodu, URL, request/response yapısı, güvenlik filtreleri.
+     * *İstemci Entegrasyonu:* Servis çağrısı, store/state yönetimi, query/cache.
+     * *Arayüz / UI Bileşenleri:* Bileşen ağacı, form validasyonu, kullanıcı etkileşimleri.
+     * *Skeleton Screens UI:* Veri yüklenirken gösterilen gri tonlu wireframe/kaset yapısı.
+   - **3. Nasıl Kullanılır? (Adım Adım Kullanım Playbook'u):**
+     * Sayfa veya ekran rotası (`/ornek-sayfa`).
+     * Tıklanacak buton ve menülerin tam metinleri (örn. `"Yeni Ekle"` -> `"Kaydet"`).
+     * Form alanlarına girilecek veriler ve doğrulama ipuçları.
+     * Başarılı akış ve beklenen sonuç.
+   - **4. Arayüz ve UX Durumları:**
+     * Skeleton screens yükleme durumu.
+     * Normal / dolu verili durum.
+     * Boş durum (Empty state).
+     * Hata ve yeniden dene (Error & Retry) durumu.
+3. 💡 **İstisna (Minor Rötüş & Dahili Değişiklikler):**
+   Mevcut kullanıcı akışını, ekran bileşenlerini veya kabul senaryolarını değiştirmeyen minor rötüşlar (CSS boşluk/renk ince ayarı, dahili refactoring, tip güvenliği/düzeltmesi, typo) için HTML rehberine satır eklenmez. Raporda *"Özellik HTML Rehberi: Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"* beyan edilir.
+
+---
+
 ## Adım 5 — Devir ve bilgi tabanı güncellemesi
 
 1. `knowledge-base.md`'ye bu adımda alınan kararlar

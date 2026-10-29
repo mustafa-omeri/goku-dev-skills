@@ -36,6 +36,7 @@ ve kapı sağlar. Sözleşmeye uymayan ajan "yaptım" diyemez.
 | `RELEASE_PLAN.md` | proje kökü | **dağıtılmaz** |
 | `specs/<kart-id>.feature` | proje kökü `specs/` | **dağıtılmaz** |
 | `KULLANICI_TEST_REHBERI.md` | proje kökü (Birincil) veya `docs/KULLANICI_TEST_REHBERI.md` (Alternatif) | **dağıtılmaz** — proje-özel durum (şablon: `templates/KULLANICI_TEST_REHBERI.template.md`) |
+| `docs/kullanici-rehberi.html` (veya `docs/user-guide.html`) | `docs/` dizini | **dağıtılmaz** — proje-özel interaktif özellik ve kullanım rehberi (şablon: `templates/KULLANICI_REHBERI.template.html`) |
 
 ⛔ Bu adları değiştirme veya çoğulize etme (`SPRINT_PLANS.md`). `KULLANICI_TEST_REHBERI.md` için proje kökü (birincil) veya `docs/KULLANICI_TEST_REHBERI.md` (kabul edilen alternatif) geçerlidir; kapı her iki konumu da tanır. Ad değişirse kapı susar ve kural ölü kalır.
 
@@ -269,6 +270,10 @@ bilinçli olarak `sprint: S<n+1>` ile taşınmış olmalıdır. Üçüncü yol
  1. Görsel UX: Formu doldur, gönder, başarı toast'unu ve formun sıfırlandığını gör.
  2. Ağ (Network): F12 Ağ sekmesinde giden API isteğinin `201 Created` / `200 OK` olduğunu ve giden payload'u doğrula.
  3. Veritabanı (DB): Veritabanı sorgusu (`SELECT ...`) veya Admin panelinde yeni satırın oluştuğunu doğrula. DB kanıtı olmadan veri toplama işi "Yapıldı" yapılamaz.
+
+### 6.0 İnteraktif Özellik ve Kullanım HTML Rehberi Zorunluluğu (docs/kullanici-rehberi.html)
+
+Her sprint çıktısı veya kart teslimatında, üretilen özelliklerin mimari yapılışını (5 katmanlı dilim) ve kullanıcıya yönelik adım adım kullanımını (butonlar, formlar, Skeleton ekranları) içeren `docs/kullanici-rehberi.html` (veya `docs/user-guide.html`) dosyasının güncellenmesi zorunlu kabul kriteridir (Definition of Done).
 
 ### 6.1 UI/UX Kalite Kapısı ve Anti-Slop Zorunluluğu (Definition of Done)
 

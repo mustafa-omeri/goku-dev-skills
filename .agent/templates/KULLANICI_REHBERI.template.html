@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{PROJE_ADI}} — Özellik ve Kullanım Rehberi</title>
+  <meta name="description" content="{{PROJE_ADI}} platformunun tüm özelliklerinin mimari yapılışı ve adım adım kullanım rehberi.">
+  
+  <style>
+    :root {
+      --primary: #3B82F6;
+      --primary-hover: #2563EB;
+      --primary-subtle: rgba(59, 130, 246, 0.12);
+      --accent: #10B981;
+      --accent-subtle: rgba(16, 185, 129, 0.12);
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --transition: 0.2s ease;
+    }
+
+    [data-theme="dark"] {
+      --bg-base: #0B0F17;
+      --bg-surface: #111827;
+      --bg-surface-elevated: #1F2937;
+      --bg-surface-hover: #2D3748;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.18);
+      --text-main: #F9FAFB;
+      --text-muted: #9CA3AF;
+      --text-faint: #6B7280;
+      --code-bg: #030712;
+      --skeleton-base: #1F2937;
+      --skeleton-pulse: #374151;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    [data-theme="light"] {
+      --bg-base: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --bg-surface-elevated: #F1F5F9;
+      --bg-surface-hover: #E2E8F0;
+      --border-subtle: rgba(0, 0, 0, 0.08);
+      --border-strong: rgba(0, 0, 0, 0.16);
+      --text-main: #0F172A;
+      --text-muted: #475569;
+      --text-faint: #94A3B8;
+      --code-bg: #F1F5F9;
+      --skeleton-base: #E2E8F0;
+      --skeleton-pulse: #CBD5E1;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 0;
+      min-height: 100vh;
+      transition: background-color var(--transition), color var(--transition);
+    }
+
+    /* Üst Bar & Navigasyon */
+    header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFF;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .brand-badge {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 9999px;
+      background: var(--primary-subtle);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .theme-toggle, .btn-action {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .theme-toggle:hover, .btn-action:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--border-strong);
+    }
+
+    /* Arama ve Filtreleme Alanı */
+    .hero-search {
+      max-width: 1200px;
+      margin: 2rem auto 1rem;
+      padding: 0 1.5rem;
+    }
+    .search-box-wrap {
+      position: relative;
+      margin-bottom: 1.25rem;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      color: var(--text-main);
+      padding: 0.9rem 1.25rem 0.9rem 2.75rem;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      box-shadow: var(--shadow);
+    }
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-subtle);
+    }
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-faint);
+      pointer-events: none;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-tab {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.4rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .filter-tab:hover {
+      color: var(--text-main);
+      border-color: var(--border-strong);
+    }
+    .filter-tab.active {
+      background: var(--primary);
+      color: #FFFFFF;
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* İstatistik ve Özet Çubuğu */
+    .summary-stats {
+      max-width: 1200px;
+      margin: 1.5rem auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Ana Konteyner ve Özellik Kartları */
+    main {
+      max-width: 1200px;
+      margin: 1.5rem auto 4rem;
+      padding: 0 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow);
+      transition: border-color var(--transition);
+    }
+    .feature-card:hover {
+      border-color: var(--border-strong);
+    }
+    .feature-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .feature-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .feature-icon {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+    .feature-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .feature-badges {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+    }
+    .badge-primary { background: var(--primary-subtle); color: var(--primary); }
+    .badge-success { background: var(--accent-subtle); color: var(--accent); }
+    .badge-neutral { background: var(--bg-surface-elevated); color: var(--text-muted); }
+
+    /* 4 Temel Bölüm Blokları */
+    .feature-sections {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .section-block {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+    }
+    .section-heading {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.85rem;
+    }
+
+    /* Katman Listeleri */
+    .slice-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.75rem;
+    }
+    .slice-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      font-size: 0.85rem;
+    }
+    .slice-name {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Kullanım Adımları */
+    .step-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+    }
+    .step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #FFF;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.15rem;
+    }
+
+    /* Kod ve Parametreler */
+    code, pre {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+    code {
+      background: var(--code-bg);
+      color: var(--primary);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+    }
+    pre {
+      background: var(--code-bg);
+      color: var(--text-main);
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      overflow-x: auto;
+      margin-top: 0.5rem;
+    }
+
+    /* Skeleton Screen UI Demo Mockup */
+    .skeleton-demo-box {
+      background: var(--bg-surface);
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .skel-line {
+      height: 12px;
+      background: var(--skeleton-base);
+      border-radius: 4px;
+      animation: skelPulse 1.5s ease-in-out infinite;
+    }
+    .skel-line.w-80 { width: 80%; }
+    .skel-line.w-60 { width: 60%; }
+    .skel-line.w-40 { width: 40%; }
+    .skel-rect {
+      height: 48px;
+      background: var(--skeleton-base);
+      border-radius: var(--radius-sm);
+      animation: skelPulse 1.5s ease-in-out infinite;
+    }
+    @keyframes skelPulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Üst Başlık & Kontroller -->
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-logo">📖</div>
+        <div>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <span class="brand-title">{{PROJE_ADI}}</span>
+            <span class="brand-badge">Özellik ve Kullanım Rehberi</span>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Tüm özelliklerin mimari yapılışı ve adım adım kullanım playbook'u</p>
+        </div>
+      </div>
+      <div class="header-controls">
+        <button class="btn-action" onclick="expandAllSections()">Aç / Kapat</button>
+        <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()">
+          <span id="themeIcon">☀️</span>
+          <span id="themeText">Açık Tema</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Arama ve Filtreleme -->
+  <section class="hero-search">
+    <div class="search-box-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" class="search-input" placeholder="Özellik adı, katman, API endpoint'i veya buton ara..." oninput="filterFeatures()">
+    </div>
+    <div class="filter-tabs" id="filterTabs">
+      <button class="filter-tab active" onclick="selectFilter('all')">Tüm Özellikler</button>
+      <button class="filter-tab" onclick="selectFilter('core')">Çekirdek Sistem</button>
+      <button class="filter-tab" onclick="selectFilter('auth')">Kimlik & Yetki</button>
+      <button class="filter-tab" onclick="selectFilter('ui')">Arayüz & UX</button>
+      <button class="filter-tab" onclick="selectFilter('admin')">Yönetim & Raporlama</button>
+    </div>
+  </section>
+
+  <!-- İstatistik Özeti -->
+  <section class="summary-stats">
+    <div class="stat-card">
+      <div class="stat-label">Toplam Özellik</div>
+      <div class="stat-value" id="totalFeaturesCount">1</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">5 Katmanlı Dilim Uyumu</div>
+      <div class="stat-value" style="color: var(--accent);">%100</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Skeleton Screens UI</div>
+      <div class="stat-value" style="color: var(--primary);">Zorunlu / Tam</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Son Güncelleme</div>
+      <div class="stat-value" style="font-size: 1.1rem; padding-top:0.3rem;">{{SON_GUNCELLEME}}</div>
+    </div>
+  </section>
+
+  <!-- Ana Özellik Listesi -->
+  <main id="featureList">
+
+    <!-- =========================================================================
+         ÖRNEK ÖZELLİK KARTI (Yeni her geliştirme sonrasında bu blok çoğaltılır)
+         ========================================================================= -->
+    <article class="feature-card" data-category="core" data-title="Örnek Özellik: Merkezi Kimlik Doğrulama ve Oturum Yönetimi">
+      
+      <!-- Kart Başlığı -->
+      <div class="feature-header">
+        <div class="feature-title-wrap">
+          <span class="feature-icon">🔐</span>
+          <div>
+            <h2 class="feature-title">Merkezi Kimlik Doğrulama ve Oturum Yönetimi</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">JWT tabanlı güvenli oturum açma, yenileme (refresh token) ve rol bazlı erişim denetimi (RBAC).</p>
+          </div>
+        </div>
+        <div class="feature-badges">
+          <span class="badge badge-primary">Modül: Auth</span>
+          <span class="badge badge-success">Durum: Aktif (Bitti)</span>
+          <span class="badge badge-neutral">Sürüm: v1.0.0</span>
+        </div>
+      </div>
+
+      <div class="feature-sections">
+
+        <!-- 1. Ne İşe Yarar / Amaç -->
+        <div class="section-block">
+          <div class="section-heading">🎯 1. Ne İşe Yarar? (Özellik Amacı & Katma Değer)</div>
+          <p style="font-size: 0.9rem; color: var(--text-main);">
+            Kullanıcıların e-posta ve şifreleriyle sisteme güvenli giriş yapmasını sağlar. Süresi dolan token'ları arka planda sessizce yeniler, yetkisiz rotalara erişimi engeller ve rollerine göre izinli menüleri dinamik olarak açar.
+          </p>
+        </div>
+
+        <!-- 2. Nasıl Yapıldı? (5 Katmanlı Dikey Dilim Mimarisi) -->
+        <div class="section-block">
+          <div class="section-heading">🏗️ 2. Nasıl Yapıldı? (Mimari ve 5 Katmanlı Dikey Dilim)</div>
+          <div class="slice-grid">
+            
+            <div class="slice-item">
+              <div class="slice-name">🗄️ 1. Veritabanı & Şema</div>
+              <p><code>users</code> ve <code>roles</code> tabloları. Şifreler BCrypt ile hash'lenir. <code>refresh_tokens</code> tablosunda cihaz bazlı oturum anahtarları tutulur.</p>
+            </div>
+
+            <div class="slice-item">
+              <div class="slice-name">⚙️ 2. Backend / RPC / Endpoint</div>
+              <p><code>POST /api/v1/auth/login</code> ve <code>POST /api/v1/auth/refresh</code>. JWT üretimi, HttpOnly güvenli çerez (cookie) ve Spring Security / Middleware filtreleri.</p>
+            </div>
+
+            <div class="slice-item">
+              <div class="slice-name">🌐 3. İstemci API Entegrasyonu</div>
+              <p><code>useAuthStore</code> (Zustand/Redux) ve Axios response interceptor ile otomatik 401 yakalama ve token yenileme döngüsü.</p>
+            </div>
+
+            <div class="slice-item">
+              <div class="slice-name">🎨 4. Arayüz / UI & Eylemler</div>
+              <p><code>LoginForm.tsx</code> bileşeni. React Hook Form + Zod doğrulaması. WCAG 2.2 uyumlu erişilebilir form kontrolleri.</p>
+            </div>
+
+            <div class="slice-item">
+              <div class="slice-name">💀 5. Skeleton Screens UI & UX</div>
+              <p>Oturum durumu sunucudan doğrulanırken donuk spinner yerine profil kartı ve menü iskelet ekranları (kaset yerleşimi) gösterilir.</p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 3. Nasıl Kullanılır? (Adım Adım Kullanıcı Rehberi) -->
+        <div class="section-block">
+          <div class="section-heading">🚀 3. Nasıl Kullanılır? (Adım Adım Kullanım Playbook'u)</div>
+          <ul class="step-list">
+            <li class="step-item">
+              <span class="step-num">1</span>
+              <div>
+                <strong>Sayfayı Açma:</strong> Tarayıcıda <code>/login</code> adresine gidin veya üst bardaki <strong>"Giriş Yap"</strong> butonuna tıklayın.
+              </div>
+            </li>
+            <li class="step-item">
+              <span class="step-num">2</span>
+              <div>
+                <strong>Bilgileri Girme:</strong> E-posta alanına geçerli kullanıcı adresini, şifre alanına parolanızı yazın. Şifreyi görmek için göz ikonuna tıklayabilirsiniz.
+              </div>
+            </li>
+            <li class="step-item">
+              <span class="step-num">3</span>
+              <div>
+                <strong>Girişi Başlatma:</strong> <strong>"Giriş Yap"</strong> butonuna basın. Başarılı girişte sistem sizi otomatik olarak <strong>"Gösterge Paneli (Dashboard)"</strong> ekranına yönlendirir.
+              </div>
+            </li>
+            <li class="step-item">
+              <span class="step-num">4</span>
+              <div>
+                <strong>Hata Durumu:</strong> Hatalı şifre girildiğinde formun altında kırmızı uyarı etiketi çıkar; buton sarsıntı animasyonuyla kullanıcıyı uyarır.
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 4. Arayüz ve UX Durumları (States) -->
+        <div class="section-block">
+          <div class="section-heading">📱 4. Arayüz Durumları & Skeleton Screens Önizlemesi</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+            <div>
+              <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-muted);">Yükleme Durumu (Skeleton Wireframe):</div>
+              <div class="skeleton-demo-box">
+                <div class="skel-rect"></div>
+                <div class="skel-line w-80"></div>
+                <div class="skel-line w-60"></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-muted);">Normal / Dolu Durum:</div>
+              <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 1rem; font-size: 0.85rem;">
+                ✔️ Hoş Geldiniz, <strong>Yönetici</strong><br>
+                <span style="color: var(--accent); font-size: 0.8rem;">● Çevrimiçi · Yetki: ADMIN</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </article>
+
+  </main>
+
+  <!-- Alt Bilgi -->
+  <footer>
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <strong>{{PROJE_ADI}}</strong> — Yaşayan Mimari ve Özellik Rehberi
+      </div>
+      <div>
+        Bu doküman her geliştirme adımında güncellenir · <code>docs/kullanici-rehberi.html</code>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Etkileşim Script'i -->
+  <script>
+    // Tema Yönetimi
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme') || 'dark';
+      const target = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', target);
+      localStorage.setItem('doc_theme', target);
+      updateThemeBtn(target);
+    }
+
+    function updateThemeBtn(theme) {
+      const icon = document.getElementById('themeIcon');
+      const text = document.getElementById('themeText');
+      if (theme === 'dark') {
+        icon.textContent = '☀️';
+        text.textContent = 'Açık Tema';
+      } else {
+        icon.textContent = '🌙';
+        text.textContent = 'Koyu Tema';
+      }
+    }
+
+    // Kayıtlı Temayı Yükle
+    (function initTheme() {
+      const saved = localStorage.getItem('doc_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', saved);
+      updateThemeBtn(saved);
+    })();
+
+    // Arama ve Filtreleme
+    function filterFeatures() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const activeTab = document.querySelector('.filter-tab.active').getAttribute('onclick');
+      const catMatch = activeTab.match(/'([^']+)'/);
+      const selectedCat = catMatch ? catMatch[1] : 'all';
+
+      const cards = document.querySelectorAll('.feature-card');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const title = (card.getAttribute('data-title') || '').toLowerCase();
+        const cat = card.getAttribute('data-category') || '';
+        const bodyText = card.innerText.toLowerCase();
+
+        const matchesQuery = !query || title.includes(query) || bodyText.includes(query);
+        const matchesCategory = selectedCat === 'all' || cat === selectedCat;
+
+        if (matchesQuery && matchesCategory) {
+          card.style.display = 'block';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      document.getElementById('totalFeaturesCount').textContent = visibleCount;
+    }
+
+    function selectFilter(cat) {
+      const tabs = document.querySelectorAll('.filter-tab');
+      tabs.forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      filterFeatures();
+    }
+
+    // Tümünü Genişlet / Kapat
+    let allExpanded = true;
+    function expandAllSections() {
+      allExpanded = !allExpanded;
+      const sections = document.querySelectorAll('.feature-sections');
+      sections.forEach(s => {
+        s.style.display = allExpanded ? 'grid' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

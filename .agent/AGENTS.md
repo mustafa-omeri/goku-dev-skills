@@ -17,6 +17,7 @@
 | 5 | İş alanı terimleri ve ortak dil sözlüğü (varsa) | `<repo-kök>\GLOSSARY.md` |
 | 6 | Tasarım dili ve token sözleşmesi (UI/UX işlerinde) | `<repo-kök>\DESIGN.md` |
 | Projenin kısa/uzun kapsamlı konsolide özeti | docs/<SLUG>_PROJECT_SUMMARY_SHORT.md veya docs/<SLUG>_PROJECT_SUMMARY_LONG.md |
+| Özelliklerin adım adım yapılışını ve kullanımını anlatan HTML rehberi | docs/kullanici-rehberi.html (veya docs/user-guide.html) |
 | 7 | Vault kararları (salt okunur) | `<vault>\CLAUDE.md`, `<vault>\profile\`, `<vault>\projects\_STANDARTLAR\decisions\` |
 | 8 | Proje kararları | `<vault>\projects\<proje-slug>\` |
 | 9 | Bu dizindeki kurallar | `.agent\rules\` (bkz. `trigger-rule-action.md`) |
@@ -36,15 +37,16 @@
 | Çözdüğün kalıcı hata | `<repo-kök>\knowledge-base.md` |
 | Verdiğin kalıcı karar | `<repo-kök>\knowledge-base.md` |
 | Durum, sıradaki iş, tuzaklar | `<repo-kök>\HANDOFF.md` |
-| Teknoloji, stack, DB veya mimari karar revizyonu | `<repo-kök>\PROJECT_BRIEF.md` |
+| Teknoloji, stack, DB, altyapı veya yeni modül revizyonu | `<repo-kök>\PROJECT_BRIEF.md` (makro mimari omurga) |
 | DB revizyonu (şema, tablo, kolon) | `<repo-kök>\DB_MIGRATIONS.md` |
 | Ürün gerçeği (kitle, amaç, kısıtlar) | `<repo-kök>\PRODUCT.md` |
 | İş alanı kavramı ve terimler | `<repo-kök>\GLOSSARY.md` |
 | Mimari karar kaydı (ADR) | `docs/adr/` |
 | Tasarım dili, token'lar ve kurallar | `<repo-kök>\DESIGN.md` |
 | Projenin kısa/uzun kapsamlı konsolide özeti | docs/<SLUG>_PROJECT_SUMMARY_SHORT.md veya docs/<SLUG>_PROJECT_SUMMARY_LONG.md |
+| Özelliklerin adım adım yapılışını ve kullanımını anlatan HTML rehberi | docs/kullanici-rehberi.html (veya docs/user-guide.html) |
 
-- ⛔ Başka hiçbir yere yazma. Bu dosyaların **tek ve zorunlu yeri repo köküdür** (veya DB dokümantasyonu için `docs/database/DB_MIGRATIONS.md`, ADR için `docs/adr/`).
+- ⛔ Başka hiçbir yere yazma. Bu dosyaların **tek ve zorunlu yeri repo köküdür** (veya DB dokümantasyonu için `docs/database/DB_MIGRATIONS.md`, ADR için `docs/adr/`, özellik HTML rehberi için `docs/kullanici-rehberi.html`).
 - ⛔ `knowledge-base.md`'yi baştan sona okuma; yalnız yaz (append). Boyutu büyüyebilir.
 - ⛔ Vault'a hiçbir şey yazma. Vault salt okunur; kalıcı kararları Kütüphaneci taşır.
 - ⛔ "Dosyada zaten var" dediğin kuralı ikinci kez yazma — terfi öner.
@@ -64,7 +66,8 @@ ve [`.agent\rules\project-brief-maintenance.md`](rules/project-brief-maintenance
 [`templates\DB_MIGRATIONS.template.md`](templates/DB_MIGRATIONS.template.md) ·
 [`templates\PRODUCT.template.md`](templates/PRODUCT.template.md) ·
 [`templates\GLOSSARY.template.md`](templates/GLOSSARY.template.md) ·
-[`templates\DESIGN.template.md`](templates/DESIGN.template.md)
+[`templates\DESIGN.template.md`](templates/DESIGN.template.md) ·
+[`templates\KULLANICI_REHBERI.template.html`](templates/KULLANICI_REHBERI.template.html)
 
 ---
 
@@ -77,29 +80,38 @@ ve [`.agent\rules\project-brief-maintenance.md`](rules/project-brief-maintenance
    olması kodun çalıştığını kanıtlar; kullanıcının çıktıyı gözüyle nasıl doğrulayacağını göstermez.
    Kullanıcı test adımları sunulmadan iş bitti sayılamaz ve commit onayına geçilemez.
    💡 **İstisna (Minor Rötüş & Dahili Değişiklikler):** Mevcut kullanıcı akışını, ekran bileşenlerini veya kabul senaryolarını değiştirmeyen minor rötüşlar (CSS boşluk/renk ince ayarı, dahili refactoring, tip düzeltmesi, typo) için rehbere gereksiz satır ekleme/dosya işlemi yapılmaz; raporda *"Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"* beyan edilir.
-3. ⛔ **Sahte Bitti (Phantom Done) ve Katman Bütünlüğü Denetimi:**
+3. 📖 **İnteraktif Özellik ve Kullanım HTML Rehberi (`docs/kullanici-rehberi.html`):**
+   Projelerde her gerekli/anlamlı geliştirme sonrasında, tüm özelliklerin tek tek nasıl yapıldığını ve nasıl kullanıldığını detaylıca anlatan interaktif HTML rehberini oluştur veya güncelle (yoksa `.agent/templates/KULLANICI_REHBERI.template.html` şablonundan oluştur; İngilizce projeler için `docs/user-guide.html`).
+   Her özellik kartı 4 zorunlu bölümü içermelidir:
+   - 🎯 **Amaç & Katma Değer:** Ne işe yarar, hangi problemi çözer?
+   - 🏗️ **Nasıl Yapıldı? (5 Katmanlı Dilim Mimarisi):** DB/Entity, Backend API/Endpoint/RPC, İstemci Entegrasyonu, UI Bileşenleri & State, Skeleton Screens UI.
+   - 🚀 **Nasıl Kullanılır? (Playbook):** Sayfa rotası, menü adımları, buton etiketleri, form alanları ve doğrulama akışı.
+   - 📱 **Arayüz Durumları:** Skeleton screens yükleme durumu, dolu durum, boş durum (empty state) ve hata/yeniden dene akışı.
+   💡 **İstisna (Minor Rötüş & Dahili Değişiklikler):** Kullanıcı akışını veya özellik yeteneğini değiştirmeyen dahili düzeltmeler için rehbere ekleme yapılmaz; raporda *"Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"* beyan edilir.
+4. ⛔ **Sahte Bitti (Phantom Done) ve Katman Bütünlüğü Denetimi:**
    Bir özellik veya sprint için "BİTTİ / TAMAMLANDI" beyanında bulunabilmek için yalnızca birim/mock testlerinin yeşil olması ASLA YETMEZ. Veri odaklı veya sunucu/istemci etkileşimli her özellikte 5 Katmanlı Dikey Dilim (Full-Stack Vertical Slice: 1. DB/Şema/Migration → 2. Backend/View/RPC → 3. İstemci API Entegrasyonu → 4. Arayüz/UX & Eylemler → 5. Yönetim/Döngü Kapanışı) eksiksiz kanıtlanmalıdır:
    - Sadece UI bileşeni ve TypeScript/Java tipi yazıp veritabanı şemasını (tablo/kolon/migration) açmamak,
    - Mock verili testlerin yeşil olmasına aldanıp gerçek view/endpoint bağlantısını kurmamak (canlıda view'da kolon yoksa `undefined` döner ve bileşen sessizce hiç çizilmez),
    - Verinin sisteme nasıl gireceğini (admin formu, submission ekranı, döngü kapanışı) yapmadan özelliği tamamlandı saymak,
    - Arayüz/UX katmanında sunucudan/API'den veri çeken ekranlarda kaset yapısını taklit eden gri tonlu İskelet Ekranları (Skeleton screens UI) yazmayıp jenerik spinner veya donuk/boş ekran bırakmak
    **AĞIR İHLAL (Phantom Done)** sayılır. Katmanlardan biri eksikse iş "BİTTİ" ilan edilemez; durum açıkça **"YARIM (Eksik Katman: ...)"** olarak kaydedilir ve eksik parça `HANDOFF.md` §3 Sıradaki İşler tablosuna ilk sıradan eklenir.
-4. Bağımlılık (paket/kütüphane), DB şeması, yeni servis/sunucusuz işlev (Edge Function, worker) veya mimari karar revizyonu yapıldıysa `PROJECT_BRIEF.md` dosyasını güncelle (yoksa `.agent/templates/PROJECT_BRIEF.template.md` şablonundan oluştur).
+5. Bağımlılık (paket/kütüphane), DB şeması, yeni servis/sunucusuz işlev (Edge Function, worker) veya mimari karar revizyonu yapıldıysa `PROJECT_BRIEF.md` dosyasını güncelle (yoksa `.agent/templates/PROJECT_BRIEF.template.md` şablonundan oluştur).
    ⛔ **Sahte 'Stabil' Beyanı Yasağı (Anti-Lazy Stabil Declaration):** Git çalışma ağacında bağımlılık manifesti (`package.json`, `pom.xml`, `requirements.txt`), veritabanı şeması/migration'ı (`*.sql`, `schema.prisma`, entity'ler) veya altyapı işlevi (Edge Function, worker) değiştiği halde raporda `PROJECT_BRIEF.md: Değişiklik yok / stabil` yazmak **AĞIR İHLALDIR**. Canlı mimari şema senkronize edilmelidir; `check_project_brief.py` (E3, E4) ve `check_db_migrations.py` (E5) kapıları bu durumu otomatik tespit ederek işlemi bloke eder.
-5. Veritabanı revizyonu (tablo, kolon, indeks, entity) yapıldıysa `DB_MIGRATIONS.md` dosyasını güncelle (yoksa `.agent/templates/DB_MIGRATIONS.template.md` şablonundan oluştur).
-6. `knowledge-base.md`'ye bu adımda çözülen hataları ve verilen kararları **yaz**.
-7. `HANDOFF.md`'yi güncelle: kanıt metrikleri, katman denetimi matrisi, nerede kaldık, **sıradaki iş**,
+6. Veritabanı revizyonu (tablo, kolon, indeks, entity) yapıldıysa `DB_MIGRATIONS.md` dosyasını güncelle (yoksa `.agent/templates/DB_MIGRATIONS.template.md` şablonundan oluştur).
+7. `knowledge-base.md`'ye bu adımda çözülen hataları ve verilen kararları **yaz**.
+8. `HANDOFF.md`'yi güncelle: kanıt metrikleri, katman denetimi matrisi, nerede kaldık, **sıradaki iş**,
    varsa yeni düşülen hata ve "Nasıl Test Edilir (kullanıcı)" bölümü.
-8. ⛔ **"Sıradaki İş" Terminoloji ve Tekillik İlkesi (Anti-Conflict Next Work Rule):**
+9. ⛔ **"Sıradaki İş" Terminoloji ve Tekillik İlkesi (Anti-Conflict Next Work Rule):**
    - **İcra Edilen İşe "Sıradaki İş" Başlığı Koyma Yasağı:** Oturumda veya yanıtta tamamlanan/geliştirilen adımları anlatırken ASLA `### Sıradaki İş: [İş]` başlığı kullanılamaz! Bu bölümler daima **"İcra Edilen Görev / Yapılan Geliştirme: [İş Tanımı]"** olmalıdır. Çünkü kullanıcı o işi henüz yapılmamış, sırada bekleyen iş zannederek çelişkiye düşer.
    - **Yanıt Boyunca Tek ve Tutarlı "Sıradaki İş" Beyanı:** Bir yanıtta "Sıradaki İş(ler)" ifadesi YALNIZCA VE YALNIZCA bir sonraki oturumda/adımda başlanacak açık işleri ifade eder. Yanıt içerisinde aynı veya çelişkili iki farklı "sıradaki iş" bilgisi yer alamaz.
    - **Devir Raporunda Tekillik:** Devir raporu bloğunda sıradaki işler tek bir maddede (`- **Sıradaki İşler (Canlı Görev Panosu):** 1. ⏭️ ..., 2. ⬜ ...`) sunulur; `HANDOFF.md` altında mükerrer `* Sıradaki İş:` açılmaz.
-9. Kullanıcıya şeffaf rapor ver — aşağıdaki blok **zorunludur**.
-10. Commit istenmedikçe `git commit` / `push` / `tag` **yapma**.
+10. Kullanıcıya şeffaf rapor ver — aşağıdaki blok **zorunludur**.
+11. Commit istenmedikçe `git commit` / `push` / `tag` **yapma**.
 
 ```markdown
 ### 📝 OTURUM DEVİR & BİLGİ TABANI GÜNCELLEMESİ (HANDOFF & KB RAPORU)
 - **Kullanıcı Test Rehberi:** [KULLANICI_TEST_REHBERI.md güncellendi mi? Eklenen test senaryoları/adımları veya "Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"]
+- **Özellik HTML Rehberi:** [docs/kullanici-rehberi.html güncellendi mi? Eklenen özellikler ve mimari/kullanım detayları veya "Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"]
 - **Katman Bütünlüğü (Full-Stack Slice):** [5 Katman doğrulandı mı? (DB, View/RPC, API, UI, Admin/Giriş Formu) veya "Salt UI/İstemci (DB bağımlılığı yok)" veya "YARIM (Eksik: ...)"]
 - **PROJECT_BRIEF.md:** [Güncellendi mi? (Stack/DB/Karar revizyonu) veya "Değişiklik yok / stabil"]
 - **knowledge-base.md:** [Eklenen hata/karar başlıkları ve kısa özeti (yoksa "yeni yok")]

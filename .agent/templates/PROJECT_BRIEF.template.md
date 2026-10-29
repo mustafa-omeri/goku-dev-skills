@@ -62,4 +62,7 @@ related_docs:
 ---
 
 ## 5. Yaşatma ve Senkronizasyon Kuralı
-⛔ **Bu dosya asla bayat bırakılamaz.** Her sprint tamamlandığında, yeni bir paket eklendiğinde veya mimari bağımlılık değiştiğinde güncellenmelidir (Bkz: `.agent/rules/project-brief-maintenance.md`).
+⛔ **Bu dosya projenin makro mimari omurgasıdır; özellik changelog'u DEĞİLDİR.**
+- **Ne Zaman Güncellenir:** Yeni bir kütüphane/paket eklendiğinde, veritabanı şeması/migration'ı değiştiğinde, yeni bir altyapı/Edge servisi kurulduğunda veya yeni bir modül dizini (`§2`) açıldığında güncellenir.
+- **Ne Zaman Stabil Kalır:** Yeni paket veya DB tablosu gerektirmeyen salt iş mantığı (business logic), arayüz bileşeni veya birim test geliştirmelerinde mimari omurga stabil kalır (özellik detayları `docs/kullanici-rehberi.html` ve `knowledge-base.md` içinde tutulur).
+- Ayrıntılı kural ve kapı: `.agent/rules/project-brief-maintenance.md` ve `readme-help.md`.
