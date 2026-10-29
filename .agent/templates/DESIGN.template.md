@@ -215,3 +215,4 @@ Her sayfa veya bileşen için sıfırdan rastgele CSS sınıfları icat etmek YA
 - Do Not: Kod/komut (`code`, `pre`, `kbd`) dışındaki başlık, rozet veya etiketlerde monospace font kullanma.
 - Do Not: İkon yerine emoji veya Unicode karakteri kullanma; standart SVG ikon kütüphanesi kullan.
 - Do Not: Sözleşmede (`DESIGN.md`) tanımlı olmayan ham hex/rgb renkleri CSS veya bileşen içine gömme.
+- Do Not: Sunucudan veri çekilen sayfa, kart, tablo ve listelerde iskelet ekran (Skeleton screens UI) yerine jenerik spinner veya boş beyaz ekran kullanma; hedef bileşenin kaset yapısını taklit eden gri tonlu görsel taslak (Skeleton) kullanılması zorunludur.

@@ -45,7 +45,7 @@ Focus on:
 - **Motion**: Use animations for effects and micro-interactions. Prioritize CSS-only solutions for HTML. Use Motion library for React when available. Focus on high-impact moments: one well-orchestrated page load with staggered reveals (animation-delay) creates more delight than scattered micro-interactions. Use scroll-triggering and hover states that surprise.
 - **Spatial Composition**: Unexpected layouts. Asymmetry. Overlap. Diagonal flow. Grid-breaking elements. Generous negative space OR controlled density.
 - **Responsive Viewport & Device Context**: Never treat mobile as merely a squeezed desktop. Design intentionally for 3 distinct ergonomic form factors: **Mobile** (< 768px: Thumb-Zone ergonomics, bottom action bar, min 44×44px touch targets, card lists, and adaptive bottom-sheet drawers instead of desktop modals), **Tablet** (768px–1024px: balanced 2-column grids, master-detail split-views, collapsible rail sidebars, touch-friendly hit areas without hover dependencies), and **Desktop** (> 1024px: multi-column dense information layouts, permanent sidebars, rich data tables, and hover micro-interactions).
-- **The 4 Essential UX States**: Never ship an interface in only its static happy path. Always craft distinct, thoughtful treatments for **Loading** (structural skeleton loaders avoiding layout shifts), **Empty** (clear iconography, engaging copy, and explicit CTA buttons like *"Create your first project"*), **Error** (inline actionable messaging with clear retry capabilities), and **Feedback** (immediate contextual confirmation toasts and optimistic updates).
+- **The 4 Essential UX States**: Never ship an interface in only its static happy path. Always craft distinct, thoughtful treatments for **Loading** (MANDATORY Skeleton Screen UI mimicking the exact wireframe/cassette structure with zero layout shift; full-page/container spinners for data loading are strictly forbidden), **Empty** (clear iconography, engaging copy, and explicit CTA buttons like *"Create your first project"*), **Error** (inline actionable messaging with clear retry capabilities), and **Feedback** (immediate contextual confirmation toasts and optimistic updates).
 - **Backgrounds & Visual Details**: Create atmosphere and depth rather than defaulting to solid colors. Add contextual effects and textures that match the overall aesthetic. Apply creative forms like gradient meshes, noise textures, geometric patterns, layered transparencies, dramatic shadows, decorative borders, custom cursors, and grain overlays.
 
 ## Curated Themes & Palette Selection (`./themes` Directory)
@@ -62,9 +62,12 @@ Similar to searching `./canvas-fonts` in `canvas-design` for typographic depth, 
 - **Curated Component Themes**: The `./component-themes/` folder contains 55 production-ready HTML/CSS themes across 8 core categories (sidebars, navbars, menus, parallax, logins, footers, cards, accordions). **When the user asks for a sidebar, navbar, login, footer, card, accordion, menu, or parallax, always inspect `./component-themes/` first.** Each theme folder contains its standalone working code and a dedicated `<theme-name>.design.md` detailing aesthetic tone, layout anatomy, agent selection criteria, and framework adaptation.
 - **Zero-Friction CLI Bridges:**
   * Component Picker: `python .agent/skills/frontend-design/scripts/get_component.py --list` (or `--theme <name> --html` / `--type sidebars`)
-  * Palette Picker: `python .agent/skills/frontend-design/scripts/get_palette.py --list` (or `--id <1-10> --format css`)
-- **Zero-Friction CLI Bridges:**
-  * Component Picker: `python .agent/skills/frontend-design/scripts/get_component.py --list` (or `--theme <name> --html` / `--type sidebars`)
+  * Palette Picker: `python .agent/skills/frontend-design/scripts/get_palette.py --list` (or `--id <1-10> --format css`)
+
+- **Zero-Friction CLI Bridges:**
+
+  * Component Picker: `python .agent/skills/frontend-design/scripts/get_component.py --list` (or `--theme <name> --html` / `--type sidebars`)
+
   * Palette Picker: `python .agent/skills/frontend-design/scripts/get_palette.py --list` (or `--id <1-10> --format css`)
 - **How to Use**:
   1. Before picking random colors or falling back to generic blues/purples, inspect the `./themes` folder.

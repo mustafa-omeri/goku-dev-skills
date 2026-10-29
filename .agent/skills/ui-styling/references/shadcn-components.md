@@ -365,16 +365,45 @@ import { Progress } from "@/components/ui/progress"
 <Progress value={33} />
 ```
 
-### Skeleton
+### Skeleton (Mandatory for Async Data Loading)
+> ⛔ **Kural:** Sunucudan içerik/veri yüklenirken jenerik spinner veya boş ekran YASAKTIR; bileşenin kaset yapısını (wireframe) taklit eden Skeleton Screen zorunludur.
+
 ```tsx
 import { Skeleton } from "@/components/ui/skeleton"
 
-<div className="flex items-center space-x-4">
+// 1. Profil / Kullanıcı Kaseti
+<div className="flex items-center space-x-4" aria-busy="true" aria-live="polite">
   <Skeleton className="h-12 w-12 rounded-full" />
   <div className="space-y-2">
     <Skeleton className="h-4 w-[250px]" />
     <Skeleton className="h-4 w-[200px]" />
   </div>
+</div>
+
+// 2. Kart Kaseti (Card Cassette)
+<div className="p-6 rounded-xl border border-border bg-card space-y-4" aria-busy="true">
+  <Skeleton className="h-48 w-full rounded-lg" />
+  <Skeleton className="h-6 w-3/4" />
+  <div className="space-y-2">
+    <Skeleton className="h-4 w-full" />
+    <Skeleton className="h-4 w-5/6" />
+  </div>
+  <div className="flex justify-between pt-4">
+    <Skeleton className="h-9 w-24 rounded-md" />
+    <Skeleton className="h-9 w-20 rounded-md" />
+  </div>
+</div>
+
+// 3. Tablo Satır Kaseti (Table Rows)
+<div className="w-full space-y-2" aria-busy="true">
+  {[...Array(5)].map((_, i) => (
+    <div key={i} className="flex items-center space-x-4 py-3 border-b border-border/50">
+      <Skeleton className="h-4 w-12" />
+      <Skeleton className="h-4 w-48 flex-1" />
+      <Skeleton className="h-4 w-24" />
+      <Skeleton className="h-8 w-16 rounded" />
+    </div>
+  ))}
 </div>
 ```
 

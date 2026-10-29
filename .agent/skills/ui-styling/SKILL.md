@@ -55,7 +55,7 @@ manifesto, `.png`/`.pdf` çıktı) ve font seti için `canvas-design` skill'ini 
 
 | Konu | Sahip |
 |------|-------|
-| Tailwind/shadcn yardımı, dark mode, responsive, a11y deseni | **bu skill** |
+| Tailwind/shadcn yardımı, dark mode, responsive, a11y deseni, Skeleton UI | **bu skill** |
 | Estetik yönelim, AI-slop kaçınma, kod disiplini | `frontend-design` |
 | Token üretimi (primitive → semantic → component) | `design-system` |
 | Stil/palet/UX önerisi (aranabilir veri) | `ui-ux-pro-max` |

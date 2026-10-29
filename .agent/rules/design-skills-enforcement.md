@@ -58,8 +58,8 @@ Ajan, belirtilen ekranlarda iş mantığını (logic), state yönetimini ve API 
 Hiçbir sayfa, form, tablo veya arayüz bileşeni yalnızca "başarılı veri var" haliyle teslim edilemez. Her bileşen şu 4 UX durumunu eksiksiz karşılamak zorundadır:
 
 1. **Loading State (Yüklenme Durumu):**
-   - Veri çekilirken içeriğin düzenini koruyan skeleton screens veya belirgin spinner.
-   - Form gönderimi veya buton tıklamasında çift tıklamayı önleyen `disabled` ve buton içi loading durumu (`isSubmitting`).
+   - **İskelet Ekranlar (Skeleton screens UI) KESİNTİSİZ ZORUNLUDUR:** Bir web sitesinde veya mobil uygulamada içerikler sunucudan yüklenirken gerçek verilerin yerine gösterilen, sayfanın genel yerleşimini (wireframe/kaset yapısını) taklit eden gri tonlu görsel taslakların (Skeleton screens) sunulması zorunludur. AI ajanları bu kuralı ASLA ATLAYAMAZ.
+   - **Spinner Kullanım Sınırı:** Dönen yükleme göstergesi (Spinner), YALNIZCA buton içi form gönderimlerinde (`isSubmitting` durumunda `disabled` buton yanında) veya mikro aksiyon rozetlerinde kullanılabilir. Sayfa, kart listesi, tablo, panel, modal içeriği veya asenkron veri yüklenen hiçbir alanda spinner veya boş beyaz ekran KULLANILAMAZ.
 2. **Empty State (Boş Durum):**
    - Henüz veri/kayıt yokken veya filtre sonucu boş döndüğünde donuk/beyaz ekran bırakılamaz.
    - Amaca uygun açıklayıcı ikon + net başlık + yönlendirici açıklama + birincil aksiyon CTA butonu (*"İlk Projeni Ekle"*, *"Filtreleri Temizle"*).
@@ -67,6 +67,34 @@ Hiçbir sayfa, form, tablo veya arayüz bileşeni yalnızca "başarılı veri va
    - Genel/kriptik hata kodları yerine; kullanıcı diliyle yazılmış inline hata mesajı, problemin net sebebi ve doğrudan çözüm sunan *"Yeniden Dene"* (Retry) aksiyonu.
 4. **Action Feedback & Success (Teyit ve Başarı):**
    - Kullanıcının gerçekleştirdiği her kritik aksiyon (ekleme, silme, güncelleme) anında geri bildirim üretmelidir: net Toast bildirimi, animasyonlu onay veya listenin anında güncellenmesi (optimistic UI).
+
+## 2.2.1 Zorunlu İskelet Ekran (Skeleton Screen UI) ve Kaset Yapısı Sözleşmesi (Mandatory Skeleton Screen Contract)
+
+> 💡 **Temel İlke & Tanım:**  
+> *"Skeleton screens UI (İskelet ekranlar), bir web sitesinde veya mobil uygulamada içerikler sunucudan yüklenirken gerçek verilerin yerine gösterilen, sayfanın genel yerleşimini (wireframe/kaset yapısını) taklit eden gri tonlu görsel taslaklardır."*  
+> Bu kural kesinlikle uygulanan bir sistem anayasasıdır; **AI ajanları bu kuralı hiçbir koşulda atlayamaz.**
+
+Bir bileşen veya sayfa için Skeleton screen tasarlanırken şu 5 mimari gereksinim eksiksiz sağlanmalıdır:
+
+1. **Kaset / Wireframe Sadakati (Cassette Wireframe Fidelity):**
+   - İskelet ekran, rastgele tek bir dev gri kutu veya generic dikdörtgen olamaz.
+   - Nihai verinin yerleşeceği arayüzün kaset yapısını (avatar daireleri `rounded-full`, başlık çubukları, çok satırlı metinlerde değişken genişlikler örn. %100 - %85 - %60, kart çerçeveleri, buton şekilleri, tablo kolonları ve satırları) birebir taklit etmelidir.
+2. **Sıfır Düzen Kayması (Zero Cumulative Layout Shift - Zero CLS):**
+   - Gerçek veri API veya sunucudan gelip render edildiğinde sayfa elemanlarının sıçramaması veya aşağı/sağa kaymaması esastır.
+   - İskelet elemanlarının yükseklikleri (`min-h-*`), genişlikleri, grid kolonları ve boşlukları (`gap-*`, `p-*`, `m-*`), yüklenecek nihai içerikle piksel ve oran seviyesinde tam eşleşmelidir.
+3. **Zanaat Renk Standartları (Theme-Aware Semantic Tokens):**
+   - İskelet renkleri sabit ham hex (`#cccccc`, `#e0e0e0`, `#333333`) OLAMAZ.
+   - Daima projenin tasarım sistemi ve tema token'larını kullanmalıdır: `bg-muted` (Tailwind/shadcn), `bg-neutral-200 dark:bg-neutral-800` veya CSS değişkeni `hsl(var(--muted))`.
+   - Açık modda yumuşak açık gri, koyu modda ise gözü yormayan derin mat yüzey tonlarında olmalıdır.
+4. **Animasyon ve Hareket Zanaatı (Subtle Motion & a11y):**
+   - İskelet yüzeylerine yumuşak bir nefes alma efekti (`animate-pulse`) veya hafif gradyan parıltısı (shimmer sweep) uygulanmalıdır.
+   - Göz yoran, hızlı veya flaş patlaması yapan sert animasyonlar KESİNLİKLE YASAKTIR.
+   - Erişilebilirlik kapsamında `motion-reduce:animate-none` kuralı desteklenmeli; kullanıcının hareket azaltma tercihinde nabız durdurulup statik kaset gösterilmelidir.
+5. **Erişilebilirlik ve ARIA Sözleşmesi (Accessible Loading Attributes):**
+   - İskelet kapsayıcısında ekran okuyucular için `aria-busy="true"` ve `aria-live="polite"` özellikleri tanımlanmalıdır.
+   - Ekran okuyucu kullanıcıları için gizli metin (`<span className="sr-only">İçerik yükleniyor...</span>` veya `aria-label="Yükleniyor"`) bulunmalıdır.
+   - İskeletin görsel sahte şekillerine (çizgiler, daireler) yardımcı teknolojilerin takılmaması için `aria-hidden="true"` verilmelidir.
+
 
 ## 2.3 Üç Katmanlı Çözünürlük & Cihaz Ergonomisi Sözleşmesi (Responsive Viewport Contract)
 
@@ -127,6 +155,7 @@ Tüm web arayüzü, frontend bileşeni ve sayfa geliştirmelerinde "generic AI s
 12. **Hardcoded Renk ve Başıboş Stil Yasağı (E9 - hardcoded-palette):** HTML veya JSX içinde inline `style="color: #..."` gibi başıboş hex renkler kullanmak yasaktır. Renkler her zaman ölçülmüş token'lardan (`get_palette.py --id <num> --format css` veya CSS değişkenleri / Tailwind sınıfları) gelmelidir. `check_design_slop.py` tarafından mekanik olarak denetlenir.
 13. **Yatay Scroll Slop'u Yasağı (W3 / A.13 - No Horizontal Scroll Slop):** Görev ve eylem alanlarında (navigasyon, komut şeridi, filtre çubuğu, etiketler veya sayfa gövdesinde) seçeneklere erişmek için yapay yatay kaydırma zorunluluğu (`overflow-x: auto; white-space: nowrap;`) oluşturulamaz. Bu durum tembelce tasarlanmış bir "AI slop" belirtisidir. Çözüm; gereksiz boşlukları azaltmak, responsive sarma (`flex-wrap: wrap`) uygulamak ve ikincil seçenekleri açılır bir komut paleti/popover veya gruplanmış bir kontrol altına almaktır. *İstisnalar:* Çok kolonlu geniş veri tabloları (`table`, `.table-card`, `.table-wrap`) ve kod/log blokları (`pre`, `code`, `.code-block`) doğası gereği geniş olduğu için yatay kaydırma gerekçesiyle korunur.
 14. **Çerçevesiz Kategori Yığılması ve Mağara Modalları Yasağı (A.14 - No Unframed Floating Groups & No Cavernous Modals):** Çoklu kategori, grup veya etki alanı barındıran modal/popup panellerde kategorilerin çerçevesiz, arka plansız havada asılı bırakılması ve modalın içeriğin 2-3 katı genişliğe (ör. 1100px+) açılarak devasa asimetrik karanlık boşluklar yaratması kesinlikle yasaktır. Gruplar çerçevelenmeli ve modal boyutu içeriğin doğal ızgara genişliğiyle orantılı sınırlandırılmalıdır.
+15. **Veri Yüklemede Jenerik Spinner ve Boş Ekran Kolaycılığı Yasağı (A.15 - No Data-Loading Spinners & Mandatory Skeleton Screens):** Bir web sitesinde veya mobil uygulamada içerikler (sayfa, görünüm, kart, liste, tablo, profil, istatistik) sunucudan/API'den yüklenirken gerçek verilerin yerine sayfanın genel yerleşimini (wireframe/kaset yapısını) taklit eden gri tonlu görsel taslakların (Skeleton screens UI) sunulması KESİNLİKLE ZORUNLUDUR. AI ajanları bu kuralı atlayamaz. Veri yükleme anında tüm sayfayı veya veri konteynerini bloklayan jenerik spinner veya donuk/boş ekran bırakılması KESİNLİKLE YASAKTIR. Spinner (dönen yükleme ikonu), YALNIZCA buton içi form gönderimlerinde (`isSubmitting`) veya küçük durum rozetlerinde kullanılabilir.
 
 ### B. Çıktı Üzerinde Zorunlu Zanaat Kontrolleri (Craft Floor Verifications)
 

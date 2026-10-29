@@ -27,6 +27,8 @@ E9 (hardcoded-palette)      Inline style veya CSS kuralında token dışı ham h
 E10 (mono-outside-code)     Kod/komut seçicileri (code/pre/kbd/samp) dışında monospace font kullanımı
 W1 (missing-tabular-nums)   Tablo veya sayaç/istatistik rakamlarında tabular-nums eksikliği
 W2 (label-uppercase-spam)   Sayfada 3'ten fazla seçicide uppercase + letter-spacing etiket kullanımı
+W3 (horizontal-scroll-slop) Görev ve eylem alanlarında yapay yatay kaydırma
+W4 (spinner-loading-slop)    Veri/içerik yüklenirken iskelet ekran (Skeleton) yerine jenerik spinner kullanımı (§2.6 A.15)
 
 Çıkış Kodları:
 - E1-E9 varsa: exit 1
@@ -126,6 +128,12 @@ EMOJI_ICON_CLASS_RE = re.compile(
 EMOJI_HEADING_BUTTON_RE = re.compile(
     rf"""<(button|h[1-6]|a)\b[^>]*>\s*({EMOJI_GLYPHS})\s+[^<]+</\1>""",
     re.UNICODE
+)
+
+# W4: Spinner Loading Slop (Veri yüklenirken Skeleton yerine jenerik spinner veya loader döndürme)
+DATA_LOADING_SPINNER_RE = re.compile(
+    r"""(?:<Suspense\s+fallback=\{[^}]*(?:Spinner|Loader|animate-spin)|if\s*\([^)]*(?:loading|fetching|pending)[^)]*\)\s*\{?\s*return\s*\(?\s*(?:<div[^>]*>)?\s*<(?:Spinner|Loader|LoadingSpinner|Icons\.spinner|Loader2)\b)""",
+    re.IGNORECASE
 )
 
 # E9: Inline style with hardcoded hex color
@@ -382,7 +390,7 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
                 "message": f"Başlık veya butonda önek emoji ('{m.group(2)}') tespit edildi. SVG vektör ikon kullanın (§2.6 A.8)."
             })
 
-    # E9: Inline style with hardcoded hex color
+        # E9: Inline style with hardcoded hex color
     for idx, line in enumerate(lines, start=1):
         m = INLINE_HEX_STYLE_RE.search(line)
         if m:
@@ -565,6 +573,26 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
                 "line": line_no,
                 "message": "Tablo tespit edildi ancak tabular-nums sınıfı veya font-variant-numeric bulunamadı. Rakam hizalaması için ekleyin."
             })
+
+    # W4: Spinner Loading Slop (Veri/içerik yüklenirken Skeleton yerine jenerik spinner kullanımı)
+    # §2.6 A.15: Sunucudan veri yüklenirken jenerik spinner yasaktır; wireframe kaset yapısını taklit eden Skeleton UI zorunludur.
+    if path.suffix.lower() in (".tsx", ".jsx", ".vue", ".svelte"):
+        has_skeleton = bool(re.search(r"\b(?:Skeleton|ui-skeleton|animate-pulse)\b", content))
+        if not has_skeleton:
+            m = DATA_LOADING_SPINNER_RE.search(content)
+            if m:
+                line_no = content[:m.start()].count("\n") + 1
+                warnings.append({
+                    "code": "W4",
+                    "rule": "spinner-loading-slop",
+                    "file": str(path),
+                    "line": line_no,
+                    "message": (
+                        "Veri yüklenirken jenerik spinner tespit edildi (§2.6 A.15 / spinner-loading-slop). "
+                        "Sunucudan veri yüklenirken içeriğin kaset yerleşimini (wireframe) taklit eden gri tonlu İskelet Ekran "
+                        "(Skeleton screens UI) kullanılması zorunludur. Spinner yalnızca form submit butonlarında kullanılabilir."
+                    ),
+                })
 
     return errors, warnings
 

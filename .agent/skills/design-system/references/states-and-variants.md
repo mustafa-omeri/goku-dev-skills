@@ -102,14 +102,15 @@ When multiple states apply, priority (highest to lowest):
 
 ## Loading States
 
-### Spinner Placement
+### Loading Indicators & Skeleton Screen Placement
 
-| Component | Spinner Position |
-|-----------|------------------|
-| Button | Replace icon or center |
-| Input | Trailing position |
-| Card | Center overlay |
-| Page | Center of viewport |
+| Scope / Component | Loading Pattern | Standard |
+|-------------------|-----------------|----------|
+| **Page / View** | **Skeleton Screen (Cassette)** | MANDATORY: wireframe layout mimicking final content |
+| **Card / List / Table** | **Skeleton Screen (Cassette)** | MANDATORY: shape fidelity, zero layout shift (CLS) |
+| **Button / Submit** | **Spinner** | Micro-interaction inside button (`isSubmitting`) |
+| **Input** | **Spinner** | Trailing position during inline async validation |
+| *Full-page spinner for data* | *FORBIDDEN* | Banned by `design-skills-enforcement.md` §2.6 A.15 |
 
 ### Loading Treatment
 

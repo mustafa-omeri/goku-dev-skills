@@ -83,7 +83,7 @@ Geliştirmeye başlamadan önce ajan sırasıyla şu adımları işletmek zorund
 
 6. ⛔ **UX Durumları ve 3 Cihaz Ergonomisi Planı (Responsive Viewport Contract):**
    - Görev bir arayüz, sayfa veya bileşen içeriyorsa planda şu 3 unsur açıkça tanımlanmalıdır:
-     1. **4 UX Durumu:** Loading (skeleton/spinner), Empty (açıklayıcı ikon+CTA), Error (inline+çözüm) ve Action Feedback (toast/optimistic).
+     1. **4 UX Durumu:** Loading (kaset yapısını taklit eden zorunlu Skeleton Screen UI; veri yüklemede spinner yasaktır, spinner yalnız form submit butonunda kullanılır), Empty (açıklayıcı ikon+CTA), Error (inline+çözüm) ve Action Feedback (toast/optimistic).
      2. **3 Cihaz Ergonomisi:** Mobil (< 768px - tek sütun / Thumb Zone / Bottom Nav / kart listesi), Tablet (768px-1024px - 2 sütun / Split-View / dokunmatik aralıklar), Masaüstü (> 1024px - çok sütunlu zengin ızgara).
      3. **Modal / Popup Davranışı:** Sayfa token'larıyla uyum, mobilde alttan açılan Bottom Sheet (Drawer) adaptasyonu ve `max-h-[85dvh]` kaydırma/klavye koruması.
 

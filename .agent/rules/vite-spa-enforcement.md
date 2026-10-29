@@ -42,6 +42,7 @@ Kod yazmadan önce yığını doğrula: `package.json` → `dependencies`.
 - Dev sunucusu: `npm run dev`
 - Path alias: `@/` — `vite.config.js` içinde tanımlıdır
 - Kod bölme: `React.lazy()` + `import()` (bkz. `frontend-bundle-limits.md`)
+- Asenkron veri ve lazy loading: `React.Suspense` fallback veya query loading durumlarında jenerik spinner yerine hedef sayfa/bileşenin wireframe kaset yapısını taklit eden Skeleton ekranı render edilmelidir (bkz. `design-skills-enforcement.md` §2.2.1).
 
 ## İhlal kontrolü — her kod üretiminde
 

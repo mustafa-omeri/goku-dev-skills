@@ -4,7 +4,7 @@ type: project-brief
 project: skillSetWorks
 status: active
 created: 2026-10-27
-updated: 2026-10-28
+updated: 2026-10-29
 primary_language: Python 3.11 / Node.js / Markdown
 frameworks: ["pytest", "unittest", "node-cli"]
 database: ["Yok / Kural ve Dağıtım Deposu"]
@@ -27,7 +27,7 @@ related_docs:
 
 ## 1. Teknoloji Yığını & Altyapı
 - **Proje Adı / Slug:** skillSetWorks (`skillSetWorks`)
-- **Paket / Sürüm:** `goku-dev-skills` v1.17.0 (`package.json`)
+- **Paket / Sürüm:** `goku-dev-skills` v1.17.1 (`package.json`)
 - **Birincil Dil:** Python 3.11 / Node.js 18+ / Markdown
 - **Frameworkler & Kütüphaneler:** Python `unittest`, `pytest`, `pytest-cov`, `argparse`, Node.js CLI runtime
 - **Veritabanı / Altyapı:** Yok (Uygulama kodu içermez; kural, skill ve dağıtım motorudur)
@@ -61,6 +61,12 @@ related_docs:
 
 ---
 
-## 4. Yaşayan Durum ve Doğrulama
+## 4. Veritabanı Modeli & Veri Mimarisi
+- **Model / DB:** Yok (Bu repo uygulama kodu içermez; kural, skill ve dağıtım motorudur).
+- **Migration Takibi:** Kapsam dışı (`DB_MIGRATIONS.md` gerektirmez).
+
+---
+
+## 5. Yaşatma & Operasyonel Döngü
 - **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `test_skills_catalog.py`, `test_project_summary.py`
-- **Son Başarılı Doğrulama:** 2026-10-28 · 17/17 test paketi PASS · 8/8 kapı PASS
+- **Son Başarılı Doğrulama:** 2026-10-29 · 17/17 test paketi PASS · 8/8 kapı PASS

@@ -81,7 +81,8 @@ ve [`.agent\rules\project-brief-maintenance.md`](rules/project-brief-maintenance
    Bir özellik veya sprint için "BİTTİ / TAMAMLANDI" beyanında bulunabilmek için yalnızca birim/mock testlerinin yeşil olması ASLA YETMEZ. Veri odaklı veya sunucu/istemci etkileşimli her özellikte 5 Katmanlı Dikey Dilim (Full-Stack Vertical Slice: 1. DB/Şema/Migration → 2. Backend/View/RPC → 3. İstemci API Entegrasyonu → 4. Arayüz/UX & Eylemler → 5. Yönetim/Döngü Kapanışı) eksiksiz kanıtlanmalıdır:
    - Sadece UI bileşeni ve TypeScript/Java tipi yazıp veritabanı şemasını (tablo/kolon/migration) açmamak,
    - Mock verili testlerin yeşil olmasına aldanıp gerçek view/endpoint bağlantısını kurmamak (canlıda view'da kolon yoksa `undefined` döner ve bileşen sessizce hiç çizilmez),
-   - Verinin sisteme nasıl gireceğini (admin formu, submission ekranı, döngü kapanışı) yapmadan özelliği tamamlandı saymak
+   - Verinin sisteme nasıl gireceğini (admin formu, submission ekranı, döngü kapanışı) yapmadan özelliği tamamlandı saymak,
+   - Arayüz/UX katmanında sunucudan/API'den veri çeken ekranlarda kaset yapısını taklit eden gri tonlu İskelet Ekranları (Skeleton screens UI) yazmayıp jenerik spinner veya donuk/boş ekran bırakmak
    **AĞIR İHLAL (Phantom Done)** sayılır. Katmanlardan biri eksikse iş "BİTTİ" ilan edilemez; durum açıkça **"YARIM (Eksik Katman: ...)"** olarak kaydedilir ve eksik parça `HANDOFF.md` §3 Sıradaki İşler tablosuna ilk sıradan eklenir.
 4. Bağımlılık (paket/kütüphane), DB şeması, yeni servis/sunucusuz işlev (Edge Function, worker) veya mimari karar revizyonu yapıldıysa `PROJECT_BRIEF.md` dosyasını güncelle (yoksa `.agent/templates/PROJECT_BRIEF.template.md` şablonundan oluştur).
    ⛔ **Sahte 'Stabil' Beyanı Yasağı (Anti-Lazy Stabil Declaration):** Git çalışma ağacında bağımlılık manifesti (`package.json`, `pom.xml`, `requirements.txt`), veritabanı şeması/migration'ı (`*.sql`, `schema.prisma`, entity'ler) veya altyapı işlevi (Edge Function, worker) değiştiği halde raporda `PROJECT_BRIEF.md: Değişiklik yok / stabil` yazmak **AĞIR İHLALDIR**. Canlı mimari şema senkronize edilmelidir; `check_project_brief.py` (E3, E4) ve `check_db_migrations.py` (E5) kapıları bu durumu otomatik tespit ederek işlemi bloke eder.
@@ -251,6 +252,7 @@ Kullanmadıysan **"kullanmadım" de.** Ayrıntı ve sınır listesi:
   [`rules\design-skills-enforcement.md`](rules/design-skills-enforcement.md) §3'te
   tanımlıdır. Bir konuyu iki skill sahiplenmez — çakışmada o tabloya bak.
 - Generic/AI-slop çıktı kabul edilmez.
+- **İskelet Ekranlar (Skeleton screens UI) Kesin Zorunluluktur:** Bir web sitesinde veya mobil uygulamada içerikler sunucudan yüklenirken gerçek verilerin yerine gösterilen, sayfanın genel yerleşimini (wireframe/kaset yapısını) taklit eden gri tonlu görsel taslakların (Skeleton screens) sunulması zorunludur. AI ajanları bu kuralı ASLA ATLAYAMAZ; veri yükleme durumlarında jenerik spinner veya boş ekran kullanılamaz (spinner yalnız form submit butonlarında geçerlidir). Ayrıntı: [`design-skills-enforcement.md`](rules/design-skills-enforcement.md) §2.2.1.
 - Ayrıntı: [`design-skills-enforcement.md`](rules/design-skills-enforcement.md).
 
 ---

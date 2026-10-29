@@ -235,6 +235,50 @@ class TestCheckDesignSlop(unittest.TestCase):
         ret = check_design_slop.main(["--strict", "--json"])
         self.assertEqual(ret, 1)
 
+    def test_warns_spinner_loading_slop_w4(self):
+        """Veri yüklenirken iskelet ekran yerine jenerik spinner W4 uyarısı üretmeli."""
+        src = self.tmp_dir / "src"
+        src.mkdir(exist_ok=True)
+        page = src / "DataFeed.tsx"
+        page.write_text(
+            """
+            import React from 'react';
+            export function DataFeed({ isLoading, data }) {
+                if (isLoading) return <Spinner />;
+                return <div>{data.title}</div>;
+            }
+            """,
+            encoding="utf-8"
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertTrue(any(w["code"] == "W4" for w in res["warnings"]))
+
+    def test_skeleton_screen_loading_passes_cleanly(self):
+        """İskelet ekran (Skeleton) kullanan veri yükleme bileşeni temiz geçmeli."""
+        src = self.tmp_dir / "src"
+        src.mkdir(exist_ok=True)
+        page = src / "DataFeedWithSkeleton.tsx"
+        page.write_text(
+            """
+            import React from 'react';
+            import { Skeleton } from '@/components/ui/skeleton';
+            export function DataFeedWithSkeleton({ isLoading, data }) {
+                if (isLoading) {
+                    return (
+                        <div className="space-y-4" aria-busy="true">
+                            <Skeleton className="h-8 w-1/3" />
+                            <Skeleton className="h-24 w-full" />
+                        </div>
+                    );
+                }
+                return <div>{data.title}</div>;
+            }
+            """,
+            encoding="utf-8"
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertFalse(any(w["code"] == "W4" for w in res["warnings"]))
+
 
 if __name__ == "__main__":
     unittest.main()
