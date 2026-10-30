@@ -17,7 +17,7 @@ Bu yetenek, anlık geliştirme oturumunda **en son yapılan değişiklikleri**, 
 
 ---
 
-## 3 Aşamalı Cerrahi Denetim Protokolü
+## 4 Aşamalı Cerrahi Denetim ve Bulgu İşleme Protokolü
 
 ### 1. Birleşik Kapsam-Duyarlı Kalite Kapısı (`run_all_gates.py`)
 - `git status --short` ile değişen dosyaları listele.
@@ -41,6 +41,11 @@ Bu yetenek, anlık geliştirme oturumunda **en son yapılan değişiklikleri**, 
 ### 3. Hızlı Kullanıcı Test Adımı
 - Kullanıcının tarayıcıda veya konsolda bu son değişikliği 1-2 adımda gözüyle nasıl doğrulayacağını net olarak sun.
 
+### 4. Bulgu Yönetimi ve Auto-Heal Protokolü (Zorunlu İcra Adımı)
+⛔ **Kırık Kapıyla Commit İsteme Yasağı:**
+1. **Auto-heal (Otomatik Eşleme Senkronizasyonu):** Saf dokümantasyon senkron eksikliği tespit edildiğinde (DB değişti ama `DB_MIGRATIONS.md` / `PROJECT_BRIEF.md` güncellenmedi, API rotası değişti ama `docs/APIs/` yazılmadı, kod değişti ama `HANDOFF.md` güncellenmedi); ajan ara onay sormadan bu dosyaları otomatik senkronize eder (**Auto-heal**).
+2. **Kod/Test Kırıklığı:** `run_all_gates.py` derleme, tip (`tsc`) veya test hatası verirse commit onayına KESİNLİKLE gidilemez. Hata derhal `fix-bug` (`diagnosing-bugs`) cerrahi onarım akışına sokulur.
+
 ---
 
 ## Standart Çıktı Raporu
@@ -55,6 +60,11 @@ Bu yetenek, anlık geliştirme oturumunda **en son yapılan değişiklikleri**, 
   * Tip Kontrolü (`typecheck`): ✅ [0 hata veya Kapsam Dışı]
   * İlgili Testler: ✅ [X passed / 0 failed]
 - **Dokunulan Katmanlar & Senkron:** [DB ↔ DB_MIGRATIONS.md + PROJECT_BRIEF.md, API ↔ docs/APIs, UI ↔ DESIGN.md, Handoff ↔ HANDOFF.md]
+- **Otomatik Senkronizasyon (Auto-heal):** [Güncellenen belge eşleşmeleri veya "Tamamı güncel"]
 - **Gözle Doğrulama:**
   👉 `[URL veya Komut]` ➔ `[Beklenen Sonuç]`
+
+#### Sonraki Adım:
+- [Kapılar Yeşilse] ➔ Commit onayı iste (`git-release-workflow`).
+- [Kapılar Kırmızıysa] ➔ Kırmızı kapıyı düzeltmek için `fix-bug`'a devret.
 ```

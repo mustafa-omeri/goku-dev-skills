@@ -17,7 +17,7 @@ Bu yetenek, projenin **aktif sprinti** (`SPRINT_PLAN.md`) ve hemen öncesinde ta
 
 ---
 
-## 4 Aşamalı Sprint Denetim Protokolü
+## 5 Aşamalı Sprint Denetim ve Bulgu İşleme Protokolü
 
 ### 1. Kart Kabul Kriterleri (Gherkin AC) Doğrulaması
 - `SPRINT_PLAN.md` ve `KANBAN.md` içindeki aktif kartların `specs/<kart-id>.feature` dosyalarını tara.
@@ -42,6 +42,13 @@ Sprint kapsamındaki her özellik için 5 katmanı doğrula:
 - Kapanmayan açık kartlar `RELEASE_PLAN.md`'ye aktarılmış mı?
 - `HANDOFF.md` §3 canlı görev panosu güncellenmiş mi?
 
+### 5. Sprint Engellenme ve Bulgu Yönetimi Protokolü (Zorunlu İcra Adımı)
+⛔ **Engellenen Sprinti Raporda Bırakıp Çekilme Yasağı:** Denetim sonucunda bir kartın testi kırmızıysa veya katmanı eksikse sprint kapanışı `ENGELLENDİ` ilan edilir ve şu durum kalıcılığı adımları otonom işletilir:
+1. **`KANBAN.md` Geri Çekme:** Eksik/başarısız kart asla `Yapıldı`'da bırakılamaz. Derhal `Yapılıyor` veya `Bekliyor` sütununa geri çekilir; durum `🔴 Kapatılamaz (YARIM)` olarak işaretlenir.
+2. **`RELEASE_PLAN.md` Senkronu:** Sprint kapsamından çıkarılan veya ötelenen kartlar `RELEASE_PLAN.md` içindeki Ötelenen Kartlar bölümüne kaydedilir (`sprint-delivery-workflow.md` §2.4).
+3. **`HANDOFF.md` §3 Canlı Görev Panosu:** Kapanmayan kartın eksik parçası, `HANDOFF.md` §3 tablosuna `1. ⏭️ [DOM]-US-XXX` formatıyla en üst sıradan kaydedilir.
+4. **Kullanıcıya İcra Menüsü Sunumu:** Raporun altında kullanıcıya anında seçenekler sunulur.
+
 ---
 
 ## Standart Çıktı Raporu
@@ -50,7 +57,7 @@ Sprint kapsamındaki her özellik için 5 katmanı doğrula:
 ### 📋 VERIFY-SPRINT: SPRİNT KABUL & BÜTÜNLÜK RAPORU
 
 - **Sprint:** [Sprint Numarası / Hedefi]
-- **Kart Durumu:** [X adet Yapıldı, Y adet Bekliyor]
+- **Kart Durumu:** [X adet Yapıldı, Y adet Bekliyor / Kapatılamayan]
 
 #### Kart Bazlı Katman Denetimi
 | Kart ID | İş Başlığı | Gherkin Test | 5 Katman | Kullanıcı Testi | Sonuç |
@@ -60,4 +67,13 @@ Sprint kapsamındaki her özellik için 5 katmanı doğrula:
 
 #### Sprint Kapanış Kararı: [ONAYLANDI / ENGELLENDİ]
 - Engellenme gerekçesi (varsa): ...
+
+#### Yapılan Sistem Durumu Güncellemeleri
+- **KANBAN.md:** [Geri çekilen kartlar ve güncel sütun durumları]
+- **RELEASE_PLAN.md:** [Ötelenen / sonraki sprinte aktarılan maddeler]
+- **HANDOFF.md §3:** [Canlı panoya 1. sıradan eklenen blocker işler]
+
+#### Önerilen Aksiyon & Onarım Menüsü
+1. ⚡ **Engelleri Şimdi Çöz (Fix Blockers Now):** `tdd` veya `fix-bug` ile eksik katman veya Gherkin testini hemen tamamlayıp sprinti kapat.
+2. 📋 **Kartları Devret & Sprinti Kapat (Defer & Close):** Kapanmayan kartları sonraki sprinte aktarılmış haliyle bırakıp devir raporuna geç.
 ```

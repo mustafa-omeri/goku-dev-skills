@@ -238,6 +238,30 @@ Yukarıdaki ölçülebilir kapı komutları (`npm run build`, `pnpm test`, `npx 
 
 ---
 
+## Adım 4.3 — Doğrulama Bulgularının Yönetimi ve Yaşam Döngüsü (VFRLP)
+
+1. ⛔ **Bulguların Pasif Metin Olarak Bırakılması veya Doğrudan Koda Dalıp Bulguları Unutma Yasağı (Anti-Passive Audit & Zero-Loss Rule):**
+   `/verify-prd`, `/verify-sprint` veya `/verify-last` çalıştırıldığında tespit edilen eksik katmanlar, Sahte Bitti (Phantom Done) durumları, kırık testler, kalite kapısı hataları veya şartname sapmaları ASLA sadece sohbete Markdown çıktısı basılarak bırakılamaz! Aynı şekilde kullanıcı onarımı onayladığında ajan doğrudan koda dalıp 4-6. bulguları sohbet geçmişinde unutmaya terk edemez; önce **Faz 0 (Sıfır-Kayıplı Dosya Dağıtımı)**, ardından **Faz 1..N (Dilimli Cerrahi Onarım)** yürütülür.
+2. 📖 **Tarih Damgalı 4 Bölümlü PRD Senkronizasyonu (`## BULGULAR` Audit Trail):**
+   `/verify-prd` denetiminde projenin `PRODUCT.md`, `docs/*-prd.md` veya `docs/FEATURES.md` dokümanı altına `## BULGULAR (DENETİM RAPORU — [YYYY-MM-DD HH:mm])` ana başlığı açılarak yalnızca özet tablo değil, raporun **4 ana bölümünün tamamı** hiçbir madde kırpılmadan kalıcı olarak işlenir:
+   - `### 1. Katman Bütünlüğü Matrisi (Full-Stack Slice Audit)`: `| Özellik / Modül (PRD / RFC) | 1. DB / Şema | 2. Backend / RPC | 3. İstemci API | 4. UI & Skeleton | 5. Döngü Kapanışı | Nihai Hüküm |`
+   - `### 2. Tespit Edilen Sahte Bitti (Phantom Done), Yetim Bileşenler ve Kırık/Eksik Bağlantılar`
+   - `### 3. Doküman-Kod Sapması (Spec Drift) & Test Rehberi Denetimi`
+   - `### 4. Düzeltme & Tamamlama Eylem Planı (Action Items — 🔴 Kritik & 🟡 İyileştirme)`
+   Böylece ürün şartnamesi ile gerçek kod durumu arasındaki tüm bulgular kalıcı olarak mühürlenir.
+3. 🔄 **Sıfır-Kayıplı Durum Kalıcılığı (HANDOFF §0/§3, KANBAN & RELEASE):**
+   - **`HANDOFF.md` §3 & RTM:** Tespit edilen tüm `🔴 Kritik` ve `🟡 İyileştirme` maddelerine deterministik `[DOM]-[TIP]-[NO]` (`[DOM]-BUG-XXX` / `[DOM]-US-XXX`) kimliği verilir. WIP limitini (maks 3) koruyarak ilk 3 kritik iş `🎯 Aktif Sprint / Anlık Görev Panosu`na (`1. ⏭️`, `2. ⬜`, `3. ⬜`), kalan **tüm** Kritik ve İyileştirme maddeleri ise hemen altındaki `📌 Gelecek Fazlar & Parking Lot / Sıradaki Dilimler (RTM)` tablosuna eksiksiz kaydedilir (`AGENTS.md` §2.4 & `handoff-session-continuity.md` §2). Yeni yakalanan sistemik hatalar `§0 Tuzaklar` ve `knowledge-base.md` dosyalarına işlenir.
+   - **`KANBAN.md`:** Kabul kriteri yeşil olmayan veya katmanı eksik olan kartlar `Yapıldı` sütununda tutulamaz; derhal `Yapılıyor` veya `Bekliyor` sütununa geri çekilir ve durumu `🔴 Kapatılamaz (YARIM)` yapılır.
+   - **`RELEASE_PLAN.md`:** Kapanmayan veya ötelenen kartlar sürüm planına aktarılır.
+4. 🛠️ **Auto-heal (Otomatik Belge Senkronu):**
+   Saf dokümantasyon senkron açıkları (DB şeması değiştiğinde `PROJECT_BRIEF.md` / `DB_MIGRATIONS.md`, API eklendiğinde `docs/APIs/`, kod değiştiğinde `HANDOFF.md` güncelliği) ajan tarafından ara onay sormadan otomatik tamamlanır (**Auto-heal**).
+5. ⚡ **Dilimli Cerrahi Onarım ve Eylem Menüsü (Faz 1..N):**
+   Raporun hemen altında kullanıcıya net iki seçenek sunulur:
+   - **1. Anında Dilimli Cerrahi Onarım (Fix Now — Faz 1..N):** Faz 0 ile mühürlenen `🔴 Kritik` maddeleri (3'erli WIP dilimleriyle) ve ardından `🟡 İyileştirme` maddelerini ilgili cerrahi yeteneklerle (`fix-bug`, `tdd`, `db-migration-enforcement`, `ui-polish`, `doc-coauthoring`) sırayla çöz.
+   - **2. Görev Panosunda Bırak (Plan Next):** Bulguları PRD `## BULGULAR` ve `HANDOFF.md` üzerinde planlı tutarak oturumu güvenle devret.
+
+---
+
 ## Adım 5 — Devir ve bilgi tabanı güncellemesi
 
 1. `knowledge-base.md`'ye bu adımda alınan kararlar

@@ -208,6 +208,23 @@ haritasından** gelir ([`design-skills-enforcement.md`](./design-skills-enforcem
 
 ---
 
+## D.1. Doğrulama Sonrası Bulgu Triyaj ve Onarım Yönlendirme Matrisi (Post-Verification Remediation Matrix)
+
+Doğrulama yetenekleri (`/verify-prd`, `/verify-sprint`, `/verify-last`) bir eksiklik, kırık kapı veya mimari sapma tespit ettiğinde bulguları pasif metin olarak bırakmaz; aşağıdaki matrise göre deterministik şekilde sınıflandırır ve ilgili onarım becerisine bağlar:
+
+| Bulgu Türü (Finding Type) | Tespit Eden Seviye | Öncelik | İlgili Onarım Becerisi | Yürütülecek Cerrahi Protokol & Kural |
+|---|---|---|---|---|
+| **Sahte Bitti (Phantom Done) & Mock Kalıntıları:** Hardcoded dummy array'ler, bağlanmamış API mock'ları, ölü butonlar | `/verify-prd`, `/verify-sprint` | 🔴 Blocker (P0) | [`fix-bug`](../skills/fix-bug/SKILL.md) | Önce kırmızı test döngüsü kur, sahte mock'u sil, gerçek API/RPC bağlantısını sağla (`bug-diagnosis-enforcement.md`). |
+| **Eksik Katman (Vertical Slice Gap):** View/RPC, İstemci hook veya Admin Giriş Formu yokluğu | `/verify-prd`, `/verify-sprint` | 🔴 Blocker / Major (P1) | [`tdd`](../skills/tdd/SKILL.md) + [`musgoku`](../skills/musgoku/SKILL.md) | Dikiş noktasında (`seam`) kırmızı test yaz, eksik katmanı minimal kodla inşa et (Full-stack 5 katman dilimi). |
+| **Veritabanı & Şema Eksikliği:** Eksik migration, tablo, kolon, indeks veya açık RLS politikası | `/verify-prd`, `/verify-sprint`, `/verify-last` | 🔴 Blocker (P0) | [`db-migration-enforcement`](./db-migration-enforcement.md) + [`musgoku`](../skills/musgoku/SKILL.md) | Yeni migration (`*.sql`) yaz, `DB_MIGRATIONS.md` ve `PROJECT_BRIEF.md` ikili eşlemesini eşzamanlı güncelle. |
+| **Arayüz Kalitesi & Skeleton Yokluğu:** Skeleton screens wireframe eksikliği, WCAG kontrast veya AI-slop | `/verify-prd`, `/verify-last` | 🟡 Major (P1) | [`ui-polish`](../skills/ui-polish/SKILL.md) + [`frontend-design`](../skills/frontend-design/SKILL.md) | Gri tonlu Skeleton screens kaset yapısını ekle, `DESIGN.md` sözleşmesi ve WCAG 2.2 AA kontrastını sağla. |
+| **Doküman-Kod Sapması (Spec Drift):** Halüsinasyonlu veya kodla çelişen dokümantasyon kartları | `/verify-prd` | 🟡 Major / Minor (P2) | [`doc-coauthoring`](../skills/doc-coauthoring/SKILL.md) | `PRODUCT.md` / `docs/*-prd.md` ve `docs/kullanici-rehberi.html` dosyalarını gerçek kod tabanıyla senkronize et. |
+| **Yetim Responsive Bileşenler:** Mount edilmemiş mobil/tablet barları veya dead code | `/verify-prd` | 🟡 Major (P1) | [`ui-styling`](../skills/ui-styling/SKILL.md) + [`frontend-design`](../skills/frontend-design/SKILL.md) | Yetim bileşenleri ana ekrana mount et veya gereksizse temizle, 3 Cihaz Ergonomisini sağla. |
+| **Eksik Kullanıcı Test Senaryoları:** Gözle doğrulama adımı bulunmayan özellikler | `/verify-prd`, `/verify-sprint`, `/verify-last` | 🟡 Major (P1) | [`development-workflow`](./development-workflow.md) | `docs/KULLANICI_TEST_REHBERI.md` dosyasına adım adım gözle test akışlarını ekle. |
+| **Kalite Kapısı Hatası:** `run_all_gates.py`, derleme (`build`), tip (`tsc`), lint veya kural kapısı | `/verify-last` | 🔴 Blocker (P0) | [`fix-bug`](../skills/fix-bug/SKILL.md) / `Auto-heal` | Belge senkron hatası ise Auto-heal ile tamamla; derleme/tip hatası ise cerrahi onar. |
+
+---
+
 ## E. Sözleşme kuralları
 
 Her `SKILL.md` `description` alanı şu kalıbı taşır:
