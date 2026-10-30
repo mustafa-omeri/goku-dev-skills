@@ -4,7 +4,7 @@ type: project-brief
 project: skillSetWorks
 status: active
 created: 2026-10-27
-updated: 2026-10-29
+updated: 2026-10-30
 primary_language: Python 3.11 / Node.js / Markdown
 frameworks: ["pytest", "unittest", "node-cli"]
 database: ["Yok / Kural ve Dağıtım Deposu"]
@@ -16,6 +16,7 @@ related_docs:
   - HANDOFF.md
   - delivery.md
   - README.md
+  - docs/KULLANICI_TEST_REHBERI.md
 ---
 
 # 🚀 skillSetWorks — Project Brief & Architecture Matrix
@@ -27,7 +28,7 @@ related_docs:
 
 ## 1. Teknoloji Yığını & Altyapı
 - **Proje Adı / Slug:** skillSetWorks (`skillSetWorks`)
-- **Paket / Sürüm:** `goku-dev-skills` v1.17.2 (`package.json`)
+- **Paket / Sürüm:** `goku-dev-skills` v1.17.3 (`package.json`)
 - **Birincil Dil:** Python 3.11 / Node.js 18+ / Markdown
 - **Frameworkler & Kütüphaneler:** Python `unittest`, `pytest`, `pytest-cov`, `argparse`, Node.js CLI runtime
 - **Veritabanı / Altyapı:** Yok (Uygulama kodu içermez; kural, skill ve dağıtım motorudur)

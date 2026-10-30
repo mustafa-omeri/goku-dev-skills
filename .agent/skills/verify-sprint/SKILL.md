@@ -34,7 +34,7 @@ Sprint kapsamındaki her özellik için 5 katmanı doğrula:
 *Katmanlardan biri eksikse kart `Yapıldı` olamaz; `YARIM (Eksik Katman)` işaretlenir.*
 
 ### 3. Kullanıcı Test Rehberi Adımları
-- `KULLANICI_TEST_REHBERI.md` kontrol edilir: Kart için kullanıcının tarayıcıda gözüyle doğrulayabileceği adımlar yazılmış mı?
+- `docs/KULLANICI_TEST_REHBERI.md` kontrol edilir: Kart için kullanıcının tarayıcıda gözüyle doğrulayabileceği adımlar yazılmış mı?
 - Kullanıcı test adımı sunulmadan kart kapatılamaz.
 
 ### 4. Pano & Plan Senkronizasyonu

@@ -38,7 +38,7 @@ Tüm özelliklerin şu 5 katmandan eksiksiz geçtiğini doğrula:
 - Arayüzde tıklanınca hiçbir işlem yapmayan ölü butonlar veya sahte linkler.
 
 ### 4. Kullanıcı Gözle Doğrulama & Test Rehberi Uyumu
-- `KULLANICI_TEST_REHBERI.md` dosyasını tara: Geçmiş sprintlerde bitti denmiş tüm kritik akışların kullanıcı tarafından tarayıcıda adım adım nasıl test edileceği yazılmış mı?
+- `docs/KULLANICI_TEST_REHBERI.md` (veya kökteki) dosyasını tara: Geçmiş sprintlerde bitti denmiş tüm kritik akışların kullanıcı tarafından tarayıcıda adım adım nasıl test edileceği yazılmış mı?
 
 ---
 

@@ -36,7 +36,7 @@ Bu yetenek, anlık geliştirme oturumunda **en son yapılan değişiklikleri**, 
   * **Bağımlılık veya Edge Function / Altyapı değiştiyse:** `PROJECT_BRIEF.md` güncellendi mi? (`check_project_brief.py` E3/E6).
   * **API rotası / Controller değiştiyse:** `docs/APIs/` güncellendi mi? (`check_api_docs.py` E1/E3).
   * **Arayüz (UI/CSS) değiştiyse:** `DESIGN.md` sözleşmesi, WCAG kontrastı ve anti-slop kuralları korundu mu? (`check_design_contract.py`, `check_design_slop.py`, `check_theme_contrast.py`).
-  * **Uygulama kodu değiştiyse:** `HANDOFF.md` ve gerekiyorsa `KULLANICI_TEST_REHBERI.md` güncellendi mi? (`check_handoff.py` E3/W2).
+  * **Uygulama kodu değiştiyse:** `HANDOFF.md` ve gerekiyorsa `docs/KULLANICI_TEST_REHBERI.md` güncellendi mi? (`check_handoff.py` E3/W2).
 
 ### 3. Hızlı Kullanıcı Test Adımı
 - Kullanıcının tarayıcıda veya konsolda bu son değişikliği 1-2 adımda gözüyle nasıl doğrulayacağını net olarak sun.

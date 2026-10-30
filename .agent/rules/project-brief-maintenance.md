@@ -63,7 +63,7 @@ flowchart TD
 
     Action -->|"İş mantığı, çözülen hata & kalıcı mimari karar"| KB["knowledge-base.md<br/>(Kalıcı Bilgi Tabanı)"]
     Action -->|"Oturum durumu, ölçülen metrikler & sıradaki işler"| HO["HANDOFF.md<br/>(Canlı Oturum Köprüsü)"]
-    Action -->|"Kullanıcının gözüyle adım adım test senaryoları"| TEST["KULLANICI_TEST_REHBERI.md<br/>(Manuel Test Rehberi)"]
+    Action -->|"Kullanıcının gözüyle adım adım test senaryoları"| TEST["docs/KULLANICI_TEST_REHBERI.md<br/>(Manuel Test Rehberi)"]
     Action -->|"Özellik mimarisi (5 katman) ve interaktif ekran playbook'u"| HTML["docs/kullanici-rehberi.html<br/>(İnteraktif Özellik Rehberi)"]
     
     Action -->|"YALNIZCA yeni paket, DB migration, altyapı veya yeni modül değişirse"| PB["PROJECT_BRIEF.md<br/>(Makro Mimari Omurga)"]
@@ -75,7 +75,7 @@ flowchart TD
 | **`docs/kullanici-rehberi.html`** | *"Yapılan özellikler arka planda nasıl inşa edildi (5 katman) ve ekranda adım adım nasıl kullanılır?"* | Her anlamlı özellik geliştirmesinden sonra | İnteraktif özellik playbook'u |
 | **`HANDOFF.md`** | *"Biz şu an hangi sprintteyiz, hangi testler yeşil ve sıradaki 1-3 görev nedir?"* | Her görev bittiğinde ve oturum sonunda | Canlı görev panosu & oturum köprüsü |
 | **`knowledge-base.md`** | *"Bu projede hangi kök hataları çözdük ve hangi mimari kararları aldık?"* | Yeni hata çözüldüğünde veya karar alındığında (append-only) | Kalıcı tecrübe kütüphanesi |
-| **`KULLANICI_TEST_REHBERI.md`** | *"Kullanıcı tarayıcıyı/konsolu açtığında özellikleri gözüyle nasıl doğrulayacak?"* | Kullanıcı akışını değiştiren her çıktıda | Manuel kabul test adımları |
+| **`docs/KULLANICI_TEST_REHBERI.md`** | *"Kullanıcı tarayıcıyı/konsolu açtığında özellikleri gözüyle nasıl doğrulayacak?"* | Kullanıcı akışını değiştiren her çıktıda | Manuel kabul test adımları |
 
 ⛔ **Sahte 'Stabil' Beyanı Yasağı (Anti-Lazy Stabil Declaration):**
 Git çalışma ağacında bağımlılık manifesti (`package.json`, `pom.xml`, `requirements.txt` vb.), yeni bir servis/sunucusuz fonksiyon (örn. Edge Function, worker) veya veritabanı şeması/migration'ı değiştirilmişken devir raporunda `PROJECT_BRIEF.md: Değişiklik yok / stabil` beyanında bulunmak ağır kural ihlalidir. Bu dosya canlı mimariyi yansıtmak zorundadır.

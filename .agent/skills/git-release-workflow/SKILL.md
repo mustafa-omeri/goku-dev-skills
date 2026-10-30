@@ -58,7 +58,7 @@ commit + tag + push yapar ve sonucu raporlar.
 ### 4. Ask User for Commit Approval (CRITICAL MANDATORY STEP)
 
 - **ASLA KULLANICIYA SORMAYIP ONAY ALMADAN COMMIT ATMA!**
-- Değiştirilen dosyaları, önerilen commit mesajını ve **kullanıcının çıktıyı gözüyle nasıl doğrulayacağını (`KULLANICI_TEST_REHBERI.md` adımları)** kullanıcıya göster.
+- Değiştirilen dosyaları, önerilen commit mesajını ve **kullanıcının çıktıyı gözüyle nasıl doğrulayacağını (`docs/KULLANICI_TEST_REHBERI.md` adımları)** kullanıcıya göster.
 - Kullanıcıdan açık onay (onaylıyorum / evet / commit yap / commitleyebilirsin / commitx / commitle) almadan `git commit` adımına geçme. "devam et" gibi ifadeler onay **sayılmaz**.
 - ⚡ **PEŞİN YETKİLENDİRME İSTİSNASI (`commitx`, `commitle`):** Kullanıcı doğrudan `commitx` veya `commitle` yazdığında bu adım peşinen onaylanmıştır; ara onay sorulmaz, doğrudan 5, 6 ve 7. adımlar kesintisiz yürütülür ve rapor tek seferde sunulur.
 - ⭐ **ONAY SONRASI KESİNTİSİZ OTONOM ÇALIŞTIRMA:** Kullanıcıdan onay alındıktan sonra, sıradaki adımlar (`git add`, `git commit`, `git tag`, `git push` vb.) için her komutta TEKRAR TEKRAR ONAY İSTENMEZ. Tüm akış uçtan uca tek seferde, kesintisiz ve otonom olarak çalıştırılır, doğrudan nihai sonuç raporlanır.

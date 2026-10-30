@@ -252,7 +252,7 @@ python .agent/skills/musgoku/scripts/check_project_brief.py""",
 
         "sample_prompt": "/verify-sprint: Aktif sprint hedeflerini, kart kabul kriterlerini (Gherkin) ve 5 katman dikey dilim bütünlüğünü denetle.",
 
-        "protocol": "1. SPRINT_PLAN.md & KANBAN.md Senkronu ➜ 2. Gherkin (.feature) AC Doğrulaması ➜ 3. Kart Başına 5 Katman Matrisi ➜ 4. KULLANICI_TEST_REHBERI.md Kanıtı",
+        "protocol": "1. SPRINT_PLAN.md & KANBAN.md Senkronu ➜ 2. Gherkin (.feature) AC Doğrulaması ➜ 3. Kart Başına 5 Katman Matrisi ➜ 4. docs/KULLANICI_TEST_REHBERI.md Kanıtı",
 
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
 
@@ -1703,7 +1703,7 @@ python .agent/skills/seo-growth/scripts/seo_checker.py --strict"""
 
         "features": ["Aktif Sprint Kabul Denetimi", "Gherkin Senaryo Doğrulaması", "Kart Başına 5 Katman", "check_sprint_board.py Kapısı"],
 
-        "detail": "Aktif sprint veya yeni kapanan sprint sınırındaki tüm kartların Gherkin kabul kriterlerini, 5 katmanlı dikey dilimini ve KULLANICI_TEST_REHBERI.md adımlarını doğrular.",
+        "detail": "Aktif sprint veya yeni kapanan sprint sınırındaki tüm kartların Gherkin kabul kriterlerini, 5 katmanlı dikey dilimini ve docs/KULLANICI_TEST_REHBERI.md adımlarını doğrular.",
 
         "sample_prompt": "/verify-sprint: Aktif sprint hedeflerini, kart kabul kriterlerini (Gherkin) ve 5 katman dikey dilim bütünlüğünü denetle.",
 

@@ -51,7 +51,7 @@ Ajan, bu makro veya tetikleyicilerden birini aldığında şu davranış sınır
 5. **`clarify` (Netleştir):** UX metinlerini ve buton etiketlerini eyleme dayalı ("Kaydet", "Projeyi Yayınla") ve doğrudan kullanıcı diline çevirir.
 6. **`critique` (Eleştir):** Arayüzü Zanaat Tabanı (Craft Floor) ve Yüzey Modu (Surface Mode) açısından inceler, P0/P1/P2 öncelikli aksiyon listesi sunar.
 
-Ajan, belirtilen ekranlarda iş mantığını (logic), state yönetimini ve API veri akışını bozmadan cerrahi refactoring yapar; gözle doğrulama adımlarını `KULLANICI_TEST_REHBERI.md` dosyasına ekler.
+Ajan, belirtilen ekranlarda iş mantığını (logic), state yönetimini ve API veri akışını bozmadan cerrahi refactoring yapar; gözle doğrulama adımlarını `docs/KULLANICI_TEST_REHBERI.md` dosyasına ekler.
 
 ## 2.2 Zorunlu 4 UX Durumu Sözleşmesi (The 4 UI/UX States Matrix)
 

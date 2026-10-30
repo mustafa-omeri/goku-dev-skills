@@ -100,7 +100,7 @@
 ### Nasıl Test Edilir (kullanıcı)
 
 > Her oturum ve teslimat sonunda kullanıcının çıktıyı nasıl test edeceği
-> adım adım yazılır (ve `KULLANICI_TEST_REHBERI.md` güncellenir; minor rötüş/dahili değişikliklerde mevcut senaryolar referans verilir).
+> adım adım yazılır (ve `docs/KULLANICI_TEST_REHBERI.md` güncellenir; minor rötüş/dahili değişikliklerde mevcut senaryolar referans verilir).
 1. `[kullanıcı komutu veya tarayıcı URL'si]` → `[beklenen sonuç]`
 2. `[bozma veya sınır testi]` → `[beklenen hata veya davranış]`
 

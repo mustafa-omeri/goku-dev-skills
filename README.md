@@ -241,7 +241,7 @@ To catch regressions early without running heavy full-repository audits on every
 | Tier & Command | Scope | What It Verifies | When to Use |
 | :--- | :--- | :--- | :--- |
 | **Micro Tier:**<br>**`/verify-last`** | `git status` (uncommitted working tree) or `HEAD~1..HEAD` (last commit) | Scope-aware build/typecheck/unit tests on touched files, surgical 5-layer impact check, zero leftover `TODO`/`console.log`, and quick manual test step. | Right after finishing a coding task or bug fix, before staging or committing. |
-| **Meso Tier:**<br>**`/verify-sprint`** | Active sprint or most recently closed sprint in `SPRINT_PLAN.md` & `KANBAN.md` | Every sprint card's Gherkin `.feature` scenarios, per-card 5-Layer Vertical Slice matrix, `check_sprint_board.py`, and `KULLANICI_TEST_REHBERI.md` scenarios. | At sprint boundaries before moving cards to `Yapıldı (Done)` or closing a sprint. |
+| **Meso Tier:**<br>**`/verify-sprint`** | Active sprint or most recently closed sprint in `SPRINT_PLAN.md` & `KANBAN.md` | Every sprint card's Gherkin `.feature` scenarios, per-card 5-Layer Vertical Slice matrix, `check_sprint_board.py`, and `docs/KULLANICI_TEST_REHBERI.md` scenarios. | At sprint boundaries before moving cards to `Yapıldı (Done)` or closing a sprint. |
 | **Macro Tier:**<br>**`/verify-prd`** | Entire repository against `PRODUCT.md`, `PROJECT_BRIEF.md`, and PRD specs | Retrospective **"Phantom Done" hunt** across all features: verifies DB migrations, live SQL views/RPCs, client hooks, UI states, admin forms, mock remnants (`localStorage` fakes), and scope creep. | Before major releases, milestone handoffs, or when auditing an existing project's true completion state. |
 
 ---
@@ -364,7 +364,7 @@ All 12 ensemble slash commands are registered as first-class skills under `.agen
 | :--- | :--- | :--- |
 | **`/ui-polish`** | `canvas-design` → `design-system` → `ui-ux-pro-max` → `frontend-design` → `ui-styling` → `banner-design` (+5 conditional) | **4-Mode `DESIGN.md` & 11-Skill Craft Orchestrator:** Extracts `DESIGN.md` (`mode: baseline`) on existing projects without altering visual UI; explores 3 directions (`canvas-design` + *Rejected Defaults*) on new/redesign projects; verifies `check_design_contract.py`, `check_design_slop.py`, and `check_theme_contrast.py`. |
 | **`/verify-last`** | `verify-last` + `musgoku` + `development-workflow` | **Micro Worktree & Last-Commit Auditor:** Audits uncommitted changes (`git status`) or `HEAD~1..HEAD` with scope-aware build/typecheck/tests and surgical 5-layer impact checks. |
-| **`/verify-sprint`** | `verify-sprint` + `sprint-delivery-workflow` + `tdd` | **Meso Sprint Acceptance Auditor:** Verifies active/completed sprint goals (`SPRINT_PLAN.md`), Gherkin `.feature` scenarios, per-card 5-layer slice, and `KULLANICI_TEST_REHBERI.md`. |
+| **`/verify-sprint`** | `verify-sprint` + `sprint-delivery-workflow` + `tdd` | **Meso Sprint Acceptance Auditor:** Verifies active/completed sprint goals (`SPRINT_PLAN.md`), Gherkin `.feature` scenarios, per-card 5-layer slice, and `docs/KULLANICI_TEST_REHBERI.md`. |
 | **`/verify-prd`** | `doc-coauthoring` + `code-review` + 5-Layer Vertical Slice | **Macro "Done with Proof" Verification Engine:** Hunts down "Phantom Done" across the entire project by auditing Gherkin ACs, 5-layer full-stack completion, mock remnants, and scope creep. |
 | **`/check-security`** | `security-audit` + `development-workflow` + `prelaunch-audit` | **Hardened Security Harness:** OWASP vulnerability scan, public form abuse shield (Turnstile, Rate-limit, RLS), and sensitive secret/env leakage audit. |
 | **`/fix-bug`** | `diagnosing-bugs` → `musgoku` → `karpathy-guidelines` | **Root-Cause Feedback Loop:** Forces a reproducible red test before touching code, implements the surgical fix, and cleans up speculative side-effects. |
@@ -473,7 +473,7 @@ python delivery.py --only ocai
 
 ### Safety Features
 - **Project Rule Preservation:** Automatically detects and preserves the target project's `## Proje Bazlı Ek Kurallar` block inside `AGENTS.md`.
-- **Living Root File Protection:** Project-specific root contracts (`DESIGN.md`, `PROJECT_BRIEF.md`, `HANDOFF.md`, `KULLANICI_TEST_REHBERI.md`) are distributed as templates under `.agent/templates/*.template.md` and are never overwritten at the target repo root.
+- **Living Root & Docs File Protection:** Project-specific living contracts (`DESIGN.md`, `PROJECT_BRIEF.md`, `HANDOFF.md`, `docs/KULLANICI_TEST_REHBERI.md`) are distributed as templates under `.agent/templates/*.template.md` and are never overwritten at the target repo.
 - **Automated Rolling Backups:** Safely backs up existing target `.agent/` trees to `yedekler/` prior to replacement and prunes old backups via `--keep N`.
 - **Zero Git Side-Effects:** Never executes git commits or pushes on target repositories.
 

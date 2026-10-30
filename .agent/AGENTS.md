@@ -18,6 +18,7 @@
 | 6 | Tasarım dili ve token sözleşmesi (UI/UX işlerinde) | `<repo-kök>\DESIGN.md` |
 | Projenin kısa/uzun kapsamlı konsolide özeti | docs/<SLUG>_PROJECT_SUMMARY_SHORT.md veya docs/<SLUG>_PROJECT_SUMMARY_LONG.md |
 | Özelliklerin adım adım yapılışını ve kullanımını anlatan HTML rehberi | docs/kullanici-rehberi.html (veya docs/user-guide.html) |
+| Kullanıcının bizzat gözüyle doğrulayacağı manuel test senaryoları | docs/KULLANICI_TEST_REHBERI.md |
 | 7 | Vault kararları (salt okunur) | `<vault>\CLAUDE.md`, `<vault>\profile\`, `<vault>\projects\_STANDARTLAR\decisions\` |
 | 8 | Proje kararları | `<vault>\projects\<proje-slug>\` |
 | 9 | Bu dizindeki kurallar | `.agent\rules\` (bkz. `trigger-rule-action.md`) |
@@ -45,8 +46,9 @@
 | Tasarım dili, token'lar ve kurallar | `<repo-kök>\DESIGN.md` |
 | Projenin kısa/uzun kapsamlı konsolide özeti | docs/<SLUG>_PROJECT_SUMMARY_SHORT.md veya docs/<SLUG>_PROJECT_SUMMARY_LONG.md |
 | Özelliklerin adım adım yapılışını ve kullanımını anlatan HTML rehberi | docs/kullanici-rehberi.html (veya docs/user-guide.html) |
+| Kullanıcının bizzat gözüyle doğrulayacağı manuel test senaryoları | docs/KULLANICI_TEST_REHBERI.md |
 
-- ⛔ Başka hiçbir yere yazma. Bu dosyaların **tek ve zorunlu yeri repo köküdür** (veya DB dokümantasyonu için `docs/database/DB_MIGRATIONS.md`, ADR için `docs/adr/`, özellik HTML rehberi için `docs/kullanici-rehberi.html`).
+- ⛔ Başka hiçbir yere yazma. Bu dosyaların **tek ve zorunlu yeri repo köküdür** (veya DB dokümantasyonu için `docs/database/DB_MIGRATIONS.md`, ADR için `docs/adr/`, özellik HTML rehberi için `docs/kullanici-rehberi.html`, kullanıcı test rehberi için `docs/KULLANICI_TEST_REHBERI.md`).
 - ⛔ `knowledge-base.md`'yi baştan sona okuma; yalnız yaz (append). Boyutu büyüyebilir.
 - ⛔ Vault'a hiçbir şey yazma. Vault salt okunur; kalıcı kararları Kütüphaneci taşır.
 - ⛔ "Dosyada zaten var" dediğin kuralı ikinci kez yazma — terfi öner.
@@ -74,7 +76,7 @@ ve [`.agent\rules\project-brief-maintenance.md`](rules/project-brief-maintenance
 ## 2. Her oturumun sonunda zorunlu adımlar
 
 1. Doğrulama kapılarını çalıştır (aşağıdaki kapılar).
-2. `KULLANICI_TEST_REHBERI.md` dosyasını güncelle (yoksa `.agent/templates/KULLANICI_TEST_REHBERI.template.md` şablonundan oluştur).
+2. `docs/KULLANICI_TEST_REHBERI.md` dosyasını güncelle (yoksa `docs/` altında `.agent/templates/KULLANICI_TEST_REHBERI.template.md` şablonundan oluştur).
    Kullanıcının bizzat gözüyle tarayıcıda veya konsolda özellikleri adım adım nasıl doğrulayacağını yaz.
    ⛔ **Otomasyon Yeşilliği Yanılgısına Düşme:** Otomasyon testlerinin (unit, typecheck, e2e, lint, build) yeşil
    olması kodun çalıştığını kanıtlar; kullanıcının çıktıyı gözüyle nasıl doğrulayacağını göstermez.
@@ -110,7 +112,7 @@ ve [`.agent\rules\project-brief-maintenance.md`](rules/project-brief-maintenance
 
 ```markdown
 ### 📝 OTURUM DEVİR & BİLGİ TABANI GÜNCELLEMESİ (HANDOFF & KB RAPORU)
-- **Kullanıcı Test Rehberi:** [KULLANICI_TEST_REHBERI.md güncellendi mi? Eklenen test senaryoları/adımları veya "Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"]
+- **Kullanıcı Test Rehberi:** [docs/KULLANICI_TEST_REHBERI.md güncellendi mi? Eklenen test senaryoları/adımları veya "Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"]
 - **Özellik HTML Rehberi:** [docs/kullanici-rehberi.html güncellendi mi? Eklenen özellikler ve mimari/kullanım detayları veya "Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"]
 - **Katman Bütünlüğü (Full-Stack Slice):** [5 Katman doğrulandı mı? (DB, View/RPC, API, UI, Admin/Giriş Formu) veya "Salt UI/İstemci (DB bağımlılığı yok)" veya "YARIM (Eksik: ...)"]
 - **PROJECT_BRIEF.md:** [Güncellendi mi? (Stack/DB/Karar revizyonu) veya "Değişiklik yok / stabil"]

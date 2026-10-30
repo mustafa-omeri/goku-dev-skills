@@ -31,7 +31,7 @@ sinif: SUREC
 1. `git status` — değişiklik yoksa dur ve bildir.
 2. `git tag -l` — en son semantik tag'ı bul, sonraki sürümü hesapla.
 3. `git add .`
-4. Dosya listesi + önerilen mesaj + önerilen tag + kullanıcının bizzat gözüyle test edeceği adımları (`KULLANICI_TEST_REHBERI.md`, minor rötüş ise geçerli mevcut senaryoyu) kullanıcıya göster, onay al.
+4. Dosya listesi + önerilen mesaj + önerilen tag + kullanıcının bizzat gözüyle test edeceği adımları (`docs/KULLANICI_TEST_REHBERI.md`, minor rötüş ise geçerli mevcut senaryoyu) kullanıcıya göster, onay al.
    💡 **İstisna (`commitx`, `commitle`):** Kullanıcı doğrudan `commitx` veya `commitle` yazdığında bu adım peşinen onaylanmıştır; ara onay sorulmaz, doğrudan Adım 5, 6 ve 7 kesintisiz tamamlanır ve bilgiler nihai raporda sunulur.
 5. `git commit -m "<mesaj>"`
 6. `git tag <yeni_tag>`

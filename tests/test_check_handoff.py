@@ -164,9 +164,11 @@ def test_git_diff_e3_and_w2():
         check("E3 tetikleniyor (src/ değişti ama HANDOFF.md güncellenmedi)", "E3" in codes(errors))
         check("W2 tetikleniyor (UI değişti ama KULLANICI_TEST_REHBERI.md yok)", "W2" in codes(warnings))
 
-        # Now update HANDOFF.md and create KULLANICI_TEST_REHBERI.md
+        # Now update HANDOFF.md and create docs/KULLANICI_TEST_REHBERI.md
         (tmp_root / "HANDOFF.md").write_text(VALID_HANDOFF + "\n<!-- updated -->\n", encoding="utf-8")
-        (tmp_root / "KULLANICI_TEST_REHBERI.md").write_text("# Test Rehberi\n", encoding="utf-8")
+        docs_dir = tmp_root / "docs"
+        docs_dir.mkdir(parents=True, exist_ok=True)
+        (docs_dir / "KULLANICI_TEST_REHBERI.md").write_text("# Test Rehberi\n", encoding="utf-8")
         errors2, warnings2 = gate.validate_handoff(tmp_root)
         check("HANDOFF.md ve rehber güncellenince E3/W2 kalkıyor", "E3" not in codes(errors2) and "W2" not in codes(warnings2))
 

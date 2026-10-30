@@ -78,7 +78,7 @@ python .agent/skills/musgoku/scripts/check_handoff.py
 | `E3` | Hata (exit 1) | Git çalışma ağacında uygulama kaynak kodu (`src/`, `app/`, `components/`, `api/`, `supabase/` vb.) değiştiği halde `HANDOFF.md` güncellenmedi. |
 | `E4` | Hata (exit 1) | `HANDOFF.md` başlık/özet alanında doldurulmamış şablon yer tutucusu (`[YYYY-MM-DD]`, `[Ajan Adı]` vb.) bırakıldı. |
 | `W1` | Uyarı | `§3 Sıradaki İşler` aktif görev panosunda tamamlanmış (`✅ BİTTİ` / `TAMAMLANDI`) satır temizlenmeden bırakıldı. |
-| `W2` | Uyarı | Git çalışma ağacında arayüz bileşeni (`.tsx`, `.jsx`, `.vue`, `.svelte`) değiştiği halde `KULLANICI_TEST_REHBERI.md` mevcut değil. |
+| `W2` | Uyarı | Git çalışma ağacında arayüz bileşeni (`.tsx`, `.jsx`, `.vue`, `.svelte`) değiştiği halde `docs/KULLANICI_TEST_REHBERI.md` mevcut değil. |
 
 ## Bu kuralın istisnası
 

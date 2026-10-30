@@ -136,7 +136,7 @@ yanıtta ayrı bir blok halinde göster:
 
 ```markdown
 ### 📝 OTURUM DEVİR & BİLGİ TABANI GÜNCELLEMESİ (HANDOFF & KB RAPORU)
-- **Kullanıcı Test Rehberi:** [KULLANICI_TEST_REHBERI.md güncellendi mi? Eklenen test senaryoları/adımları veya "Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"]
+- **Kullanıcı Test Rehberi:** [docs/KULLANICI_TEST_REHBERI.md güncellendi mi? Eklenen test senaryoları/adımları veya "Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"]
 - **Katman Bütünlüğü (Full-Stack Slice):** [5 Katman doğrulandı mı? (DB, View/RPC, API, UI, Admin/Giriş Formu) veya "Salt UI/İstemci (DB bağımlılığı yok)" veya "YARIM (Eksik: ...)"]
 - **PROJECT_BRIEF.md:** [Güncellendi mi? (Stack/DB/Karar revizyonu) veya "Değişiklik yok / stabil"]
 - **knowledge-base.md:** [Eklenen hata/karar başlıkları ve kısa özeti (yoksa "yeni yok")]

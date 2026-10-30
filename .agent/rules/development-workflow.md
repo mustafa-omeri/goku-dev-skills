@@ -174,18 +174,18 @@ Yukarıdaki ölçülebilir kapı komutları (`npm run build`, `pnpm test`, `npx 
 
 ---
 
-## Adım 4.1 — Kullanıcı Test Edilebilirliği ve Test Rehberi (KULLANICI_TEST_REHBERI.md)
+## Adım 4.1 — Kullanıcı Test Edilebilirliği ve Test Rehberi (docs/KULLANICI_TEST_REHBERI.md)
 
 1. **Her çıktı test edilebilir olmalı:** Her geliştirme, düzeltme veya sprint teslimatında
    çıktı kullanıcı tarafından test edilebilir olmalıdır.
-2. **Rehber güncellemesi:** Proje kökündeki `KULLANICI_TEST_REHBERI.md` dosyası yoksa
+2. **Rehber güncellemesi:** `docs/KULLANICI_TEST_REHBERI.md` dosyası yoksa
    `.agent/templates/KULLANICI_TEST_REHBERI.template.md` şablonundan oluşturulur; varsa
    bu adımda yapılan işin tarayıcıda veya konsolda nasıl adım adım test edileceği rehbere eklenir.
 3. ⛔ **Otomasyon Yeşilliği Yanılgısına Düşme (Kritik Ders):**
    Otomasyon testlerinin (`pnpm test`, `typecheck`, `test:e2e`, `mvn test`) yeşil olması,
    kodun syntax ve birim düzeyinde çalıştığını kanıtlar; ancak kullanıcının kendi gözüyle
    tarayıcıda bu özellikleri adım adım nasıl doğrulayacağını göstermez.
-   `KULLANICI_TEST_REHBERI.md` güncellenmeden veya kullanıcıya adım adım test yöntemi
+   `docs/KULLANICI_TEST_REHBERI.md` güncellenmeden veya kullanıcıya adım adım test yöntemi
    sunulmadan teslimat tamamlanmış sayılamaz ve commit onayına geçilemez!
 4. 💡 **İstisna (Minor Rötüş & Dahili Değişiklikler):**
    Mevcut kullanıcı akışını, ekran bileşenlerini veya kabul senaryolarını değiştirmeyen minor rötüşlar
@@ -202,7 +202,7 @@ Yukarıdaki ölçülebilir kapı komutları (`npm run build`, `pnpm test`, `npx 
 6. ⛔ **UI/UX Kalite Kapısı ve Anti-Slop Kontrolü:**
    Yeni veya güncellenen bir sayfa, tablo veya form teslim edilirken; tasarımın `frontend-design` ve `ui-ux-pro-max` standartlarını karşıladığı, tekdüze gri kutulardan kaçınıldığı, net görsel hiyerarşi ve durum rozetleri sağlandığı rehberde gözle doğrulanmalıdır. Gözle profesyonel görünmeyen arayüz tamamlanmış sayılamaz.
 7. ⛔ **3 Cihaz Ergonomisi ve Adaptif Modal Doğrulaması (Responsive UX Verification):**
-   Arayüz veya modal içeren her teslimatta, kullanıcının bizzat gözüyle test edebilmesi için `KULLANICI_TEST_REHBERI.md` içine şu 3 senaryonun eklenmesi zorunludur:
+   Arayüz veya modal içeren her teslimatta, kullanıcının bizzat gözüyle test edebilmesi için `docs/KULLANICI_TEST_REHBERI.md` içine şu 3 senaryonun eklenmesi zorunludur:
    - **Mobil (375px/414px F12 Cihaz Simülasyonu):** Tek sütun akışı, başparmakla butonlara erişim, formların yatay taşmaması ve açılan modalın alttan gelen Bottom Sheet (Drawer) olarak açılıp parmakla kaydırılabilmesi.
    - **Tablet (768px – 1024px iPad Simülasyonu):** 2 sütunlu dengeli düzen veya split-view, dokunmatik buton aralıkları, katlanabilir sidebar.
    - **Masaüstü (> 1024px):** Çok sütunlu zengin yerleşim, ortalanmış modal dialog ve hover durumları.
@@ -262,7 +262,7 @@ Ayrıntı: [knowledge-base-management.md](./knowledge-base-management.md)
 - Değişiklikleri listele (`git status`).
 - Önerilen commit mesajı ve yeni semantik tag'i göster.
 - **Kullanıcı test adımlarını sun:** Kullanıcının teslimatı bizzat gözüyle test edebilmesi için
-  `KULLANICI_TEST_REHBERI.md` dosyasındaki ilgili adımları ve test komutlarını göster
+  `docs/KULLANICI_TEST_REHBERI.md` dosyasındaki ilgili adımları ve test komutlarını göster
   (minor rötüş ise güncelleme gerekmediğini ve geçerli mevcut senaryoyu belirt).
 - ⛔ Onay olmadan commit yapma.
 - ✅ Onay verilirse `git-release-workflow` skill'iyle **kesintisiz** yürüt.

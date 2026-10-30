@@ -1,6 +1,6 @@
 # KULLANICI_TEST_REHBERI.md — Çıktıları Nasıl Test Edersiniz
 
-> Bu dosya her proje kökünde tutulur ve `.agent/templates/KULLANICI_TEST_REHBERI.template.md`
+> Bu dosya her projede `docs/KULLANICI_TEST_REHBERI.md` altında tutulur ve `.agent/templates/KULLANICI_TEST_REHBERI.template.md`
 > şablonundan oluşturulur.
 > Kurallar: `.agent/rules/sprint-delivery-workflow.md` · `.agent/rules/development-workflow.md`
 > Amacı: ajanın "yaptım / test edildi / tüm testler yeşil" demesini, kullanıcının

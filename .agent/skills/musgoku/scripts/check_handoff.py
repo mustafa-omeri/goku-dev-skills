@@ -11,7 +11,7 @@ Denetlenen Hata ve Uyarı Kodları:
   E3 - Git çalışma ağacında uygulama kaynak kodu değiştiği halde HANDOFF.md güncellenmemiş.
   E4 - HANDOFF.md üst bilgi/özet alanında doldurulmamış şablon yer tutucusu ([YYYY-MM-DD], [Ajan Adı] vb.).
   W1 - §3 Sıradaki İşler aktif görev tablosunda tamamlanmış (✅ BİTTİ / TAMAMLANDI) satır bırakılmış.
-  W2 - Git çalışma ağacında arayüz (UI) bileşeni değiştiği halde KULLANICI_TEST_REHBERI.md mevcut değil.
+  W2 - Git çalışma ağacında arayüz (UI) bileşeni değiştiği halde docs/KULLANICI_TEST_REHBERI.md mevcut değil.
 """
 import argparse
 import re
@@ -223,11 +223,12 @@ def validate_handoff(root: Path, ignore_git_diff: bool = False) -> Tuple[List[Tu
                 f for f in changed_app_files
                 if f.endswith(UI_EXTENSIONS)
             ]
-            if changed_ui_files and not (root / "KULLANICI_TEST_REHBERI.md").is_file():
+            guide_exists = (root / "docs" / "KULLANICI_TEST_REHBERI.md").is_file() or (root / "KULLANICI_TEST_REHBERI.md").is_file()
+            if changed_ui_files and not guide_exists:
                 warnings.append((
                     "W2",
                     f"Git çalışma ağacında UI bileşeni değişti ({changed_ui_files[0]}) "
-                    f"ancak KULLANICI_TEST_REHBERI.md mevcut değil.",
+                    f"ancak docs/KULLANICI_TEST_REHBERI.md mevcut değil.",
                 ))
 
     return errors, warnings
