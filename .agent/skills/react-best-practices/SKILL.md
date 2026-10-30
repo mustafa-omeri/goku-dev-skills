@@ -189,3 +189,4 @@ Detaylı kural dosyaları `rules/` klasöründe yer alır. Tam birleşik referan
 1. **Bileşen Geliştirirken:** Bölüm 1'deki Altın Kurallar Matrisini kontrol et.
 2. **Mimari Tasarlarken:** `rules/architecture-compound-components.md` ve `rules/architecture-avoid-boolean-props.md` rehberlerini oku.
 3. **Performans İyileştirmesinde:** `rules/rerender-*.md` ve `rules/bundle-*.md` kurallarındaki Before/After örneklerini referans al.
+4. **State & Routing Teşhisinde:** `references/state-and-routing-antipatterns.md` (Zustand useShallow/transient reads, React Router layout cascade, MobX computed önbellek kuralları).

@@ -211,6 +211,8 @@ Then synthesize the design system + detailed searches and implement.
 | Layout breaks on small screens | `references/quick-reference.md` §5: `mobile-first` + `breakpoint-consistency` |
 | Performance / jank | `references/quick-reference.md` §3: `virtualize-lists` + `main-thread-budget` + `debounce-throttle` |
 | Enterprise B2B / SaaS benchmark | `references/enterprise-design-systems.md` for Polaris, Carbon, Primer, SLDS |
+| 3D / WebGL / R3F render performance | `references/three-r3f-performance-rubric.md` (useFrame, disposal, pooling, DPR) |
+| Fluid motion & micro-interactions | `references/emil-kowalski-motion-playbook.md` (Spring physics, interruptibility, spatial layout) |
 
 ## Before Delivering App UI
 

@@ -60,6 +60,10 @@ Projedeki kurallara (`AGENTS.md`, `.agent/rules/`, `CONTRIBUTING.md`) ek olarak,
 - Diff, commit listesi ve spec/PRD içeriği verilir.
 - Görev: (a) Eksik veya yarım kalmış gereksinimler, (b) İstenmediği halde eklenen kapsam kaymaları (scope creep), (c) Yanlış uygulanmış kurallar. Her bulgu için şartnamedeki maddeyi alıntılamak.
 
-### 5. Sonuçları Birleştirin (Aggregate)
+### 5. Sonuçları Birleştirin (Aggregate) & Rejection Log
 Bulguları `## Standartlar` ve `## Şartname` başlıkları altında yan yana sunun. İki eksenin bulgularını asla birbirine karıştırmayın veya tek bir puanlama yapmayın.
+
+- **Rejection Log (Bilinçli Tercih Kontrolü):** `HANDOFF.md`, `knowledge-base.md` ve `PROJECT_BRIEF.md` içinde belgelenmiş bilinçli mimari ödünler (tradeoffs) "hata" olarak sunulmaz; `## Bilinçli Tercihler (Rejection Log)` tablosuna taşınır (Ayrıntı: `references/stop-conditions-and-rejections.md`).
+- **STOP Koşulları:** Kod incelemesi sonrası refactoring veya onarım adımlarında gerçeklik beklentiyle uyuşmuyorsa (`Reality Mismatch`), alt ajan durur ve onay ister.
+
 Raporu şu özetle bitirin: Her iki eksendeki toplam bulgu sayısı ve her eksenin kendi içindeki en kritik sorunu.

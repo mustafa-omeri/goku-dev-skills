@@ -77,6 +77,9 @@ Detaylı teknik standartlar, şablonlar ve lansman taktikleri için alt kılavuz
 - **İçerik Özeti & Rakip Analizi:** `references/competitive-gap-content-brief.md` (Content brief şablonu, arama niyeti, Answer Block formülü).
 - **GTM & Lansman Playbook'u:** `references/growth-gtm-playbook.md` (Show HN, Product Hunt, Reddit, GitHub vitrini).
 - **CRO & Metin Yazımı:** `references/copywriting-cro.md` (PAS, AIDA, BAB formülleri ve CTA optimizasyonu).
+- **GEO/AEO Alıntı Optimizasyonu:** `references/geo-aeo-citation-readiness.md` (ChatGPT Search, Perplexity, Gemini ve Claude kaynak gösterilme kontrol listesi).
+- **Trafik Düşüşü & Analitik Teşhis:** `references/traffic-drop-analytics-protocol.md` (GSC ve GA4 dönem karşılaştırma, kök neden matrisi).
+- **Reklam Bütçesi Koruma Sınırları:** `references/paid-media-budget-guardrails.md` (Ajan bütçe sınırları ve insan onay protokolü).
 
 ---
 

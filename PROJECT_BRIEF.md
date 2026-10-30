@@ -28,7 +28,7 @@ related_docs:
 
 ## 1. Teknoloji Yığını & Altyapı
 - **Proje Adı / Slug:** skillSetWorks (`skillSetWorks`)
-- **Paket / Sürüm:** `goku-dev-skills` v1.17.3 (`package.json`)
+- **Paket / Sürüm:** `goku-dev-skills` v1.18.0 (`package.json`)
 - **Birincil Dil:** Python 3.11 / Node.js 18+ / Markdown
 - **Frameworkler & Kütüphaneler:** Python `unittest`, `pytest`, `pytest-cov`, `argparse`, Node.js CLI runtime
 - **Veritabanı / Altyapı:** Yok (Uygulama kodu içermez; kural, skill ve dağıtım motorudur)
@@ -70,4 +70,4 @@ related_docs:
 
 ## 5. Yaşatma & Operasyonel Döngü
 - **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `test_skills_catalog.py`, `test_project_summary.py`
-- **Son Başarılı Doğrulama:** 2026-10-29 · 17/17 test paketi PASS · 8/8 kapı PASS
+- **Son Başarılı Doğrulama:** 2026-10-30 · 17/17 test paketi PASS · 8/8 kapı PASS

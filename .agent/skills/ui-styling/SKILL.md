@@ -263,6 +263,7 @@ python scripts/tailwind_config_gen.py --colors brand:blue --force
 - `references/tailwind-utilities.md` - Core utility classes
 - `references/tailwind-responsive.md` - Responsive design
 - `references/tailwind-customization.md` - Configuration and extensions
+- `references/base-ui-tailwind-v4.md` - Base UI primitives & Tailwind v4 CSS-first integration
 
 **Visual Design** (farklı skill — `canvas-design`)
 - `canvas-design/SKILL.md` - Design philosophy, manifesto ve canvas üretimi

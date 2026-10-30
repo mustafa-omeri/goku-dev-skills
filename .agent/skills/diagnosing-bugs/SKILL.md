@@ -77,6 +77,8 @@ Her prob, Aşama 3'teki somut bir tahmine karşılık gelmelidir. **Her seferind
 
 ## Aşama 5: Düzeltme ve Regresyon Testi (Fix + Regression Test)
 
+🛑 **STOP Koşulu (Reality Mismatch Abort):** Düzeltme veya regresyon testi yazılırken kod tabanındaki durum hipotezdeki veya plandaki varsayımla örtüşmüyorsa (dosya yok, fonksiyon imzası farklı, yan etki beklenmedikse), varsayımla kod yazmaya devam etmeyin; derhal durup hipotezi baştan gözden geçirin (Ayrıntı: `.agent/skills/code-review/references/stop-conditions-and-rejections.md`).
+
 Doğru bir dikiş noktası (seam) varsa regresyon testini **düzeltmeden önce** yazın.
 - Gerçek kullanım desenini simüle eden doğru bir dikiş noktası seçin.
 - Testin kırmızıya düştüğünü görün.
