@@ -34,6 +34,7 @@ Ajan, kullanıcının belirli bir sihirli kelimeyi (trigger) yazmasını **asla 
 | **Landing Page / Web / robots.txt:** Yeni web sayfası, SEO, sitemap, crawler politikaları | `seo-growth` (`seo_checker.py`) | Arama motoru ve AI bot görünürlüğü için standart denetim esastır. |
 | **Güvenlik / Yetki / Token / Hassas Veri:** Auth, role, input sanitization, API anahtarı | `security-audit` | Güvenlik kalkanı ve yetki aşımı denetimi tavizsizdir. |
 | **Görev Planlama / Mimari Parçalama / "Nasıl Yapılacak?":** Yeni özellik kurgusu, mimari fazlara bölme, sprint/dilim planı, "nasıl yapacaksın?", kabul kriterleri | `doc-coauthoring` + `musgoku` + `tdd` + `sprint-delivery-workflow` | Serbest metinli yüzeysel planları (ad-hoc planning slop) ve phantom done riskini önlemek; 5 katmanlı dikey dilim, TDD dikiş noktaları ve Gherkin kriterlerini zorunlu kılmak için esastır. |
+| **Antigravity Plan Modu & Proceed İcrası:** "/plan", "plan modu", "proceed", "proceed with plan", "planı uygula", "planı onayla" | `tdd` + `sprint-delivery-workflow` + `musgoku` + `development-workflow` | IDE plan modunda TDD, KANBAN ve 5 katmanlı dilimin bypass edilmesini önlemek; kırmızı test kanıtlanmadan doğrudan üretim koduna başlanmasını engellemek için zorunludur. |
 | **Yeni Paket / Dokümantasyon / API İsmi:** Harici kütüphane ekleme veya API kullanımı | `context7` MCP | Sürüm farkları ve doğru API parametrelerini doğrulamak için zorunludur. |
 | **3+ Adımlı Plan / Belirsiz Mantık:** Karmaşık mimari akıl yürütme veya strateji | `sequential-thinking` MCP | Düşünce zincirinin dağılmasını önlemek için zorunludur. |
 
@@ -135,6 +136,7 @@ Yapay zeka asistanlarının tekil ve birbirinden kopuk araçlar çalıştırmas�
 
 | Slash Komut / Makro | Bağlanan Beceriler (Ensemble) | Yürütülen Bağlayıcı Protokol & Kanıt | Gövde yolu |
 |---|---|---|---|
+| **`/plan`** / `/proceed` / `proceed` / `[PLAN-PROCEED]` | `tdd` + `sprint-delivery-workflow` + `musgoku` + `development-workflow` | **Antigravity Plan Modu & Proceed İcra Motoru:** Antigravity IDE planlama modunda `PLAN.template.md` ile TDD dikiş noktalarını, 5 katmanlı dikey dilimi ve KANBAN kartını planlar. Kullanıcı 'Proceed' dediğinde doğrudan koda başlamayı engelleyip, önce kırmızı testi terminalde kanıtlayan (Faz 1-5) deterministik TDD icra döngüsünü yürütür. | `rules/development-workflow.md` (Adım 2.2) |
 | **`/verify-prd`** / `/prd-verify` / `[VERIFY-PRD]` | `doc-coauthoring` + `code-review` + Katman Bütünlüğü (5-Layer Vertical Slice) | **Tüm Proje & PRD Retrospektif Güven Motoru:** Şartnamedeki kabul kriterlerini (Gherkin AC), geçmişten bugüne tüm özelliklerin 5 Katmanlı Dikey Dilimini (DB migration, View/RPC, Client API, UI UX, Admin Formu), Sahte Bitti (Phantom Done) ve mock kalıntılarını tarar. | `skills/verify-prd/SKILL.md` |
 
 | **`/verify-sprint`** / `[VERIFY-SPRINT]` | `sprint-delivery-workflow` + `tdd` + Katman Bütünlüğü | **Sprint Kapanış & Kabul Motoru:** Aktif sprint ve en son biten sprintteki kartların Gherkin kabul kriterlerini (`specs/*.feature`), 5 katmanlı dikey dilimini ve kullanıcı test adımlarını doğrular. | `skills/verify-sprint/SKILL.md` |

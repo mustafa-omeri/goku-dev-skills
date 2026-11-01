@@ -48,7 +48,8 @@ içeriği sen doldurursun:
 [`.agent/templates/SPRINT_PLAN.template.md`](../templates/SPRINT_PLAN.template.md) ·
 [`.agent/templates/KANBAN.template.md`](../templates/KANBAN.template.md) ·
 [`.agent/templates/RELEASE_PLAN.template.md`](../templates/RELEASE_PLAN.template.md) ·
-[`.agent/templates/KULLANICI_TEST_REHBERI.template.md`](../templates/KULLANICI_TEST_REHBERI.template.md)
+[`.agent/templates/KULLANICI_TEST_REHBERI.template.md`](../templates/KULLANICI_TEST_REHBERI.template.md) ·
+[`.agent/templates/PLAN.template.md`](../templates/PLAN.template.md)
 
 ⛔ **Şablonu olduğu gibi kopyalayıp boş bırakma.** Projeye göre uyarla:
 
@@ -96,6 +97,14 @@ Boş bırakmak yerine kapının seni uyarmasını tercih et.
    Uygulama içinde veya altyapısında kullanılacak herhangi bir 3. parti araç, paket, kütüphane veya servis varsa, doğrudan plana eklenmeden önce detaylıca araştırılmalıdır:
    - ⛔ **Açık Kaynak (Open-Source) Önceliği Kesin Kuraldır:** Tescilli, kapalı veya ücretli araçlar yerine daima aktif bakımı yapılan, geniş topluluk desteği ve güvenilir lisansı (MIT, Apache 2.0, BSD) olan açık kaynaklı çözümler önceliklendirilmelidir.
    - Planda kütüphanenin adı, lisansı, dokümantasyon linki, neden seçildiği ve açık kaynak gerekçesi belirtilmelidir.
+
+### 2.1.1 Antigravity IDE Plan Modu (/plan) ve KANBAN / TDD Köprüsü
+Antigravity IDE içinde `/plan` komutu veya Plan Mode çalıştırıldığında:
+1. Üretilecek olan plan artifact'ı (`<plan_name>.md`), doğrudan [`.agent/templates/PLAN.template.md`](../templates/PLAN.template.md) şablonunu kullanır; TDD dikiş noktalarını (`seam`), 5 katmanlı dikey dilimi ve ilgili KANBAN kartını açıkça belirtir.
+2. ⛔ **Proceed İcra Kilidi (Phase Lock):** Kullanıcı UI'daki "Proceed" butonuna bastığında veya planı onayladığında:
+   - İlgili kart `KANBAN.md` üzerinde `Yapılıyor`'a çekilir (WIP limiti maksimum 3 denetlenir).
+   - TDD Kırmızı Test yazılıp terminalde **KIRMIZI (FAIL)** olduğu kanıtlanmadan üretim koduna dokunulamaz!
+   - Test yeşile döndükten ve 5 katman (DB, API, UI, Skeleton Screen) tamamlandıktan sonra kart `Yapıldı`'ya taşınır.
 
 ### 2.2 Kullanıcı İnceleme (Review), Değişiklik ve Açık Onay Kapısı
 

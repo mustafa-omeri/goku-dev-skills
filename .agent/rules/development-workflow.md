@@ -106,6 +106,24 @@ Geliştirmeye başlamadan önce ajan sırasıyla şu adımları işletmek zorund
 
 ---
 
+## Adım 2.2 — Antigravity IDE Plan Modu (`/plan`) ve Proceed İcra Protokolü (Proceed Execution Protocol)
+
+Antigravity IDE içinde planlama modunda (`/plan` veya Plan Mode) çalışırken, sistemin IDE'nin yerleşik `<PLAN>` promptu ile codebase kurallarımız arasında tam deterministik bir köprü kurması ZORUNLUDUR:
+
+1. **Zorunlu Plan Şablonu (`.agent/templates/PLAN.template.md`):**
+   - Kullanıcı `/plan` komutu verdiğinde veya plan istendiğinde, ajan IDE'nin beklediği alanları (`Goal Description`, `User Review Required`, `Open Questions`, `Proposed Changes`, `Verification Plan`) eksiksiz karşılayan, ancak **TDD Kırmızı-Yeşil Dikiş Noktaları**, **5 Katmanlı Dikey Dilim Mimarisi** ve **Sprint/KANBAN Durumunu** içeren standart [`.agent/templates/PLAN.template.md`](../templates/PLAN.template.md) şablonuna göre plan üretir.
+   - ⛔ **Serbest Metin ve TDD'siz Plan Yasağı:** TDD fazları, dikiş noktası (`seam`) ve 5 katmanlı dilim içermeyen bir plan artifact'ı üretmek **AĞIR İHLALDİR (Anti-Adhoc-Planning Slop)**.
+
+2. ⛔ **PROCEED İCRA PROTOKOLÜ (Proceed Execution Protocol — Kırmızı Test Kanıtı Olmadan Koda Başlama Yasağı):**
+   Kullanıcı plandaki "Proceed" butonuna bastığında, "planı uygula", "onaylıyorum", "devam et" veya benzeri bir onay verdiğinde; ajan **ASLA VE KESİNLİKLE** doğrudan kaynak kod (`src/**`) yazmaya başlayamaz! Plan dokümanında tanımlanan 5 fazı sırasıyla işletmek zorundadır:
+   - **Faz 1 (Gherkin & KANBAN Başlangıcı):** `specs/<kart-id>.feature` senaryosu hazırlanır (veya doğrulanır); `KANBAN.md` kartı `Bekliyor`'dan `Yapılıyor`'a çekilir (WIP kontrolü yapılır).
+   - **Faz 2 (KIRMIZI TEST KANITI - Red Loop):** Önceden belirlenen dikiş noktasında (`seam`) başarısız olan test dosyası (`*.test.ts`, `*Test.java` vb.) yazılır. Test komutu terminalde çalıştırılır ve testin **KIRMIZI (FAIL)** olduğu çıktı ile kanıtlanır. Test yazılmadan ve fail ettiği gösterilmeden üretim koduna geçmek **SİSTEMATİK YASAKTIR**.
+   - **Faz 3 (MİNİMAL YEŞİL KOD - Green Loop):** Yalnızca o kırmızı testi yeşile çevirecek kadar minimal üretim kodu yazılır (spekülatif/hayali kod eklenmez). Test tekrar çalıştırılır ve **YEŞİL (PASS)** olduğu kanıtlanır.
+   - **Faz 4 (5 Katman Tamamlama & UX Durumları):** Varsa DB, View/RPC, API ve UI katmanları bağlanır. Sayfa ve veri yükleme durumlarında **Skeleton Screens UI** uygulanır (spinner yasaktır).
+   - **Faz 5 (Refactor & Kapanış):** Kod sadeleştirilir, ölçülebilir kalite kapıları (`run_all_gates.py`) çalıştırılır, kullanıcı test adımları `docs/KULLANICI_TEST_REHBERI.md`'ye eklenir ve KANBAN kartı `Yapıldı`'ya taşınır.
+
+---
+
 ## Adım 3 — Geliştir
 
 1. İlgili skill'leri oku ve kurallarına uy.

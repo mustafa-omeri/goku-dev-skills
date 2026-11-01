@@ -19,6 +19,7 @@
 | Projenin kısa/uzun kapsamlı konsolide özeti | docs/<SLUG>_PROJECT_SUMMARY_SHORT.md veya docs/<SLUG>_PROJECT_SUMMARY_LONG.md |
 | Özelliklerin adım adım yapılışını ve kullanımını anlatan HTML rehberi | docs/kullanici-rehberi.html (veya docs/user-guide.html) |
 | Kullanıcının bizzat gözüyle doğrulayacağı manuel test senaryoları | docs/KULLANICI_TEST_REHBERI.md |
+| Mimari geliştirme ve uygulama planı (/plan) | <artifact-dir>/<plan_name>.md (şablon: templates/PLAN.template.md) |
 | 7 | Vault kararları (salt okunur) | `<vault>\CLAUDE.md`, `<vault>\profile\`, `<vault>\projects\_STANDARTLAR\decisions\` |
 | 8 | Proje kararları | `<vault>\projects\<proje-slug>\` |
 | 9 | Bu dizindeki kurallar | `.agent\rules\` (bkz. `trigger-rule-action.md`) |
@@ -47,6 +48,7 @@
 | Projenin kısa/uzun kapsamlı konsolide özeti | docs/<SLUG>_PROJECT_SUMMARY_SHORT.md veya docs/<SLUG>_PROJECT_SUMMARY_LONG.md |
 | Özelliklerin adım adım yapılışını ve kullanımını anlatan HTML rehberi | docs/kullanici-rehberi.html (veya docs/user-guide.html) |
 | Kullanıcının bizzat gözüyle doğrulayacağı manuel test senaryoları | docs/KULLANICI_TEST_REHBERI.md |
+| Mimari geliştirme ve uygulama planı (/plan) | <artifact-dir>/<plan_name>.md (şablon: templates/PLAN.template.md) |
 
 - ⛔ Başka hiçbir yere yazma. Bu dosyaların **tek ve zorunlu yeri repo köküdür** (veya DB dokümantasyonu için `docs/database/DB_MIGRATIONS.md`, ADR için `docs/adr/`, özellik HTML rehberi için `docs/kullanici-rehberi.html`, kullanıcı test rehberi için `docs/KULLANICI_TEST_REHBERI.md`).
 - ⛔ `knowledge-base.md`'yi baştan sona okuma; yalnız yaz (append). Boyutu büyüyebilir.
@@ -227,6 +229,7 @@ Ayrıntı: [`rules/no-silent-wait.md`](rules/no-silent-wait.md).
 - Kurallar dizini tek kaynaktır: [`.agent\rules/`](rules/) — `trigger-rule-action.md` hepsini bağlar.
 - 💡 **Otonom Bağlamsal Tetikleme (Autonomous Activation):** Ajan, kullanıcının belirli bir sihirli kelimeyi (trigger) yazmasını **pasifçe beklemez.** Görevin bağlamı (UI değişikliği, 2+ alternatifli mimari ikilem, bug çözümü, SEO, güvenlik, görev planlama/parçalama vb.) ilgili alana girdiği anda kullanıcı o kelimeyi unutsa dahi ilgili skill'i (`karpathy-guidelines` Council, `diagnosing-bugs`, tasarım üçlüsü, `seo-growth`, `security-audit`, `doc-coauthoring` + `musgoku` + `tdd`) **otonom olarak** devreye alır. (Bkz. [`rules/skill-trigger-routing.md`](rules/skill-trigger-routing.md) §0).
 - Yeni iş mantığı, servis veya endpoint geliştirmede `tdd` (kırmızı → yeşil döngüsü); hata ayıklamada ise `bug-diagnosis-enforcement` (önce kırmızı geri bildirim döngüsü) tavizsiz uygulanır.
+- 💡 **Antigravity Plan Modu ve Proceed İcra Protokolü:** Kullanıcı Antigravity IDE'de `/plan` veya plan modunu çalıştırdığında plan artifact'ı standart `.agent/templates/PLAN.template.md` şablonuna göre üretilir (TDD dikiş noktası, 5 katmanlı dilim, KANBAN kartı zorunludur). Kullanıcı 'Proceed' butonuna bastığında veya planı onayladığında doğrudan üretim koduna başlanamaz; önce dikiş noktasında test yazılıp terminalde **KIRMIZI (FAIL)** olduğu kanıtlanır, ardından minimal yeşil kod ve diğer katmanlar icra edilir (bkz. `development-workflow.md` Adım 2.2).
 - Tasarım/UI taleplerinde `canvas-design` + `frontend-design` + `ui-ux-pro-max`
   birlikte okunur; hangi konunun sahibi olduğunu `design-skills-enforcement.md`
   §3 sahiplik haritasından doğrula.
