@@ -1,6 +1,6 @@
 ---
 name: ui-polish
-description: Master Design Orchestrator & UI Sözleşmesi; 16 resmi kilitli temayı, 55 hazır bileşen şablonunu ve 16 UI/UX tasarım becerisini koordine ederek sıfır AI-slop, geometry-matched skeleton ve 375px responsive ergonomisiyle üretim kalitesinde arayüz inşa eder ve doğrular. Tetikleyiciler: "/ui-polish", "ui polish", "[UI-POLISH]", "arayüz parlat", "polish ui". Tetiklenmez: sıfırdan backend API ve veritabanı `musgoku`'ya aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
+description: Master Design Orchestrator & UI Sözleşmesi; 16 resmi kilitli temayı, 55 hazır bileşen şablonunu ve 16 UI/UX tasarım becerisini koordine ederek sıfır AI-slop, geometry-matched skeleton ve 375px responsive ergonomisiyle üretim kalitesinde arayüz inşa eder ve doğrular. Tetikleyiciler: "/ui-polish", "ui polish", "[UI-POLISH]", "/ui-polish --skeleton", "arayüz parlat", "polish ui", "skeleton kasetlerini entegre et". Tetiklenmez: sıfırdan backend API ve veritabanı `musgoku`'ya aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
 ---
 
 # UI Polish & Master Design Orchestrator (`/ui-polish`)
@@ -19,6 +19,7 @@ Ajan tek satır CSS veya bileşen kodu değiştirmeden önce projenin çalışma
 | Proje kökünde `DESIGN.md` **yok** VE proje sıfırdan kuruluyor (Greenfield) | **2. Keşif & Tasarım Modu (`mode: crafted`)** | Faz 1 Keşif → Faz 2 Kreatif Yön (1 birincil + 2 alternatif tema) → Faz 3–9 tam icra akışı. |
 | Proje kökünde `DESIGN.md` **var** VE normal `/ui-polish` çağrıldı | **3. İyileştirme Modu (`Refinement`)** | Mevcut `DESIGN.md` sözleşmesine sadık kalınır. Token'lar korunarak zanaat tabanı, 4 UX durumu, 375px mobil dönüşümü ve 10-noktalı canlı düzeltme döngüsü uygulanır. |
 | Proje kökünde `DESIGN.md` **var** VE kullanıcı açıkça `"tasarımı değiştir / yeniden tasarla"` dedi | **4. Yeniden Tasarım Modu (`mode: redesign`)** | `PRODUCT.md` korunur; eski `DESIGN.md` anti-referans kabul edilerek yeni yön seçilir ve tüm arayüz dönüştürülür. |
+| Kullanıcı açıkça `"/ui-polish --skeleton"` veya `"skeleton entegre et"` dedi | **5. Cerrahi Skeleton Kaset Modu (`mode: skeleton-only`)** | Tüm sayfayı yeniden tasarlamak yerine doğrudan hedef bileşenin kaset yapısını (geometry-matched skeleton) kurar; sıfır CLS, semantik tema token'ları ve themes.css shimmer motorunu bağlar. |
 
 ---
 
@@ -72,6 +73,26 @@ Bir arayüz geliştirilirken veya parlatılırken her bileşenin sahibi tek bir 
 | **React Performans & Re-render Koruması** | `react-best-practices` | `react-best-practices/references/state-and-routing-antipatterns.md` | Gereksiz re-render'ları önleme, Zustand `useShallow`, cascading waterfall ve memoization disiplini. |
 | **Çok Dilli Arayüz & Çeviri Denetimi** | `i18n-localization` | `i18n-localization/scripts/i18n_checker.py` | UI üzerinde hardcoded metin kalmasını engelleme, `t()` anahtarlarını JSON sözlükleriyle eşleme. |
 | **Standart Kullanıcı Rehberi** | `ui-polish` | `ui-polish/references/rehber_design.md` -> `kullanici_rehberi.html` | `skills-catalog.html` seviyesinde 5 katmanlı dikey dilim, playbook ve skeleton önizlemeli interaktif HTML rehberi. |
+
+---
+
+## 2.1 Cerrahi Skeleton Kaset Entegrasyonu Protokolü (`/ui-polish --skeleton`)
+
+Kullanıcı doğrudan `/ui-polish --skeleton [Bileşen]` veya `skeleton kasetlerini entegre et` dediğinde ajan tüm sayfayı veya temayı değiştirmekle vakit kaybetmez; doğrudan aşağıdaki 5 cerrahi adımı işletir:
+
+1. **Geometri & Düzen Analizi (Kaset Sadakati):**
+   - Hedef bileşenin (kart, liste, profil, tablo satırı vb.) gerçek DOM yapısını inceler.
+   - Dış genişlik (`width`), yükseklik (`height` / `min-height`), iç boşluklar (`padding`) ve aralıklar (`gap`, `space-y`) pikseli pikseline tespit edilir.
+2. **Themes.css Shimmer & Hazır Kaset Seçimi:**
+   - `.agent/skills/ui-polish/references/themes.css` içindeki donanım hızlandırmalı `.skeleton` shimmer motoru projeye dahil edilir (veya import edilir).
+   - Profil, Kart veya Tablo ise `.agent/skills/ui-styling/references/shadcn-components.md` içindeki hazır kaset şablonları uyarlanır.
+3. **Sıfır Düzen Sıçraması (Zero CLS Guarantee):**
+   - Kaset bileşeni, gerçek veri yüklendiğinde düzenin zıplamasını (Cumulative Layout Shift) %0 yapacak şekilde kapsayıcı elementle birebir aynı ölçülere kilitlenir.
+4. **Semantik Tema Token'ları & A11y:**
+   - Flat/sabit `bg-gray-200` gibi renkler KESİNLİKLE YASAKTIR. Temanın semantik `--bg-surface`, `--bg-card` ve `--border-subtle` değişkenleri kullanılır.
+   - Erişilebilirlik için kapsayıcıya `aria-busy="true"`, `aria-live="polite"` ve `<span className="sr-only">Yükleniyor...</span>` eklenir.
+5. **Mekanik Doğrulama:**
+   - `python .agent/skills/musgoku/scripts/check_design_slop.py` çalıştırılarak veri yükleme anında spinner kalıntısı (`W4`) kalmadığı kanıtlanır.
 
 ---
 
