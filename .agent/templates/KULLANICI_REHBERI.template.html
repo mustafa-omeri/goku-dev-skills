@@ -1,72 +1,89 @@
 <!DOCTYPE html>
-<html lang="tr" data-theme="dark">
+<html lang="tr" data-theme="obsidian-velvet" data-mode="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{PROJE_ADI}} — Özellik ve Kullanım Rehberi</title>
-  <meta name="description" content="{{PROJE_ADI}} platformunun tüm özelliklerinin mimari yapılışı ve adım adım kullanım rehberi.">
+  <meta name="description" content="{{PROJE_ADI}} platformunun tüm özelliklerinin 5 katmanlı dikey dilim mimari yapılışı, playbook ve skeleton ekran rehberi.">
+  
+  <!-- Craft Typography: Space Grotesk, Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   
   <style>
+    /* ==========================================================================
+       LOCKED THEMES & SEMANTIC TOKENS (themes.css standard)
+       ========================================================================== */
+    :root, [data-theme="obsidian-velvet"] {
+      --bg-base: #17151C;
+      --bg-surface: #292531;
+      --bg-elevated: #45404F;
+      --border-subtle: #45404F;
+      --border-strong: #716879;
+      --text-muted: #716879;
+      --text-secondary: #AAA2B3;
+      --text-primary: #E2DDE7;
+      --accent-primary: #E2DDE7;
+      --accent-secondary: #AAA2B3;
+      --accent-contrast: #17151C;
+    }
+    [data-theme="obsidian-velvet"][data-mode="light"], [data-mode="light"] [data-theme="obsidian-velvet"] {
+      --bg-base: #E2DDE7; --bg-surface: #D5CEDC; --bg-elevated: #C4BACD; --border-subtle: #AAA2B3; --border-strong: #716879;
+      --text-muted: #716879; --text-secondary: #45404F; --text-primary: #17151C; --accent-primary: #292531; --accent-secondary: #45404F; --accent-contrast: #E2DDE7;
+    }
+
+    [data-theme="nordic-slate"] {
+      --bg-base: #111522; --bg-surface: #1E263B; --bg-elevated: #303D59; --border-subtle: #303D59; --border-strong: #536684;
+      --text-muted: #536684; --text-secondary: #98A9C4; --text-primary: #DCE3EF; --accent-primary: #98A9C4; --accent-secondary: #536684; --accent-contrast: #111522;
+    }
+    [data-theme="nordic-slate"][data-mode="light"], [data-mode="light"] [data-theme="nordic-slate"] {
+      --bg-base: #DCE3EF; --bg-surface: #C8D4E6; --bg-elevated: #B4C4DD; --border-subtle: #98A9C4; --border-strong: #536684;
+      --text-muted: #536684; --text-secondary: #303D59; --text-primary: #111522; --accent-primary: #1E263B; --accent-secondary: #303D59; --accent-contrast: #DCE3EF;
+    }
+
+    [data-theme="maritime-amber"] {
+      --bg-base: #0B132B; --bg-surface: #1C2541; --bg-elevated: #3A506B; --border-subtle: #3A506B; --border-strong: #5BC0DE;
+      --text-muted: #5BC0DE; --text-secondary: #F4D6B0; --text-primary: #F4D6B0; --accent-primary: #D97706; --accent-secondary: #5BC0DE; --accent-contrast: #0B132B;
+    }
+    [data-theme="maritime-amber"][data-mode="light"], [data-mode="light"] [data-theme="maritime-amber"] {
+      --bg-base: #F8F5EE; --bg-surface: #F0E6D8; --bg-elevated: #E4D1BC; --border-subtle: #3A506B; --border-strong: #1C2541;
+      --text-muted: #1C2541; --text-secondary: #0B132B; --text-primary: #0B132B; --accent-primary: #D97706; --accent-secondary: #1C2541; --accent-contrast: #F8F5EE;
+    }
+
+    [data-theme="verdant-abyss"] {
+      --bg-base: #051F20; --bg-surface: #0B2B26; --bg-elevated: #163832; --border-subtle: #235347; --border-strong: #8EB69B;
+      --text-muted: #8EB69B; --text-secondary: #DAF1DE; --text-primary: #DAF1DE; --accent-primary: #8EB69B; --accent-secondary: #235347; --accent-contrast: #051F20;
+    }
+
+    [data-theme="plum-lime"] {
+      --bg-base: #F5F1E8; --bg-surface: color-mix(in srgb, #F5F1E8 92%, #542C5F 8%); --bg-elevated: color-mix(in srgb, #F5F1E8 82%, #542C5F 18%);
+      --border-subtle: color-mix(in srgb, #542C5F 22%, transparent); --border-strong: #542C5F; --text-muted: color-mix(in srgb, #542C5F 65%, #F5F1E8 35%);
+      --text-secondary: color-mix(in srgb, #542C5F 85%, #F5F1E8 15%); --text-primary: #542C5F; --accent-primary: #C7E84B; --accent-secondary: #542C5F; --accent-contrast: #542C5F;
+    }
+
     :root {
-      --primary: #3B82F6;
-      --primary-hover: #2563EB;
-      --primary-subtle: rgba(59, 130, 246, 0.12);
-      --accent: #10B981;
-      --accent-subtle: rgba(16, 185, 129, 0.12);
-      --warning: #F59E0B;
-      --danger: #EF4444;
-      --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+      --font-display: 'Space Grotesk', -apple-system, sans-serif;
+      --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 16px;
-      --transition: 0.2s ease;
-    }
-
-    [data-theme="dark"] {
-      --bg-base: #0B0F17;
-      --bg-surface: #111827;
-      --bg-surface-elevated: #1F2937;
-      --bg-surface-hover: #2D3748;
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-strong: rgba(255, 255, 255, 0.18);
-      --text-main: #F9FAFB;
-      --text-muted: #9CA3AF;
-      --text-faint: #6B7280;
-      --code-bg: #030712;
-      --skeleton-base: #1F2937;
-      --skeleton-pulse: #374151;
-      --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    }
-
-    [data-theme="light"] {
-      --bg-base: #F8FAFC;
-      --bg-surface: #FFFFFF;
-      --bg-surface-elevated: #F1F5F9;
-      --bg-surface-hover: #E2E8F0;
-      --border-subtle: rgba(0, 0, 0, 0.08);
-      --border-strong: rgba(0, 0, 0, 0.16);
-      --text-main: #0F172A;
-      --text-muted: #475569;
-      --text-faint: #94A3B8;
-      --code-bg: #F1F5F9;
-      --skeleton-base: #E2E8F0;
-      --skeleton-pulse: #CBD5E1;
-      --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      --transition: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: var(--font-sans);
+      font-family: var(--font-body);
       background-color: var(--bg-base);
-      color: var(--text-main);
+      color: var(--text-primary);
       line-height: 1.6;
-      padding: 0;
       min-height: 100vh;
       transition: background-color var(--transition), color var(--transition);
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* Üst Bar & Navigasyon */
+    /* Sticky Header */
     header {
       background: var(--bg-surface);
       border-bottom: 1px solid var(--border-subtle);
@@ -76,9 +93,9 @@
       backdrop-filter: blur(12px);
     }
     .header-inner {
-      max-width: 1200px;
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 1rem 1.5rem;
+      padding: 0.85rem 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -88,621 +105,570 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.85rem;
     }
     .brand-logo {
       width: 36px;
       height: 36px;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #FFF;
-      font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
+      color: var(--accent-primary);
     }
-    .brand-title {
-      font-size: 1.25rem;
+    .brand-text h1 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
       font-weight: 700;
+      color: var(--text-primary);
       letter-spacing: -0.02em;
     }
-    .brand-badge {
+    .brand-text p {
       font-size: 0.75rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 9999px;
-      background: var(--primary-subtle);
-      color: var(--primary);
-      font-weight: 600;
+      color: var(--text-muted);
     }
-
-    .header-controls {
+    .header-actions {
       display: flex;
       align-items: center;
       gap: 0.75rem;
     }
-    .theme-toggle, .btn-action {
-      background: var(--bg-surface-elevated);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-main);
-      padding: 0.45rem 0.85rem;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 500;
-      transition: all var(--transition);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-    .theme-toggle:hover, .btn-action:hover {
-      background: var(--bg-surface-hover);
-      border-color: var(--border-strong);
-    }
 
-    /* Arama ve Filtreleme Alanı */
-    .hero-search {
-      max-width: 1200px;
-      margin: 2rem auto 1rem;
-      padding: 0 1.5rem;
+    /* Search & Filters */
+    .controls-strip {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.75rem 1.5rem;
     }
-    .search-box-wrap {
+    .controls-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .search-box {
+      flex: 1;
+      min-width: 260px;
       position: relative;
-      margin-bottom: 1.25rem;
     }
     .search-input {
       width: 100%;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-strong);
-      color: var(--text-main);
-      padding: 0.9rem 1.25rem 0.9rem 2.75rem;
-      border-radius: var(--radius-md);
-      font-size: 1rem;
-      font-family: inherit;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 1rem 0.5rem 2.25rem;
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      color: var(--text-primary);
       outline: none;
-      transition: border-color var(--transition), box-shadow var(--transition);
-      box-shadow: var(--shadow);
+      transition: border-color var(--transition);
     }
     .search-input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-subtle);
+      border-color: var(--accent-primary);
     }
     .search-icon {
       position: absolute;
-      left: 1rem;
+      left: 0.75rem;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--text-faint);
-      pointer-events: none;
+      color: var(--text-muted);
+      font-size: 0.875rem;
     }
 
-    .filter-tabs {
+    .filter-pills {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.4rem;
       flex-wrap: wrap;
-      align-items: center;
     }
-    .filter-tab {
-      background: var(--bg-surface);
+    .filter-pill {
+      background: var(--bg-elevated);
       border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-      padding: 0.4rem 0.85rem;
-      border-radius: 9999px;
-      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
       cursor: pointer;
       transition: all var(--transition);
     }
-    .filter-tab:hover {
-      color: var(--text-main);
-      border-color: var(--border-strong);
-    }
-    .filter-tab.active {
-      background: var(--primary);
-      color: #FFFFFF;
-      border-color: var(--primary);
-      font-weight: 600;
+    .filter-pill:hover,
+    .filter-pill.active {
+      background: var(--accent-primary);
+      color: var(--accent-contrast);
+      border-color: var(--accent-primary);
     }
 
-    /* İstatistik ve Özet Çubuğu */
-    .summary-stats {
-      max-width: 1200px;
-      margin: 1.5rem auto;
-      padding: 0 1.5rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
+    /* Container & Layout */
+    .container {
+      max-width: 1280px;
+      margin: 2rem auto;
+      padding: 0 1.5rem 4rem 1.5rem;
     }
-    .stat-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      padding: 1rem 1.25rem;
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow);
-    }
-    .stat-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-    .stat-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    /* Ana Konteyner ve Özellik Kartları */
-    main {
-      max-width: 1200px;
-      margin: 1.5rem auto 4rem;
-      padding: 0 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    .feature-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 1.75rem;
-      box-shadow: var(--shadow);
-      transition: border-color var(--transition);
-    }
-    .feature-card:hover {
-      border-color: var(--border-strong);
-    }
-    .feature-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-      margin-bottom: 1.25rem;
-      flex-wrap: wrap;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    .feature-title-wrap {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-    .feature-icon {
-      font-size: 1.6rem;
-      line-height: 1;
-    }
-    .feature-title {
-      font-size: 1.35rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-    .feature-badges {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .badge {
-      font-size: 0.75rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: var(--radius-sm);
-      font-weight: 600;
-    }
-    .badge-primary { background: var(--primary-subtle); color: var(--primary); }
-    .badge-success { background: var(--accent-subtle); color: var(--accent); }
-    .badge-neutral { background: var(--bg-surface-elevated); color: var(--text-muted); }
-
-    /* 4 Temel Bölüm Blokları */
-    .feature-sections {
+    .features-grid {
       display: grid;
       grid-template-columns: 1fr;
       gap: 1.5rem;
     }
 
-    .section-block {
-      background: var(--bg-surface-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 1.25rem;
-    }
-    .section-heading {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.85rem;
-    }
-
-    /* Katman Listeleri */
-    .slice-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 0.75rem;
-    }
-    .slice-item {
+    /* Feature Card */
+    .feature-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 0.75rem;
-      font-size: 0.85rem;
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      transition: border-color var(--transition), transform var(--transition);
     }
-    .slice-name {
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 0.2rem;
+    .feature-card:hover {
+      border-color: var(--border-strong);
+    }
+    .card-header {
       display: flex;
-      align-items: center;
-      gap: 0.35rem;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .card-title-group h2 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+    .feature-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .card-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: var(--bg-elevated);
+      color: var(--accent-primary);
+      border: 1px solid var(--border-subtle);
+      white-space: nowrap;
     }
 
-    /* Kullanım Adımları */
-    .step-list {
-      list-style: none;
+    /* Tabs for Vertical Slice & Playbook */
+    .tabs-nav {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 1.25rem;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 0.5rem 0.85rem;
+      font-family: var(--font-body);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      color: var(--text-primary);
+    }
+    .tab-btn.active {
+      color: var(--accent-primary);
+      border-bottom-color: var(--accent-primary);
+    }
+
+    /* Slice Layers List */
+    .slice-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0.85rem;
+    }
+    .slice-item {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem;
+    }
+    .slice-layer-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .slice-code {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      color: var(--text-primary);
+      word-break: break-all;
+    }
+
+    /* Playbook Steps */
+    .playbook-steps {
       display: flex;
       flex-direction: column;
-      gap: 0.6rem;
+      gap: 0.75rem;
     }
     .step-item {
       display: flex;
-      align-items: flex-start;
       gap: 0.75rem;
-      font-size: 0.9rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
     }
     .step-num {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--primary);
-      color: #FFF;
+      width: 24px;
+      height: 24px;
+      background: var(--accent-primary);
+      color: var(--accent-contrast);
       font-size: 0.75rem;
       font-weight: 700;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      margin-top: 0.15rem;
+    }
+    .step-content h4 {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.2rem;
+    }
+    .step-content p {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
     }
 
-    /* Kod ve Parametreler */
-    code, pre {
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
+    /* Mandatory Skeleton Shimmer Engine */
+    @keyframes skeleton-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
-    code {
-      background: var(--code-bg);
-      color: var(--primary);
-      padding: 0.15rem 0.4rem;
-      border-radius: 4px;
-      border: 1px solid var(--border-subtle);
-    }
-    pre {
-      background: var(--code-bg);
-      color: var(--text-main);
-      padding: 0.85rem 1rem;
+    .skeleton-box {
+      background: linear-gradient(
+        90deg,
+        var(--bg-surface) 25%,
+        var(--bg-elevated) 50%,
+        var(--bg-surface) 75%
+      );
+      background-size: 200% 100%;
+      animation: skeleton-shimmer 1.6s infinite cubic-bezier(0.4, 0, 0.6, 1);
       border-radius: var(--radius-sm);
       border: 1px solid var(--border-subtle);
-      overflow-x: auto;
-      margin-top: 0.5rem;
+      user-select: none;
+      pointer-events: none;
     }
 
-    /* Skeleton Screen UI Demo Mockup */
-    .skeleton-demo-box {
-      background: var(--bg-surface);
-      border: 1px dashed var(--border-strong);
+    /* States Simulator */
+    .state-preview-box {
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-sm);
-      padding: 1rem;
+      padding: 1.25rem;
+      background: var(--bg-base);
+      margin-top: 0.75rem;
+      min-height: 140px;
       display: flex;
       flex-direction: column;
-      gap: 0.6rem;
+      justify-content: center;
     }
-    .skel-line {
-      height: 12px;
-      background: var(--skeleton-base);
+    .state-toggle-bar {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 0.75rem;
+    }
+    .state-toggle-btn {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      padding: 0.25rem 0.6rem;
       border-radius: 4px;
-      animation: skelPulse 1.5s ease-in-out infinite;
+      cursor: pointer;
     }
-    .skel-line.w-80 { width: 80%; }
-    .skel-line.w-60 { width: 60%; }
-    .skel-line.w-40 { width: 40%; }
-    .skel-rect {
-      height: 48px;
-      background: var(--skeleton-base);
-      border-radius: var(--radius-sm);
-      animation: skelPulse 1.5s ease-in-out infinite;
-    }
-    @keyframes skelPulse {
-      0%, 100% { opacity: 0.6; }
-      50% { opacity: 1; }
+    .state-toggle-btn.active {
+      background: var(--accent-primary);
+      color: var(--accent-contrast);
+      border-color: var(--accent-primary);
     }
 
     /* Footer */
     footer {
       border-top: 1px solid var(--border-subtle);
-      background: var(--bg-surface);
       padding: 2rem 1.5rem;
       text-align: center;
-      font-size: 0.85rem;
       color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    /* Mobile First (375px) Adaptations */
+    @media (max-width: 640px) {
+      .header-inner { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+      .controls-inner { flex-direction: column; align-items: stretch; }
+      .search-box { min-width: 100%; }
+      .slice-grid { grid-template-columns: 1fr; }
+      .tabs-nav { gap: 0.25rem; }
+      .tab-btn { padding: 0.4rem 0.6rem; font-size: 0.75rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Üst Başlık & Kontroller -->
+  <!-- Sticky Kokpit Header -->
   <header>
     <div class="header-inner">
       <div class="brand">
-        <div class="brand-logo">📖</div>
-        <div>
-          <div style="display:flex; align-items:center; gap:0.5rem;">
-            <span class="brand-title">{{PROJE_ADI}}</span>
-            <span class="brand-badge">Özellik ve Kullanım Rehberi</span>
-          </div>
-          <p style="font-size: 0.8rem; color: var(--text-muted);">Tüm özelliklerin mimari yapılışı ve adım adım kullanım playbook'u</p>
+        <div class="brand-logo">⚡</div>
+        <div class="brand-text">
+          <h1>{{PROJE_ADI}} — Özellik Rehberi</h1>
+          <p>5 Katmanlı Dikey Dilim & Playbook Kullanım Kılavuzu</p>
         </div>
       </div>
-      <div class="header-controls">
-        <button class="btn-action" onclick="expandAllSections()">Aç / Kapat</button>
-        <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()">
-          <span id="themeIcon">☀️</span>
-          <span id="themeText">Açık Tema</span>
-        </button>
+      <div class="header-actions">
+        <span class="card-badge">v{{PROJE_SURUM}}</span>
+        <button id="modeToggleBtn" style="background:var(--bg-elevated); border:1px solid var(--border-subtle); color:var(--text-primary); border-radius:6px; padding:6px 12px; font-size:12px; cursor:pointer;" onclick="toggleLightDarkMode()">🌙 Koyu</button>
       </div>
     </div>
   </header>
 
-  <!-- Arama ve Filtreleme -->
-  <section class="hero-search">
-    <div class="search-box-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" class="search-input" placeholder="Özellik adı, katman, API endpoint'i veya buton ara..." oninput="filterFeatures()">
-    </div>
-    <div class="filter-tabs" id="filterTabs">
-      <button class="filter-tab active" onclick="selectFilter('all')">Tüm Özellikler</button>
-      <button class="filter-tab" onclick="selectFilter('core')">Çekirdek Sistem</button>
-      <button class="filter-tab" onclick="selectFilter('auth')">Kimlik & Yetki</button>
-      <button class="filter-tab" onclick="selectFilter('ui')">Arayüz & UX</button>
-      <button class="filter-tab" onclick="selectFilter('admin')">Yönetim & Raporlama</button>
-    </div>
-  </section>
-
-  <!-- İstatistik Özeti -->
-  <section class="summary-stats">
-    <div class="stat-card">
-      <div class="stat-label">Toplam Özellik</div>
-      <div class="stat-value" id="totalFeaturesCount">1</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">5 Katmanlı Dilim Uyumu</div>
-      <div class="stat-value" style="color: var(--accent);">%100</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Skeleton Screens UI</div>
-      <div class="stat-value" style="color: var(--primary);">Zorunlu / Tam</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Son Güncelleme</div>
-      <div class="stat-value" style="font-size: 1.1rem; padding-top:0.3rem;">{{SON_GUNCELLEME}}</div>
-    </div>
-  </section>
-
-  <!-- Ana Özellik Listesi -->
-  <main id="featureList">
-
-    <!-- =========================================================================
-         ÖRNEK ÖZELLİK KARTI (Yeni her geliştirme sonrasında bu blok çoğaltılır)
-         ========================================================================= -->
-    <article class="feature-card" data-category="core" data-title="Örnek Özellik: Merkezi Kimlik Doğrulama ve Oturum Yönetimi">
-      
-      <!-- Kart Başlığı -->
-      <div class="feature-header">
-        <div class="feature-title-wrap">
-          <span class="feature-icon">🔐</span>
-          <div>
-            <h2 class="feature-title">Merkezi Kimlik Doğrulama ve Oturum Yönetimi</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted);">JWT tabanlı güvenli oturum açma, yenileme (refresh token) ve rol bazlı erişim denetimi (RBAC).</p>
-          </div>
-        </div>
-        <div class="feature-badges">
-          <span class="badge badge-primary">Modül: Auth</span>
-          <span class="badge badge-success">Durum: Aktif (Bitti)</span>
-          <span class="badge badge-neutral">Sürüm: v1.0.0</span>
-        </div>
+  <!-- Controls Strip (Search & Filter Pills) -->
+  <div class="controls-strip">
+    <div class="controls-inner">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="featureSearchInput" class="search-input" placeholder="Özellik, endpoint veya anahtar kelime ara (Ctrl+K)..." oninput="filterFeatures()">
       </div>
+      <div class="filter-pills" id="categoryPills">
+        <button class="filter-pill active" onclick="setCategoryFilter('all', this)">Tümü</button>
+        <button class="filter-pill" onclick="setCategoryFilter('ui', this)">Arayüz & UX</button>
+        <button class="filter-pill" onclick="setCategoryFilter('backend', this)">Backend & API</button>
+        <button class="filter-pill" onclick="setCategoryFilter('database', this)">Veritabanı</button>
+      </div>
+    </div>
+  </div>
 
-      <div class="feature-sections">
+  <!-- Main Features Container -->
+  <main class="container">
+    <div class="features-grid" id="featuresContainer">
 
-        <!-- 1. Ne İşe Yarar / Amaç -->
-        <div class="section-block">
-          <div class="section-heading">🎯 1. Ne İşe Yarar? (Özellik Amacı & Katma Değer)</div>
-          <p style="font-size: 0.9rem; color: var(--text-main);">
-            Kullanıcıların e-posta ve şifreleriyle sisteme güvenli giriş yapmasını sağlar. Süresi dolan token'ları arka planda sessizce yeniler, yetkisiz rotalara erişimi engeller ve rollerine göre izinli menüleri dinamik olarak açar.
-          </p>
+      <!-- ====================================================================
+           ÖRNEK ÖZELLİK KARTI (Geliştirilen her özellik bu kart formatında eklenir)
+           ==================================================================== -->
+      <article class="feature-card" data-category="ui" data-title="Örnek Özellik: İnteraktif Gösterge Paneli">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="card-badge">Özellik #01</span>
+            <h2>İnteraktif Gösterge Paneli (Dashboard UI)</h2>
+            <p class="feature-desc">Kullanıcının sistem metriklerini, canlı görevlerini ve analizlerini tek ekrandan sıfır gecikmeyle takip etmesini sağlar.</p>
+          </div>
+          <span class="card-badge" style="border-color:var(--accent-primary);">Tamamlandı</span>
         </div>
 
-        <!-- 2. Nasıl Yapıldı? (5 Katmanlı Dikey Dilim Mimarisi) -->
-        <div class="section-block">
-          <div class="section-heading">🏗️ 2. Nasıl Yapıldı? (Mimari ve 5 Katmanlı Dikey Dilim)</div>
+        <!-- Sekmeler: 1. Mimari (5 Katman), 2. Kullanım (Playbook), 3. Durumlar (UX Simulator) -->
+        <nav class="tabs-nav">
+          <button class="tab-btn active" onclick="switchCardTab(this, 'slice')">🏗️ Nasıl Yapıldı? (5 Katman)</button>
+          <button class="tab-btn" onclick="switchCardTab(this, 'playbook')">🚀 Nasıl Kullanılır? (Playbook)</button>
+          <button class="tab-btn" onclick="switchCardTab(this, 'states')">📱 Arayüz Durumları & Skeleton</button>
+        </nav>
+
+        <!-- Tab 1: 5 Katmanlı Dilim Mimarisi -->
+        <div class="tab-content slice-panel">
           <div class="slice-grid">
-            
             <div class="slice-item">
-              <div class="slice-name">🗄️ 1. Veritabanı & Şema</div>
-              <p><code>users</code> ve <code>roles</code> tabloları. Şifreler BCrypt ile hash'lenir. <code>refresh_tokens</code> tablosunda cihaz bazlı oturum anahtarları tutulur.</p>
+              <div class="slice-layer-title">🗄️ 1. DB / Şema / Migration</div>
+              <div class="slice-code">supabase/migrations/20261101_dashboard.sql (tables: metrics, activities)</div>
             </div>
-
             <div class="slice-item">
-              <div class="slice-name">⚙️ 2. Backend / RPC / Endpoint</div>
-              <p><code>POST /api/v1/auth/login</code> ve <code>POST /api/v1/auth/refresh</code>. JWT üretimi, HttpOnly güvenli çerez (cookie) ve Spring Security / Middleware filtreleri.</p>
+              <div class="slice-layer-title">⚙️ 2. Backend API / RPC</div>
+              <div class="slice-code">GET /api/v1/dashboard/metrics · Edge Function: compute-kpi</div>
             </div>
-
             <div class="slice-item">
-              <div class="slice-name">🌐 3. İstemci API Entegrasyonu</div>
-              <p><code>useAuthStore</code> (Zustand/Redux) ve Axios response interceptor ile otomatik 401 yakalama ve token yenileme döngüsü.</p>
+              <div class="slice-layer-title">🔌 3. İstemci Entegrasyonu</div>
+              <div class="slice-code">src/api/dashboardApi.ts · useDashboardMetrics() React Query hook</div>
             </div>
-
             <div class="slice-item">
-              <div class="slice-name">🎨 4. Arayüz / UI & Eylemler</div>
-              <p><code>LoginForm.tsx</code> bileşeni. React Hook Form + Zod doğrulaması. WCAG 2.2 uyumlu erişilebilir form kontrolleri.</p>
+              <div class="slice-layer-title">🎨 4. UI Bileşenleri & State</div>
+              <div class="slice-code">src/components/DashboardGrid.tsx · Zustand metricsStore</div>
             </div>
-
             <div class="slice-item">
-              <div class="slice-name">💀 5. Skeleton Screens UI & UX</div>
-              <p>Oturum durumu sunucudan doğrulanırken donuk spinner yerine profil kartı ve menü iskelet ekranları (kaset yerleşimi) gösterilir.</p>
+              <div class="slice-layer-title">🛡️ 5. Skeleton UI & Kapanış</div>
+              <div class="slice-code">themes.css .skeleton-shimmer · MetricCardSkeleton.tsx</div>
             </div>
-
           </div>
         </div>
 
-        <!-- 3. Nasıl Kullanılır? (Adım Adım Kullanıcı Rehberi) -->
-        <div class="section-block">
-          <div class="section-heading">🚀 3. Nasıl Kullanılır? (Adım Adım Kullanım Playbook'u)</div>
-          <ul class="step-list">
-            <li class="step-item">
-              <span class="step-num">1</span>
-              <div>
-                <strong>Sayfayı Açma:</strong> Tarayıcıda <code>/login</code> adresine gidin veya üst bardaki <strong>"Giriş Yap"</strong> butonuna tıklayın.
-              </div>
-            </li>
-            <li class="step-item">
-              <span class="step-num">2</span>
-              <div>
-                <strong>Bilgileri Girme:</strong> E-posta alanına geçerli kullanıcı adresini, şifre alanına parolanızı yazın. Şifreyi görmek için göz ikonuna tıklayabilirsiniz.
-              </div>
-            </li>
-            <li class="step-item">
-              <span class="step-num">3</span>
-              <div>
-                <strong>Girişi Başlatma:</strong> <strong>"Giriş Yap"</strong> butonuna basın. Başarılı girişte sistem sizi otomatik olarak <strong>"Gösterge Paneli (Dashboard)"</strong> ekranına yönlendirir.
-              </div>
-            </li>
-            <li class="step-item">
-              <span class="step-num">4</span>
-              <div>
-                <strong>Hata Durumu:</strong> Hatalı şifre girildiğinde formun altında kırmızı uyarı etiketi çıkar; buton sarsıntı animasyonuyla kullanıcıyı uyarır.
-              </div>
-            </li>
-          </ul>
-        </div>
-
-        <!-- 4. Arayüz ve UX Durumları (States) -->
-        <div class="section-block">
-          <div class="section-heading">📱 4. Arayüz Durumları & Skeleton Screens Önizlemesi</div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
-            <div>
-              <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-muted);">Yükleme Durumu (Skeleton Wireframe):</div>
-              <div class="skeleton-demo-box">
-                <div class="skel-rect"></div>
-                <div class="skel-line w-80"></div>
-                <div class="skel-line w-60"></div>
+        <!-- Tab 2: Nasıl Kullanılır? (Playbook) -->
+        <div class="tab-content playbook-panel" style="display:none;">
+          <div class="playbook-steps">
+            <div class="step-item">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <h4>Sayfaya Erişim</h4>
+                <p>Sol menüdeki <strong>"Gösterge Paneli"</strong> bağlantısına tıklayın veya doğrudan <code>/dashboard</code> rotasına gidin.</p>
               </div>
             </div>
-            <div>
-              <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-muted);">Normal / Dolu Durum:</div>
-              <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 1rem; font-size: 0.85rem;">
-                ✔️ Hoş Geldiniz, <strong>Yönetici</strong><br>
-                <span style="color: var(--accent); font-size: 0.8rem;">● Çevrimiçi · Yetki: ADMIN</span>
+            <div class="step-item">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <h4>Filtreleme & Tarih Seçimi</h4>
+                <p>Üst çubuktaki tarih aralığı seçicisinden <em>"Son 30 Gün"</em> filtresini seçin. Metrikler anında güncellenir.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <h4>Detay Çekmecesi (Drawer)</h4>
+                <p>Herhangi bir metrik kartına tıklayarak sağdan açılan detay çekmecesinde aktivite geçmişini inceleyin.</p>
               </div>
             </div>
           </div>
         </div>
 
-      </div>
-    </article>
+        <!-- Tab 3: Arayüz Durumları & Skeleton Simülatörü -->
+        <div class="tab-content states-panel" style="display:none;">
+          <div class="state-toggle-bar">
+            <button class="state-toggle-btn active" onclick="switchStateSimulator(this, 'skeleton')">1. Skeleton Screen (Yükleniyor)</button>
+            <button class="state-toggle-btn" onclick="switchStateSimulator(this, 'hydrated')">2. Dolu Durum (Success)</button>
+            <button class="state-toggle-btn" onclick="switchStateSimulator(this, 'empty')">3. Boş Durum (Empty)</button>
+            <button class="state-toggle-btn" onclick="switchStateSimulator(this, 'error')">4. Hata Durumu (Retry)</button>
+          </div>
+          
+          <div class="state-preview-box">
+            <!-- Simülasyon: Skeleton State -->
+            <div class="sim-view sim-skeleton" style="display:flex; flex-direction:column; gap:8px;">
+              <div class="skeleton-box" style="height:20px; width:45%;"></div>
+              <div class="skeleton-box" style="height:14px; width:80%;"></div>
+              <div style="display:flex; gap:12px; margin-top:8px;">
+                <div class="skeleton-box" style="height:60px; flex:1;"></div>
+                <div class="skeleton-box" style="height:60px; flex:1;"></div>
+              </div>
+            </div>
 
+            <!-- Simülasyon: Dolu Durum -->
+            <div class="sim-view sim-hydrated" style="display:none;">
+              <h3 style="font-size:14px; font-weight:700; color:var(--text-primary);">Aylık Ciro: ₺142.500,00</h3>
+              <p style="font-size:12px; color:var(--text-secondary); margin-top:4px;">Hedef gerçekleşme oranı: %114 · 1.240 aktif işlem</p>
+            </div>
+
+            <!-- Simülasyon: Boş Durum -->
+            <div class="sim-view sim-empty" style="display:none; text-align:center;">
+              <p style="font-size:13px; color:var(--text-secondary);">Henüz bir veri girişi yapılmadı.</p>
+              <button style="margin-top:8px; background:var(--accent-primary); color:var(--accent-contrast); border:none; padding:4px 12px; border-radius:4px; font-size:11px; cursor:pointer;">İlk Kaydı Ekle</button>
+            </div>
+
+            <!-- Simülasyon: Hata Durumu -->
+            <div class="sim-view sim-error" style="display:none; text-align:center;">
+              <p style="font-size:13px; color:#EF4444;">Veri sunucusu yanıt vermedi (503).</p>
+              <button style="margin-top:8px; background:var(--bg-elevated); border:1px solid var(--border-subtle); color:var(--text-primary); padding:4px 12px; border-radius:4px; font-size:11px; cursor:pointer;">Yeniden Dene</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
   </main>
 
-  <!-- Alt Bilgi -->
+  <!-- Canlı Tema Seçici (Zero-Token Hook) -->
+  <div id="systemThemeSwitcherPill" style="position:fixed; bottom:20px; right:20px; z-index:99999; background:var(--bg-surface); border:1px solid var(--border-subtle); padding:6px 12px; border-radius:999px; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(0,0,0,0.45); backdrop-filter:blur(8px);">
+    <label for="systemThemeSelector" style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">Tema:</label>
+    <select id="systemThemeSelector" onchange="document.documentElement.setAttribute('data-theme', this.value)" style="background:var(--bg-elevated); color:var(--text-primary); border:1px solid var(--border-subtle); border-radius:6px; padding:3px 8px; font-size:12px; cursor:pointer; outline:none;">
+      <option value="obsidian-velvet">01. Obsidian Velvet</option>
+      <option value="nordic-slate">03. Nordic Slate</option>
+      <option value="maritime-amber">08. Maritime Amber</option>
+      <option value="verdant-abyss">04. Verdant Abyss</option>
+      <option value="plum-lime">14. Plum + Lime</option>
+    </select>
+  </div>
+
   <footer>
-    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-      <div>
-        <strong>{{PROJE_ADI}}</strong> — Yaşayan Mimari ve Özellik Rehberi
-      </div>
-      <div>
-        Bu doküman her geliştirme adımında güncellenir · <code>docs/kullanici-rehberi.html</code>
-      </div>
-    </div>
+    <p>{{PROJE_ADI}} · Mimari Uyumluluk: 5 Katmanlı Dikey Dilim & rehber_design.md Sözleşmesi</p>
+    <p style="margin-top:4px;">Son Güncelleme: {{TARIH}} · Üretim Kalitesi Standardı</p>
   </footer>
 
-  <!-- Etkileşim Script'i -->
   <script>
-    // Tema Yönetimi
-    function toggleTheme() {
-      const html = document.documentElement;
-      const current = html.getAttribute('data-theme') || 'dark';
-      const target = current === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-theme', target);
-      localStorage.setItem('doc_theme', target);
-      updateThemeBtn(target);
+    // Tab Değiştirici
+    function switchCardTab(btn, tabName) {
+      const card = btn.closest('.feature-card');
+      card.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      card.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+      card.querySelector('.' + tabName + '-panel').style.display = 'block';
     }
 
-    function updateThemeBtn(theme) {
-      const icon = document.getElementById('themeIcon');
-      const text = document.getElementById('themeText');
-      if (theme === 'dark') {
-        icon.textContent = '☀️';
-        text.textContent = 'Açık Tema';
-      } else {
-        icon.textContent = '🌙';
-        text.textContent = 'Koyu Tema';
+    // Durum Simülatörü
+    function switchStateSimulator(btn, stateName) {
+      const box = btn.closest('.states-panel');
+      box.querySelectorAll('.state-toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      box.querySelectorAll('.sim-view').forEach(v => v.style.display = 'none');
+      box.querySelector('.sim-' + stateName).style.display = 'block';
+      if (stateName === 'skeleton') {
+        box.querySelector('.sim-skeleton').style.display = 'flex';
       }
     }
 
-    // Kayıtlı Temayı Yükle
-    (function initTheme() {
-      const saved = localStorage.getItem('doc_theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', saved);
-      updateThemeBtn(saved);
-    })();
+    // Açık / Koyu Tema Toggle
+    function toggleLightDarkMode() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-mode') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-mode', next);
+      const btn = document.getElementById('modeToggleBtn');
+      btn.innerText = next === 'light' ? '☀️ Açık' : '🌙 Koyu';
+    }
 
-    // Arama ve Filtreleme
+    // Canlı Arama
     function filterFeatures() {
-      const query = document.getElementById('searchInput').value.toLowerCase().trim();
-      const activeTab = document.querySelector('.filter-tab.active').getAttribute('onclick');
-      const catMatch = activeTab.match(/'([^']+)'/);
-      const selectedCat = catMatch ? catMatch[1] : 'all';
+      const q = document.getElementById('featureSearchInput').value.toLowerCase();
+      document.querySelectorAll('.feature-card').forEach(card => {
+        const text = card.innerText.toLowerCase();
+        card.style.display = text.includes(q) ? 'block' : 'none';
+      });
+    }
 
-      const cards = document.querySelectorAll('.feature-card');
-      let visibleCount = 0;
-
-      cards.forEach(card => {
-        const title = (card.getAttribute('data-title') || '').toLowerCase();
-        const cat = card.getAttribute('data-category') || '';
-        const bodyText = card.innerText.toLowerCase();
-
-        const matchesQuery = !query || title.includes(query) || bodyText.includes(query);
-        const matchesCategory = selectedCat === 'all' || cat === selectedCat;
-
-        if (matchesQuery && matchesCategory) {
+    // Kategori Filtresi
+    function setCategoryFilter(cat, btn) {
+      document.querySelectorAll('#categoryPills .filter-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.feature-card').forEach(card => {
+        if (cat === 'all' || card.getAttribute('data-category') === cat) {
           card.style.display = 'block';
-          visibleCount++;
         } else {
           card.style.display = 'none';
         }
       });
-
-      document.getElementById('totalFeaturesCount').textContent = visibleCount;
     }
 
-    function selectFilter(cat) {
-      const tabs = document.querySelectorAll('.filter-tab');
-      tabs.forEach(t => t.classList.remove('active'));
-      event.target.classList.add('active');
-      filterFeatures();
-    }
-
-    // Tümünü Genişlet / Kapat
-    let allExpanded = true;
-    function expandAllSections() {
-      allExpanded = !allExpanded;
-      const sections = document.querySelectorAll('.feature-sections');
-      sections.forEach(s => {
-        s.style.display = allExpanded ? 'grid' : 'none';
-      });
-    }
+    // Kısayol: Ctrl+K ile arama kutusuna odaklan
+    window.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        document.getElementById('featureSearchInput').focus();
+      }
+    });
   </script>
 </body>
 </html>

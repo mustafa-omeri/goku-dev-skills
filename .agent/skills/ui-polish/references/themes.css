@@ -1,0 +1,579 @@
+/* ==========================================================================
+   SYSTEM UI SKILLSET - LOCKED 16 THEMES & SKELETON ENGINE (themes.css)
+   Rule: Components MUST ONLY reference semantic variables below.
+   Never hardcode hex values inside component CSS/JSX.
+   Both Dark Mode (Default) and Light Mode (Reversed Scale) are fully supported.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   01. OBSIDIAN VELVET (Enterprise SaaS, AI Workspaces, Developer Tools)
+   Dark:  #17151C, #292531, #45404F, #716879, #AAA2B3, #E2DDE7
+   Light: Scale reversed using exact palette tones for pristine contrast
+   -------------------------------------------------------------------------- */
+:root,
+:root[data-theme="obsidian-velvet"],
+[data-theme="obsidian-velvet"] {
+  --bg-base: #17151C;
+  --bg-surface: #292531;
+  --bg-elevated: #45404F;
+  --border-subtle: #45404F;
+  --border-strong: #716879;
+  --text-muted: #716879;
+  --text-secondary: #AAA2B3;
+  --text-primary: #E2DDE7;
+  --accent-primary: #E2DDE7;
+  --accent-secondary: #AAA2B3;
+  --accent-contrast: #17151C;
+}
+
+[data-theme="obsidian-velvet"][data-mode="light"],
+[data-mode="light"] [data-theme="obsidian-velvet"] {
+  --bg-base: #E2DDE7;
+  --bg-surface: #D5CEDC;
+  --bg-elevated: #C4BACD;
+  --border-subtle: #AAA2B3;
+  --border-strong: #716879;
+  --text-muted: #716879;
+  --text-secondary: #45404F;
+  --text-primary: #17151C;
+  --accent-primary: #292531;
+  --accent-secondary: #45404F;
+  --accent-contrast: #E2DDE7;
+}
+
+/* --------------------------------------------------------------------------
+   02. ESPRESSO TERRACOTTA (Hospitality, Architecture, Luxury E-Commerce)
+   Dark:  #211B1A, #382A28, #60433D, #916B60, #C1A094, #E8D8CE
+   -------------------------------------------------------------------------- */
+:root[data-theme="espresso-terracotta"],
+[data-theme="espresso-terracotta"] {
+  --bg-base: #211B1A;
+  --bg-surface: #382A28;
+  --bg-elevated: #60433D;
+  --border-subtle: #60433D;
+  --border-strong: #916B60;
+  --text-muted: #916B60;
+  --text-secondary: #C1A094;
+  --text-primary: #E8D8CE;
+  --accent-primary: #C1A094;
+  --accent-secondary: #916B60;
+  --accent-contrast: #211B1A;
+}
+
+[data-theme="espresso-terracotta"][data-mode="light"],
+[data-mode="light"] [data-theme="espresso-terracotta"] {
+  --bg-base: #E8D8CE;
+  --bg-surface: #DEC9BC;
+  --bg-elevated: #D2B7A7;
+  --border-subtle: #C1A094;
+  --border-strong: #916B60;
+  --text-muted: #916B60;
+  --text-secondary: #60433D;
+  --text-primary: #211B1A;
+  --accent-primary: #382A28;
+  --accent-secondary: #60433D;
+  --accent-contrast: #E8D8CE;
+}
+
+/* --------------------------------------------------------------------------
+   03. NORDIC SLATE (FinTech, B2B Dashboards, Cloud Infrastructure)
+   Dark:  #111522, #1E263B, #303D59, #536684, #98A9C4, #DCE3EF
+   -------------------------------------------------------------------------- */
+:root[data-theme="nordic-slate"],
+[data-theme="nordic-slate"] {
+  --bg-base: #111522;
+  --bg-surface: #1E263B;
+  --bg-elevated: #303D59;
+  --border-subtle: #303D59;
+  --border-strong: #536684;
+  --text-muted: #536684;
+  --text-secondary: #98A9C4;
+  --text-primary: #DCE3EF;
+  --accent-primary: #98A9C4;
+  --accent-secondary: #536684;
+  --accent-contrast: #111522;
+}
+
+[data-theme="nordic-slate"][data-mode="light"],
+[data-mode="light"] [data-theme="nordic-slate"] {
+  --bg-base: #DCE3EF;
+  --bg-surface: #C8D4E6;
+  --bg-elevated: #B4C4DD;
+  --border-subtle: #98A9C4;
+  --border-strong: #536684;
+  --text-muted: #536684;
+  --text-secondary: #303D59;
+  --text-primary: #111522;
+  --accent-primary: #1E263B;
+  --accent-secondary: #303D59;
+  --accent-contrast: #DCE3EF;
+}
+
+/* --------------------------------------------------------------------------
+   04. VERDANT ABYSS (Sustainability, Wealth Management, AgriTech)
+   Dark:  #051F20, #0B2B26, #163832, #235347, #8EB69B, #DAF1DE
+   -------------------------------------------------------------------------- */
+:root[data-theme="verdant-abyss"],
+[data-theme="verdant-abyss"] {
+  --bg-base: #051F20;
+  --bg-surface: #0B2B26;
+  --bg-elevated: #163832;
+  --border-subtle: #235347;
+  --border-strong: #8EB69B;
+  --text-muted: #8EB69B;
+  --text-secondary: #DAF1DE;
+  --text-primary: #DAF1DE;
+  --accent-primary: #8EB69B;
+  --accent-secondary: #235347;
+  --accent-contrast: #051F20;
+}
+
+[data-theme="verdant-abyss"][data-mode="light"],
+[data-mode="light"] [data-theme="verdant-abyss"] {
+  --bg-base: #DAF1DE;
+  --bg-surface: #C7E7CE;
+  --bg-elevated: #B2DDBD;
+  --border-subtle: #8EB69B;
+  --border-strong: #235347;
+  --text-muted: #235347;
+  --text-secondary: #163832;
+  --text-primary: #051F20;
+  --accent-primary: #0B2B26;
+  --accent-secondary: #163832;
+  --accent-contrast: #DAF1DE;
+}
+
+/* --------------------------------------------------------------------------
+   05. UMBER MONOLITH (Craftsmanship, Industrial IoT, Logistics)
+   Dark:  #1A120E, #3A2418, #6B4A2E, #A88462, #D5C4AE, #F5EFEB
+   -------------------------------------------------------------------------- */
+:root[data-theme="umber-monolith"],
+[data-theme="umber-monolith"] {
+  --bg-base: #1A120E;
+  --bg-surface: #3A2418;
+  --bg-elevated: #6B4A2E;
+  --border-subtle: #6B4A2E;
+  --border-strong: #A88462;
+  --text-muted: #A88462;
+  --text-secondary: #D5C4AE;
+  --text-primary: #F5EFEB;
+  --accent-primary: #D5C4AE;
+  --accent-secondary: #A88462;
+  --accent-contrast: #1A120E;
+}
+
+[data-theme="umber-monolith"][data-mode="light"],
+[data-mode="light"] [data-theme="umber-monolith"] {
+  --bg-base: #F5EFEB;
+  --bg-surface: #E8DDD2;
+  --bg-elevated: #D5C4AE;
+  --border-subtle: #A88462;
+  --border-strong: #6B4A2E;
+  --text-muted: #6B4A2E;
+  --text-secondary: #3A2418;
+  --text-primary: #1A120E;
+  --accent-primary: #3A2418;
+  --accent-secondary: #6B4A2E;
+  --accent-contrast: #F5EFEB;
+}
+
+/* --------------------------------------------------------------------------
+   06. ROYAL AMETHYST (Web3, Creative Suites, Gaming Platforms)
+   Dark:  #0E0B1D, #2A1E4D, #5A3B8C, #8B7CC7, #C9C2E3, #F2EFFB
+   -------------------------------------------------------------------------- */
+:root[data-theme="royal-amethyst"],
+[data-theme="royal-amethyst"] {
+  --bg-base: #0E0B1D;
+  --bg-surface: #2A1E4D;
+  --bg-elevated: #5A3B8C;
+  --border-subtle: #5A3B8C;
+  --border-strong: #8B7CC7;
+  --text-muted: #8B7CC7;
+  --text-secondary: #C9C2E3;
+  --text-primary: #F2EFFB;
+  --accent-primary: #C9C2E3;
+  --accent-secondary: #8B7CC7;
+  --accent-contrast: #0E0B1D;
+}
+
+[data-theme="royal-amethyst"][data-mode="light"],
+[data-mode="light"] [data-theme="royal-amethyst"] {
+  --bg-base: #F2EFFB;
+  --bg-surface: #E0DAF5;
+  --bg-elevated: #C9C2E3;
+  --border-subtle: #8B7CC7;
+  --border-strong: #5A3B8C;
+  --text-muted: #5A3B8C;
+  --text-secondary: #2A1E4D;
+  --text-primary: #0E0B1D;
+  --accent-primary: #2A1E4D;
+  --accent-secondary: #5A3B8C;
+  --accent-contrast: #F2EFFB;
+}
+
+/* --------------------------------------------------------------------------
+   07. MOSS BOTANICAL (EdTech, Mental Health, Organic Products)
+   Dark:  #0F1F17, #1E3A2E, #3E5A3F, #6B7F67, #C7CBB8, #F0F2EB
+   -------------------------------------------------------------------------- */
+:root[data-theme="moss-botanical"],
+[data-theme="moss-botanical"] {
+  --bg-base: #0F1F17;
+  --bg-surface: #1E3A2E;
+  --bg-elevated: #3E5A3F;
+  --border-subtle: #3E5A3F;
+  --border-strong: #6B7F67;
+  --text-muted: #6B7F67;
+  --text-secondary: #C7CBB8;
+  --text-primary: #F0F2EB;
+  --accent-primary: #C7CBB8;
+  --accent-secondary: #6B7F67;
+  --accent-contrast: #0F1F17;
+}
+
+[data-theme="moss-botanical"][data-mode="light"],
+[data-mode="light"] [data-theme="moss-botanical"] {
+  --bg-base: #F0F2EB;
+  --bg-surface: #DFE3D5;
+  --bg-elevated: #C7CBB8;
+  --border-subtle: #6B7F67;
+  --border-strong: #3E5A3F;
+  --text-muted: #3E5A3F;
+  --text-secondary: #1E3A2E;
+  --text-primary: #0F1F17;
+  --accent-primary: #1E3A2E;
+  --accent-secondary: #3E5A3F;
+  --accent-contrast: #F0F2EB;
+}
+
+/* --------------------------------------------------------------------------
+   08. MARITIME AMBER (Supply Chain, Aviation, Operations Control, BI)
+   Dark:  #0B132B, #1C2541, #3A506B, #5BC0DE, #F4D6B0, #D97706
+   -------------------------------------------------------------------------- */
+:root[data-theme="maritime-amber"],
+[data-theme="maritime-amber"] {
+  --bg-base: #0B132B;
+  --bg-surface: #1C2541;
+  --bg-elevated: #3A506B;
+  --border-subtle: #3A506B;
+  --border-strong: #5BC0DE;
+  --text-muted: #5BC0DE;
+  --text-secondary: #F4D6B0;
+  --text-primary: #F4D6B0;
+  --accent-primary: #D97706;
+  --accent-secondary: #5BC0DE;
+  --accent-contrast: #0B132B;
+}
+
+[data-theme="maritime-amber"][data-mode="light"],
+[data-mode="light"] [data-theme="maritime-amber"] {
+  --bg-base: #F8F5EE;
+  --bg-surface: #F0E6D8;
+  --bg-elevated: #E4D1BC;
+  --border-subtle: #3A506B;
+  --border-strong: #1C2541;
+  --text-muted: #1C2541;
+  --text-secondary: #0B132B;
+  --text-primary: #0B132B;
+  --accent-primary: #D97706;
+  --accent-secondary: #1C2541;
+  --accent-contrast: #F8F5EE;
+}
+
+/* --------------------------------------------------------------------------
+   09. GRAPHITE PULSE (Modern Consumer Apps, Fitness, Streaming, Social)
+   Dark:  #121212, #1F2937, #334155, #64748B, #F1F5F9, #EC4899
+   -------------------------------------------------------------------------- */
+:root[data-theme="graphite-pulse"],
+[data-theme="graphite-pulse"] {
+  --bg-base: #121212;
+  --bg-surface: #1F2937;
+  --bg-elevated: #334155;
+  --border-subtle: #334155;
+  --border-strong: #64748B;
+  --text-muted: #64748B;
+  --text-secondary: #F1F5F9;
+  --text-primary: #F1F5F9;
+  --accent-primary: #EC4899;
+  --accent-secondary: #64748B;
+  --accent-contrast: #121212;
+}
+
+[data-theme="graphite-pulse"][data-mode="light"],
+[data-mode="light"] [data-theme="graphite-pulse"] {
+  --bg-base: #F8FAFC;
+  --bg-surface: #F1F5F9;
+  --bg-elevated: #E2E8F0;
+  --border-subtle: #CBD5E1;
+  --border-strong: #94A3B8;
+  --text-muted: #64748B;
+  --text-secondary: #334155;
+  --text-primary: #121212;
+  --accent-primary: #DB2777;
+  --accent-secondary: #475569;
+  --accent-contrast: #FFFFFF;
+}
+
+/* --------------------------------------------------------------------------
+   10. AEGEAN COPPER (Travel, Maritime, Cultural Platforms, Data Story)
+   Dark:  #0A0F14, #0F3D3E, #2E6F73, #7FB3B8, #EADCC8, #C6601F
+   -------------------------------------------------------------------------- */
+:root[data-theme="aegean-copper"],
+[data-theme="aegean-copper"] {
+  --bg-base: #0A0F14;
+  --bg-surface: #0F3D3E;
+  --bg-elevated: #2E6F73;
+  --border-subtle: #2E6F73;
+  --border-strong: #7FB3B8;
+  --text-muted: #7FB3B8;
+  --text-secondary: #EADCC8;
+  --text-primary: #EADCC8;
+  --accent-primary: #C6601F;
+  --accent-secondary: #7FB3B8;
+  --accent-contrast: #0A0F14;
+}
+
+[data-theme="aegean-copper"][data-mode="light"],
+[data-mode="light"] [data-theme="aegean-copper"] {
+  --bg-base: #F7F3EB;
+  --bg-surface: #EADCC8;
+  --bg-elevated: #D9C5AA;
+  --border-subtle: #7FB3B8;
+  --border-strong: #2E6F73;
+  --text-muted: #2E6F73;
+  --text-secondary: #0F3D3E;
+  --text-primary: #0A0F14;
+  --accent-primary: #C6601F;
+  --accent-secondary: #0F3D3E;
+  --accent-contrast: #FFFFFF;
+}
+
+/* --------------------------------------------------------------------------
+   11. MAGENTA DUSK (Event Platforms, Entertainment, Design Tools)
+   Dark:  #1A0F2E, #3B1B4F, #7A2E6F, #D6598F, #F4D7D4, #FF6B6B
+   -------------------------------------------------------------------------- */
+:root[data-theme="magenta-dusk"],
+[data-theme="magenta-dusk"] {
+  --bg-base: #1A0F2E;
+  --bg-surface: #3B1B4F;
+  --bg-elevated: #7A2E6F;
+  --border-subtle: #7A2E6F;
+  --border-strong: #D6598F;
+  --text-muted: #D6598F;
+  --text-secondary: #F4D7D4;
+  --text-primary: #F4D7D4;
+  --accent-primary: #FF6B6B;
+  --accent-secondary: #D6598F;
+  --accent-contrast: #1A0F2E;
+}
+
+[data-theme="magenta-dusk"][data-mode="light"],
+[data-mode="light"] [data-theme="magenta-dusk"] {
+  --bg-base: #FCF4F3;
+  --bg-surface: #F4D7D4;
+  --bg-elevated: #E8BFBA;
+  --border-subtle: #D6598F;
+  --border-strong: #7A2E6F;
+  --text-muted: #7A2E6F;
+  --text-secondary: #3B1B4F;
+  --text-primary: #1A0F2E;
+  --accent-primary: #E11D48;
+  --accent-secondary: #7A2E6F;
+  --accent-contrast: #FFFFFF;
+}
+
+/* --------------------------------------------------------------------------
+   12. INDIGO SOLAR (Productivity Apps, EdTech Gamification, CRM)
+   Dark:  #1A1A1F, #2D2B55, #6A5ACD, #A678B9, #F0D9B5, #F4A62A
+   -------------------------------------------------------------------------- */
+:root[data-theme="indigo-solar"],
+[data-theme="indigo-solar"] {
+  --bg-base: #1A1A1F;
+  --bg-surface: #2D2B55;
+  --bg-elevated: #6A5ACD;
+  --border-subtle: #6A5ACD;
+  --border-strong: #A678B9;
+  --text-muted: #A678B9;
+  --text-secondary: #F0D9B5;
+  --text-primary: #F0D9B5;
+  --accent-primary: #F4A62A;
+  --accent-secondary: #6A5ACD;
+  --accent-contrast: #1A1A1F;
+}
+
+[data-theme="indigo-solar"][data-mode="light"],
+[data-mode="light"] [data-theme="indigo-solar"] {
+  --bg-base: #FAF4EB;
+  --bg-surface: #F0D9B5;
+  --bg-elevated: #DEC092;
+  --border-subtle: #A678B9;
+  --border-strong: #6A5ACD;
+  --text-muted: #6A5ACD;
+  --text-secondary: #2D2B55;
+  --text-primary: #1A1A1F;
+  --accent-primary: #D97706;
+  --accent-secondary: #2D2B55;
+  --accent-contrast: #FFFFFF;
+}
+
+/* --------------------------------------------------------------------------
+   13. FOREST GILD (Private Banking, Executive Portals, Real Estate)
+   Dark:  #0B0F0D, #1F2A1F, #3E5A3F, #8CA98C, #D9C7A3, #B08D57
+   -------------------------------------------------------------------------- */
+:root[data-theme="forest-gild"],
+[data-theme="forest-gild"] {
+  --bg-base: #0B0F0D;
+  --bg-surface: #1F2A1F;
+  --bg-elevated: #3E5A3F;
+  --border-subtle: #3E5A3F;
+  --border-strong: #8CA98C;
+  --text-muted: #8CA98C;
+  --text-secondary: #D9C7A3;
+  --text-primary: #D9C7A3;
+  --accent-primary: #B08D57;
+  --accent-secondary: #8CA98C;
+  --accent-contrast: #0B0F0D;
+}
+
+[data-theme="forest-gild"][data-mode="light"],
+[data-mode="light"] [data-theme="forest-gild"] {
+  --bg-base: #F7F5EF;
+  --bg-surface: #D9C7A3;
+  --bg-elevated: #C4AE84;
+  --border-subtle: #8CA98C;
+  --border-strong: #3E5A3F;
+  --text-muted: #3E5A3F;
+  --text-secondary: #1F2A1F;
+  --text-primary: #0B0F0D;
+  --accent-primary: #926A2D;
+  --accent-secondary: #1F2A1F;
+  --accent-contrast: #FFFFFF;
+}
+
+/* ==========================================================================
+   3-COLOR EDITORIAL SYSTEMS (Strict Palette Lock via color-mix)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   14. PLUM + LIME (Disruptive Startups, Gen-Z Fintech, Creative Agencies)
+   Deep Plum #542C5F, Electric Lime #C7E84B, Soft Ivory #F5F1E8
+   -------------------------------------------------------------------------- */
+:root[data-theme="plum-lime"],
+[data-theme="plum-lime"] {
+  --bg-base: #F5F1E8;
+  --bg-surface: color-mix(in srgb, #F5F1E8 92%, #542C5F 8%);
+  --bg-elevated: color-mix(in srgb, #F5F1E8 82%, #542C5F 18%);
+  --border-subtle: color-mix(in srgb, #542C5F 22%, transparent);
+  --border-strong: #542C5F;
+  --text-muted: color-mix(in srgb, #542C5F 65%, #F5F1E8 35%);
+  --text-secondary: color-mix(in srgb, #542C5F 85%, #F5F1E8 15%);
+  --text-primary: #542C5F;
+  --accent-primary: #C7E84B;
+  --accent-secondary: #542C5F;
+  --accent-contrast: #542C5F;
+}
+
+/* --------------------------------------------------------------------------
+   15. DIGITAL FRESH (HealthTech, Modern SaaS, Productivity, AI)
+   Electric Cobalt #3155FF, Soft Sage #A8D5BA, Warm Cream #FFF4DC
+   -------------------------------------------------------------------------- */
+:root[data-theme="digital-fresh"],
+[data-theme="digital-fresh"] {
+  --bg-base: #FFF4DC;
+  --bg-surface: color-mix(in srgb, #FFF4DC 75%, #A8D5BA 25%);
+  --bg-elevated: #A8D5BA;
+  --border-subtle: color-mix(in srgb, #3155FF 20%, #A8D5BA 80%);
+  --border-strong: #3155FF;
+  --text-muted: color-mix(in srgb, #3155FF 60%, #FFF4DC 40%);
+  --text-secondary: color-mix(in srgb, #3155FF 82%, #000000 18%);
+  --text-primary: color-mix(in srgb, #3155FF 45%, #000000 55%);
+  --accent-primary: #3155FF;
+  --accent-secondary: #A8D5BA;
+  --accent-contrast: #FFF4DC;
+}
+
+/* --------------------------------------------------------------------------
+   16. EARTHY ENERGY (FoodTech, Community Platforms, E-Commerce, Lifestyle)
+   Burnt Coral #E85D3F, Butter Yellow #F4D06F, Espresso #24211F
+   -------------------------------------------------------------------------- */
+:root[data-theme="earthy-energy"],
+[data-theme="earthy-energy"] {
+  --bg-base: #24211F;
+  --bg-surface: color-mix(in srgb, #24211F 88%, #F4D06F 12%);
+  --bg-elevated: color-mix(in srgb, #24211F 76%, #E85D3F 24%);
+  --border-subtle: color-mix(in srgb, #F4D06F 25%, #24211F 75%);
+  --border-strong: #E85D3F;
+  --text-muted: color-mix(in srgb, #F4D06F 60%, #24211F 40%);
+  --text-secondary: #F4D06F;
+  --text-primary: color-mix(in srgb, #F4D06F 35%, #FFFFFF 65%);
+  --accent-primary: #E85D3F;
+  --accent-secondary: #F4D06F;
+  --accent-contrast: #24211F;
+}
+
+/* ==========================================================================
+   MANDATORY GEOMETRY-MATCHED SKELETON SHIMMER ENGINE
+   Rule: Every async data container, chart, card and table must use .skeleton
+   Generic spinners or blank screens are strictly prohibited.
+   ========================================================================== */
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton,
+[data-skeleton="true"] {
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface) 25%,
+    var(--bg-elevated) 50%,
+    var(--bg-surface) 75%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: skeleton-shimmer 1.6s infinite cubic-bezier(0.4, 0, 0.6, 1) !important;
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid var(--border-subtle) !important;
+  color: transparent !important;
+  user-select: none !important;
+  pointer-events: none !important;
+}
+
+.skeleton *,
+[data-skeleton="true"] * {
+  visibility: hidden !important;
+}
+
+/* Skeleton Geometry Helpers */
+.skeleton-text {
+  height: 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+}
+
+.skeleton-title {
+  height: 1.5rem;
+  width: 60%;
+  margin-bottom: 0.75rem;
+  border-radius: 6px;
+}
+
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50% !important;
+}
+
+.skeleton-button {
+  height: 40px;
+  width: 120px;
+  border-radius: var(--radius-sm, 6px);
+}
+
+.skeleton-card {
+  min-height: 140px;
+  border-radius: var(--radius-md, 10px);
+}

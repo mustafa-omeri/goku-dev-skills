@@ -33,6 +33,11 @@ bir talepte** aşağıdaki üç skill **birlikte** okunur ve uygulanır:
    hiyerarşik görsel dil uygula.
 3. Yanıtın başlangıcında bu üç skill'in ve kullanılan MCP araçlarının
    **aktif devrede olduğunu** açıkça belirt.
+4. **Master Design Orchestration (/ui-polish):** /ui-polish çağrıldığında ajan yüzeysel bir CSS düzenleyicisi olarak değil, **Baş Tasarım Mühendisi ve Skillset Orkestratörü (Master Orchestrator)** olarak hareket eder. Kod yazmadan önce **Zorunlu 6 Satırlık Ön Uçuş Makbuzu (Execution Receipt)** basmak zorundadır:
+   - *1. Detected Project Archetype*, *2. Selected Locked Theme* (1 birincil + 2 alternatif tema), *3. Selected Component Themes* (component-themes/), *4. Invoked UI/UX Skills* (16 skill), *5. Viewport-Native Mobile Transformations* (375px), *6. Top 10 High-Impact UI Flaws Targeted*.
+5. **16 Kilitli Sistem Teması & 	hemes.css Zorunluluğu:** Projelerde rastgele renk uydurmak yasaktır. Ajan doğrudan .agent/skills/ui-polish/references/themes.css içindeki 16 resmi kilitli temayı (13 adet 6-tonlu çift modlu sistem + 3 adet editoryal 3-renkli sistem) ve semantik CSS değişkenlerini (--bg-base, --bg-surface, --text-primary, --accent-primary vb.) kullanmak ZORUNDADIR.
+6. **Standart Kullanıcı Rehberi Sözleşmesi (
+ehber_design.md):** Her projede docs/kullanici_rehberi.html, sistem standardı olan .agent/templates/rehber_design.md spesifikasyonuna sadık kalarak (Space Grotesk, Plus Jakarta Sans, 5 katmanlı dilim, playbook ve skeleton ekran simülatörüyle) üretilir veya güncellenir.
 
 ## 2.1 Prompt Makroları ve Tasarım Fiilleri (`[DESIGN-REFRESH]`, `[UI-POLISH]`, `[BOLDER]`, `[QUIETER]`, `[DISTILL]`, `[HARDEN]`)
 
@@ -193,7 +198,7 @@ Tüm web arayüzü, frontend bileşeni ve sayfa geliştirmelerinde "generic AI s
 ### C. Hazır Bileşen ve Ölçülmüş Palet Önceliği (Zero-Friction Ready-Made Lookup)
 
 ⛔ **Ezbere CSS/HTML Üretme Yasağı:** Modelin eğitim hafızasından uydurma ortalama 2023 grid'leri ve renkleri basmasını engellemek için, bir bileşen (sidebar, navbar, card, login, footer, accordion, menu) tasarlanırken veya renklendirilirken **önce** şu araçlar taranmak ZORUNDADIR:
-1. **Hazır Bileşen Şablonları (55 Tema):** `python .agent/skills/frontend-design/scripts/get_component.py --list` veya `--theme <name> --html` ile doğrudan üretim kalitesindeki CSS/HTML referans alınır.
+1. **Hazır Bileşen Şablonları (55 Tema & 8 Kategori + 18 Dashboard):** Ajan yalnızca sidebar değil; `sidebars`, `cards`, `navbars`, `menus`, `logins`, `footers`, `accordions` ve `parallax` olmak üzere 8 kategorinin (55 hazır tema) tamamını `python .agent/skills/frontend-design/scripts/get_component.py --list` veya `--type <category>` ile tarar. Dashboard arayüzlerinde `dashboard-theme/` altındaki 18 referans mimariyi baz alır.
 2. **Ölçülmüş Kontrastlı Paletler (10 Palet):** `python .agent/skills/frontend-design/scripts/get_palette.py --id <1-10> --format css` ile WCAG AA/AAA kontrastı garanti edilmiş CSS değişkenleri projeye aktarılır.
 3. **Merkezi Tasarım Arama Motoru:** `python .agent/skills/ui-ux-pro-max/scripts/search.py "<query>"` araması, sorguya uyan yerel hazır bileşen ve paletleri otomatik olarak yüzeye çıkarır.
 
@@ -229,9 +234,9 @@ Ajan tasarım üzerinde çalışırken bu ayrımı kesinlikle gözetir:
 ### Baseline Çıkarma (Brownfield), İyileştirme (Refinement) ve Yeniden Tasarım (Redesign) Semantiği
 Ajan tasarım üzerinde çalışırken bu üç modu kesinlikle gözetir:
 0. **Mevcut Projelerde Baseline Çıkarma (`mode: baseline` — İlk Adım):**
-   - Halihazırda çalışan bir arayüzü olan projede (`kalansure`, `ocai`, `FEProjectv1`, `bookmarkManagerProject` vb.) `<repo-kök>/DESIGN.md` henüz yoksa, ajan **mevcut tasarımı ve UI kodunu ASLA kendi başına değiştirmez**.
-   - Önce projenin mevcut renkleri, fontları, yüzeyleri ve bileşenleri olduğu gibi analiz edilerek `DESIGN.md` (`mode: baseline`) olarak kayıt altına alınır.
-   - Mevcut tasarımın değiştirilmesi yalnızca kullanıcı açıkça talep ettiğinde / zorladığında (`--redesign`, `[OVERDRIVE]`, `"tasarımı değiştir / yeniden tasarla"`) gerçekleşir.
+   - Halihazırda çalışan bir arayüzü olan projede (`kalansure`, `ocai`, `FEProjectv1`, `bookmarkManagerProject` vb.) `<repo-kök>/DESIGN.md` henüz yoksa, ajan rutin özellik oturumlarında **mevcut tasarımı ve UI kodunu ASLA kendi başına değiştirmez**.
+   - Önce projenin mevcut renkleri, fontları, yüzeyleri ve bileşenleri analiz edilerek `DESIGN.md` (`mode: baseline`) olarak kayıt altına alınır.
+   - 💡 **Karar A1 /ui-polish İstisnası:** Kullanıcı açıkça `/ui-polish` çağırdığında bu komut tasarıma dokunma ve dönüştürme onayıdır. Ajan 1 dakikalık hızlı analizle mevcut durumu `DESIGN.md (mode: baseline)` olarak çıkarıp anti-referans yapar, ardından duraksamadan dönüşüm ve iyileştirmeye geçer.
 1. **İyileştirme (Refinement - `[POLISH]`, `[AUDIT]`, `[HARDEN]`, `[DISTILL]`, `[CLARIFY]`):**
    - Hem `PRODUCT.md` hem de `DESIGN.md` korunur.
    - Mevcut tasarım diline, token'larına ve kreatif kuzey yıldızına sadık kalınarak cerrahi iyileştirmeler yapılır.
@@ -277,6 +282,35 @@ skill sahiplenmez.** Çakışma şüphesinde bu tabloya bak ve doğru olanı aç
 - Palet sorusu → hazır tema `theme-factory`, ürüne özel palet `ui-ux-pro-max`,
   token `design-system`. Üçü farklı iş yapar.
 - Marka dokümanı → içerik `brand`, yazma süreci `doc-coauthoring`.
+
+### 3.1 Bileşen, Arayüz Katmanı ve Skill Sorumluluk Haritası (Component-to-Skill Orchestration Matrix)
+
+Arayüz geliştirme ve parlatma süreçlerinde her bileşenin sahibi tek bir skill'dir:
+- **Estetik Vizyon & Kuzey Yıldızı:** `canvas-design` (1 paragraflık tasarım felsefesi / manifestosu).
+- **Fontlar & Tipografi Çiftleri:** `canvas-design` (`canvas-fonts/` 29 küratörlü aile) + `ui-ux-pro-max` (`typography.csv` 74 font eşleşmesi, `google-fonts.csv`).
+- **3-Tier Token Mimarisi:** `design-system` (`generate-tokens.cjs`, `tokens.json`) + `ui-polish` (`themes.css` 16 kilitli tema).
+- **Header & Navbar:** `frontend-design` (`component-themes/navbars/floating-pill-marker-navbar`, `component-themes/menus/adaptive-overflow-card-hub`).
+- **Sidebar & Navigasyon Shell:** `frontend-design` (`component-themes/sidebars/` 8 hazır tema) + `ui-styling` (mobilde Bottom Navigation Bar + Drawer).
+- **İskelet Ekranlar (Skeleton UI):** `ui-polish` (`themes.css` `.skeleton` shimmer motoru) + `design-system` (`states-and-variants.md` kaset yapısı).
+- **Kartlar, Metrikler & Listeler:** `frontend-design` (`component-themes/cards/` 10 hazır tema) + `ui-ux-pro-max` (sağa hizalı `tabular-nums`).
+- **Giriş / Login Ekranları:** `frontend-design` (`component-themes/logins/` 16 hazır tema).
+- **Footer & Alt Bar:** `frontend-design` (`component-themes/footers/` 15 hazır tema).
+- **Dashboard Mimari Yerleşimi:** `frontend-design` (`dashboard-theme/` 18 referans mimari şablon).
+- **Akordeon & Parallaks:** `frontend-design` (`component-themes/accordions/`, `component-themes/parallax/`).
+- **İkonografi:** `ui-ux-pro-max` (`icons.csv` 105 Phosphor/Lucide SVG ikon standardı; ham emoji yasaktır).
+- **Hareket, Geçişler & Yay Fiziği:** `ui-ux-pro-max` (`emil-kowalski-motion-playbook.md` + `motion.csv` 17 GSAP önayarı).
+- **3D / WebGL Standartları:** `ui-ux-pro-max` (`three-r3f-performance-rubric.md`).
+- **Form UX & Girdi Doğrulama:** `ui-ux-pro-max` (`ux-guidelines.csv` inline validation ve tek dominant CTA).
+- **Tailwind & shadcn/ui Kod Katmanı:** `ui-styling` (`shadcn_add.py`, `tailwind_config_gen.py`, `base-ui-tailwind-v4.md`).
+- **Gerçekçi Mock Varlıklar:** `mock-asset-provider` (`fetch_assets.py`) + `frontend-design` (`assets.mjs` kültürel açık arşiv).
+- **Banner & Sosyal Kapaklar:** `banner-design` (Hero banner ve OG görselleri güvenli alan kuralları).
+- **Rehberli Ürün Turu & Coachmark'lar:** `onboarding-tour` (`scaffold_tour.py` Driver.js / Joyride).
+- **Logo & Kurumsal Kimlik:** `design` (`logo-design.md`, `cip-style-guide.md`).
+- **Sunum / Slayt Stratejisi & Üretimi:** `slides` + `design-system` (`generate-slide.py`).
+- **IDE Benzeri Paneller & Editör UX:** `web-ide-ux-architect` (Split pane, Command Palette Ctrl+K).
+- **React Performans & Re-render Koruması:** `react-best-practices` (`state-and-routing-antipatterns.md`, Zustand `useShallow`).
+- **Çok Dilli Arayüz & Çeviri Denetimi:** `i18n-localization` (`i18n_checker.py`).
+- **Standart Kullanıcı Rehberi:** `ui-polish` (`rehber_design.md` -> `kullanici_rehberi.html`).
 
 ## 4. Kapsam
 
