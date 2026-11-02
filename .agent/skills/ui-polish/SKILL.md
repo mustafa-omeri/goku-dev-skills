@@ -73,6 +73,7 @@ Bir arayüz geliştirilirken veya parlatılırken her bileşenin sahibi tek bir 
 | **React Performans & Re-render Koruması** | `react-best-practices` | `react-best-practices/references/state-and-routing-antipatterns.md` | Gereksiz re-render'ları önleme, Zustand `useShallow`, cascading waterfall ve memoization disiplini. |
 | **Çok Dilli Arayüz & Çeviri Denetimi** | `i18n-localization` | `i18n-localization/scripts/i18n_checker.py` | UI üzerinde hardcoded metin kalmasını engelleme, `t()` anahtarlarını JSON sözlükleriyle eşleme. |
 | **Standart Kullanıcı Rehberi** | `ui-polish` | `ui-polish/references/rehber_design.md` -> `kullanici_rehberi.html` | `skills-catalog.html` seviyesinde 5 katmanlı dikey dilim, playbook ve skeleton önizlemeli interaktif HTML rehberi. |
+| **Bildirimler & Yay Fiziği Toast'ları** | `ui-polish` | `ui-polish/references/transferred_sileo.md` (`/ui-toast`) | Sileo mimarisiyle yay fiziği (spring), 6 pozisyon (`top-left` .. `bottom-right`), varsayılan toast sağlayıcısı. |
 
 ---
 
@@ -93,6 +94,19 @@ Kullanıcı doğrudan `/ui-polish --skeleton [Bileşen]` veya `skeleton kasetler
    - Erişilebilirlik için kapsayıcıya `aria-busy="true"`, `aria-live="polite"` ve `<span className="sr-only">Yükleniyor...</span>` eklenir.
 5. **Mekanik Doğrulama:**
    - `python .agent/skills/musgoku/scripts/check_design_slop.py` çalıştırılarak veri yükleme anında spinner kalıntısı (`W4`) kalmadığı kanıtlanır.
+
+---
+
+## 2.2 Bildirim ve Toast Mimari Standardı (`/ui-toast`)
+
+Projelerde aksi belirtilmedikçe standart ve varsayılan toast bildirim motoru **Sileo** mimarisidir (Scout ID: 23).
+- **6 Konum Seçeneği:** `"top-left"`, `"top-center"`, `"top-right"` (varsayılan), `"bottom-left"`, `"bottom-center"`, `"bottom-right"`.
+- **Komut Formatları:**
+  - `/ui-toast --[position]` (Örn: `/ui-toast --top-left`)
+  - `/ui-toast --[type] --[position]` (Örn: `/ui-toast --warning --top-left`, `/ui-toast --success --bottom-center`)
+  - `/ui-toast --sileo --[type] --[position]` (Örn: `/ui-toast --sileo --warning --top-left`)
+- **Fizik Mekaniği:** Doğrusal zaman aşımı yerine Apple/iOS benzeri yay fiziği (spring: `stiffness: 380, damping: 28, bounce: 0.25`), mikro-genişleme ve kart destesi (stacking deck).
+- **Cerrahi Kod ve Şablon:** `.agent/skills/ui-polish/references/transferred_sileo.md`.
 
 ---
 

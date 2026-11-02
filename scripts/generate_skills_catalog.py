@@ -127,65 +127,84 @@ CATEGORIES = {
 SLASH_COMMANDS = [
 
     {
-
         "command": "/ui-polish",
-
-        "aliases": ["/ui-polish", "[UI-POLISH]", "[DESIGN-REFRESH]", "--redesign", "[OVERDRIVE]"],
-
-        "name": "DESIGN.md Sözleşme & 11-Beceri Zanaat Orkestratörü",
-
-        "badge": "Tasarım & Sözleşme",
-
+        "aliases": ["/ui-polish", "ui polish", "[UI-POLISH]", "/ui-polish --skeleton", "skeleton kasetlerini entegre et", "--redesign", "[OVERDRIVE]"],
+        "name": "Master Design Orchestrator, 16 Kilitli Tema & Cerrahi Skeleton Kaseti",
+        "badge": "Master Design",
         "badge_class": "badge-accent",
-
         "skills": [
-
-            "canvas-design", "design-system", "ui-ux-pro-max", "frontend-design",
-
-            "ui-styling", "banner-design", "brand", "theme-factory",
-
-            "mock-asset-provider", "onboarding-tour", "i18n-localization"
-
+            "ui-polish", "canvas-design", "design-system", "ui-ux-pro-max", "frontend-design",
+            "ui-styling", "banner-design", "brand", "theme-factory", "mock-asset-provider",
+            "onboarding-tour", "i18n-localization", "web-ide-ux-architect", "react-best-practices", "design", "slides"
         ],
+        "goal": "16 Kilitli Tema (themes.css), 5 Çalışma Modu, Cerrahi Skeleton Kasetleri & Sıfır AI-Slop",
+        "description": "Web ve mobil arayüzleri 16 UI&UX tasarım becerisi, 16 resmi kilitli tema (#01 SLATE BREEZE .. #16 SOFT CLAY), geometry-matched skeleton ekranları (Zero CLS, W4 kapısı), /ui-toast bildirimleri ve 6-satırlık bağlayıcı ön uçuş makbuzuyla üretim kalitesinde inşa eder ve doğrular.",
+        "sample_prompt": "/ui-polish --skeleton: Kart bileşenine geometry-matched skeleton kasetini entegre et, CLS sıçramasını ve spinner kullanımını engelle.",
+        "protocol": "1. Ön Uçuş Makbuzu ➜ 2. Mod Tespiti (baseline | crafted | refinement | redesign | skeleton-only) ➜ 3. F1-F6 Zanaat İcrası ➜ 4. F7 4 Mekanik Kapı (contract, slop, contrast, W4 skeleton) & Doğrulama",
+        "usage_snippet": """# 1. Cerrahi Skeleton Kaset Modu (/ui-polish --skeleton):
+/ui-polish --skeleton @[src/components/UserProfile.tsx]
+# Kaset analizi, themes.css shimmer motoru, geometry-matched skeleton, zero CLS
 
-        "goal": "4 Modlu DESIGN.md Sözleşmesi (Baseline / Crafted / Refinement / Redesign) & 3 Mekanik Kapı",
+# 2. Yay Fiziği Toast Bildirimleri (/ui-toast):
+/ui-toast --top-left
+/ui-toast --warning --top-left
+/ui-toast --success --bottom-center
 
-        "description": "Mevcut projelerde görsel tasarımı değiştirmeden önce mevcut yapıyı belgeleyen <repo-kök>/DESIGN.md (mode: baseline) çıkarır; yalnızca kullanıcı --redesign veya [OVERDRIVE] ile zorladığında ya da sıfırdan tasarımda F2 aşamasında canvas-design + canvas-fonts ile 3 alternatif yön sunar, 3-katmanlı token sözleşmesi kurar ve 3 mekanik kapı (contract, slop, contrast) ile doğrular.",
-
-        "sample_prompt": "/ui-polish: Projeyi analiz et, mevcut tasarım için görsele dokunmadan DESIGN.md (mode: baseline) sözleşmesini oluştur ve 3 mekanik tasarım kapısıyla doğrula.",
-
-        "protocol": "F1 Keşif & Mod Tespiti (baseline | crafted | refinement | redesign) ➜ F2 3 Yön (canvas-design + Reddedilen Varsayılanlar) ➜ F3 DESIGN.md & 3-Katman Token (design-system) ➜ F4-F6 Uygulama ➜ F7 3 Kapı & 6-Görüntü Skor Kartı",
-
-        "usage_snippet": """# 1. Mod 0 (Baseline - Mevcut Projede Görseli Değiştirmeden DESIGN.md Çıkarma):
-
+# 3. Mod 0 (Baseline - Mevcut Projede Görsele Dokunmadan DESIGN.md Çıkarma):
 /ui-polish @[src/index.css]
 
-
-
-# 2. Mod B (Refinement - Mevcut DESIGN.md Sözleşmesine Sadık İnce İşçilik):
-
-/ui-polish @[.agent/skills-catalog.html]
-
-
-
-# 3. Mod C (Redesign - Kullanıcı Zorlamasıyla 3 Yönlü Yeniden Tasarım):
-
+# 4. Mod C (Redesign - 16 Kilitli Tema ile Yeniden Tasarım):
 /ui-polish --redesign @[src/pages/Dashboard.tsx]
 
-# veya: /ui-polish [OVERDRIVE] tasarımı yeniden tasarla
-
-
-
-# 4. Üç Mekanik Tasarım Doğrulama Kapısı (0 Hata Zorunlu):
-
+# 5. Dört Mekanik Tasarım Doğrulama Kapısı (0 Hata Zorunlu):
 python .agent/skills/musgoku/scripts/check_design_contract.py --strict
-
-python .agent/skills/musgoku/scripts/check_design_slop.py --strict
-
+python .agent/skills/musgoku/scripts/check_design_slop.py --strict   # W4: Spinner slop & Skeleton denetimi
 python .agent/skills/musgoku/scripts/check_theme_contrast.py --strict""",
-
         "category": "Tasarım & UI"
+    },
+    {
+        "command": "/ui-toast",
+        "aliases": ["/ui-toast", "ui toast", "[UI-TOAST]", "toast ekle", "--sileo"],
+        "name": "Sileo Yay Fiziği (Spring Physics) Toast & Bildirim Motoru",
+        "badge": "Toast & Bildirim",
+        "badge_class": "badge-accent",
+        "skills": ["ui-polish", "frontend-design", "ui-styling", "ui-ux-pro-max"],
+        "goal": "6 Konfigürasyon, iOS Yay Mekaniği, Swipe-to-Dismiss & Sıfır AI-Slop",
+        "description": "Projelerde varsayılan toast sağlayıcısı olan Sileo mimarisini devreye alır. 6 konum seçeneği (top-left, top-center, top-right, bottom-left, bottom-center, bottom-right), fiziksel yay animasyonları (stiffness: 380, damping: 28), kart destesi istiflemesi ve donanım hızlandırmalı CSS kuralları sunar.",
+        "sample_prompt": "/ui-toast --warning --top-left: Sol üstte sarı uyarı durumunda Sileo bildirim kasetini entegre et.",
+        "protocol": "1. Konum & Durum Tespiti ➜ 2. Sileo Provider / Portal Katmanı ➜ 3. Spring Animasyon & Stacking ➜ 4. A11y Live Region Duyurusu",
+        "usage_snippet": """# 1. Konuma Göre Toast Bildirimi:
+/ui-toast --top-left
+/ui-toast --bottom-center
 
+# 2. Durum ve Konum Birlikte:
+/ui-toast --warning --top-left
+/ui-toast --success --bottom-center
+/ui-toast --error --top-right
+
+# 3. Kütüphane Adıyla Çağırma:
+/ui-toast --sileo --warning --top-left""",
+        "category": "Tasarım & UI"
+    },
+    {
+        "command": "/plan",
+        "aliases": ["/plan", "plan modu", "[PLAN]", "proceed", "plan hazirla"],
+        "name": "Antigravity Plan Modu & Proceed İcra Protokolü",
+        "badge": "Mimari & TDD",
+        "badge_class": "badge-primary",
+        "skills": ["musgoku", "tdd", "doc-coauthoring", "development-workflow"],
+        "goal": "TDD Dikiş Noktası, 5 Katmanlı Dilim, KANBAN Kartı & Önce Kırmızı Test",
+        "description": "Antigravity IDE'de karmaşık geliştirmeler için standart PLAN.template.md şablonunda mimari plan üretir. Kullanıcı Proceed butonuna bastığında doğrudan üretim koduna geçilmesini engeller; dikiş noktasında önce test yazılıp FAIL olduğu kanıtlandıktan sonra minimal yeşil kod icra edilir.",
+        "sample_prompt": "/plan: Yeni kullanıcı profil sayfası için TDD dikiş noktası ve 5 katmanlı dilim içeren mimari plan hazırla.",
+        "protocol": "1. PLAN.template.md Oluşturma ➜ 2. Kullanıcı 'Proceed' Onayı ➜ 3. Dikiş Noktasında Kırmızı Test (FAIL) ➜ 4. Yeşil Kod & 5 Katman İcrası",
+        "usage_snippet": """# 1. Plan Modu Tetikleme:
+/plan [Özellik Açıklaması]
+
+# 2. Plan Onayı ve İcra Protokolü:
+# Kullanıcı 'Proceed' dedikten sonra:
+# Adım 2.1: Test yazımı ve terminalde FAIL kanıtı
+# Adım 2.2: Minimal geçiş kodu ve 5 katmanlı dikey dilim""",
+        "category": "Kod & Mimari"
     },
 
     {
@@ -674,55 +693,38 @@ python .agent/skills/project-summary/scripts/summarize_project.py --check"""
     },
 
     "ui-polish": {
-
-        "status": "Tasarım Sözleşmesi",
-
+        "status": "Master Orchestrator",
         "badge_class": "badge-accent",
-
-        "file": "DESIGN.md (Proje Kökü) + 3 Mekanik Kapı",
-
+        "file": "DESIGN.md + themes.css + 4 Mekanik Kapı",
         "features": [
-
-            "Mod 0: Baseline (Görsele Dokunmaz)",
-
-            "Mod A: Crafted (Sıfırdan 3 Yön)",
-
-            "Mod B: Refinement (Mevcut DESIGN.md)",
-
-            "Mod C: Redesign (--redesign / [OVERDRIVE])",
-
-            "11 Tasarım Becerisi Orkestrasyonu",
-
-            "3 Mekanik Kapı (Contract, Slop, Contrast)"
-
+            "Mod 1: Baseline (Görsele Dokunmaz)",
+            "Mod 2: Crafted (Sıfırdan Tasarım)",
+            "Mod 3: Refinement (Mevcut DESIGN.md)",
+            "Mod 4: Redesign (--redesign / [OVERDRIVE])",
+            "Mod 5: Cerrahi Skeleton Kaset Modu (/ui-polish --skeleton)",
+            "16 Resmi Kilitli Tema (themes.css)",
+            "16 UI&UX Tasarım Becerisi Orkestrasyonu",
+            "Geometry-Matched Skeleton Screens UI (Zero CLS)",
+            "W4 Spinner Slop & Mekanik Kapılar",
+            "Sileo Yay Fiziği Toast Sistemi (/ui-toast)"
         ],
+        "detail": "Tüm 16 UI&UX tasarım becerisini koordine eden, 16 resmi kilitli temayı ve geometry-matched skeleton ekranlarını uygulayan Master Design Orchestrator protokolüdür.",
+        "sample_prompt": "/ui-polish --skeleton: Kart bileşenine geometry-matched skeleton kasetini entegre et.",
+        "config_snippet": """# 1. Cerrahi Skeleton Kaset Entegrasyonu:
+/ui-polish --skeleton @[Bileşen]
 
-        "detail": "Mevcut projelerde görsel tasarımı değiştirmeden önce mevcut yapıyı belgeleyen <repo-kök>/DESIGN.md (mode: baseline) çıkarır. Yalnızca kullanıcı --redesign veya [OVERDRIVE] ile zorladığında ya da sıfırdan tasarımda F2 aşamasında canvas-design + canvas-fonts ile 3 alternatif yön sunar ve 3 mekanik kapıyla doğrular.",
+# 2. Sileo Toast Bildirimleri (6 Konfigürasyon):
+/ui-toast --top-left
+/ui-toast --warning --top-left
 
-        "sample_prompt": "/ui-polish: Projeyi analiz et, mevcut tasarım için görsele dokunmadan DESIGN.md (mode: baseline) sözleşmesini oluştur ve 3 mekanik tasarım kapısıyla doğrula.",
-
-        "config_snippet": """# 1. Mod 0 (Baseline - Mevcut Tasarımı Değiştirmeden DESIGN.md Çıkarma):
-
+# 3. Master Tasarım Parlatma ve Sözleşme:
 /ui-polish
-
-
-
-# 2. Mod C (Redesign - Kullanıcı Zorlamasıyla 3 Yönlü Yeniden Tasarım):
-
 /ui-polish --redesign
 
-/ui-polish [OVERDRIVE] tasarımı yeniden tasarla
-
-
-
-# 3. Üç Mekanik Tasarım Doğrulama Kapısı:
-
-python .agent/skills/musgoku/scripts/check_design_contract.py --strict
-
+# 4. Dört Mekanik Doğrulama Kapısı:
 python .agent/skills/musgoku/scripts/check_design_slop.py --strict
-
+python .agent/skills/musgoku/scripts/check_design_contract.py --strict
 python .agent/skills/musgoku/scripts/check_theme_contrast.py --strict"""
-
     },
 
     "frontend-design": {
@@ -2011,7 +2013,9 @@ SAMPLE_PROMPTS = {
 
     "gs-update": "/goku-skills-update: Kurulu skill setini güncelle, kapsamı (workspace / global) sorarak ilerle.",
 
-    "ui-polish": "/ui-polish: Arayüzü hazır bileşen ve paletlerden ilhamla zenginleştir, generic AI kalıplarını temizle, tipografi ve boşluk ritmini modernleştir, WCAG kontrastını doğrula."
+    "ui-polish": "/ui-polish --skeleton: Kart bileşenine geometry-matched skeleton kasetini entegre et; 16 kilitli temayla arayüzü parlat ve W4 spinner slop denetimini doğrula.",
+    "ui-toast": "/ui-toast --warning --top-left: Sileo yay fiziği toast bildirim motorunu ve konumlandırmasını entegre et.",
+    "plan": "/plan: Karmaşık geliştirme için TDD dikiş noktası ve 5 katmanlı dilim içeren mimari plan hazırla." 
 
 }
 
@@ -2160,8 +2164,10 @@ def parse_skill_md(skill_path: Path) -> dict:
         search_keywords.extend(["github", "api", "unsplash", "pexels", "resim", "foto", "avatar", "profil", "etkinlik", "assets.json"])
 
     if name == "musgoku":
+        search_keywords.extend(["goku update", "skill update", "gs update", "güncelle", "cerrahi", "w4", "spinner slop", "run_all_gates"])
 
-        search_keywords.extend(["goku update", "skill update", "gs update", "güncelle", "cerrahi"])
+    if name in ("ui-polish", "frontend-design", "ui-styling", "design-system"):
+        search_keywords.extend(["skeleton", "iskelet", "kaset", "shimmer", "w4", "spinner slop", "zero cls", "16 kilitli tema", "themes.css", "sileo", "toast", "ui-toast"])
 
 
 
@@ -2355,7 +2361,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
             "border_var": "var(--accent-primary-border)",
 
-            "commands": ["/council"]
+            "commands": ["/council", "/plan"]
 
         },
 
@@ -2387,7 +2393,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
             "border_var": "var(--status-warning-border)",
 
-            "commands": ["/ui-polish", "/seo-apply"]
+            "commands": ["/ui-polish", "/ui-toast", "/seo-apply"]
 
         },
 
@@ -5759,6 +5765,10 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
       display: flex;
 
+      cursor: pointer;
+
+      user-select: none;
+
       align-items: center;
 
       justify-content: space-between;
@@ -6065,6 +6075,10 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
       justify-content: space-between;
 
+      cursor: pointer;
+
+      user-select: none;
+
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
     }}
@@ -6155,7 +6169,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
     }}
 
-    .chain-pill {{
+        .chain-pill {{
 
       font-family: var(--font-mono);
 
@@ -6170,6 +6184,22 @@ def generate_catalog_html(skills: list[dict]) -> str:
       padding: 0.1rem 0.4rem;
 
       border-radius: var(--radius-xs);
+
+      cursor: pointer;
+
+      transition: all 0.15s ease;
+
+    }}
+
+    .chain-pill:hover {{
+
+      background: var(--bg-surface-elevated);
+
+      border-color: var(--accent-slash);
+
+      color: var(--accent-slash);
+
+      transform: translateY(-1px);
 
     }}
 
@@ -6567,12 +6597,24 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
         <div class="quick-preset-chips">
 
-          <button class="preset-pill" onclick="quickFilterPreset('core')">
-
-            <span>Goku Çekirdek</span>
-
+          <button class="preset-pill" onclick="quickFilterPreset('skeleton')" style="background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.3); font-weight:700;">
+            <span>🦴 Skeleton & Kaset</span>
             <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
 
+          <button class="preset-pill" onclick="quickFilterPreset('themes')" style="background:rgba(99,102,241,0.12); color:#818cf8; border:1px solid rgba(99,102,241,0.3); font-weight:700;">
+            <span>🎨 16 Kilitli Tema</span>
+            <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+
+          <button class="preset-pill" onclick="quickFilterPreset('toast')" style="background:rgba(245,158,11,0.12); color:#fbbf24; border:1px solid rgba(245,158,11,0.3); font-weight:700;">
+            <span>🍞 Toast Bildirim</span>
+            <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+
+          <button class="preset-pill" onclick="quickFilterPreset('core')">
+            <span>Goku Çekirdek</span>
+            <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
           </button>
 
           <button class="preset-pill" onclick="quickFilterPreset('design-trio')">
@@ -6672,6 +6714,12 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
 
         <div class="header-controls">
+
+          <div class="header-feature-pills" style="display:flex; gap:6px; align-items:center; margin-right:8px; flex-wrap:wrap;">
+            <button type="button" class="preset-pill" onclick="quickFilterPreset('skeleton')" style="background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); font-size:11px; padding:3px 8px; border-radius:6px; font-weight:700; cursor:pointer;" title="Skeleton Ekranları ve W4 Kapısı">🦴 Skeleton UI (W4)</button>
+            <button type="button" class="preset-pill" onclick="quickFilterPreset('themes')" style="background:rgba(99,102,241,0.15); color:#818cf8; border:1px solid rgba(99,102,241,0.3); font-size:11px; padding:3px 8px; border-radius:6px; font-weight:700; cursor:pointer;" title="16 Resmi Kilitli Tema">🎨 16 Kilitli Tema</button>
+            <button type="button" class="preset-pill" onclick="quickFilterPreset('toast')" style="background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.3); font-size:11px; padding:3px 8px; border-radius:6px; font-weight:700; cursor:pointer;" title="Sileo Yay Fiziği Toast">🍞 /ui-toast (Sileo)</button>
+          </div>
 
           <div class="layout-toggle-group" role="group" aria-label="Görünüm Seçici">
 
@@ -7181,10 +7229,17 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
     function quickFilterPreset(preset) {{
 
-      if (preset === 'core') {{
-
+      if (preset === 'skeleton') {{
+        currentSearch = 'skeleton';
+        currentCategory = 'all';
+      }} else if (preset === 'themes') {{
+        currentSearch = 'kilitli tema';
+        currentCategory = 'all';
+      }} else if (preset === 'toast') {{
+        currentSearch = 'toast';
+        currentCategory = 'all';
+      }} else if (preset === 'core') {{
         currentSearch = 'goku';
-
       }} else if (preset === 'design-trio') {{
 
         currentCategory = 'Tasarım & UI';
@@ -7365,6 +7420,22 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
     function openDrawer(skillName) {{
 
+      if (skillName && (skillName.startsWith('/') || !allSkills.find(item => item.name === skillName))) {{
+
+        const isSlash = allSlashCommands.find(c => c.command === skillName || (c.aliases && c.aliases.includes(skillName)) || c.command === ('/' + skillName));
+
+        if (isSlash) {{
+
+          openSlashDrawer(isSlash.command);
+
+          return;
+
+        }}
+
+      }}
+
+
+
       const s = allSkills.find(item => item.name === skillName);
 
       if (!s) return;
@@ -7544,6 +7615,190 @@ def generate_catalog_html(skills: list[dict]) -> str:
       document.getElementById('drawerBackdrop').classList.remove('active');
 
       document.getElementById('detailDrawer').classList.remove('open');
+
+    }}
+
+
+
+    function openSlashDrawer(cmdName) {{
+
+      const cmd = allSlashCommands.find(item => item.command === cmdName || (item.aliases && item.aliases.includes(cmdName)) || item.command === ('/' + cmdName));
+
+      if (!cmd) return;
+
+
+
+      const catClass = categoryBadgeClassMap[cmd.category] || 'cat-workflow';
+
+      document.getElementById('drawerCatBadge').innerHTML = `
+
+        <span class="cat-badge ${{catClass}}">${{escapeHtml(cmd.category)}}</span>
+
+        <span class="badge ${{cmd.badge_class}}" style="margin-left:0.4rem;font-size:0.7rem;">${{escapeHtml(cmd.badge)}}</span>
+
+      `;
+
+      document.getElementById('drawerTitle').innerHTML = `
+
+        <span style="color:var(--accent-slash);font-family:var(--font-mono);display:inline-flex;align-items:center;gap:0.35rem;">
+
+          ${{SVG_SLASH}} ${{escapeHtml(cmd.command)}}
+
+        </span>
+
+      `;
+
+
+
+      const aliasesHtml = (cmd.aliases || []).map(a => 
+
+        `<span class="trigger-pill" data-trigger="${{escapeHtml(a)}}" title="Kopyalamak için tıkla" onclick="copyTriggerFromEl(this)">${{escapeHtml(a)}}</span>`
+
+      ).join('');
+
+
+
+      const skillsChainHtml = (cmd.skills || []).map((sk, sIdx) => 
+
+        `<button class="btn-action chain-pill" style="display:inline-flex;align-items:center;gap:0.3rem;cursor:pointer;padding:0.25rem 0.55rem;font-size:0.75rem;background:var(--bg-surface-elevated);" onclick="openDrawer('${{escapeHtml(sk)}}')" title="${{escapeHtml(sk)}} skill detayını aç">${{SVG_SPARKLES}} <strong>${{escapeHtml(sk)}}</strong></button>` + 
+
+        (sIdx < cmd.skills.length - 1 ? `<span class="chain-arrow" style="color:var(--text-tertiary);margin:0 0.15rem;">→</span>` : '')
+
+      ).join(' ');
+
+
+
+      const body = document.getElementById('drawerBody');
+
+      body.innerHTML = `
+
+        <div>
+
+          <div class="drawer-section-title">Komut Tanımı & Görev</div>
+
+          <div style="font-size:1rem;font-weight:700;color:var(--text-primary);margin-bottom:0.35rem;">
+
+            ${{escapeHtml(cmd.name)}}
+
+          </div>
+
+          <div style="font-size:0.82rem;font-weight:600;color:var(--accent-slash);display:flex;align-items:center;gap:0.35rem;margin-bottom:0.6rem;">
+
+            ${{SVG_TARGET}} ${{escapeHtml(cmd.goal)}}
+
+          </div>
+
+          <div class="drawer-box">
+
+            <p class="drawer-box-text">${{escapeHtml(cmd.description)}}</p>
+
+          </div>
+
+        </div>
+
+
+
+        <div>
+
+          <div class="drawer-section-title">Orkestre Edilen Beceri Zinciri (Skill Ensemble)</div>
+
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.4rem;padding:0.6rem;background:var(--bg-surface-elevated);border-radius:var(--radius-sm);border:1px solid var(--border-subtle);">
+
+            ${{skillsChainHtml}}
+
+          </div>
+
+          <div style="font-size:0.7rem;color:var(--text-tertiary);margin-top:0.35rem;">
+
+            * Becerinin teknik mimarisine ve zanaat kurallarına gitmek için ilgili rozete tıklayabilirsiniz.
+
+          </div>
+
+        </div>
+
+
+
+        <div>
+
+          <div class="drawer-section-title">Tetikleyiciler & Takma Adlar (Aliases) — Kopyalamak için tıkla</div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
+
+            ${{aliasesHtml || '<span style="color:var(--text-tertiary);font-size:0.75rem">Tetikleyici bulunamadı</span>'}}
+
+          </div>
+
+        </div>
+
+
+
+        <div>
+
+          <div class="drawer-section-title">Deterministik Protokol Akışı</div>
+
+          <div class="drawer-box" style="font-size:0.78rem;font-family:var(--font-mono);line-height:1.6;background:var(--bg-surface-elevated);border-left:3px solid var(--accent-slash);">
+
+            ${{escapeHtml(cmd.protocol)}}
+
+          </div>
+
+        </div>
+
+
+
+        <div>
+
+          <div class="drawer-section-title">${{SVG_TERMINAL}} Kullanım & CLI Çağrı Kalıpları</div>
+
+          <div class="drawer-box" style="background:var(--code-block-bg);position:relative;">
+
+            <button class="btn-action" style="position:absolute;top:0.5rem;right:0.5rem;padding:0.2rem 0.5rem;font-size:0.7rem;" onclick="copyToClipboard(\`${{escapeHtml(cmd.usage_snippet)}}\`, 'Kullanım kodu kopyalandı')">Kopyala</button>
+
+            <pre style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-secondary);overflow-x:auto;padding-top:1.5rem;white-space:pre-wrap;"><code>${{escapeHtml(cmd.usage_snippet)}}</code></pre>
+
+          </div>
+
+        </div>
+
+
+
+        <div>
+
+          <div class="drawer-section-title">${{SVG_COPY}} Örnek Prompt — Tıkla ve Kopyala</div>
+
+          <div class="drawer-box" style="cursor:pointer;" onclick="copySlashPromptByName('${{escapeHtml(cmd.command)}}')" title="Promptu kopyalamak için tıkla">
+
+            <p class="drawer-box-text" style="font-style:italic;color:var(--text-primary);">"${{escapeHtml(cmd.sample_prompt)}}"</p>
+
+          </div>
+
+        </div>
+
+
+
+        <div style="display:flex;gap:0.5rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-color);">
+
+          <button class="btn-action" style="flex:1;border-color:var(--accent-slash-border);color:var(--accent-slash);font-weight:600;" onclick="copySlashCommand('${{escapeHtml(cmd.command)}}')">
+
+            ${{SVG_SLASH}} Komutu Kopyala
+
+          </button>
+
+          <button class="btn-action" style="flex:1;" onclick="copySlashPromptByName('${{escapeHtml(cmd.command)}}')">
+
+            ${{SVG_COPY}} Örnek Promptu Kopyala
+
+          </button>
+
+        </div>
+
+      `;
+
+
+
+      document.getElementById('drawerBackdrop').classList.add('active');
+
+      document.getElementById('detailDrawer').classList.add('open');
 
     }}
 
@@ -7807,11 +8062,47 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
           card.className = 'slash-card';
 
+          card.setAttribute('tabindex', '0');
+
+          card.setAttribute('role', 'button');
+
+          card.setAttribute('aria-label', `${{cmd.command}} detayını aç`);
+
+
+
+          card.addEventListener('click', (e) => {{
+
+            if (!e.target.closest('button') && !e.target.closest('.chain-pill')) {{
+
+              openSlashDrawer(cmd.command);
+
+            }}
+
+          }});
+
+
+
+          card.addEventListener('keydown', (e) => {{
+
+            if (e.key === 'Enter' || e.key === ' ') {{
+
+              if (!e.target.closest('button') && !e.target.closest('.chain-pill')) {{
+
+                e.preventDefault();
+
+                openSlashDrawer(cmd.command);
+
+              }}
+
+            }}
+
+          }});
+
 
 
           const skillsChainHtml = cmd.skills.map((sk, sIdx) => 
 
-            `<span class="chain-pill">${{escapeHtml(sk)}}</span>` + 
+            `<button class="btn-action chain-pill" style="cursor:pointer;padding:0.1rem 0.4rem;font-size:0.72rem;display:inline-flex;align-items:center;" onclick="event.stopPropagation();openDrawer('${{escapeHtml(sk)}}')" title="${{escapeHtml(sk)}} detayını aç">${{escapeHtml(sk)}}</button>` + 
 
             (sIdx < cmd.skills.length - 1 ? `<span class="chain-arrow">→</span>` : '')
 
@@ -7869,6 +8160,12 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
             <div class="card-footer">
 
+              <button class="btn-action btn-inspect" onclick="openSlashDrawer('${{escapeHtml(cmd.command)}}')">
+
+                ${{SVG_INSPECT}} İncele
+
+              </button>
+
               <button class="btn-action" style="border-color:var(--accent-slash-border);color:var(--accent-slash);" onclick="copySlashCommand('${{escapeHtml(cmd.command)}}')">
 
                 ${{SVG_SLASH}} ${{cmd.command}}
@@ -7877,7 +8174,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
               <button class="btn-action" onclick="copySlashPromptByName('${{escapeHtml(cmd.command)}}')">
 
-                ${{SVG_COPY}} Örnek Prompt
+                ${{SVG_COPY}} Prompt
 
               </button>
 
@@ -7899,7 +8196,43 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
           row.className = 'slash-list-row';
 
+          row.setAttribute('tabindex', '0');
+
+          row.setAttribute('role', 'button');
+
+          row.setAttribute('aria-label', `${{cmd.command}} detayını aç`);
+
           const numPadded = String(cIdx + 1).padStart(2, '0');
+
+
+
+          row.addEventListener('click', (e) => {{
+
+            if (!e.target.closest('button')) {{
+
+              openSlashDrawer(cmd.command);
+
+            }}
+
+          }});
+
+
+
+          row.addEventListener('keydown', (e) => {{
+
+            if (e.key === 'Enter' || e.key === ' ') {{
+
+              if (!e.target.closest('button')) {{
+
+                e.preventDefault();
+
+                openSlashDrawer(cmd.command);
+
+              }}
+
+            }}
+
+          }});
 
 
 
@@ -7930,6 +8263,12 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
 
             <div class="list-row-right">
+
+              <button class="btn-action btn-inspect" style="padding:0.25rem 0.5rem;font-size:0.72rem;" onclick="openSlashDrawer('${{escapeHtml(cmd.command)}}')">
+
+                ${{SVG_INSPECT}} İncele
+
+              </button>
 
               <button class="btn-action" style="padding:0.25rem 0.5rem;font-size:0.72rem;border-color:var(--accent-slash-border);color:var(--accent-slash);" onclick="copySlashCommand('${{escapeHtml(cmd.command)}}')">
 
@@ -8450,6 +8789,8 @@ def generate_catalog_html(skills: list[dict]) -> str:
       closeBottomSheetHub();
 
       quickSelectSlash(cmd);
+
+      openSlashDrawer(cmd);
 
     }}
 
@@ -8986,4 +9327,3 @@ def main() -> int:
 if __name__ == "__main__":
 
     sys.exit(main())
-
