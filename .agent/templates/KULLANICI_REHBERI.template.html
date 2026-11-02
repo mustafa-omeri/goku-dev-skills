@@ -1,369 +1,986 @@
 <!DOCTYPE html>
-<html lang="tr" data-theme="obsidian-velvet" data-mode="dark">
+<html lang="tr" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{PROJE_ADI}} — Özellik ve Kullanım Rehberi</title>
+  <title>{{PROJE_ADI}} — Özellik ve Kullanım Rehberi (Command Deck)</title>
   <meta name="description" content="{{PROJE_ADI}} platformunun tüm özelliklerinin 5 katmanlı dikey dilim mimari yapılışı, playbook ve skeleton ekran rehberi.">
-  
-  <!-- Craft Typography: Space Grotesk, Plus Jakarta Sans & JetBrains Mono -->
+
+  <!-- Craft Typography: Space Grotesk, Plus Jakarta Sans & JetBrains Mono (Obsidian Command Deck) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
   <style>
     /* ==========================================================================
-       LOCKED THEMES & SEMANTIC TOKENS (themes.css standard)
+       3-TIER DESIGN TOKEN ARCHITECTURE (skills-catalog.html identical standard)
        ========================================================================== */
-    :root, [data-theme="obsidian-velvet"] {
-      --bg-base: #17151C;
-      --bg-surface: #292531;
-      --bg-elevated: #45404F;
-      --border-subtle: #45404F;
-      --border-strong: #716879;
-      --text-muted: #716879;
-      --text-secondary: #AAA2B3;
-      --text-primary: #E2DDE7;
-      --accent-primary: #E2DDE7;
-      --accent-secondary: #AAA2B3;
-      --accent-contrast: #17151C;
-    }
-    [data-theme="obsidian-velvet"][data-mode="light"], [data-mode="light"] [data-theme="obsidian-velvet"] {
-      --bg-base: #E2DDE7; --bg-surface: #D5CEDC; --bg-elevated: #C4BACD; --border-subtle: #AAA2B3; --border-strong: #716879;
-      --text-muted: #716879; --text-secondary: #45404F; --text-primary: #17151C; --accent-primary: #292531; --accent-secondary: #45404F; --accent-contrast: #E2DDE7;
-    }
+    :root, [data-theme="dark"] {
+      /* --- Layer 1: Primitive Tokens (Foundational Values) --- */
+      --slate-950: #090d16;
+      --slate-900: #0f172a;
+      --slate-850: #131d33;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-400: #94a3b8;
+      --slate-300: #cbd5e1;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50:  #f8fafc;
+      --white:     #ffffff;
 
-    [data-theme="nordic-slate"] {
-      --bg-base: #111522; --bg-surface: #1E263B; --bg-elevated: #303D59; --border-subtle: #303D59; --border-strong: #536684;
-      --text-muted: #536684; --text-secondary: #98A9C4; --text-primary: #DCE3EF; --accent-primary: #98A9C4; --accent-secondary: #536684; --accent-contrast: #111522;
-    }
-    [data-theme="nordic-slate"][data-mode="light"], [data-mode="light"] [data-theme="nordic-slate"] {
-      --bg-base: #DCE3EF; --bg-surface: #C8D4E6; --bg-elevated: #B4C4DD; --border-subtle: #98A9C4; --border-strong: #536684;
-      --text-muted: #536684; --text-secondary: #303D59; --text-primary: #111522; --accent-primary: #1E263B; --accent-secondary: #303D59; --accent-contrast: #DCE3EF;
-    }
+      --sky-400:   #38bdf8;
+      --sky-500:   #0ea5e9;
+      --sky-600:   #0284c7;
 
-    [data-theme="maritime-amber"] {
-      --bg-base: #0B132B; --bg-surface: #1C2541; --bg-elevated: #3A506B; --border-subtle: #3A506B; --border-strong: #5BC0DE;
-      --text-muted: #5BC0DE; --text-secondary: #F4D6B0; --text-primary: #F4D6B0; --accent-primary: #D97706; --accent-secondary: #5BC0DE; --accent-contrast: #0B132B;
-    }
-    [data-theme="maritime-amber"][data-mode="light"], [data-mode="light"] [data-theme="maritime-amber"] {
-      --bg-base: #F8F5EE; --bg-surface: #F0E6D8; --bg-elevated: #E4D1BC; --border-subtle: #3A506B; --border-strong: #1C2541;
-      --text-muted: #1C2541; --text-secondary: #0B132B; --text-primary: #0B132B; --accent-primary: #D97706; --accent-secondary: #1C2541; --accent-contrast: #F8F5EE;
-    }
+      --indigo-400: #818cf8;
+      --indigo-500: #6366f1;
 
-    [data-theme="verdant-abyss"] {
-      --bg-base: #051F20; --bg-surface: #0B2B26; --bg-elevated: #163832; --border-subtle: #235347; --border-strong: #8EB69B;
-      --text-muted: #8EB69B; --text-secondary: #DAF1DE; --text-primary: #DAF1DE; --accent-primary: #8EB69B; --accent-secondary: #235347; --accent-contrast: #051F20;
-    }
+      --emerald-400: #34d399;
+      --emerald-500: #10b981;
+      --emerald-600: #059669;
 
-    [data-theme="plum-lime"] {
-      --bg-base: #F5F1E8; --bg-surface: color-mix(in srgb, #F5F1E8 92%, #542C5F 8%); --bg-elevated: color-mix(in srgb, #F5F1E8 82%, #542C5F 18%);
-      --border-subtle: color-mix(in srgb, #542C5F 22%, transparent); --border-strong: #542C5F; --text-muted: color-mix(in srgb, #542C5F 65%, #F5F1E8 35%);
-      --text-secondary: color-mix(in srgb, #542C5F 85%, #F5F1E8 15%); --text-primary: #542C5F; --accent-primary: #C7E84B; --accent-secondary: #542C5F; --accent-contrast: #542C5F;
-    }
+      --amber-400: #fbbf24;
+      --amber-500: #f59e0b;
+      --amber-600: #d97706;
 
-    :root {
-      --font-display: 'Space Grotesk', -apple-system, sans-serif;
-      --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+      --rose-400:  #fb7185;
+      --rose-500:  #f43f5e;
+      --rose-600:  #e11d48;
+
+      --font-display: 'Space Grotesk', 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', "SFMono-Regular", Consolas, Menlo, monospace;
+
+      --radius-xs: 4px;
       --radius-sm: 6px;
       --radius-md: 10px;
-      --radius-lg: 16px;
-      --transition: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      --radius-lg: 14px;
+      --radius-full: 9999px;
+
+      /* --- Layer 2: Semantic Tokens (Dark Theme - Obsidian Command Deck) --- */
+      --bg-canvas: #090a0f;
+      --bg-surface: #10121b;
+      --bg-surface-elevated: #161926;
+      --bg-surface-hover: #161a29;
+      --bg-subtle: rgba(255, 255, 255, 0.04);
+
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(99, 102, 241, 0.35);
+      --border-hover: rgba(99, 102, 241, 0.5);
+
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-tertiary: #8b9bb4;
+      --text-on-accent: #ffffff;
+      --text-on-brand: #ffffff;
+
+      --accent-primary: #6366f1;
+      --accent-primary-subtle: rgba(99, 102, 241, 0.12);
+      --accent-primary-border: rgba(99, 102, 241, 0.28);
+
+      --accent-slash: #f43f5e;
+      --accent-slash-subtle: rgba(244, 63, 94, 0.12);
+      --accent-slash-border: rgba(244, 63, 94, 0.28);
+
+      --status-success: var(--emerald-400);
+      --status-success-subtle: rgba(52, 211, 153, 0.1);
+      --status-success-border: rgba(52, 211, 153, 0.25);
+
+      --status-warning: var(--amber-400);
+      --status-warning-subtle: rgba(251, 191, 36, 0.1);
+      --status-warning-border: rgba(251, 191, 36, 0.25);
+
+      --status-info: #818cf8;
+      --status-info-subtle: rgba(129, 140, 248, 0.12);
+      --status-info-border: rgba(129, 140, 248, 0.28);
+
+      --status-danger: var(--rose-400);
+      --status-danger-subtle: rgba(248, 113, 113, 0.1);
+      --status-danger-border: rgba(248, 113, 113, 0.25);
+
+      --accent-secondary: #818cf8;
+      --accent-secondary-subtle: rgba(129, 140, 248, 0.12);
+      --accent-secondary-border: rgba(129, 140, 248, 0.28);
+
+      --ring-focus: #6366f1;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.65), 0 0 20px -4px rgba(99, 102, 241, 0.2);
+
+      /* --- Layer 3: Component Tokens --- */
+      --header-bg: rgba(9, 10, 15, 0.88);
+      --card-bg: var(--bg-surface);
+      --card-border: var(--border-subtle);
+      --search-input-bg: #06070a;
+      --code-block-bg: #06070a;
+      --pill-bg: var(--bg-surface-elevated);
+
+      --sidebar-width: 270px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    [data-theme="light"] {
+      /* --- Layer 2: Semantic Tokens (Light Theme - Swiss Clean) --- */
+      --bg-canvas: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #f1f5f9;
+      --bg-surface-hover: #e2e8f0;
+      --bg-subtle: #f8fafc;
+
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --border-hover: var(--sky-600);
+
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-tertiary: #475569;
+      --text-on-accent: #ffffff;
+      --text-on-brand: #ffffff;
+
+      --accent-primary: var(--sky-600);
+      --accent-primary-subtle: rgba(2, 132, 199, 0.08);
+      --accent-primary-border: rgba(2, 132, 199, 0.2);
+
+      --accent-slash: #be123c;
+      --accent-slash-subtle: rgba(190, 18, 60, 0.08);
+      --accent-slash-border: rgba(190, 18, 60, 0.22);
+
+      --status-success: var(--emerald-600);
+      --status-success-subtle: rgba(5, 150, 105, 0.08);
+      --status-success-border: rgba(5, 150, 105, 0.2);
+
+      --status-warning: #b45309;
+      --status-warning-subtle: rgba(217, 119, 6, 0.08);
+      --status-warning-border: rgba(217, 119, 6, 0.2);
+
+      --status-info: var(--sky-600);
+      --status-info-subtle: rgba(2, 132, 199, 0.08);
+      --status-info-border: rgba(2, 132, 199, 0.2);
+
+      --status-danger: #9f1239;
+      --status-danger-subtle: #fff1f2;
+      --status-danger-border: #fecdd3;
+
+      --accent-secondary: #4f46e5;
+      --accent-secondary-subtle: rgba(79, 70, 229, 0.08);
+      --accent-secondary-border: rgba(79, 70, 229, 0.22);
+
+      --ring-focus: var(--sky-600);
+
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12);
+
+      --header-bg: rgba(255, 255, 255, 0.9);
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --search-input-bg: #ffffff;
+      --code-block-bg: #f8fafc;
+      --pill-bg: #f1f5f9;
+
+      --sidebar-width: 270px;
+    }
+
+    /* ==========================================================================
+       THEMED BROWSER SURFACES
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    ::selection {
+      background: var(--accent-primary-subtle);
+      color: var(--accent-primary);
+    }
+
+    input, textarea {
+      caret-color: var(--accent-primary);
+    }
+
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-canvas);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: var(--radius-full);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--slate-500);
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--ring-focus);
+      outline-offset: 2px;
+    }
+
     body {
-      font-family: var(--font-body);
-      background-color: var(--bg-base);
+      font-family: var(--font-sans);
+      background-color: var(--bg-canvas);
       color: var(--text-primary);
-      line-height: 1.6;
+      line-height: 1.55;
       min-height: 100vh;
-      transition: background-color var(--transition), color var(--transition);
+      transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
     }
 
-    /* Sticky Header */
-    header {
-      background: var(--bg-surface);
-      border-bottom: 1px solid var(--border-subtle);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(12px);
+    /* Vector SVG Icon System */
+    .svg-icon {
+      width: 15px;
+      height: 15px;
+      display: inline-block;
+      vertical-align: -0.15em;
+      stroke: currentColor;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      flex-shrink: 0;
     }
-    .header-inner {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0.85rem 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
+    .svg-icon-lg {
+      width: 18px;
+      height: 18px;
     }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-    }
-    .brand-logo {
-      width: 36px;
-      height: 36px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.15rem;
-      color: var(--accent-primary);
-    }
-    .brand-text h1 {
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      letter-spacing: -0.02em;
-    }
-    .brand-text p {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
+    .svg-slash {
+      color: var(--accent-slash);
     }
 
-    /* Search & Filters */
-    .controls-strip {
-      background: var(--bg-surface);
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 0.75rem 1.5rem;
-    }
-    .controls-inner {
-      max-width: 1280px;
-      margin: 0 auto;
+    /* ==========================================================================
+       APP SHELL ARCHITECTURE (Collapsible Sidebar + Workspace Main + Drawer)
+       ========================================================================== */
+    .app-layout {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .search-box {
-      flex: 1;
-      min-width: 260px;
-      position: relative;
-    }
-    .search-input {
+      min-height: 100vh;
       width: 100%;
-      background: var(--bg-base);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 0.5rem 1rem 0.5rem 2.25rem;
-      font-family: var(--font-body);
-      font-size: 0.875rem;
-      color: var(--text-primary);
-      outline: none;
-      transition: border-color var(--transition);
-    }
-    .search-input:focus {
-      border-color: var(--accent-primary);
-    }
-    .search-icon {
-      position: absolute;
-      left: 0.75rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted);
-      font-size: 0.875rem;
+      background-color: var(--bg-canvas);
     }
 
-    .filter-pills {
-      display: flex;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-    }
-    .filter-pill {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 0.35rem 0.75rem;
-      border-radius: 999px;
-      cursor: pointer;
-      transition: all var(--transition);
-    }
-    .filter-pill:hover,
-    .filter-pill.active {
-      background: var(--accent-primary);
-      color: var(--accent-contrast);
-      border-color: var(--accent-primary);
-    }
-
-    /* Container & Layout */
-    .container {
-      max-width: 1280px;
-      margin: 2rem auto;
-      padding: 0 1.5rem 4rem 1.5rem;
-    }
-    .features-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-
-    /* Feature Card */
-    .feature-card {
+    /* --- 1. COLLAPSIBLE SIDEBAR DOCK --- */
+    .app-sidebar {
+      width: var(--sidebar-width);
+      min-width: var(--sidebar-width);
       background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 1.5rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-      transition: border-color var(--transition), transform var(--transition);
-    }
-    .feature-card:hover {
-      border-color: var(--border-strong);
-    }
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-      margin-bottom: 1rem;
-      padding-bottom: 0.85rem;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    .card-title-group h2 {
-      font-family: var(--font-display);
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 0.25rem;
-    }
-    .feature-desc {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-    .card-badge {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      background: var(--bg-elevated);
-      color: var(--accent-primary);
-      border: 1px solid var(--border-subtle);
-      white-space: nowrap;
-    }
-
-    /* Tabs for Vertical Slice & Playbook */
-    .tabs-nav {
-      display: flex;
-      gap: 0.5rem;
-      border-bottom: 1px solid var(--border-subtle);
-      margin-bottom: 1.25rem;
-      overflow-x: auto;
-    }
-    .tab-btn {
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      padding: 0.5rem 0.85rem;
-      font-family: var(--font-body);
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: all var(--transition);
-      white-space: nowrap;
-    }
-    .tab-btn:hover {
-      color: var(--text-primary);
-    }
-    .tab-btn.active {
-      color: var(--accent-primary);
-      border-bottom-color: var(--accent-primary);
-    }
-
-    /* Slice Layers List */
-    .slice-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 0.85rem;
-    }
-    .slice-item {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 0.85rem;
-    }
-    .slice-layer-title {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-      margin-bottom: 0.35rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-    .slice-code {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      background: var(--bg-base);
-      border: 1px solid var(--border-subtle);
-      padding: 0.4rem 0.6rem;
-      border-radius: 4px;
-      color: var(--text-primary);
-      word-break: break-all;
-    }
-
-    /* Playbook Steps */
-    .playbook-steps {
+      border-right: 1px solid var(--border-subtle);
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      z-index: 200;
+      transition: width 0.24s cubic-bezier(0.16, 1, 0.3, 1), min-width 0.24s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .step-item {
+
+    .app-sidebar.collapsed {
+      width: 74px;
+      min-width: 74px;
+    }
+
+    .sidebar-brand {
       display: flex;
-      gap: 0.75rem;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 0.75rem 1rem;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      gap: 0.5rem;
     }
-    .step-num {
-      width: 24px;
-      height: 24px;
-      background: var(--accent-primary);
-      color: var(--accent-contrast);
-      font-size: 0.75rem;
-      font-weight: 700;
-      border-radius: 50%;
+    .brand-main {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      min-width: 0;
+    }
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-primary-subtle);
+      border: 1px solid var(--accent-primary-border);
+      color: var(--accent-primary);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
-    .step-content h4 {
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 0.2rem;
+    .brand-info {
+      min-width: 0;
+      overflow: hidden;
     }
-    .step-content p {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+      letter-spacing: -0.015em;
+    }
+    .brand-sub {
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .version-tag {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      font-weight: 600;
+      background: var(--accent-primary-subtle);
+      color: var(--accent-primary);
+      border: 1px solid var(--accent-primary-border);
+      padding: 0.05rem 0.35rem;
+      border-radius: var(--radius-full);
+      font-variant-numeric: tabular-nums;
     }
 
-    /* Mandatory Skeleton Shimmer Engine */
+    .sidebar-toggle-btn {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xs);
+      color: var(--text-tertiary);
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .sidebar-toggle-btn:hover {
+      color: var(--text-primary);
+      background: var(--bg-surface-elevated);
+      border-color: var(--border-hover);
+    }
+
+    .sidebar-section {
+      padding: 0.85rem 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .sidebar-section-title {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-tertiary);
+      margin-bottom: 0.5rem;
+      padding-left: 0.35rem;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.55rem 0.65rem;
+      border-radius: var(--radius-xs);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+      width: 100%;
+    }
+    .nav-btn:hover {
+      background: var(--bg-surface-elevated);
+      color: var(--text-primary);
+    }
+    .nav-btn.active {
+      background: var(--accent-primary-subtle);
+      border-color: var(--accent-primary-border);
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+    .nav-btn .nav-badge {
+      margin-left: auto;
+      font-size: 0.68rem;
+      padding: 0.1rem 0.4rem;
+      border-radius: var(--radius-full);
+      background: var(--bg-surface-elevated);
+      color: var(--text-tertiary);
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+    }
+    .nav-btn.active .nav-badge {
+      background: var(--accent-primary);
+      color: var(--white);
+    }
+
+    /* Category List */
+    .category-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .sidebar-cat-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.45rem 0.65rem;
+      border-radius: var(--radius-xs);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+      width: 100%;
+    }
+    .sidebar-cat-btn:hover {
+      background: var(--bg-surface-elevated);
+      color: var(--text-primary);
+    }
+    .sidebar-cat-btn.active {
+      background: var(--bg-surface-elevated);
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .sidebar-cat-btn .cat-label {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sidebar-cat-btn .cat-count {
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Sidebar Footer */
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 0.85rem 0.75rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      background: var(--bg-surface);
+    }
+    .sidebar-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: var(--text-tertiary);
+    }
+    .stat-val {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .theme-toggle-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.45rem 0.65rem;
+      border-radius: var(--radius-xs);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface-elevated);
+      color: var(--text-primary);
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .theme-toggle-btn:hover {
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
+
+    /* Collapsed Sidebar Rules */
+    .app-sidebar.collapsed .brand-info,
+    .app-sidebar.collapsed .sidebar-section-title,
+    .app-sidebar.collapsed .cat-label,
+    .app-sidebar.collapsed .cat-count,
+    .app-sidebar.collapsed .nav-label,
+    .app-sidebar.collapsed .nav-badge,
+    .app-sidebar.collapsed .stat-row,
+    .app-sidebar.collapsed #themeToggleLabel {
+      display: none !important;
+    }
+    .app-sidebar.collapsed .sidebar-brand {
+      justify-content: center;
+      padding: 1rem 0.4rem;
+    }
+    .app-sidebar.collapsed .brand-main {
+      justify-content: center;
+    }
+    .app-sidebar.collapsed .nav-btn,
+    .app-sidebar.collapsed .sidebar-cat-btn {
+      justify-content: center;
+      padding: 0.55rem;
+    }
+    .app-sidebar.collapsed .sidebar-section {
+      padding: 0.65rem 0.35rem;
+    }
+
+    /* --- 2. WORKSPACE MAIN & COMMAND BAR --- */
+    .app-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-canvas);
+    }
+
+    .workspace-header {
+      position: sticky;
+      top: 0;
+      z-index: 150;
+      background: var(--header-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.65rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .header-search-bar {
+      position: relative;
+      flex: 1;
+      max-width: 600px;
+      display: flex;
+      align-items: center;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--search-input-bg);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 0.45rem 2.8rem 0.45rem 2.2rem;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .search-input:focus {
+      border-color: var(--ring-focus);
+      background: var(--bg-surface);
+      box-shadow: 0 0 0 3px var(--accent-primary-subtle);
+    }
+    .header-search-bar .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      color: var(--text-tertiary);
+      pointer-events: none;
+    }
+    .btn-clear-search {
+      position: absolute;
+      right: 2.2rem;
+      background: transparent;
+      border: none;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 0.2rem 0.4rem;
+      display: none;
+    }
+    .kbd-shortcut {
+      position: absolute;
+      right: 0.65rem;
+      background: var(--bg-surface-elevated);
+      color: var(--text-tertiary);
+      border: 1px solid var(--border-subtle);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      padding: 0.1rem 0.35rem;
+      border-radius: var(--radius-xs);
+      pointer-events: none;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .layout-toggle-group {
+      display: inline-flex;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xs);
+      padding: 2px;
+      gap: 2px;
+    }
+    .layout-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-tertiary);
+      padding: 0.35rem 0.65rem;
+      border-radius: var(--radius-xs);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+    .layout-btn:hover {
+      color: var(--text-primary);
+      background: var(--bg-surface-hover);
+    }
+    .layout-btn.active {
+      background: var(--bg-surface);
+      color: var(--accent-primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xs);
+      color: var(--text-primary);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .mobile-menu-btn:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--accent-primary);
+    }
+
+    /* Workspace Content Area */
+    .workspace-body {
+      padding: 1.25rem 1.75rem 3rem;
+      max-width: 1440px;
+      width: 100%;
+    }
+
+    /* Quick Filter Ribbon */
+    .quick-filter-ribbon {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      margin-bottom: 1rem;
+    }
+    .quick-ribbon-title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-right: 0.25rem;
+      white-space: nowrap;
+    }
+    .quick-pills-wrap {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      flex: 1;
+      min-width: 0;
+    }
+    .quick-pill {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-full);
+      background: var(--bg-surface-elevated);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .quick-pill:hover,
+    .quick-pill.active {
+      background: var(--accent-primary-subtle);
+      border-color: var(--accent-primary-border);
+      color: var(--accent-primary);
+    }
+
+    /* Filter Status Bar */
+    .filter-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.1rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .filter-summary {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .btn-reset-filters {
+      background: var(--accent-primary-subtle);
+      color: var(--accent-primary);
+      border: 1px solid var(--accent-primary-border);
+      font-size: 0.72rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: var(--radius-xs);
+      cursor: pointer;
+    }
+
+    /* --- FEATURES GRID & LIST VIEW MODES --- */
+    .features-container.layout-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+      gap: 1.25rem;
+    }
+    .features-container.layout-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    /* Grid Card Design */
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .feature-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .card-top {
+      padding: 1.1rem 1.25rem 0.75rem;
+    }
+    .card-meta-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.65rem;
+    }
+    .card-index {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+    .cat-badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .cat-ui { background: var(--accent-primary-subtle); color: var(--accent-primary); border: 1px solid var(--accent-primary-border); }
+    .cat-core { background: var(--status-info-subtle); color: var(--status-info); border: 1px solid var(--status-info-border); }
+    .cat-extension { background: var(--accent-secondary-subtle); color: var(--accent-secondary); border: 1px solid var(--accent-secondary-border); }
+    .cat-automation { background: var(--status-warning-subtle); color: var(--status-warning); border: 1px solid var(--status-warning-border); }
+    .cat-pwa { background: var(--status-success-subtle); color: var(--status-success); border: 1px solid var(--status-success-border); }
+
+    .status-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.12rem 0.45rem;
+      border-radius: var(--radius-xs);
+      background: var(--status-success-subtle);
+      color: var(--status-success);
+      border: 1px solid var(--status-success-border);
+    }
+
+    .card-header {
+      margin-bottom: 0.65rem;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      letter-spacing: -0.015em;
+    }
+    .card-desc {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    /* Card Tabs */
+    .card-tabs {
+      display: flex;
+      gap: 0.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      margin: 0.75rem 0;
+      overflow-x: auto;
+    }
+    .card-tab-btn {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 0.35rem 0.6rem;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .card-tab-btn:hover {
+      color: var(--text-primary);
+    }
+    .card-tab-btn.active {
+      color: var(--accent-primary);
+      border-bottom-color: var(--accent-primary);
+    }
+
+    /* Tab Contents */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.18s ease;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(2px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Slice Mini Grid */
+    .slice-mini-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+    .slice-mini-item {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xs);
+      padding: 0.5rem 0.65rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .slice-mini-title {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .slice-mini-code {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      background: var(--code-block-bg);
+      border: 1px solid var(--border-subtle);
+      padding: 0.15rem 0.4rem;
+      border-radius: var(--radius-xs);
+      color: var(--accent-primary);
+      word-break: break-all;
+    }
+
+    /* Playbook Mini Steps */
+    .playbook-mini-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .step-mini-item {
+      display: flex;
+      gap: 0.55rem;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xs);
+      padding: 0.5rem 0.65rem;
+      align-items: flex-start;
+    }
+    .step-mini-num {
+      width: 20px;
+      height: 20px;
+      background: var(--accent-primary);
+      color: var(--white);
+      font-size: 0.68rem;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+    .step-mini-content h4 {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.15rem;
+    }
+    .step-mini-content p {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+    .step-mini-content code {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      background: var(--code-block-bg);
+      border: 1px solid var(--border-subtle);
+      padding: 0.1rem 0.3rem;
+      border-radius: var(--radius-xs);
+      color: var(--accent-primary);
+    }
+
+    /* Skeleton Shimmer Engine */
     @keyframes skeleton-shimmer {
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
@@ -372,12 +989,12 @@
       background: linear-gradient(
         90deg,
         var(--bg-surface) 25%,
-        var(--bg-elevated) 50%,
+        var(--bg-surface-elevated) 50%,
         var(--bg-surface) 75%
       );
       background-size: 200% 100%;
       animation: skeleton-shimmer 1.6s infinite cubic-bezier(0.4, 0, 0.6, 1);
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-xs);
       border: 1px solid var(--border-subtle);
       user-select: none;
       pointer-events: none;
@@ -386,289 +1003,805 @@
     /* States Simulator */
     .state-preview-box {
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 1.25rem;
-      background: var(--bg-base);
-      margin-top: 0.75rem;
-      min-height: 140px;
+      border-radius: var(--radius-xs);
+      padding: 0.85rem;
+      background: var(--code-block-bg);
+      min-height: 110px;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
     .state-toggle-bar {
       display: flex;
-      gap: 0.4rem;
-      margin-bottom: 0.75rem;
+      gap: 0.3rem;
+      margin-bottom: 0.6rem;
+      flex-wrap: wrap;
     }
     .state-toggle-btn {
-      background: var(--bg-elevated);
+      background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      font-size: 0.7rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: 4px;
+      color: var(--text-tertiary);
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-xs);
       cursor: pointer;
+      transition: all 0.15s;
+    }
+    .state-toggle-btn:hover {
+      color: var(--text-primary);
+      background: var(--bg-surface-hover);
     }
     .state-toggle-btn.active {
       background: var(--accent-primary);
-      color: var(--accent-contrast);
+      color: var(--white);
       border-color: var(--accent-primary);
     }
 
-    /* Footer */
-    footer {
+    /* Card Footer */
+    .card-footer {
+      padding: 0.75rem 1.25rem;
+      background: var(--bg-surface-elevated);
       border-top: 1px solid var(--border-subtle);
-      padding: 2rem 1.5rem;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      border-bottom-left-radius: inherit;
+      border-bottom-right-radius: inherit;
+    }
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      font-size: 0.74rem;
+      font-weight: 500;
+      padding: 0.32rem 0.65rem;
+      border-radius: var(--radius-xs);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-action:hover {
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+      background: var(--accent-primary-subtle);
+    }
+    .btn-inspect {
+      background: var(--accent-primary-subtle);
+      color: var(--accent-primary);
+      border-color: var(--accent-primary-border);
+      font-weight: 600;
+    }
+    .btn-inspect:hover {
+      background: var(--accent-primary);
+      color: var(--white);
     }
 
-    /* Mobile First (375px) Adaptations */
-    @media (max-width: 640px) {
-      .header-inner { flex-direction: column; align-items: stretch; gap: 0.75rem; }
-      .controls-inner { flex-direction: column; align-items: stretch; }
-      .search-box { min-width: 100%; }
-      .slice-grid { grid-template-columns: 1fr; }
-      .tabs-nav { gap: 0.25rem; }
-      .tab-btn { padding: 0.4rem 0.6rem; font-size: 0.75rem; }
+    /* Verification Box Banner */
+    .verification-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      margin-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* --- 3. SLIDE-OVER DETAIL DRAWER --- */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 998;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .drawer-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .detail-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 580px;
+      max-width: 94vw;
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-lg);
+      z-index: 999;
+      transform: translateX(100%);
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .detail-drawer.open {
+      transform: translateX(0);
+    }
+    .drawer-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      background: var(--header-bg);
+    }
+    .drawer-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+    .drawer-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+    .drawer-close-btn {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-xs);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .drawer-close-btn:hover {
+      border-color: var(--accent-primary);
+      color: var(--text-primary);
+    }
+    .drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.25rem 1.5rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .drawer-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .drawer-section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-tertiary);
+    }
+
+    /* Toast Notification System */
+    .toast-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+    .toast {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      animation: toast-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: auto;
+    }
+    @keyframes toast-in {
+      from { transform: translateY(10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .app-sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        transform: translateX(-100%);
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .app-sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      .mobile-menu-btn {
+        display: flex;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Sticky Kokpit Header -->
-  <header>
-    <div class="header-inner">
-      <div class="brand">
-        <div class="brand-logo">⚡</div>
-        <div class="brand-text">
-          <h1>{{PROJE_ADI}} — Özellik Rehberi</h1>
-          <p>5 Katmanlı Dikey Dilim & Playbook Kullanım Kılavuzu</p>
-        </div>
-      </div>
-      <div class="header-actions">
-        <span class="card-badge">v{{PROJE_SURUM}}</span>
-        <button id="modeToggleBtn" style="background:var(--bg-elevated); border:1px solid var(--border-subtle); color:var(--text-primary); border-radius:6px; padding:6px 12px; font-size:12px; cursor:pointer;" onclick="toggleLightDarkMode()">🌙 Koyu</button>
-      </div>
-    </div>
-  </header>
+  <div class="app-layout" id="appLayout">
 
-  <!-- Controls Strip (Search & Filter Pills) -->
-  <div class="controls-strip">
-    <div class="controls-inner">
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="featureSearchInput" class="search-input" placeholder="Özellik, endpoint veya anahtar kelime ara (Ctrl+K)..." oninput="filterFeatures()">
-      </div>
-      <div class="filter-pills" id="categoryPills">
-        <button class="filter-pill active" onclick="setCategoryFilter('all', this)">Tümü</button>
-        <button class="filter-pill" onclick="setCategoryFilter('ui', this)">Arayüz & UX</button>
-        <button class="filter-pill" onclick="setCategoryFilter('backend', this)">Backend & API</button>
-        <button class="filter-pill" onclick="setCategoryFilter('database', this)">Veritabanı</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Features Container -->
-  <main class="container">
-    <div class="features-grid" id="featuresContainer">
-
-      <!-- ====================================================================
-           ÖRNEK ÖZELLİK KARTI (Geliştirilen her özellik bu kart formatında eklenir)
-           ==================================================================== -->
-      <article class="feature-card" data-category="ui" data-title="Örnek Özellik: İnteraktif Gösterge Paneli">
-        <div class="card-header">
-          <div class="card-title-group">
-            <span class="card-badge">Özellik #01</span>
-            <h2>İnteraktif Gösterge Paneli (Dashboard UI)</h2>
-            <p class="feature-desc">Kullanıcının sistem metriklerini, canlı görevlerini ve analizlerini tek ekrandan sıfır gecikmeyle takip etmesini sağlar.</p>
+    <!-- 1. LEFT COLLAPSIBLE SIDEBAR DOCK -->
+    <aside class="app-sidebar" id="appSidebar">
+      <!-- Brand & Workspace Header -->
+      <div class="sidebar-brand">
+        <div class="brand-main">
+          <div class="brand-icon">
+            <svg class="svg-icon svg-icon-lg" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
           </div>
-          <span class="card-badge" style="border-color:var(--accent-primary);">Tamamlandı</span>
+          <div class="brand-info">
+            <div class="brand-title">{{PROJE_ADI}}</div>
+            <div class="brand-sub">Kullanım Rehberi <span class="version-tag">v{{PROJE_SURUM}}</span></div>
+          </div>
         </div>
+        <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebar()" title="Menüyü Daralt / Genişlet (Kısayol: [)">
+          <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+        </button>
+      </div>
 
-        <!-- Sekmeler: 1. Mimari (5 Katman), 2. Kullanım (Playbook), 3. Durumlar (UX Simulator) -->
-        <nav class="tabs-nav">
-          <button class="tab-btn active" onclick="switchCardTab(this, 'slice')">🏗️ Nasıl Yapıldı? (5 Katman)</button>
-          <button class="tab-btn" onclick="switchCardTab(this, 'playbook')">🚀 Nasıl Kullanılır? (Playbook)</button>
-          <button class="tab-btn" onclick="switchCardTab(this, 'states')">📱 Arayüz Durumları & Skeleton</button>
+      <!-- Primary Navigation -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Görünüm Modu</div>
+        <nav class="sidebar-nav">
+          <button class="nav-btn active" id="navAll" onclick="switchMainView('all', this)">
+            <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <span class="nav-label">Tüm Özellikler</span>
+            <span class="nav-badge" id="sidebarTotalBadge">1</span>
+          </button>
+          <button class="nav-btn" id="navSlice" onclick="switchGlobalTab('slice', this)">
+            <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+            <span class="nav-label">5-Katmanlı Dilim</span>
+            <span class="nav-badge">Mimari</span>
+          </button>
+          <button class="nav-btn" id="navPlaybook" onclick="switchGlobalTab('playbook', this)">
+            <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            <span class="nav-label">Playbook Kılavuzu</span>
+            <span class="nav-badge">Adım Adım</span>
+          </button>
+          <button class="nav-btn" id="navStates" onclick="switchGlobalTab('states', this)">
+            <svg class="svg-icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            <span class="nav-label">Skeleton Simülatörü</span>
+            <span class="nav-badge">UX 4-Durum</span>
+          </button>
         </nav>
+      </div>
 
-        <!-- Tab 1: 5 Katmanlı Dilim Mimarisi -->
-        <div class="tab-content slice-panel">
-          <div class="slice-grid">
-            <div class="slice-item">
-              <div class="slice-layer-title">🗄️ 1. DB / Şema / Migration</div>
-              <div class="slice-code">supabase/migrations/20261101_dashboard.sql (tables: metrics, activities)</div>
-            </div>
-            <div class="slice-item">
-              <div class="slice-layer-title">⚙️ 2. Backend API / RPC</div>
-              <div class="slice-code">GET /api/v1/dashboard/metrics · Edge Function: compute-kpi</div>
-            </div>
-            <div class="slice-item">
-              <div class="slice-layer-title">🔌 3. İstemci Entegrasyonu</div>
-              <div class="slice-code">src/api/dashboardApi.ts · useDashboardMetrics() React Query hook</div>
-            </div>
-            <div class="slice-item">
-              <div class="slice-layer-title">🎨 4. UI Bileşenleri & State</div>
-              <div class="slice-code">src/components/DashboardGrid.tsx · Zustand metricsStore</div>
-            </div>
-            <div class="slice-item">
-              <div class="slice-layer-title">🛡️ 5. Skeleton UI & Kapanış</div>
-              <div class="slice-code">themes.css .skeleton-shimmer · MetricCardSkeleton.tsx</div>
-            </div>
+      <!-- Categories -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Kategoriler & Dilimler</div>
+        <div class="category-list" id="sidebarCategoryList">
+          <button class="sidebar-cat-btn active" onclick="setCategoryFilter('all', this)">
+            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <span class="cat-label">Tüm Kategoriler</span>
+            <span class="cat-count" id="catCountAll">1</span>
+          </button>
+          <button class="sidebar-cat-btn" onclick="setCategoryFilter('ui', this)">
+            <span style="width:8px; height:8px; border-radius:50%; background:var(--accent-primary);"></span>
+            <span class="cat-label">Arayüz & UX</span>
+            <span class="cat-count">1</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <div class="sidebar-stats">
+          <div class="stat-row">
+            <span>Toplam Modül:</span>
+            <span class="stat-val" id="statTotalModules">1</span>
+          </div>
+          <div class="stat-row">
+            <span>5-Katman Uyumu:</span>
+            <span class="stat-val" style="color:var(--status-success);">%100</span>
+          </div>
+          <div class="stat-row">
+            <span>Skeleton Ekran:</span>
+            <span class="stat-val" style="color:var(--status-info);">Zorunlu / Tam</span>
+          </div>
+        </div>
+        <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()">
+          <svg class="svg-icon" id="themeToggleIcon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <span id="themeToggleLabel">Koyu Mod (Obsidian)</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- 2. WORKSPACE MAIN & COMMAND BAR -->
+    <main class="app-main">
+      <header class="workspace-header">
+        <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" title="Menüyü Aç">
+          <svg class="svg-icon" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+
+        <div class="header-search-bar">
+          <svg class="svg-icon search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="featureSearchInput" class="search-input" placeholder="Özellik, endpoint, RPC veya anahtar kelime ara (Ctrl+K)..." oninput="filterFeatures()">
+          <button class="btn-clear-search" id="btnClearSearch" onclick="clearSearch()" title="Aramayı Temizle">✕</button>
+          <span class="kbd-shortcut">Ctrl+K</span>
+        </div>
+
+        <div class="header-controls">
+          <div class="layout-toggle-group">
+            <button class="layout-btn active" id="layoutGridBtn" onclick="setLayoutMode('grid')" title="Izgara Görünümü">
+              <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              <span>Izgara</span>
+            </button>
+            <button class="layout-btn" id="layoutListBtn" onclick="setLayoutMode('list')" title="Kompakt Liste">
+              <svg class="svg-icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+              <span>Liste</span>
+            </button>
+          </div>
+          <button class="btn-action" onclick="expandAllCardPanels()" title="Tüm Sekmeleri Aç/Kapat">
+            <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+            <span id="expandAllLabel">Tümünü Genişlet</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="workspace-body">
+        <!-- Quick Filter Ribbon -->
+        <div class="quick-filter-ribbon">
+          <div class="quick-ribbon-title">
+            <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+            <span>Hızlı Filtre:</span>
+          </div>
+          <div class="quick-pills-wrap" id="quickPillsWrap">
+            <button class="quick-pill active" onclick="setCategoryFilter('all', this)">Tüm Özellikler</button>
+            <button class="quick-pill" onclick="setCategoryFilter('ui', this)">Arayüz & UX</button>
           </div>
         </div>
 
-        <!-- Tab 2: Nasıl Kullanılır? (Playbook) -->
-        <div class="tab-content playbook-panel" style="display:none;">
-          <div class="playbook-steps">
-            <div class="step-item">
-              <div class="step-num">1</div>
-              <div class="step-content">
-                <h4>Sayfaya Erişim</h4>
-                <p>Sol menüdeki <strong>"Gösterge Paneli"</strong> bağlantısına tıklayın veya doğrudan <code>/dashboard</code> rotasına gidin.</p>
-              </div>
-            </div>
-            <div class="step-item">
-              <div class="step-num">2</div>
-              <div class="step-content">
-                <h4>Filtreleme & Tarih Seçimi</h4>
-                <p>Üst çubuktaki tarih aralığı seçicisinden <em>"Son 30 Gün"</em> filtresini seçin. Metrikler anında güncellenir.</p>
-              </div>
-            </div>
-            <div class="step-item">
-              <div class="step-num">3</div>
-              <div class="step-content">
-                <h4>Detay Çekmecesi (Drawer)</h4>
-                <p>Herhangi bir metrik kartına tıklayarak sağdan açılan detay çekmecesinde aktivite geçmişini inceleyin.</p>
-              </div>
-            </div>
+        <!-- Filter Status Bar -->
+        <div class="filter-status-bar">
+          <div class="filter-summary">
+            <span>Gösterilen: <strong id="filterVisibleCount" style="color:var(--text-primary);">1</strong> özellik modülü</span>
+            <button class="btn-reset-filters" id="btnResetFilters" style="display:none;" onclick="resetAllFilters()">Filtreleri Sıfırla</button>
+          </div>
+          <div style="font-size:0.75rem; color:var(--text-tertiary); font-family:var(--font-mono);">
+            Standart: <code>rehber_design.md</code>
           </div>
         </div>
 
-        <!-- Tab 3: Arayüz Durumları & Skeleton Simülatörü -->
-        <div class="tab-content states-panel" style="display:none;">
-          <div class="state-toggle-bar">
-            <button class="state-toggle-btn active" onclick="switchStateSimulator(this, 'skeleton')">1. Skeleton Screen (Yükleniyor)</button>
-            <button class="state-toggle-btn" onclick="switchStateSimulator(this, 'hydrated')">2. Dolu Durum (Success)</button>
-            <button class="state-toggle-btn" onclick="switchStateSimulator(this, 'empty')">3. Boş Durum (Empty)</button>
-            <button class="state-toggle-btn" onclick="switchStateSimulator(this, 'error')">4. Hata Durumu (Retry)</button>
-          </div>
-          
-          <div class="state-preview-box">
-            <!-- Simülasyon: Skeleton State -->
-            <div class="sim-view sim-skeleton" style="display:flex; flex-direction:column; gap:8px;">
-              <div class="skeleton-box" style="height:20px; width:45%;"></div>
-              <div class="skeleton-box" style="height:14px; width:80%;"></div>
-              <div style="display:flex; gap:12px; margin-top:8px;">
-                <div class="skeleton-box" style="height:60px; flex:1;"></div>
-                <div class="skeleton-box" style="height:60px; flex:1;"></div>
+        <!-- Features Grid / List Container -->
+        <div class="features-container layout-grid" id="featuresContainer">
+
+          <!-- ÖRNEK ÖZELLİK KARTI -->
+          <article class="feature-card" data-category="ui" data-title="Örnek Özellik: İnteraktif Gösterge Paneli" data-index="1">
+            <div class="card-top">
+              <div class="card-meta-bar">
+                <span class="card-index">#01</span>
+                <span class="cat-badge cat-ui">Arayüz & UX</span>
+                <span class="status-badge">Tamamlandı</span>
+              </div>
+              <div class="card-header">
+                <h3 class="card-title">
+                  <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                  <span>İnteraktif Gösterge Paneli (Dashboard UI)</span>
+                </h3>
+                <p class="card-desc">Sistem metriklerini, canlı görevleri ve analizleri tek ekrandan sıfır gecikmeyle takip etmeyi sağlar.</p>
+              </div>
+
+              <!-- Card Tabs -->
+              <div class="card-tabs">
+                <button class="card-tab-btn active" onclick="switchCardTab(this, 'slice')">🏗️ 5 Katman</button>
+                <button class="card-tab-btn" onclick="switchCardTab(this, 'playbook')">🚀 Playbook</button>
+                <button class="card-tab-btn" onclick="switchCardTab(this, 'states')">📱 Skeleton & Durumlar</button>
+              </div>
+
+              <!-- Tab 1: 5 Katmanlı Dilim -->
+              <div class="tab-content slice-panel active">
+                <div class="slice-mini-grid">
+                  <div class="slice-mini-item">
+                    <div class="slice-mini-title">🗄️ 1. DB / Şema / Migration</div>
+                    <div class="slice-mini-code">supabase/migrations/20261101_dashboard.sql (tables: metrics)</div>
+                  </div>
+                  <div class="slice-mini-item">
+                    <div class="slice-mini-title">⚙️ 2. Backend API / RPC</div>
+                    <div class="slice-mini-code">GET /api/v1/dashboard/metrics · Edge Function: compute-kpi</div>
+                  </div>
+                  <div class="slice-mini-item">
+                    <div class="slice-mini-title">🔌 3. İstemci Entegrasyonu</div>
+                    <div class="slice-mini-code">src/api/dashboardApi.ts · useDashboardMetrics() React Query hook</div>
+                  </div>
+                  <div class="slice-mini-item">
+                    <div class="slice-mini-title">🎨 4. UI Bileşenleri & State</div>
+                    <div class="slice-mini-code">src/components/DashboardGrid.tsx · Zustand metricsStore</div>
+                  </div>
+                  <div class="slice-mini-item">
+                    <div class="slice-mini-title">💀 5. Skeleton Screens UI & UX</div>
+                    <div class="slice-mini-code">MetricCardSkeleton.tsx · .skeleton-box kaset yerleşimi</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tab 2: Playbook Adımları -->
+              <div class="tab-content playbook-panel">
+                <div class="playbook-mini-steps">
+                  <div class="step-mini-item">
+                    <div class="step-mini-num">1</div>
+                    <div class="step-mini-content">
+                      <h4>Sayfaya Erişim</h4>
+                      <p>Sol menüdeki <strong>"Gösterge Paneli"</strong> bağlantısına tıklayın veya doğrudan <code>/dashboard</code> rotasına gidin.</p>
+                    </div>
+                  </div>
+                  <div class="step-mini-item">
+                    <div class="step-mini-num">2</div>
+                    <div class="step-mini-content">
+                      <h4>Filtreleme & Tarih Seçimi</h4>
+                      <p>Üst çubuktaki tarih aralığı seçicisinden <em>"Son 30 Gün"</em> filtresini seçin. Metrikler anında güncellenir.</p>
+                    </div>
+                  </div>
+                  <div class="step-mini-item">
+                    <div class="step-mini-num">3</div>
+                    <div class="step-mini-content">
+                      <h4>Detay Çekmecesi</h4>
+                      <p>Herhangi bir metrik kartına tıklayarak aktivite geçmişini inceleyin.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tab 3: Durumlar & Skeleton Simülatörü -->
+              <div class="tab-content states-panel">
+                <div class="state-toggle-bar">
+                  <button class="state-toggle-btn active" onclick="switchStateSimulator(this, 'skeleton')">1. Skeleton (Yükleniyor)</button>
+                  <button class="state-toggle-btn" onclick="switchStateSimulator(this, 'hydrated')">2. Dolu (Success)</button>
+                  <button class="state-toggle-btn" onclick="switchStateSimulator(this, 'empty')">3. Boş (Empty)</button>
+                  <button class="state-toggle-btn" onclick="switchStateSimulator(this, 'error')">4. Hata (Retry)</button>
+                </div>
+                <div class="state-preview-box">
+                  <div class="sim-view sim-skeleton" style="display:flex; flex-direction:column; gap:6px;">
+                    <div class="skeleton-box" style="height:18px; width:45%;"></div>
+                    <div class="skeleton-box" style="height:12px; width:80%;"></div>
+                    <div style="display:flex; gap:8px; margin-top:4px;">
+                      <div class="skeleton-box" style="height:38px; flex:1;"></div>
+                      <div class="skeleton-box" style="height:38px; flex:1;"></div>
+                    </div>
+                  </div>
+                  <div class="sim-view sim-hydrated" style="display:none;">
+                    <h4 style="font-size:13px; font-weight:700; color:var(--text-primary);">Aylık Ciro: ₺142.500,00</h4>
+                    <p style="font-size:11px; color:var(--text-secondary); margin-top:2px;">Hedef gerçekleşme oranı: %114 · 1.240 aktif işlem</p>
+                  </div>
+                  <div class="sim-view sim-empty" style="display:none; text-align:center;">
+                    <p style="font-size:12px; color:var(--text-secondary);">Henüz bir veri girişi yapılmadı.</p>
+                    <button style="margin-top:6px; background:var(--accent-primary); color:var(--white); border:none; padding:3px 10px; border-radius:var(--radius-xs); font-size:11px; cursor:pointer;">İlk Kaydı Ekle</button>
+                  </div>
+                  <div class="sim-view sim-error" style="display:none; text-align:center;">
+                    <p style="font-size:12px; color:var(--status-danger);">Veri sunucusu yanıt vermedi (503).</p>
+                    <button style="margin-top:6px; background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); color:var(--text-primary); padding:3px 10px; border-radius:var(--radius-xs); font-size:11px; cursor:pointer;">Yeniden Dene</button>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <!-- Simülasyon: Dolu Durum -->
-            <div class="sim-view sim-hydrated" style="display:none;">
-              <h3 style="font-size:14px; font-weight:700; color:var(--text-primary);">Aylık Ciro: ₺142.500,00</h3>
-              <p style="font-size:12px; color:var(--text-secondary); margin-top:4px;">Hedef gerçekleşme oranı: %114 · 1.240 aktif işlem</p>
+            <div class="card-footer">
+              <button class="btn-action" onclick="copyCardPlaybook(this)" title="Playbook Adımlarını Kopyala">
+                <svg class="svg-icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span>Playbook Kopyala</span>
+              </button>
+              <button class="btn-action btn-inspect" onclick="openDetailDrawerFromCard(this)" title="Çekmecede İncele">
+                <span>İncele</span>
+                <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
             </div>
+          </article>
 
-            <!-- Simülasyon: Boş Durum -->
-            <div class="sim-view sim-empty" style="display:none; text-align:center;">
-              <p style="font-size:13px; color:var(--text-secondary);">Henüz bir veri girişi yapılmadı.</p>
-              <button style="margin-top:8px; background:var(--accent-primary); color:var(--accent-contrast); border:none; padding:4px 12px; border-radius:4px; font-size:11px; cursor:pointer;">İlk Kaydı Ekle</button>
-            </div>
-
-            <!-- Simülasyon: Hata Durumu -->
-            <div class="sim-view sim-error" style="display:none; text-align:center;">
-              <p style="font-size:13px; color:#EF4444;">Veri sunucusu yanıt vermedi (503).</p>
-              <button style="margin-top:8px; background:var(--bg-elevated); border:1px solid var(--border-subtle); color:var(--text-primary); padding:4px 12px; border-radius:4px; font-size:11px; cursor:pointer;">Yeniden Dene</button>
-            </div>
-          </div>
         </div>
-      </article>
 
-    </div>
-  </main>
+        <!-- Verification Banner -->
+        <div class="verification-box">
+          <div>
+            <h3 style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+              <svg class="svg-icon" style="color:var(--status-success);" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              <span>Canlı Manuel Test Senaryoları & Doğrulama</span>
+            </h3>
+            <p style="font-size:12px; color:var(--text-secondary);">Tüm özelliklerin tarayıcıda veya konsolda gözle adım adım nasıl test edileceği <code>docs/KULLANICI_TEST_REHBERI.md</code> dosyasında mevcuttur.</p>
+          </div>
+          <a href="KULLANICI_TEST_REHBERI.md" class="btn-action btn-inspect" style="text-decoration:none; padding:0.5rem 1rem;">
+            <span>Test Rehberini Aç</span>
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          </a>
+        </div>
+      </div>
+    </main>
 
-  <!-- Canlı Tema Seçici (Zero-Token Hook) -->
-  <div id="systemThemeSwitcherPill" style="position:fixed; bottom:20px; right:20px; z-index:99999; background:var(--bg-surface); border:1px solid var(--border-subtle); padding:6px 12px; border-radius:999px; display:flex; align-items:center; gap:8px; box-shadow:0 8px 32px rgba(0,0,0,0.45); backdrop-filter:blur(8px);">
-    <label for="systemThemeSelector" style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">Tema:</label>
-    <select id="systemThemeSelector" onchange="document.documentElement.setAttribute('data-theme', this.value)" style="background:var(--bg-elevated); color:var(--text-primary); border:1px solid var(--border-subtle); border-radius:6px; padding:3px 8px; font-size:12px; cursor:pointer; outline:none;">
-      <option value="obsidian-velvet">01. Obsidian Velvet</option>
-      <option value="nordic-slate">03. Nordic Slate</option>
-      <option value="maritime-amber">08. Maritime Amber</option>
-      <option value="verdant-abyss">04. Verdant Abyss</option>
-      <option value="plum-lime">14. Plum + Lime</option>
-    </select>
   </div>
 
-  <footer>
-    <p>{{PROJE_ADI}} · Mimari Uyumluluk: 5 Katmanlı Dikey Dilim & rehber_design.md Sözleşmesi</p>
-    <p style="margin-top:4px;">Son Güncelleme: {{TARIH}} · Üretim Kalitesi Standardı</p>
-  </footer>
+  <!-- 3. SLIDE-OVER MASTER-DETAIL INSPECTOR DRAWER -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDetailDrawer()"></div>
+  <aside class="detail-drawer" id="detailDrawer">
+    <div class="drawer-header">
+      <div>
+        <span class="cat-badge cat-ui" id="drawerBadge" style="margin-bottom:0.4rem;">Modül</span>
+        <h2 class="drawer-title" id="drawerTitle">Özellik Adı</h2>
+        <p class="drawer-subtitle" id="drawerDesc">Özellik katma değer açıklaması</p>
+      </div>
+      <button class="drawer-close-btn" onclick="closeDetailDrawer()" title="Kapat (Esc)">✕</button>
+    </div>
+    <div class="drawer-body" id="drawerBody">
+      <div class="drawer-section">
+        <div class="drawer-section-title">🏗️ 5 Katmanlı Dilim Mimarisi</div>
+        <div id="drawerSliceGrid" class="slice-mini-grid"></div>
+      </div>
+      <div class="drawer-section">
+        <div class="drawer-section-title">🚀 Playbook Adımları</div>
+        <div id="drawerPlaybookSteps" class="playbook-mini-steps"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
 
   <script>
-    // Tab Değiştirici
-    function switchCardTab(btn, tabName) {
-      const card = btn.closest('.feature-card');
-      card.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      card.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-      card.querySelector('.' + tabName + '-panel').style.display = 'block';
+    // Theme Management (Obsidian Dark vs Swiss Clean Light)
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('guide_deck_theme', next);
+      updateThemeBtn(next);
+      showToast('Tema güncellendi: ' + (next === 'dark' ? 'Obsidian Koyu' : 'Swiss Temiz Açık'));
     }
 
-    // Durum Simülatörü
+    function updateThemeBtn(theme) {
+      const label = document.getElementById('themeToggleLabel');
+      const icon = document.getElementById('themeToggleIcon');
+      if (theme === 'dark') {
+        if (label) label.textContent = 'Koyu Mod (Obsidian)';
+        if (icon) icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+      } else {
+        if (label) label.textContent = 'Açık Mod (Swiss)';
+        if (icon) icon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+      }
+    }
+
+    // Sidebar Collapse
+    function toggleSidebar() {
+      const sidebar = document.getElementById('appSidebar');
+      sidebar.classList.toggle('collapsed');
+      localStorage.setItem('guide_sidebar_collapsed', sidebar.classList.contains('collapsed'));
+    }
+
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('appSidebar');
+      sidebar.classList.toggle('mobile-open');
+    }
+
+    // Card Tab Switcher
+    function switchCardTab(btn, tabName) {
+      const card = btn.closest('.feature-card');
+      card.querySelectorAll('.card-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      card.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      const target = card.querySelector('.' + tabName + '-panel');
+      if (target) target.classList.add('active');
+    }
+
+    // Global View Tab Switcher (From Sidebar)
+    function switchGlobalTab(tabName, navBtn) {
+      document.querySelectorAll('.sidebar-nav .nav-btn').forEach(b => b.classList.remove('active'));
+      navBtn.classList.add('active');
+      document.querySelectorAll('.feature-card').forEach(card => {
+        card.querySelectorAll('.card-tab-btn').forEach(b => {
+          if (b.getAttribute('onclick').includes(tabName)) {
+            switchCardTab(b, tabName);
+          }
+        });
+      });
+      showToast('Tüm kartlar "' + tabName.toUpperCase() + '" sekmesine geçirildi.');
+    }
+
+    function switchMainView(viewName, navBtn) {
+      document.querySelectorAll('.sidebar-nav .nav-btn').forEach(b => b.classList.remove('active'));
+      navBtn.classList.add('active');
+      resetAllFilters();
+    }
+
+    // States Simulator
     function switchStateSimulator(btn, stateName) {
       const box = btn.closest('.states-panel');
       box.querySelectorAll('.state-toggle-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       box.querySelectorAll('.sim-view').forEach(v => v.style.display = 'none');
-      box.querySelector('.sim-' + stateName).style.display = 'block';
-      if (stateName === 'skeleton') {
-        box.querySelector('.sim-skeleton').style.display = 'flex';
+      const target = box.querySelector('.sim-' + stateName);
+      if (target) {
+        target.style.display = (stateName === 'skeleton') ? 'flex' : 'block';
       }
     }
 
-    // Açık / Koyu Tema Toggle
-    function toggleLightDarkMode() {
-      const html = document.documentElement;
-      const current = html.getAttribute('data-mode') || 'dark';
-      const next = current === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-mode', next);
-      const btn = document.getElementById('modeToggleBtn');
-      btn.innerText = next === 'light' ? '☀️ Açık' : '🌙 Koyu';
-    }
-
-    // Canlı Arama
+    // Live Search
     function filterFeatures() {
-      const q = document.getElementById('featureSearchInput').value.toLowerCase();
+      const q = document.getElementById('featureSearchInput').value.toLowerCase().trim();
+      const btnClear = document.getElementById('btnClearSearch');
+      btnClear.style.display = q ? 'block' : 'none';
+
+      const activeCatBtn = document.querySelector('#sidebarCategoryList .sidebar-cat-btn.active');
+      const currentCat = activeCatBtn ? activeCatBtn.getAttribute('data-cat') || 'all' : 'all';
+
+      let visible = 0;
       document.querySelectorAll('.feature-card').forEach(card => {
         const text = card.innerText.toLowerCase();
-        card.style.display = text.includes(q) ? 'block' : 'none';
-      });
-    }
+        const cat = card.getAttribute('data-category');
+        const matchesQ = !q || text.includes(q);
+        const matchesCat = (currentCat === 'all' || cat === currentCat);
 
-    // Kategori Filtresi
-    function setCategoryFilter(cat, btn) {
-      document.querySelectorAll('#categoryPills .filter-pill').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.querySelectorAll('.feature-card').forEach(card => {
-        if (cat === 'all' || card.getAttribute('data-category') === cat) {
-          card.style.display = 'block';
+        if (matchesQ && matchesCat) {
+          card.style.display = 'flex';
+          visible++;
         } else {
           card.style.display = 'none';
         }
       });
+
+      document.getElementById('filterVisibleCount').textContent = visible;
+      document.getElementById('btnResetFilters').style.display = (q || currentCat !== 'all') ? 'inline-block' : 'none';
     }
 
-    // Kısayol: Ctrl+K ile arama kutusuna odaklan
+    function clearSearch() {
+      document.getElementById('featureSearchInput').value = '';
+      filterFeatures();
+      document.getElementById('featureSearchInput').focus();
+    }
+
+    // Category Filter
+    function setCategoryFilter(cat, btn) {
+      document.querySelectorAll('#sidebarCategoryList .sidebar-cat-btn').forEach(b => {
+        b.classList.remove('active');
+        b.removeAttribute('data-cat');
+      });
+      document.querySelectorAll('#quickPillsWrap .quick-pill').forEach(b => b.classList.remove('active'));
+
+      if (btn.classList.contains('sidebar-cat-btn')) {
+        btn.classList.add('active');
+        btn.setAttribute('data-cat', cat);
+      } else {
+        btn.classList.add('active');
+        const matchingSidebarBtn = Array.from(document.querySelectorAll('#sidebarCategoryList .sidebar-cat-btn')).find(b => b.getAttribute('onclick').includes("'" + cat + "'"));
+        if (matchingSidebarBtn) {
+          matchingSidebarBtn.classList.add('active');
+          matchingSidebarBtn.setAttribute('data-cat', cat);
+        }
+      }
+      filterFeatures();
+    }
+
+    function resetAllFilters() {
+      document.getElementById('featureSearchInput').value = '';
+      setCategoryFilter('all', document.querySelector('#sidebarCategoryList .sidebar-cat-btn'));
+    }
+
+    // Layout Switcher (Grid / List)
+    function setLayoutMode(mode) {
+      const container = document.getElementById('featuresContainer');
+      document.getElementById('layoutGridBtn').classList.toggle('active', mode === 'grid');
+      document.getElementById('layoutListBtn').classList.toggle('active', mode === 'list');
+      container.className = 'features-container layout-' + mode;
+      localStorage.setItem('guide_layout_mode', mode);
+    }
+
+    let allExpanded = false;
+    function expandAllCardPanels() {
+      allExpanded = !allExpanded;
+      document.getElementById('expandAllLabel').textContent = allExpanded ? 'Tümünü Daralt' : 'Tümünü Genişlet';
+      document.querySelectorAll('.feature-card').forEach(card => {
+        card.querySelectorAll('.tab-content').forEach(c => {
+          c.style.display = allExpanded ? 'block' : '';
+        });
+      });
+      showToast(allExpanded ? 'Tüm paneller açıldı.' : 'Paneller standart görünüme döndürüldü.');
+    }
+
+    // Detail Drawer
+    function openDetailDrawerFromCard(btn) {
+      const card = btn.closest('.feature-card');
+      const title = card.querySelector('.card-title span').textContent;
+      const desc = card.querySelector('.card-desc').textContent;
+      const catBadge = card.querySelector('.cat-badge').cloneNode(true);
+      const sliceContent = card.querySelector('.slice-panel').innerHTML;
+      const playbookContent = card.querySelector('.playbook-panel').innerHTML;
+
+      document.getElementById('drawerTitle').textContent = title;
+      document.getElementById('drawerDesc').textContent = desc;
+      const drawerBadgeEl = document.getElementById('drawerBadge');
+      drawerBadgeEl.className = catBadge.className;
+      drawerBadgeEl.textContent = catBadge.textContent;
+
+      document.getElementById('drawerSliceGrid').innerHTML = sliceContent;
+      document.getElementById('drawerPlaybookSteps').innerHTML = playbookContent;
+
+      document.getElementById('detailDrawer').classList.add('open');
+      document.getElementById('drawerBackdrop').classList.add('active');
+    }
+
+    function closeDetailDrawer() {
+      document.getElementById('detailDrawer').classList.remove('open');
+      document.getElementById('drawerBackdrop').classList.remove('active');
+    }
+
+    // Toast Notifications
+    function showToast(msg) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = '<svg class="svg-icon" style="color:var(--status-success);" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg><span>' + msg + '</span>';
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(8px)';
+        toast.style.transition = 'all 0.2s';
+        setTimeout(() => toast.remove(), 200);
+      }, 2400);
+    }
+
+    function copyCardPlaybook(btn) {
+      const card = btn.closest('.feature-card');
+      const title = card.querySelector('.card-title span').textContent;
+      const steps = Array.from(card.querySelectorAll('.step-mini-item')).map(s => {
+        const num = s.querySelector('.step-mini-num').textContent;
+        const h4 = s.querySelector('h4').textContent;
+        const p = s.querySelector('p').textContent;
+        return num + '. ' + h4 + ': ' + p;
+      }).join('\n');
+
+      navigator.clipboard.writeText(title + '\n\nPlaybook:\n' + steps).then(() => {
+        showToast('Playbook panoya kopyalandı!');
+      });
+    }
+
+    // Shortcuts
     window.addEventListener('keydown', e => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
         document.getElementById('featureSearchInput').focus();
       }
+      if (e.key === '[' && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+        e.preventDefault();
+        toggleSidebar();
+      }
+      if (e.key === 'Escape') {
+        closeDetailDrawer();
+      }
     });
+
+    // Initialize
+    (function init() {
+      const savedTheme = localStorage.getItem('guide_deck_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      updateThemeBtn(savedTheme);
+
+      const savedLayout = localStorage.getItem('guide_layout_mode') || 'grid';
+      setLayoutMode(savedLayout);
+
+      if (localStorage.getItem('guide_sidebar_collapsed') === 'true') {
+        document.getElementById('appSidebar').classList.add('collapsed');
+      }
+    })();
   </script>
 </body>
 </html>
