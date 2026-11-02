@@ -53,4 +53,9 @@ sinif: SUREC
 > 3. Yeni kural yalnızca bu başlığın altına `### <Kural Başlığı>` olarak eklenir.
 
 ### Bu Proje İçin Ek Kurallar
-_(Henüz bu projeye özel ek bir kural tanımlanmamıştır.)_
+
+### Scout ve Özel Araçlar Yerel Kalmalıdır (.gitignore Önceliği)
+- `.gitignore` dosyası git operasyonlarında birincil ve bağlayıcı kılavuzdur.
+- `scout/` aracı ve altındaki tüm dosyalar (`scout/**`, planlar, katalog, sunucu, testler, `repos.json`), `temp/`, `scratch/`, `tests/*scout*` yalnızca yerel çalışma amaçlıdır ve `.gitignore` gereği repoya dahil edilmez.
+- Ajan asla `git add -f` ile gitignore edilmiş scout dosyalarını zorla stage etmez; `scout/` dosyaları git index'inde tutulmaz, commit veya push döngüsüne sokulmaz.
+- Scout işlemleri tamamen yerel (local-only) olarak yürütülür.

@@ -320,6 +320,13 @@ Proje için yeni veya istisnai bir kural gerekiyorsa:
 _(Aşağıdakiler yalnız **skillSetWorks** deposuna aittir. Genel kural değildir;
 eklenen kural zaten kapsamı karşılıyorsa §10 gereği yazılmaz.)_
 
+### Scout ve Özel Araçlar Yerel Kalmalıdır (.gitignore Önceliği)
+
+- `scout/` aracı ve altındaki tüm dosyalar (`scout/**`, planlar, katalog, sunucu, testler, `repos.json`) yalnızca yerel geliştirme, araştırma ve çalışma amaçlıdır.
+- `.gitignore` dosyasında tanımlanan kurallara (`scout/`, `temp/`, `scratch/`, `tests/*scout*` vb.) KESİNLİKLE VE TAVİZSİZ riayet edilir.
+- Ajan asla `git add -f` ile gitignore edilmiş scout dosyalarını zorla stage etmez; `scout/` dosyaları git index'inde tutulmaz, commit veya push döngüsüne sokulmaz.
+- Scout işlemleri tamamen yerel (local-only) olarak yürütülür; repo commit ve push işlemleri yalnızca skillSetWorks'ün genel ajan kuralları ve skill dağıtım varlıklarını kapsar.
+
 ### Depo ne yapar, ne yapmaz
 
 Bu depo **uygulama kodu içermez.** Yalnız projeler arası ortak ajan çalışma
