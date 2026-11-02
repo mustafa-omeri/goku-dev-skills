@@ -346,7 +346,7 @@ export function AdaptiveModal({ children, title, triggerText }: { children: Reac
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild><Button>{triggerText}</Button></DialogTrigger>
-        <DialogContent className="sm:max-w-lg rounded-2xl max-h-[85dvh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg rounded-2xl max-h-[85dvh] overflow-y-auto overscroll-contain">
           <DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>
           <div className="py-2">{children}</div>
         </DialogContent>
@@ -363,6 +363,57 @@ export function AdaptiveModal({ children, title, triggerText }: { children: Reac
       </DrawerContent>
     </Drawer>
   )
+}
+```
+
+
+
+**Body Scroll Lock & Layout-Shift Koruması Kancası (useBodyScrollLock):**
+```tsx
+import * as React from "react"
+
+/**
+ * Modal/Popup açıkken arka plan kaydırmasını (scroll chaining) önler ve
+ * kaydırma çubuğunun kapanmasıyla oluşan 15px layout shift zıplamasını kompanse eder.
+ */
+export function useBodyScrollLock(isLocked: boolean) {
+  React.useEffect(() => {
+    if (!isLocked) return
+
+    const originalOverflow = document.documentElement.style.overflow
+    const originalPaddingRight = document.body.style.paddingRight
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+
+    document.documentElement.style.overflow = "hidden"
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`
+    }
+
+    return () => {
+      document.documentElement.style.overflow = originalOverflow
+      document.body.style.paddingRight = originalPaddingRight
+    }
+  }, [isLocked])
+}
+```
+
+```css
+/* CSS Çözümü (Framework-bağımsız): */
+html.modal-open, body.modal-open {
+  overflow: hidden;
+  scrollbar-gutter: stable; /* Kaydırma çubuğu kapanınca sayfanın sağa zıplamasını önler */
+}
+
+/* Modal içerik konteyneri */
+.modal-content, .drawer-content {
+  overflow-y: auto;
+  overscroll-behavior: contain; /* Fare tekerleğinin arkadaki sayfaya sızmasını (scroll chaining) engeller */
+}
+
+/* Modal backdrop / overlay */
+.modal-backdrop, .overlay {
+  touch-action: none; /* Mobilde dokunmatik hareketlerin arka sayfaya geçmesini engeller */
+  overscroll-behavior: contain;
 }
 ```
 

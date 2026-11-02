@@ -29,6 +29,7 @@ W1 (missing-tabular-nums)   Tablo veya sayaç/istatistik rakamlarında tabular-n
 W2 (label-uppercase-spam)   Sayfada 3'ten fazla seçicide uppercase + letter-spacing etiket kullanımı
 W3 (horizontal-scroll-slop) Görev ve eylem alanlarında yapay yatay kaydırma
 W4 (spinner-loading-slop)    Veri/içerik yüklenirken iskelet ekran (Skeleton) yerine jenerik spinner kullanımı (§2.6 A.15)
+W5 (unlocked-modal-scroll)   Modal/dialog kaydırılabilir alanında overscroll-contain eksikliği (§2.4.1, §2.6 A.16)
 
 Çıkış Kodları:
 - E1-E9 varsa: exit 1
@@ -134,6 +135,20 @@ EMOJI_HEADING_BUTTON_RE = re.compile(
 DATA_LOADING_SPINNER_RE = re.compile(
     r"""(?:<Suspense\s+fallback=\{[^}]*(?:Spinner|Loader|animate-spin)|if\s*\([^)]*(?:loading|fetching|pending)[^)]*\)\s*\{?\s*return\s*\(?\s*(?:<div[^>]*>)?\s*<(?:Spinner|Loader|LoadingSpinner|Icons\.spinner|Loader2)\b)""",
     re.IGNORECASE
+)
+
+# W5: Unlocked Modal Scroll / Missing overscroll-contain (§2.4.1 / §2.6 A.16)
+MODAL_SCROLL_TW_RE = re.compile(
+    r"""<(?:DialogContent|DrawerContent|SheetContent|ModalContent|PopupContent|PopoverContent)\b[^>]*\b(?:overflow-y-(?:auto|scroll)|overflow-(?:auto|scroll))\b[^>]*>""",
+    re.IGNORECASE | re.DOTALL
+)
+MODAL_TAG_SCROLL_RE1 = re.compile(
+    r"""<[a-zA-Z0-9_-]+\b[^>]*\b(?:class|className)=["'][^"']*\b(?:modal|dialog|drawer|sheet|popup)[^"']*\b(?:overflow-y-(?:auto|scroll)|overflow-(?:auto|scroll))\b[^"']*["'][^>]*>""",
+    re.IGNORECASE | re.DOTALL
+)
+MODAL_TAG_SCROLL_RE2 = re.compile(
+    r"""<[a-zA-Z0-9_-]+\b[^>]*\b(?:class|className)=["'][^"']*\b(?:overflow-y-(?:auto|scroll)|overflow-(?:auto|scroll))\b[^"']*\b(?:modal|dialog|drawer|sheet|popup)[^"']*["'][^>]*>""",
+    re.IGNORECASE | re.DOTALL
 )
 
 # E9: Inline style with hardcoded hex color
@@ -460,6 +475,8 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
                 has_tracking = False
                 has_overflow_x = False
                 has_nowrap = False
+                has_overflow_y = False
+                has_overscroll_contain = False
 
                 for decl in body.split(";"):
                     decl_s = decl.strip()
@@ -524,6 +541,10 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
 
                     if prop_l == "text-transform" and "uppercase" in val_l:
                         has_uppercase = True
+                    if prop_l in ("overflow-y", "overflow") and any(s in val_l for s in ("auto", "scroll")):
+                        has_overflow_y = True
+                    if prop_l.startswith("overscroll-behavior") and any(s in val_l for s in ("contain", "none")):
+                        has_overscroll_contain = True
                     if prop_l == "letter-spacing":
                         has_tracking = True
 
@@ -539,6 +560,21 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
                             "message": (
                                 f"Görev veya eylem alanında yapay yatay kaydırma ('{selector}' -> overflow-x + nowrap) tespit edildi (A.13 / Kural B). "
                                 f"Yatay scrollbar yerine responsive sarma (flex-wrap: wrap) veya açılır bir komut paleti/modal kullanın."
+                            ),
+                        })
+
+                if has_overflow_y and not has_overscroll_contain:
+                    sel_l = selector.lower()
+                    if any(k in sel_l for k in ("modal", "dialog", "drawer", "sheet", "popup", "popover")):
+                        warnings.append({
+                            "code": "W5",
+                            "rule": "unlocked-modal-scroll",
+                            "file": str(path),
+                            "line": rule_line,
+                            "message": (
+                                f"Modal/Popup kaydırılabilir alanında overscroll-behavior eksik ('{selector}'). "
+                                f"Arka plan sayfasının kaymasını (scroll chaining / background bleed) önlemek için "
+                                f"'overscroll-behavior: contain;' ekleyin ve body scroll lock uygulayın (§2.4.1 / §2.6 A.16)."
                             ),
                         })
 
@@ -593,6 +629,34 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
                         "(Skeleton screens UI) kullanılması zorunludur. Spinner yalnızca form submit butonlarında kullanılabilir."
                     ),
                 })
+
+    # W5: Unlocked Modal Scroll Slop (Modal/Popup/Drawer scroll alanında overscroll-contain bulunmalı)
+    if path.suffix.lower() in (".tsx", ".jsx", ".html", ".vue", ".svelte", ".astro"):
+        for pattern in (MODAL_SCROLL_TW_RE, MODAL_TAG_SCROLL_RE1, MODAL_TAG_SCROLL_RE2):
+            for m in pattern.finditer(content):
+                matched_tag = m.group(0)
+                if not re.search(r"\b(?:overscroll-contain|overscroll-none|overscroll-behavior)\b", matched_tag):
+                    line_no = content[:m.start()].count("\n") + 1
+                    warnings.append({
+                        "code": "W5",
+                        "rule": "unlocked-modal-scroll",
+                        "file": str(path),
+                        "line": line_no,
+                        "message": (
+                            "Modal/Dialog/Drawer kaydırılabilir içeriğinde overscroll-contain eksik (§2.4.1 / §2.6 A.16). "
+                            "Modal açıkken arkadaki sayfanın kaymasını (scroll chaining / background bleed) önlemek için "
+                            "'overscroll-contain' (overscroll-behavior: contain) ekleyin ve body scroll lock uygulayın."
+                        ),
+                    })
+
+    seen_w = set()
+    deduped_warnings = []
+    for w in warnings:
+        key = (w["code"], w["line"])
+        if key not in seen_w:
+            seen_w.add(key)
+            deduped_warnings.append(w)
+    warnings = deduped_warnings
 
     return errors, warnings
 

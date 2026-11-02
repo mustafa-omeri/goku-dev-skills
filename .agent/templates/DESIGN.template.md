@@ -178,6 +178,7 @@ Her sayfa veya bileşen için sıfırdan rastgele CSS sınıfları icat etmek YA
 
 - **Hairline First:** Derinlik için ağır gölgeler yerine önce 1px net kenarlıklar (`border`) ve ton kontrastı kullanılır.
 - **0-Blur Blok Gölge Yasağı:** `box-shadow: 4px 4px 0 ...` gibi neobrutalist blok gölgeler yasaktır.
+- **Modal & Overlay Scroll İzolasyonu:** Açılan tüm popup, dialog, drawer ve sheet bileşenlerinde kaydırılabilir alana `overscroll-behavior: contain;` (`overscroll-contain`), backdrop üzerine `touch-action: none;` verilir; modal açıkken sayfa gövdesi `overflow: hidden` ile kilitlenir ve scrollbar zıplamasına karşı `scrollbar-gutter: stable` veya padding kompanzasyonu uygulanır.
 - **Tarayıcı Yüzeyleri (Themed Browser Surfaces):**
   - `::selection`: Marka rengi ve zemin kontrastı ile uyumlu seçim arka planı ve metin rengi.
   - `caret-color`: Input odaklandığında marka aksan rengi.
@@ -216,3 +217,4 @@ Her sayfa veya bileşen için sıfırdan rastgele CSS sınıfları icat etmek YA
 - Do Not: İkon yerine emoji veya Unicode karakteri kullanma; standart SVG ikon kütüphanesi kullan.
 - Do Not: Sözleşmede (`DESIGN.md`) tanımlı olmayan ham hex/rgb renkleri CSS veya bileşen içine gömme.
 - Do Not: Sunucudan veri çekilen sayfa, kart, tablo ve listelerde iskelet ekran (Skeleton screens UI) yerine jenerik spinner veya boş beyaz ekran kullanma; hedef bileşenin kaset yapısını taklit eden gri tonlu görsel taslak (Skeleton) kullanılması zorunludur.
+- Do Not: Modal, dialog veya popup açıkken arka plan sayfasının kaymasına (scroll chaining / background bleed) izin verme; modal konteynerinde CSS overscroll-contain ve sayfa gövdesinde layout-shift korumalı programatik body scroll lock (useBodyScrollLock / scrollbar-gutter: stable) zorunludur (§2.4.1 / §2.6 A.16).

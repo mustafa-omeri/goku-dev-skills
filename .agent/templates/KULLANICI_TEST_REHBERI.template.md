@@ -66,6 +66,7 @@ _(Bu bölüm projeye özeldir. Her yeni özellikte/sprintte ajan bu bölümü g�
     1. Tarayıcıda `URL` adresine gidin.
     2. Sol menünün, geniş bilgi ızgarasının ve çok sütunlu yerleşimin ferah oturduğunu görün.
     3. Modal/Popup açan butona tıklayın: Merkezli, `max-w-lg` şık bir Dialog açıldığını ve sayfa temasını (renk, radius, backdrop) koruduğunu doğrulayın.
+    4. **Modal Scroll & Arka Plan Kilidi Testi:** Modal içeriğini fare tekerleğiyle en alta ve en üste kadar kaydırın: Arkadaki ana sayfanın KESİNLİKLE kaymadığını (`overscroll-contain`), backdrop üzerine gelindiğinde arka planın sabit kaldığını ve modal kapatıldığında ana sayfa scroll'unun ve düzeninin (sıfır layout-shift) pürüzsüz geri yüklendiğini doğrulayın.
   - **Tablet Testi (768px – 1024px / F12 Responsive iPad):**
     1. `F12` açıp genişliği `768px` ile `1024px` arasına getirin.
     2. Düzenin mobildeki gibi tek sütuna büzüşmediğini; dengeli 2 sütunlu grid veya Split-View (sol liste, sağ detay) olarak açıldığını gözlemleyin.

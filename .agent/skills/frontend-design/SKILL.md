@@ -33,7 +33,7 @@ Scale design ambition to what visitor success looks like on the target surface:
   * *Typography:* A single well-tuned Sans family across headings, buttons, and labels (never use display fonts in UI chrome). Fixed rem scale, tight ratio (1.125–1.2).
   * *Color:* Restrained palette with clear semantic status tokens (`hover`, `focus`, `active`, `disabled`, `loading`, `error`, `success`).
   * *Motion:* Quick transitions (150–250ms); NEVER use slow orchestrated page-load sequences.
-  * *Interactions:* No reinventing standard affordances; modals only when disruption is strictly necessary.
+  * *Interactions:* No reinventing standard affordances; modals only when disruption is strictly necessary; mandatory dual-layer background scroll lock on all modals/drawers (CSS `overscroll-contain` + programmatic body scroll lock with layout-shift prevention).
 - **Read (Docs, Guides, Technical Specs, Changelogs):** The visitor understands something. Structure for comprehension: 65–75ch prose line length, clear heading hierarchy, sticky table of contents (TOC), crisp code blocks with copy ergonomics.
 - **Experience (Portfolios, Galleries, Showcases):** The visitor is inside the work itself. Minimal UI chrome; let the artifact lead from the first viewport.
 

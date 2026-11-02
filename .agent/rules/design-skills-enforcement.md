@@ -121,7 +121,20 @@ Popup ve modallar sayfanın en kritik etkileşim noktalarıdır. Bir modal tesli
    - **Masaüstünde (`≥ 768px`):** Ortalanmış, odaklanmış Modal Dialog (`max-w-lg mx-auto rounded-2xl shadow-2xl`).
    - **Mobilde (`< 768px`):** Ortalanmış minik modal YASAKTIR. Otomatik olarak ekranın altından yükselen **Bottom Sheet (Drawer)** veya **Full-screen Sheet**'e dönüşmelidir (`fixed inset-x-0 bottom-0 rounded-t-2xl max-h-[90dvh]`). Kullanıcının başparmağıyla aşağı çekip kapatabileceği görsel tutamaç (`drag handle`) ve belirgin kapatma butonu zorunludur.
 3. **Kaydırma, Klavye ve Taşma Güvenliği:**
-   - **Scroll Koruması:** `max-h-[85dvh] overflow-y-auto` ve `overscroll-contain` zorunludur; modal açıldığında arka plan kaydırması (`body scroll lock`) kilitlenmelidir.
+   - **Scroll Koruması:** `max-h-[85dvh] overflow-y-auto` ve `overscroll-contain` zorunludur; modal açıldığında arka plan kaydırması (`body scroll lock`) kilitlenmelidir (bkz. §2.4.1).
+
+### 2.4.1 Çift Katmanlı Arka Plan Scroll Kilidi ve Sızıntı Önleme Sözleşmesi (Dual-Layer Body Scroll Lock & Anti-Scroll-Chaining Contract)
+
+Popup, modal, sheet, drawer veya lightbox gibi overlay katmanları açıldığında farenin tekerlek veya dokunmatik kaydırmasının arkadaki ana sayfayı da kaydırması (**scroll chaining** / **background scroll bleed**) kabul edilemez bir zanaat kusurudur. Her popup/modal uygulamasında aşağıdaki çift katmanlı koruma tavizsiz uygulanır:
+
+1. **CSS Scroll İzolasyon Katmanı (Overscroll Containment):**
+   - Açılan her modal, popup veya drawer konteynerinin kaydırılabilir gövdesinde (`overflow-y: auto`) CSS `overscroll-behavior: contain;` (Tailwind: `overscroll-contain`) bulunması **KESİNLİKLE ZORUNLUDUR**. Bu kural `check_design_slop.py` (W5 - `unlocked-modal-scroll`) kapısıyla mekanik olarak denetlenir.
+   - Modal backdrop / overlay üzerinde `overscroll-behavior: contain;` ve dokunmatik sızıntıları önlemek için `touch-action: none;` zorunludur.
+
+2. **Programatik DOM Body Scroll Kilidi (Body Scroll Lock):**
+   - Modal veya popup açıldığında (mount veya `isOpen === true`) sayfanın ana gövdesi kilitlenmelidir (`document.documentElement.style.overflow = 'hidden'` veya `document.body.style.overflow = 'hidden'`).
+   - **Gutter Zıplaması Koruması (Anti-Layout-Shift):** Kaydırma çubuğu gizlendiğinde sayfa içeriğinin 15px sağa zıplamasını (layout shift) önlemek için ya `scrollbar-gutter: stable;` kullanılmalı ya da scrollbar genişliği kadar `body`'ye `padding-right` kompanzasyonu verilmelidir.
+   - **Stack ve Temizlik Güvenliği (Cleanup & Stack-Safe):** Modal kapandığında veya unmount olduğunda önceki stiller temizlenmeli; iç içe birden fazla modal açıldığında en dıştaki son modal kapanana kadar kilit sürdürülmelidir (`useBodyScrollLock` referans kancası).
    - **Mobil Klavye Koruması:** Mobilde form inputuna tıklandığında sanal klavye açıldığında input alanının klavyenin altında kalmaması için safe-area padding (`pb-safe`, `pb-6`) ve dinamik viewport yüksekliği (`dvh`) kullanılmalıdır.
 
 ## 2.5 Gerçekçi Mock Veri ve Görsel Varlık Sözleşmesi (Realistic Mock Visuals Contract)
@@ -162,6 +175,8 @@ Tüm web arayüzü, frontend bileşeni ve sayfa geliştirmelerinde "generic AI s
 14. **Çerçevesiz Kategori Yığılması ve Mağara Modalları Yasağı (A.14 - No Unframed Floating Groups & No Cavernous Modals):** Çoklu kategori, grup veya etki alanı barındıran modal/popup panellerde kategorilerin çerçevesiz, arka plansız havada asılı bırakılması ve modalın içeriğin 2-3 katı genişliğe (ör. 1100px+) açılarak devasa asimetrik karanlık boşluklar yaratması kesinlikle yasaktır. Gruplar çerçevelenmeli ve modal boyutu içeriğin doğal ızgara genişliğiyle orantılı sınırlandırılmalıdır.
 15. **Veri Yüklemede Jenerik Spinner ve Boş Ekran Kolaycılığı Yasağı (A.15 - No Data-Loading Spinners & Mandatory Skeleton Screens):** Bir web sitesinde veya mobil uygulamada içerikler (sayfa, görünüm, kart, liste, tablo, profil, istatistik) sunucudan/API'den yüklenirken gerçek verilerin yerine sayfanın genel yerleşimini (wireframe/kaset yapısını) taklit eden gri tonlu görsel taslakların (Skeleton screens UI) sunulması KESİNLİKLE ZORUNLUDUR. AI ajanları bu kuralı atlayamaz. Veri yükleme anında tüm sayfayı veya veri konteynerini bloklayan jenerik spinner veya donuk/boş ekran bırakılması KESİNLİKLE YASAKTIR. Spinner (dönen yükleme ikonu), YALNIZCA buton içi form gönderimlerinde (`isSubmitting`) veya küçük durum rozetlerinde kullanılabilir.
 
+16. **Arka Plan Scroll Sızıntısı ve Kilitsiz Modal Yasağı (A.16 - No Background Scroll Bleed & Unlocked Modal Slop):** Açılan bir modal, dialog, sheet veya popup kaydırılırken farenin tekerlek veya dokunma hareketinin arkadaki sayfayı kaydırması (scroll chaining), modal açıkken arka plan sayfasının kilitlenmemesi veya modal scroll alanında `overscroll-contain` bulunmaması KESİNLİKLE YASAKTIR. Tüm modal ve popup'lar çift katmanlı korumayla (CSS `overscroll-contain` + layout-shift korumalı programatik body scroll lock) teslim edilir. `check_design_slop.py` (W5) kapısıyla denetlenir.
+
 ### B. Çıktı Üzerinde Zorunlu Zanaat Kontrolleri (Craft Floor Verifications)
 
 1. **Kontrast ve Renkli Zeminlerde Tonlama (Contrast & Hue Tinting):** Gövde metni ve placeholder kontrastı ≥ 4.5:1, büyük metin ≥ 3:1 (WCAG AA). Renkli zeminlerdeki ikincil metinler asla saf gri yapılmaz; her zaman zeminin renginden türetilmiş tonlu renk (tinted hue) taşır. CSS tema değişkenleri arasındaki matematiksel kontrast oranı `python .agent/skills/musgoku/scripts/check_theme_contrast.py` kapısıyla deterministik olarak denetlenir. Koyu modda karanlık metin veya parlak modda aşırı soluk metin kalması kesin olarak engellenir.
@@ -194,6 +209,8 @@ Tüm web arayüzü, frontend bileşeni ve sayfa geliştirmelerinde "generic AI s
     - **Orantılı Boyut Tavanı (Proportional Viewport Clamping):** Modal ve popup paneller içeriğin doğal ızgara genişliğine göre boyutlandırılmalı; masaüstünde `max-width: min(94vw, 780px)` (veya 800px) sınırında tutulmalıdır. Ekranda gereksiz devasa siyah boşluklar / mağara etkisi (cavernous empty void) yaratılması zanaat hatasıdır. Yükseklik içeriğe göre esnek olmalı, `max-height: min(80vh, 680px)` tavanında `overscroll-behavior: contain` taşımalıdır.
     - **Ayrı Gösterimlerin Çerçevelenmesi (Framed Category / Section Containment - Gestalt Common Region):** Farklı etki alanları (domain/kategori), filtre grupları veya alt koleksiyonlar havada başıboş bırakılamaz. Her alan açık bir çerçeve (`border: 1px solid var(--border-subtle)`, yüzey arka plan dolgusu `var(--bg-surface)`, `border-radius: var(--radius-md)`, iç padding `0.85rem–1rem`) içine alınarak görsel bir bütünlük sağlanmalıdır.
     - **Çerçeve İçi Konumlandırma ve Simetrik Izgara (Intra-Frame Alignment & Symmetrical Grid):** Çerçeve içinde üstte başlık şeridi (rozet, sayaç, başlık ve süptil ayırıcı çizgi), altta ise masaüstünde tam 2 simetrik kolondan (`grid-template-columns: repeat(2, 1fr)`) oluşan kart ızgarası yer almalıdır. Mobilde tek kolona (`1fr`) geçmelidir. Tek kartlı alanlar kontrolsüzce sağa doğru esneyemez; çerçevenin dengeli sol yarısında orantılı konumunu korur.
+
+11. **Modal ve Popup Scroll İzolasyonu Doğrulaması (Kural E — Scroll Chaining Isolation & Body Lock Proof):** Popup veya modal içeren tüm bileşenlerde tarayıcıda veya kullanıcı testinde doğrulama zorunludur: Modal açıkken fareyle modal içeriğinin en altına ve en üstüne kadar kaydırıldığında arkadaki sayfanın kıpırdamadığı, backdrop'a dokunulduğunda sayfanın kaymadığı ve modal kapandığında sayfa scroll'unun geri geldiği `docs/KULLANICI_TEST_REHBERI.md` adımlarıyla kanıtlanmalıdır.
 
 ### C. Hazır Bileşen ve Ölçülmüş Palet Önceliği (Zero-Friction Ready-Made Lookup)
 

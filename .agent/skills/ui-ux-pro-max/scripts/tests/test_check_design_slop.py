@@ -279,6 +279,90 @@ class TestCheckDesignSlop(unittest.TestCase):
         res = check_design_slop.run_checks(self.tmp_dir)
         self.assertFalse(any(w["code"] == "W4" for w in res["warnings"]))
 
+    def test_warns_unlocked_modal_scroll_w5(self):
+        """Modal veya Dialog konteynerinde overflow-y-auto olup overscroll-contain eksikse W5 uyarısı üretmeli."""
+        src = self.tmp_dir / "src"
+        src.mkdir(exist_ok=True)
+        page = src / "TestModal.tsx"
+        page.write_text(
+            """
+            import React from 'react';
+            import { Dialog, DialogContent } from '@/components/ui/dialog';
+            export function TestModal({ open }) {
+                return (
+                    <Dialog open={open}>
+                        <DialogContent className="max-w-lg max-h-[85dvh] overflow-y-auto">
+                            <div>Content</div>
+                        </DialogContent>
+                    </Dialog>
+                );
+            }
+            """,
+            encoding="utf-8"
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertTrue(any(w["code"] == "W5" for w in res["warnings"]))
+
+    def test_compliant_modal_scroll_passes_cleanly(self):
+        """Modal konteynerinde overscroll-contain varsa W5 uyarısı üretilmemeli."""
+        src = self.tmp_dir / "src"
+        src.mkdir(exist_ok=True)
+        page = src / "TestModalCompliant.tsx"
+        page.write_text(
+            """
+            import React from 'react';
+            import { Dialog, DialogContent } from '@/components/ui/dialog';
+            export function TestModalCompliant({ open }) {
+                return (
+                    <Dialog open={open}>
+                        <DialogContent className="max-w-lg max-h-[85dvh] overflow-y-auto overscroll-contain">
+                            <div>Content</div>
+                        </DialogContent>
+                    </Dialog>
+                );
+            }
+            """,
+            encoding="utf-8"
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertFalse(any(w["code"] == "W5" for w in res["warnings"]))
+
+
+    def test_warns_unlocked_modal_scroll_css(self):
+        """CSS dosyasında .modal seçicisinde overflow-y auto olup overscroll-behavior eksikse W5 uyarısı üretmeli."""
+        src = self.tmp_dir / "src"
+        src.mkdir(exist_ok=True)
+        css_file = src / "modal.css"
+        css_file.write_text(
+            """
+            .modal-content {
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            """,
+            encoding="utf-8"
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertTrue(any(w["code"] == "W5" for w in res["warnings"]))
+
+    def test_compliant_modal_scroll_css_passes_cleanly(self):
+        """CSS dosyasında .modal seçicisinde overscroll-behavior: contain varsa W5 uyarısı üretilmemeli."""
+        src = self.tmp_dir / "src"
+        src.mkdir(exist_ok=True)
+        css_file = src / "modal-compliant.css"
+        css_file.write_text(
+            """
+            .modal-content {
+                max-height: 80vh;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+            }
+            """,
+            encoding="utf-8"
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertFalse(any(w["code"] == "W5" for w in res["warnings"]))
+
 
 if __name__ == "__main__":
     unittest.main()
