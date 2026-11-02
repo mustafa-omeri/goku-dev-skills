@@ -1,0 +1,462 @@
+[
+  {
+    "id": 1,
+    "url": "https://github.com/shadcn-ui/ui",
+    "name": "ui",
+    "owner": "shadcn-ui",
+    "layer": "Belirsiz",
+    "status": "REJECTED",
+    "verdict": "BIZ_DAHA_IYIYIZ: Bizim ui-styling + ui-ux-pro-max 79 stil ve hazır token mimarisiyle daha kapsamlı.",
+    "plan_file": "plans/shadcn-ui.md",
+    "date": "2026-10-25",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-25 09:00",
+        "action": "ANALYZED",
+        "status": "REJECTED",
+        "note": "BIZ_DAHA_IYIYIZ: Bizim ui-styling + ui-ux-pro-max 79 stil ve hazır token mimarisiyle daha kapsamlı."
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "url": "https://github.com/kostja94/marketing-skills",
+    "name": "marketing-skills",
+    "owner": "kostja94",
+    "layer": "Tooling / Agentic",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/seo-growth/ (Teknik SEO, SERP, GTM Lansman, CRO & seo_checker.py) olarak entegre edildi.",
+    "plan_file": "plans/marketing-skills.md",
+    "date": "2026-10-22",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-22 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/seo-growth/ (Teknik SEO, SERP, GTM Lansman, CRO & seo_checker.py) olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "url": "https://github.com/AgricIDaniel/claude-seo",
+    "name": "claude-seo",
+    "owner": "AgricIDaniel",
+    "layer": "Backend + Tooling / Agentic",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/seo-growth/ (GEO AI Search, Topic Clusters, E-E-A-T & hreflang) olarak entegre edildi.",
+    "plan_file": "plans/claude-seo.md",
+    "date": "2026-10-22",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-22 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/seo-growth/ (GEO AI Search, Topic Clusters, E-E-A-T & hreflang) olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "url": "https://github.com/seranking/seo-skills",
+    "name": "seo-skills",
+    "owner": "seranking",
+    "layer": "Tooling / Agentic",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/seo-growth/ (Content Brief, Search Intent & Competitive Gap) olarak entegre edildi.",
+    "plan_file": "plans/seo-skills.md",
+    "date": "2026-10-22",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-22 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/seo-growth/ (Content Brief, Search Intent & Competitive Gap) olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "url": "https://github.com/Bhanunamikaze/Agentic-SEO-Skill",
+    "name": "Agentic-SEO-Skill",
+    "owner": "Bhanunamikaze",
+    "layer": "Backend + Tooling / Agentic",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/seo-growth/ (AI Crawler Policy Matrix, Citation Readiness & robots.txt Denetimi) olarak entegre edildi.",
+    "plan_file": "plans/Agentic-SEO-Skill.md",
+    "date": "2026-10-22",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-22 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/seo-growth/ (AI Crawler Policy Matrix, Citation Readiness & robots.txt Denetimi) olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "url": "https://github.com/karpathy/llm-council",
+    "name": "llm-council",
+    "owner": "karpathy",
+    "layer": "Backend + Tooling / Agentic",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/karpathy-guidelines/ (Council Deliberation, Blind Peer Review & council_ranker.py) olarak entegre edildi.",
+    "plan_file": "plans/llm-council.md",
+    "date": "2026-10-22",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-22 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/karpathy-guidelines/ (Council Deliberation, Blind Peer Review & council_ranker.py) olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "url": "https://github.com/alexpate/awesome-design-systems",
+    "name": "awesome-design-systems",
+    "owner": "alexpate",
+    "layer": "Referans & Veri",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/ui-ux-pro-max/references/enterprise-design-systems.md (40+ Kurumsal Tasarım Sistemi Benchmark İndeksi) olarak entegre edildi.",
+    "plan_file": "plans/awesome-design-systems.md",
+    "date": "2026-10-25",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-25 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/ui-ux-pro-max/references/enterprise-design-systems.md (40+ Kurumsal Tasarım Sistemi Benchmark İndeksi) olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "url": "https://github.com/abi/screenshot-to-code",
+    "name": "screenshot-to-code",
+    "owner": "abi",
+    "layer": "Fullstack",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/frontend-design/references/vision-to-component-patterns.md (Vision-to-Component 5 Aşamalı Zanaat Döngüsü) olarak entegre edildi.",
+    "plan_file": "plans/screenshot-to-code.md",
+    "date": "2026-10-25",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-25 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/frontend-design/references/vision-to-component-patterns.md (Vision-to-Component 5 Aşamalı Zanaat Döngüsü) olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "url": "https://github.com/juliusbrussee/caveman",
+    "name": "caveman",
+    "owner": "juliusbrussee",
+    "layer": "Tooling / Agentic",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/karpathy-guidelines/references/token-efficient-communication.md (Prose Compression & Token Tasarrufu İlkesi) olarak entegre edildi.",
+    "plan_file": "plans/caveman.md",
+    "date": "2026-10-25",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-25 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/karpathy-guidelines/references/token-efficient-communication.md (Prose Compression & Token Tasarrufu İlkesi) olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "url": "https://github.com/ayghri/i-have-adhd",
+    "name": "i-have-adhd",
+    "owner": "ayghri",
+    "layer": "Tooling / Agentic",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/karpathy-guidelines/references/action-first-communication.md (10 Action-First ve Bilişsel Yük Düşürme Kuralı) olarak entegre edildi.",
+    "plan_file": "plans/i-have-adhd.md",
+    "date": "2026-10-25",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-25 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/karpathy-guidelines/references/action-first-communication.md (10 Action-First ve Bilişsel Yük Düşürme Kuralı) olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "url": "local:devSearch/projects/prelaunch-skills-v2",
+    "name": "prelaunch-skills-v2",
+    "owner": "devSearch (Yerel Proje Seti)",
+    "layer": "Fullstack + Tooling / Agentic",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/prelaunch-audit/ (20-Maddelik Çekirdek Denetim, KVKK/GDPR/Consent, SEO, WCAG 2.2 AA & /prelaunch, /prelaunch-update) olarak entegre edildi.",
+    "plan_file": "plans/prelaunch-skills-v2.md",
+    "date": "2026-10-26",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-26 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/prelaunch-audit/ (20-Maddelik Çekirdek Denetim, KVKK/GDPR/Consent, SEO, WCAG 2.2 AA & /prelaunch, /prelaunch-update) olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "url": "https://github.com/headroomlabs-ai/headroom",
+    "name": "headroom",
+    "owner": "headroomlabs-ai",
+    "layer": "Tooling / Agentic",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/karpathy-guidelines/references/context-compression-headroom.md (Live-Zone Context Sıkıştırma, Prompt Cache Koruması & Byte-Accurate Hata Koruma İlkesi) olarak entegre edildi.",
+    "plan_file": "plans/headroom.md",
+    "date": "2026-10-26",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-26 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/karpathy-guidelines/references/context-compression-headroom.md (Live-Zone Context Sıkıştırma, Prompt Cache Koruması & Byte-Accurate Hata Koruma İlkesi) olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "url": "https://github.com/google-labs-code/stitch-skills",
+    "name": "stitch-skills",
+    "owner": "google-labs-code",
+    "layer": "Frontend + Tooling / Agentic",
+    "status": "SUSPENDED",
+    "verdict": "KISMEN_ALINABILIR: Google Stitch ekosistemi ve MCP tabanlı UI generation iş akışları için referans prompt/şablon kütüphanesi barındırıyor; ancak kod tabanımız bağımsız, zanaat odaklı ve yerel tasarım kurallarında (frontend-design, ui-ux-pro-max, design-system) çok daha olgun olduğundan sadece Stitch MCP entegrasyonu ve tasarım çıktısı prompt desenleri referans olarak değerlendirilebilir.",
+    "plan_file": "plans/stitch-skills.md",
+    "date": "2026-10-30",
+    "progress": 0,
+    "history": [
+      {
+        "date": "2026-10-30 09:00",
+        "action": "ANALYZED",
+        "status": "SUSPENDED",
+        "note": "KISMEN_ALINABILIR: Google Stitch ekosistemi ve MCP tabanlı UI generation iş akışları için referans prompt/şablon kütüphanesi barındırıyor; ancak kod tabanımız bağımsız, zanaat odaklı ve yerel tasarım kurallarında (frontend-design, ui-ux-pro-max, design-system) çok daha olgun olduğundan sadece Stitch MCP entegrasyonu ve tasarım çıktısı prompt desenleri referans olarak değerlendirilebilir."
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "url": "https://github.com/Flopsky/MarkThat",
+    "name": "MarkThat",
+    "owner": "Flopsky",
+    "layer": "Backend",
+    "status": "CANCEL",
+    "verdict": "KISMEN_ALINABILIR: Doküman ve görselden Markdown'a dönüşüm için Jinja2 şablonlama yapısı, koordinat bazlı figür çıkarma (PyMuPDF + multimodal LLM) ve çoklu model fallback mantığı referans olarak faydalıdır; ancak projenin kendisi bağımsız bir Python kütüphanesidir ve skill setimize doğrudan bir tam kütüphane olarak değil, doküman işleme referans deseni olarak kazandırılabilir.",
+    "plan_file": "plans/MarkThat.md",
+    "date": "2026-10-30",
+    "progress": 0,
+    "history": [
+      {
+        "date": "2026-10-30 09:00",
+        "action": "ANALYZED",
+        "status": "CANCEL",
+        "note": "KISMEN_ALINABILIR: Doküman ve görselden Markdown'a dönüşüm için Jinja2 şablonlama yapısı, koordinat bazlı figür çıkarma (PyMuPDF + multimodal LLM) ve çoklu model fallback mantığı referans olarak faydalıdır; ancak projenin kendisi bağımsız bir Python kütüphanesidir ve skill setimize doğrudan bir tam kütüphane olarak değil, doküman işleme referans deseni olarak kazandırılabilir."
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "url": "https://github.com/Dammyjay93/interface-design",
+    "name": "interface-design",
+    "owner": "Dammyjay93",
+    "layer": "Tooling / Agentic",
+    "status": "REJECTED",
+    "verdict": "BIZ_DAHA_IYIYIZ: Reponun önerdiği oturumlar arası tasarım tutarlılığı ve karar hafızası (.interface-design/system.md) yapımızda DESIGN.md, HANDOFF.md, check_design_contract.py ve ui-polish/ui-ux-pro-max/frontend-design ekosistemiyle hem çok daha derin hem de programatik linter kapılarıyla zaten tam koruma altındadır.",
+    "plan_file": "plans/interface-design.md",
+    "date": "2026-10-30",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-30 09:00",
+        "action": "ANALYZED",
+        "status": "REJECTED",
+        "note": "BIZ_DAHA_IYIYIZ: Reponun önerdiği oturumlar arası tasarım tutarlılığı ve karar hafızası (.interface-design/system.md) yapımızda DESIGN.md, HANDOFF.md, check_design_contract.py ve ui-polish/ui-ux-pro-max/frontend-design ekosistemiyle hem çok daha derin hem de programatik linter kapılarıyla zaten tam koruma altındadır."
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "url": "https://github.com/jakubkrehel/skills",
+    "name": "skills",
+    "owner": "jakubkrehel",
+    "layer": "Tooling / Agentic",
+    "status": "REJECTED",
+    "verdict": "BIZ_DAHA_IYIYIZ: Bizim ui-styling + ui-ux-pro-max 79 stil ve hazır token mimarisiyle daha kapsamlı.",
+    "plan_file": "plans/skills.md",
+    "date": "2026-10-30",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-30 09:00",
+        "action": "ANALYZED",
+        "status": "REJECTED",
+        "note": "BIZ_DAHA_IYIYIZ: Bizim ui-styling + ui-ux-pro-max 79 stil ve hazır token mimarisiyle daha kapsamlı."
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "url": "https://github.com/raphaelsalaja/skill",
+    "name": "skill",
+    "owner": "raphaelsalaja",
+    "layer": "Tooling / Agentic",
+    "status": "CANCEL",
+    "verdict": "KISMEN_ALINABILIR: HTML tabanlı görsel denetim raporlayıcıları (report.html, measure.js, viewer.html) ve \"The Pair\" (bozuk satır - düzeltilmiş satır) kural sözleşmesi tasarım/denetim skill'lerimize cerrahi fikir/desen olarak eklenebilir; ancak genel kural, mimari ve orkestrasyon derinliğinde mevcut skill setimiz çok daha olgundur.",
+    "plan_file": "plans/skill.md",
+    "date": "2026-10-30",
+    "progress": 0,
+    "history": [
+      {
+        "date": "2026-10-30 09:00",
+        "action": "ANALYZED",
+        "status": "CANCEL",
+        "note": "KISMEN_ALINABILIR: HTML tabanlı görsel denetim raporlayıcıları (report.html, measure.js, viewer.html) ve \"The Pair\" (bozuk satır - düzeltilmiş satır) kural sözleşmesi tasarım/denetim skill'lerimize cerrahi fikir/desen olarak eklenebilir; ancak genel kural, mimari ve orkestrasyon derinliğinde mevcut skill setimiz çok daha olgundur."
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "url": "https://github.com/shadcn/improve",
+    "name": "improve",
+    "owner": "shadcn",
+    "layer": "Tooling / Agentic",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/code-review/references/stop-conditions-and-rejections.md (STOP Koşulları, Reality Mismatch Abort & Rejection Log) ve diagnosing-bugs olarak entegre edildi.",
+    "plan_file": "plans/improve.md",
+    "date": "2026-10-30",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-30 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/code-review/references/stop-conditions-and-rejections.md (STOP Koşulları, Reality Mismatch Abort & Rejection Log) ve diagnosing-bugs olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "url": "https://github.com/millionco/react-doctor",
+    "name": "react-doctor",
+    "owner": "millionco",
+    "layer": "Frontend + Tooling / Agentic",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/react-best-practices/references/state-and-routing-antipatterns.md & ui-ux-pro-max/references/three-r3f-performance-rubric.md (Zustand/Router anti-patterns & R3F WebGL rubrics) olarak entegre edildi.",
+    "plan_file": "plans/react-doctor.md",
+    "date": "2026-10-30",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-30 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/react-best-practices/references/state-and-routing-antipatterns.md & ui-ux-pro-max/references/three-r3f-performance-rubric.md (Zustand/Router anti-patterns & R3F WebGL rubrics) olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "url": "https://github.com/emilkowalski/skills",
+    "name": "skills",
+    "owner": "emilkowalski",
+    "layer": "Tooling / Agentic",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/ui-ux-pro-max/references/emil-kowalski-motion-playbook.md (Emil Kowalski Motion, Spring Physics & Micro-Interactions) olarak entegre edildi.",
+    "plan_file": "plans/skills.md",
+    "date": "2026-10-30",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-30 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/ui-ux-pro-max/references/emil-kowalski-motion-playbook.md (Emil Kowalski Motion, Spring Physics & Micro-Interactions) olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "url": "https://github.com/ibelick/ui-skills",
+    "name": "ui-skills",
+    "owner": "ibelick",
+    "layer": "Frontend + Tooling / Agentic",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/ui-styling/references/base-ui-tailwind-v4.md (Base UI Primitives & Tailwind v4 Integration) olarak entegre edildi.",
+    "plan_file": "plans/ui-skills.md",
+    "date": "2026-10-30",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-30 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/ui-styling/references/base-ui-tailwind-v4.md (Base UI Primitives & Tailwind v4 Integration) olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "url": "https://github.com/nowork-studio/notfair-plugin",
+    "name": "notfair-plugin",
+    "owner": "nowork-studio",
+    "layer": "Tooling / Agentic",
+    "status": "TRANSFERRED",
+    "verdict": "AKTARILDI: .agent/skills/seo-growth/references/ (GEO/AEO Alıntı Optimizasyonu, GA4/GSC Teşhis & Reklam Bütçe Koruma) olarak entegre edildi.",
+    "plan_file": "plans/notfair-plugin.md",
+    "date": "2026-10-30",
+    "progress": 100,
+    "history": [
+      {
+        "date": "2026-10-30 09:00",
+        "action": "ANALYZED",
+        "status": "TRANSFERRED",
+        "note": "AKTARILDI: .agent/skills/seo-growth/references/ (GEO/AEO Alıntı Optimizasyonu, GA4/GSC Teşhis & Reklam Bütçe Koruma) olarak entegre edildi."
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "url": "https://github.com/hiaaryan/sileo",
+    "name": "sileo",
+    "owner": "hiaaryan",
+    "layer": "Frontend",
+    "status": "PLANNED",
+    "verdict": "KISMEN_ALINABILIR: Sileo'nun spring/fizik tabanlı toast yığınlama (physics-based toast stacking) ve swipe-to-dismiss animasyon matematiği, frontend-design ve ui-ux-pro-max kütüphanemize mikro-etkileşim deseni olarak eklenebilir.",
+    "plan_file": "plans/sileo.md",
+    "date": "2026-10-30",
+    "progress": 25,
+    "history": [
+      {
+        "date": "2026-10-30 09:00",
+        "action": "ANALYZED",
+        "status": "PLANNED",
+        "note": "KISMEN_ALINABILIR: Sileo'nun spring/fizik tabanlı toast yığınlama (physics-based toast stacking) ve swipe-to-dismiss animasyon matematiği, frontend-design ve ui-ux-pro-max kütüphanemize mikro-etkileşim deseni olarak eklenebilir."
+      }
+    ]
+  }
+]
