@@ -166,6 +166,28 @@ items.map(item => ({ ...item, selected: selectedSet.has(item.id) }));
 
 ---
 
+
+
+### 11. Reaktif İki Yönlü Geri Besleme Döngüsü ve İnline Callback Yasağı [CRITICAL]
+Alt bileşenin `useEffect` içinde üst bileşenin callback'ini tetiklemesi ve üst bileşenin her render'da yeni inline arrow fonksiyon referansı üretmesi, birbirini besleyen sonsuz re-render döngüsü (`Warning: Maximum update depth exceeded`) yaratır.
+
+```tsx
+// ❌ YANLIŞ: Her render'da yeni arrow referansı + useEffect içinde tetikleme = SONSUZ DÖNGÜ!
+<CompanyBar onCompanyListChange={(companies: any) => setCompanyList(companies)} />
+
+// ✅ DOĞRU (Seçenek A - Doğrudan kararlı setter referansı):
+<CompanyBar onCompanyListChange={setCompanyList} />
+
+// ✅ DOĞRU (Seçenek B - useCallback ile sabitleme):
+const handleCompanyListChange = useCallback((companies: any) => setCompanyList(companies), []);
+<CompanyBar onCompanyListChange={handleCompanyListChange} />
+
+// ✅ DOĞRU (Seçenek C - Effect yerine Event Handler içinde çağırma):
+const handleSelect = (data: any) => onCompanyListChange(data);
+```
+
+---
+
 ## 📚 Bölüm 2 — Kural Kategorileri & Hiyerarşi (78 Kural Dizini)
 
 Detaylı kural dosyaları `rules/` klasöründe yer alır. Tam birleşik referans için `AGENTS.md` dosyasına bakınız.

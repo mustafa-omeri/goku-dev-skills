@@ -97,3 +97,102 @@ export function RootLayout() {
 
 ### ⛔ Kural 3.2: Computed Cache İhlali
 - `@computed` özellikleri içinde `Date.now()`, `Math.random()` gibi saf olmayan (impure) değerler veya observable olmayan global değişkenler okunmamalıdır; aksi takdirde memoization önbelleği sürekli geçersiz kılınır.
+
+
+---
+
+## 4. Reaktif İki Yönlü Geri Besleme Döngüleri ve Sonsuz Re-Render Yasağı (Infinite Loop & Maximum Update Depth Exceeded - OCAI Case Study)
+
+React uygulamalarında en sık rastlanan ve tüm sekmenin kilitlenmesine yol açan ölümcül tuzak: `Warning: Maximum update depth exceeded`. Bu hata, üst ve alt bileşen arasında birbirini tetikleyen reaktif bir geri besleme döngüsü (reactive feedback loop) oluştuğunda meydana gelir.
+
+### ⛔ Somut Vaka İncelemesi (OCAI Hatası)
+```tsx
+// ❌ YANLIŞ: Categories.tsx (Parent)
+export function Categories() {
+  const [companyList, setCompanyList] = useState([]);
+
+  return (
+    // TUZAK 1: Her render'da yeni bir arrow fonksiyon referansı üretilir!
+    <CompanyBar onCompanyListChange={(companies: any) => setCompanyList(companies)} />
+  );
+}
+
+// ❌ YANLIŞ: CompanyBar.tsx (Child)
+export function CompanyBar({ isCompanyAuthorised, companyName, onCompanyListChange, user }) {
+  useEffect(() => {
+    // TUZAK 2: Her render'da yeni bir dizi referansı üretilip parent'a bildirilir!
+    onCompanyListChange([{ id: 1, companyName }]);
+    // TUZAK 3: onCompanyListChange bağımlılık dizisindedir!
+  }, [isCompanyAuthorised, companyName, onCompanyListChange, user]);
+}
+```
+
+### 💥 Ölümcül Döngü Nasıl Oluşur?
+1. `Categories` render edilir → Yeni bir `onCompanyListChange` fonksiyon referansı oluşur.
+2. `CompanyBar` mount olur → `useEffect` çalışır ve `onCompanyListChange([{ id, companyName }])` çağrılır.
+3. `Categories` içinde `setCompanyList` tetiklenir → `Categories` YENİDEN RENDER OLUR.
+4. `Categories` render olunca YEPYENİ bir `onCompanyListChange` fonksiyon referansı üretilir.
+5. `CompanyBar`'daki `useEffect`, `onCompanyListChange` referansının değiştiğini görür ve TEKRAR ÇALIŞIR!
+6. `onCompanyListChange` tekrar çağrılır → Adım 3'e dönülür.
+7. React kısa sürede 50+ derinliğe ulaşır ve `Warning: Maximum update depth exceeded` ile çöker!
+
+---
+
+### 🛡️ 5 Katmanlı Mimari Çözüm ve Önlem Kataloğu
+
+#### ✅ Çözüm 1: Doğrudan State Setter Referansı Geçirme (En Temiz & En Hızlı)
+React'in `useState`'ten dönen `setCompanyList` fonksiyonu, bileşenin tüm yaşam döngüsü boyunca **bellekte sabit ve kimliksel olarak kararlıdır (identity-stable)**. Asla yeni referans üretmez.
+```tsx
+// ✅ DOĞRU: Ekstra arrow fonksiyon sarmalayıcısı AÇMAYIN!
+<CompanyBar onCompanyListChange={setCompanyList} />
+```
+
+#### ✅ Çözüm 2: useCallback ile Callback Referansını Sabitleme
+Eğer callback içinde ek mantık yürütülecekse mutlaka `useCallback` ile sabitlenmelidir:
+```tsx
+// ✅ DOĞRU: Boş veya kararlı bağımlılık dizisiyle fonksiyon referansı dondurulur
+const handleCompanyListChange = useCallback((companies: any) => {
+  setCompanyList(companies);
+}, []);
+
+<CompanyBar onCompanyListChange={handleCompanyListChange} />
+```
+
+#### ✅ Çözüm 3: "You Might Not Need an Effect" (Veri Bildirimini Event Handler'a Taşıma)
+React resmi dokümantasyonuna göre alt bileşenin üst bileşene veri bildirmesi bir "reaktif senkronizasyon (effect)" değil, bir **olay (event)** sonucudur. Kullanıcı butona bastığında veya API isteği tamamlandığında bildirim yapılmalıdır; `useEffect` içinde sürekli üst bileşeni dürtmek anti-pattern'dir:
+```tsx
+// ✅ DOĞRU: Effect yerine verinin geldiği anda (fetch callback veya user event) çağırın
+const handleCompanySelect = (newCompany) => {
+  onCompanyListChange(newCompany);
+};
+```
+
+#### ✅ Çözüm 4: useRef ile Callback'i useEffect Bağımlılığından Kurtarma (useLatest Deseni)
+Eğer bir `useEffect` zorunlu olarak dışarıdan gelen bir callback'i çağırmak zorundaysa, callback referansını `useRef` ile tutarak `useEffect`'in gereksiz tetiklenmesi engellenmelidir:
+```tsx
+// ✅ DOĞRU: Callback referans değişimleri effect'i tetiklemez
+const onCompanyListChangeRef = useRef(onCompanyListChange);
+useEffect(() => {
+  onCompanyListChangeRef.current = onCompanyListChange;
+});
+
+useEffect(() => {
+  if (isCompanyAuthorised) {
+    onCompanyListChangeRef.current([{ id: 1, companyName }]);
+  }
+}, [isCompanyAuthorised, companyName]); // onCompanyListChange bağımlılıkta YOK!
+```
+
+#### ✅ Çözüm 5: Değer Karşılaştırma Koruması (Ref Guard)
+State güncellemesinden önce üretilen verinin eski veriyle aynı olup olmadığını kontrol edin:
+```tsx
+// ✅ DOĞRU: Aynı veriyle tekrar çağrı yapılmaz
+const prevCompaniesRef = useRef<string>("");
+useEffect(() => {
+  const payload = JSON.stringify([{ id: 1, companyName }]);
+  if (prevCompaniesRef.current !== payload) {
+    prevCompaniesRef.current = payload;
+    onCompanyListChange([{ id: 1, companyName }]);
+  }
+}, [isCompanyAuthorised, companyName]);
+```

@@ -283,6 +283,7 @@ Kullanmadıysan **"kullanmadım" de.** Ayrıntı ve sınır listesi:
   Ayrıntı: [`frontend-bundle-limits.md`](rules/frontend-bundle-limits.md).
 - UI metni hardcode yazılmaz.
   Ayrıntı: [`i18n-enforcement.md`](rules/i18n-enforcement.md).
+- **Reaktif İki Yönlü Geri Besleme ve Sonsuz Re-Render Döngüsü Yasağı (Anti-Infinite-Loop & Effect Callback Stability):** Alt bileşenin `useEffect` içinde üst bileşene ait state setter callback'lerini tetiklemesi ve `useEffect` bağımlılık dizisine kararsız inline fonksiyon referansı geçirilmesi KESİNLİKLE YASAKTIR (`Warning: Maximum update depth exceeded`). Doğrudan setter referansı (`onXChange={setX}`), `useCallback` ile sabitleme veya bildirimi `useEffect` yerine event handler içinde tetikleme zorunludur. Ayrıntı: `react-best-practices` (`references/state-and-routing-antipatterns.md` §4).
 
 ---
 
