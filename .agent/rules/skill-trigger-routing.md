@@ -75,6 +75,7 @@ Kullanıcının belirli bir isteği doğrudan ve kestirmeden ajana bildirmesini 
 | mock görsel, gerçekçi resim, kart görseli, profil resmi, etkinlik görseli, avatar ekle / mock images, placeholder images, realistic avatars, test data visuals | `mock-asset-provider` | `skills/mock-asset-provider/SKILL.md` |
 | tur hazırla, tour hazırla, desing tour, ürün turu, onboarding turu, adım adım rehber, ipucu balonu / onboarding tour, product tour, guided tour, walkthrough, coachmarks | `onboarding-tour` | `skills/onboarding-tour/SKILL.md` |
 | /ui-polish --skeleton, skeleton ekle, iskelet ekran entegre et, kaset yapısıyla skeleton, skeleton screen / add skeleton, skeleton loading, wireframe skeleton, ui-polish skeleton | `ui-polish` + `ui-styling` | `skills/ui-polish/SKILL.md` §2.1 |
+| gsap, gsap ekle, scrollsmoother, smooth scroll, autoscroll, otoskrol, pürüzsüz kaydırma / gsap, scrollsmoother, smooth scroll, autoscroll, smooth momentum | `ui-ux-pro-max` + `frontend-design` | `skills/ui-ux-pro-max/scripts/gsap_init.py` + `references/gsap-integration-guide.md` |
 
 ### A2. Marka, sunum, doküman
 

@@ -38,7 +38,7 @@ const https = require('https');
 
 
 
-const VERSION = '1.19.1';
+const VERSION = '1.20.0';
 
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 
@@ -1744,6 +1744,30 @@ function cmdAddTheme(themeArg, options) {
 
 
 
+function cmdAddGsap(options) {
+  const child_process = require('child_process');
+  const scriptPath = path.join(LOCAL_AGENT_DIR, 'skills', 'ui-ux-pro-max', 'scripts', 'gsap_init.py');
+  if (!fs.existsSync(scriptPath)) {
+    console.error(`${c.red}Error:${c.reset} gsap_init.py not found at ${scriptPath}`);
+    process.exit(1);
+  }
+  const args = [scriptPath, '--project', process.cwd()];
+  if (options && options.dryRun) {
+    args.push('--dry-run');
+  } else {
+    args.push('--install');
+  }
+  const child = child_process.spawnSync('python', args, {
+    stdio: 'inherit',
+    cwd: process.cwd(),
+  });
+  if (child.error) {
+    console.error(`${c.red}Failed to execute python:${c.reset} ${child.error.message}`);
+    process.exit(1);
+  }
+  process.exit(child.status || 0);
+}
+
 // Command: init (Modular profile installer)
 
 async function cmdInit(options) {
@@ -2985,6 +3009,7 @@ ${c.bold}Commands:${c.reset}
   ${c.green}add <skill-name...>${c.reset}             Install one or more individual skills
 
   ${c.green}add theme <category>/<theme>${c.reset}    Install a standalone HTML/CSS component theme
+  ${c.green}add gsap${c.reset}                         Integrate GSAP & ScrollSmoother into current web project
 
   ${c.green}info <skill-name>${c.reset}               Display triggers, documentation & details for a skill
 
@@ -3198,6 +3223,8 @@ ${c.bold}Examples:${c.reset}
 
         cmdAddTheme(cleanArgs[2], options);
 
+      } else if (cleanArgs[1] === 'gsap') {
+        cmdAddGsap(options);
       } else if (cleanArgs[1] === 'all') {
 
         await cmdInit(options);

@@ -315,7 +315,7 @@ Arayüz geliştirme ve parlatma süreçlerinde her bileşenin sahibi tek bir ski
 - **Dashboard Mimari Yerleşimi:** `frontend-design` (`dashboard-theme/` 18 referans mimari şablon).
 - **Akordeon & Parallaks:** `frontend-design` (`component-themes/accordions/`, `component-themes/parallax/`).
 - **İkonografi:** `ui-ux-pro-max` (`icons.csv` 105 Phosphor/Lucide SVG ikon standardı; ham emoji yasaktır).
-- **Hareket, Geçişler & Yay Fiziği:** `ui-ux-pro-max` (`emil-kowalski-motion-playbook.md` + `motion.csv` 17 GSAP önayarı).
+- **Hareket, Geçişler, GSAP & ScrollSmoother:** `ui-ux-pro-max` (`emil-kowalski-motion-playbook.md`, `gsap-integration-guide.md` + `motion.csv` 19 GSAP önayarı, `gsap_init.py`).
 - **3D / WebGL Standartları:** `ui-ux-pro-max` (`three-r3f-performance-rubric.md`).
 - **Form UX & Girdi Doğrulama:** `ui-ux-pro-max` (`ux-guidelines.csv` inline validation ve tek dominant CTA).
 - **Tailwind & shadcn/ui Kod Katmanı:** `ui-styling` (`shadcn_add.py`, `tailwind_config_gen.py`, `base-ui-tailwind-v4.md`).
