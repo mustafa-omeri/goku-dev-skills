@@ -25,6 +25,7 @@ E7 (eyebrow-spam)           Başlık üstü büyük harfli süs hapı (uppercase
 E8 (emoji-icon)             İkon, buton veya rozet olarak ham emoji/unicode kullanımı (§2.6 A.8)
 E9 (hardcoded-palette)      Inline style veya CSS kuralında token dışı ham hex kodu kullanımı (§2.6 A.12)
 E10 (mono-outside-code)     Kod/komut seçicileri (code/pre/kbd/samp) dışında monospace font kullanımı
+E11 (blur-orb-slop)         Arka planda yapay zeka klişesi dekoratif neon parıltı topu (blur-[80px+])
 W1 (missing-tabular-nums)   Tablo veya sayaç/istatistik rakamlarında tabular-nums eksikliği
 W2 (label-uppercase-spam)   Sayfada 3'ten fazla seçicide uppercase + letter-spacing etiket kullanımı
 W3 (horizontal-scroll-slop) Görev ve eylem alanlarında yapay yatay kaydırma
@@ -32,7 +33,7 @@ W4 (spinner-loading-slop)    Veri/içerik yüklenirken iskelet ekran (Skeleton) 
 W5 (unlocked-modal-scroll)   Modal/dialog kaydırılabilir alanında overscroll-contain eksikliği (§2.4.1, §2.6 A.16)
 
 Çıkış Kodları:
-- E1-E9 varsa: exit 1
+- E1-E11 varsa: exit 1
 - Yalnız W1 varsa: exit 0 (varsayılan) / exit 1 (--strict bayrağıyla)
 - Frontend kodu yoksa: kapsam dışı exit 0
 
@@ -155,6 +156,11 @@ MODAL_TAG_SCROLL_RE2 = re.compile(
 INLINE_HEX_STYLE_RE = re.compile(
     r"""style=["'][^"']*?\b(?:color|background|border-color):\s*(#[0-9a-fA-F]{3,8})\b""",
     re.IGNORECASE
+)
+
+# E11: AI-slop background blur orb
+BLUR_ORB_TW_RE = re.compile(
+    r"""(?=.*?\b(?:absolute|fixed)\b)(?=.*?\brounded-full\b)(?=.*?\bblur-(?:2xl|3xl|\[(?:[6-9]\d|\d{3,})px\]))"""
 )
 
 # W1: Missing tabular-nums on tables
@@ -415,6 +421,17 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
                 "file": str(path),
                 "line": idx,
                 "message": f"Inline style içinde ham renk hex kodu ('{m.group(1)}') tespit edildi. CSS değişkeni (var(--...)) veya token skalası kullanın."
+            })
+
+    # E11: AI-slop background blur orb
+    for idx, line in enumerate(lines, start=1):
+        if BLUR_ORB_TW_RE.search(line):
+            errors.append({
+                "code": "E11",
+                "rule": "blur-orb-slop",
+                "file": str(path),
+                "line": idx,
+                "message": "Arka planda yapay zeka klişesi dekoratif neon parıltı topu (blur orb) tespit edildi. Dağınık renk parıltıları yerine projenin gerçek zemin dokusunu ve temiz kart yüzeyini kullanın.",
             })
 
     # CSS bloklarını (<style> veya .css) E9 (kural içi ham hex), E10 (mono-outside-code) ve W2 (label-uppercase-spam) için tara

@@ -3,6 +3,8 @@
 *.env
 .env.*
 !.env.example
+node_modules/
+
 
 # Local Backups & Archival
 yedekler/
