@@ -35,6 +35,7 @@ Ajan, kullanıcının belirli bir sihirli kelimeyi (trigger) yazmasını **asla 
 | **Güvenlik / Yetki / Token / Hassas Veri:** Auth, role, input sanitization, API anahtarı | `security-audit` | Güvenlik kalkanı ve yetki aşımı denetimi tavizsizdir. |
 | **Görev Planlama / Mimari Parçalama / "Nasıl Yapılacak?":** Yeni özellik kurgusu, mimari fazlara bölme, sprint/dilim planı, "nasıl yapacaksın?", kabul kriterleri | `doc-coauthoring` + `musgoku` + `tdd` + `sprint-delivery-workflow` | Serbest metinli yüzeysel planları (ad-hoc planning slop) ve phantom done riskini önlemek; 5 katmanlı dikey dilim, TDD dikiş noktaları ve Gherkin kriterlerini zorunlu kılmak için esastır. |
 | **Antigravity Plan Modu & Proceed İcrası:** "/plan", "plan modu", "proceed", "proceed with plan", "planı uygula", "planı onayla" | `tdd` + `sprint-delivery-workflow` + `musgoku` + `development-workflow` | IDE plan modunda TDD, KANBAN ve 5 katmanlı dilimin bypass edilmesini önlemek; kırmızı test kanıtlanmadan doğrudan üretim koduna başlanmasını engellemek için zorunludur. |
+| **Eksik Sayfa / Stub / 404 / Yetim Özellik & Çekirdek Modül Zenginleştirme:** "geliştirme aşamasındaki sayfaları tamamla", "placeholder/coming soon sayfalar", "menüde olup 404'e düşen rotalar", "backend'de olup arayüzde görünmeyen yetim özellikler", "dashboard/profil/ayarları zenginleştir" | `feature-architect` (+ onay sonrası `ui-polish`, `tdd`, `musgoku`) | Uydurma tespitleri önlemek için `gap_scanner.py` kanıtı, 3 kademeli alternatif, RBAC/veri hazırlığı ve onay kapısı zorunludur. |
 | **Yeni Paket / Dokümantasyon / API İsmi:** Harici kütüphane ekleme veya API kullanımı | `context7` MCP | Sürüm farkları ve doğru API parametrelerini doğrulamak için zorunludur. |
 | **3+ Adımlı Plan / Belirsiz Mantık:** Karmaşık mimari akıl yürütme veya strateji | `sequential-thinking` MCP | Düşünce zincirinin dağılmasını önlemek için zorunludur. |
 
@@ -75,6 +76,7 @@ Kullanıcının belirli bir isteği doğrudan ve kestirmeden ajana bildirmesini 
 | mock görsel, gerçekçi resim, kart görseli, profil resmi, etkinlik görseli, avatar ekle / mock images, placeholder images, realistic avatars, test data visuals | `mock-asset-provider` | `skills/mock-asset-provider/SKILL.md` |
 | tur hazırla, tour hazırla, desing tour, ürün turu, onboarding turu, adım adım rehber, ipucu balonu / onboarding tour, product tour, guided tour, walkthrough, coachmarks | `onboarding-tour` | `skills/onboarding-tour/SKILL.md` |
 | /ui-polish --skeleton, skeleton ekle, iskelet ekran entegre et, kaset yapısıyla skeleton, skeleton screen / add skeleton, skeleton loading, wireframe skeleton, ui-polish skeleton | `ui-polish` + `ui-styling` | `skills/ui-polish/SKILL.md` §2.1 |
+| /ui-polish --<theme-name>, tema kilitle, sliding-hero, sliding-hero-auth-switcher-login, pinned theme | `ui-polish` + `frontend-design` | `skills/ui-polish/SKILL.md` §0.1 |
 | gsap, gsap ekle, scrollsmoother, smooth scroll, autoscroll, otoskrol, pürüzsüz kaydırma / gsap, scrollsmoother, smooth scroll, autoscroll, smooth momentum | `ui-ux-pro-max` + `frontend-design` | `skills/ui-ux-pro-max/scripts/gsap_init.py` + `references/gsap-integration-guide.md` |
 
 ### A2. Marka, sunum, doküman
@@ -131,6 +133,7 @@ Kullanıcının belirli bir isteği doğrudan ve kestirmeden ajana bildirmesini 
 | /goku-skills-update, /gs-update, Goku skill güncelle, skill update, GS update, GS güncelle, goku update, skillset güncelle, skill'leri güncelle, goku skills update, ajan yeteneklerini güncelle / update skills, goku update, update skill set, upgrade skills, sync skills | `musgoku` | `skills/musgoku/SKILL.md` |
 | prelaunch, canlıya al, go live, yayına alma kontrolü, consent check, axe audit, /prelaunch, /prelaunch-update / prelaunch audit, go live checklist, prelaunch checklist | `prelaunch-audit` | `skills/prelaunch-audit/SKILL.md` |
 | projenin kapsamlı özetini çıkar, proje özeti çıkar, proje özeti, /project-summary, /proje-ozeti, project summary, summarize project / project summary, summarize project | `project-summary` | `skills/project-summary/SKILL.md` |
+| /feature-architect, [FEATURE-ARCHITECT], feature architect, eksik sayfaları tamamla, projedeki eksikleri bul, stub sayfaları tamamla, placeholder sayfaları geliştir, geliştirme aşamasındaki sayfaları tamamla, 404 rotalarını düzelt, yetim özellikleri bağla, dashboard zenginleştir, profil ve ayarları zenginleştir / complete features, find missing pages, fix stub pages, orphan features, enrich dashboard | `feature-architect` | `skills/feature-architect/SKILL.md` |
 
 ### A5. Bağlayıcı Oturum Slash Komutları ve Prompt Makroları (Ensemble Slash Commands)
 
@@ -154,6 +157,7 @@ Yapay zeka asistanlarının tekil ve birbirinden kopuk araçlar çalıştırmas�
 | **`/commitx`** / `commitle` / `[COMMITX]` | `git-release-workflow` | **Peşin Tam Yetkili Sürüm Yayını:** Doğrulama kapılarını çalıştırır; ara onay sormadan `git add` → `git commit` → `git tag` → `git push` zincirini tek nefeste tamamlar. | `skills/commitx/SKILL.md` |
 | **`/goku-skills-update`** / **`/gs-update`** / `"GS güncelle"` | `gs-update` (`musgoku`) | **Sıfır-Şişkinlik Skill Senkronu:** Kullanıcıya workspace veya global kapsamını sorarak proje kuralını korur ve kurulu olmayan becerileri indirmeden cerrahi güncelleme yapar. | `skills/gs-update/SKILL.md` |
 | **`/project-summary`** / `/proje-ozeti` / `"projenin kapsamlı özetini çıkar"` | `project-summary` (`doc-coauthoring` + `domain-modeling` + `codebase-design`) | **Proje Konsolide Özeti & PRD Sentez Motoru:** Projenin kısa (`short`) veya kapsamlı (`long`) özetini çıkarır. Long modunda projedeki tüm PRD ve referans dokümanlarını tek bir `docs/<SLUG>_PROJECT_SUMMARY_LONG.md` dosyasında konsolide eder; dil uyumu, versiyonlama damgası ve `PROJECT_BRIEF.md` senkronizasyonunu zorunlu kılar. | `skills/project-summary/SKILL.md` |
+| **`/feature-architect`** / `[FEATURE-ARCHITECT]` | `feature-architect` (`gap_scanner.py`) → `frontend-design` (`dashboard-theme/catalog.json`) → `ui-polish` → `tdd` + `musgoku` | **Global Otonom Ürün Denetçisi ve Tamamlayıcısı:** Çalıştığı projedeki stub/placeholder sayfaları, ölü kontrolleri, 404 rotalarını, yetim backend uç nokta/alanlarını ve zayıf Dashboard/Profil/Ayarlar ekranlarını `gap_scanner.py` kanıtıyla tespit eder; 18 şablonluk katalogdan dashboard seçtirir, 3 kademeli (MVP / Best-Practice / Vizyoner) çözüm planı sunar ve onay sonrası `/ui-polish` ile inşa eder. | `skills/feature-architect/SKILL.md` |
 
 ---
 
@@ -172,6 +176,7 @@ Yapay zeka asistanlarının tekil ve birbirinden kopuk araçlar çalıştırmas�
 | "Mimari tercih ve alternatif seçimi" | `karpathy-guidelines` → `doc-coauthoring` | 3 aşamalı konsey körlemesi (council) → ADR karar kaydı |
 | "Yayına al" | `production-docker-architect` → `git-release-workflow` | imaj → commit/tag/push |
 | "Fikir havuzundan iş seç" | `my-idea` → `doc-coauthoring` → `sprint-delivery-workflow` → `tdd` → `musgoku` | re-rating & seçim → spec → sprint kartı → test → kodlama |
+| "Eksik/stub sayfaları bul ve tamamla" | `feature-architect` → `tdd` → `musgoku` → `ui-polish` | 6-sektör tarama → onay → kırmızı test → 5 katmanlı inşa & 18 dashboard-theme / 55 component-theme parlatma |
 | "Genel kod talebi" | `musgoku` (yönlendirici) → ilgili alt tablo | — |
 
 ---
@@ -184,6 +189,7 @@ haritasından** gelir ([`design-skills-enforcement.md`](./design-skills-enforcem
 | Belirsizlik | Karar |
 |---|---|
 | "Doğrula / Test et / Bitti mi" — hangi seviye? | Anlık son değişiklik / uncommitted ➔ `/verify-last` · Aktif/son sprint ➔ `/verify-sprint` · Tüm proje / PRD kabulü ➔ `/verify-prd` |
+| "Eksik mi, bitti mi, ham fikir mi?" | Kodda/menüde stub, 404, yetim API veya zayıf Dashboard/Profil/Ayarlar (prospektif) ➔ `/feature-architect` · Tamamlandı denen işlerin 5 katman denetimi (retrospektif) ➔ `/verify-prd` · `docs/idea/myidea.md` fikir havuzu ➔ `my-idea` |
 
 | "Tasarım yap" — ne tür? | Sabit px ölçü varsa `banner-design` · `.png/.pdf` çıktı varsa `canvas-design` · web arayüzü ise `frontend-design` + `ui-ux-pro-max` |
 | "Poster" mi "banner" mı? | Ölçüsüz sanat → `canvas-design`. Platform ölçüsü (1080×1080, 820×312) → `banner-design` |

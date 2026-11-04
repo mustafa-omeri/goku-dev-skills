@@ -1,0 +1,204 @@
+{
+  "schema": "dashboard-theme-catalog@1",
+  "description": "Verified catalog of 18 dashboard architecture templates for frontend-design, ui-polish, and feature-architect.",
+  "themes": [
+    {
+      "id": "dashboard-theme-01",
+      "file": "dashboard-theme-01.webp",
+      "title": "Cloud Storage & Asset Repository Hub",
+      "archetype": "asset-repository",
+      "density": "medium",
+      "surface": "light-with-dark-sidebar",
+      "layout": "left-sidebar + main-grid + right-utility-rail",
+      "widgets": ["category-color-cards", "folder-summary-tiles", "recent-files-table", "upload-dropzone", "quota-progress-bar", "shared-folders-list"],
+      "best_for": ["dosya ve belge yönetimi", "medya kütüphanesi", "veri havuzu", "kaynak ve arşiv panelleri"]
+    },
+    {
+      "id": "dashboard-theme-02",
+      "file": "dashboard-theme-02.webp",
+      "title": "Team Performance, Leaderboard & Activity Hub",
+      "archetype": "team-collaboration",
+      "density": "medium",
+      "surface": "light",
+      "layout": "left-sidebar + top-kpi-row + split-center-right-feed",
+      "widgets": ["3-avatar-kpi-cards", "work-rank-leaderboard", "discussion-group-cards", "live-team-activity-feed", "avatar-carousel-strip"],
+      "best_for": ["takım performansı", "topluluk ve etkileşim", "departman aktivite özeti", "liderlik tablosu"]
+    },
+    {
+      "id": "dashboard-theme-03",
+      "file": "dashboard-theme-03.webp",
+      "title": "Directory, HR & Filterable Entity Table",
+      "archetype": "operational-directory",
+      "density": "medium-high",
+      "surface": "light",
+      "layout": "top-navbar + left-facet-filter-card + main-data-table",
+      "widgets": ["project-facet-list", "status-filter-badges", "sortable-entity-table", "delta-pill-badges", "row-quick-actions"],
+      "best_for": ["çalışan ve kullanıcı yönetimi", "müşteri/üye listesi", "envanter ve kayıt tablosu", "RBAC kullanıcı dizini"]
+    },
+    {
+      "id": "dashboard-theme-04",
+      "file": "dashboard-theme-04.webp",
+      "title": "Multi-Stage Kanban & Workflow Board",
+      "archetype": "workflow-kanban",
+      "density": "high",
+      "surface": "light-with-indigo-rail",
+      "layout": "compact-icon-sidebar + top-team-filter + 4-column-kanban",
+      "widgets": ["role-tag-pills", "kanban-stage-columns", "task-cards-with-deadlines", "assignee-avatar-stacks", "attachment-comment-counters"],
+      "best_for": ["görev ve proje takibi", "onay ve iş akışı kuyrukları", "sprint ve süreç yönetimi"]
+    },
+    {
+      "id": "dashboard-theme-05",
+      "file": "dashboard-theme-05.webp",
+      "title": "Assessment, Survey & Questionnaire Builder",
+      "archetype": "assessment-builder",
+      "density": "high",
+      "surface": "light",
+      "layout": "compact-icon-rail + step-progress-header + master-editor-with-scoring-card",
+      "widgets": ["4-step-wizard-bar", "collapsible-question-rows", "weighting-percentage-controls", "floating-item-toolbar", "question-type-selector"],
+      "best_for": ["anket ve değerlendirme motoru", "sınav ve kültür analizi formları", "kural ve soru bankası yönetimi"]
+    },
+    {
+      "id": "dashboard-theme-06",
+      "file": "dashboard-theme-06.webp",
+      "title": "Portfolio & Multi-Project Progress Card Grid",
+      "archetype": "portfolio-grid",
+      "density": "medium",
+      "surface": "light",
+      "layout": "left-sidebar + status-filter-bar + 4x2-equal-card-grid",
+      "widgets": ["status-counter-tabs", "grid-list-view-switcher", "equal-dimension-project-cards", "countdown-badges", "team-progress-footer"],
+      "best_for": ["çoklu proje ve müşteri portföyü", "organizasyon değerlendirme kartları", "modül ve kampanya genel görünümü"]
+    },
+    {
+      "id": "dashboard-theme-07",
+      "file": "dashboard-theme-07.webp",
+      "title": "Diagnostic Status & Weekly Schedule Split-View",
+      "archetype": "diagnostic-scheduler",
+      "density": "medium-high",
+      "surface": "light",
+      "layout": "left-sidebar + center-diagnostic-canvas + right-calendar-schedule",
+      "widgets": ["visual-status-diagram", "metric-progress-cards", "weekly-activity-bars", "time-slot-calendar-matrix", "upcoming-event-cards"],
+      "best_for": ["randevu ve takvim yoğun sistemler", "sağlık ve durum teşhis panelleri", "danışmanlık ve oturum planlama"]
+    },
+    {
+      "id": "dashboard-theme-08",
+      "file": "dashboard-theme-08.webp",
+      "title": "Personal Workspace, Welcome Hero & Daily Focus",
+      "archetype": "personal-workspace",
+      "density": "medium",
+      "surface": "light",
+      "layout": "left-sidebar + center-hero-and-charts + right-profile-and-agenda",
+      "widgets": ["personalized-welcome-banner", "smooth-activity-line-chart", "radial-completion-donut", "kpi-mini-cards", "profile-summary-rail", "today-action-list"],
+      "best_for": ["bireysel kullanıcı ve çalışan ana sayfası", "kişisel görev ve ilerleme özeti", "onboarding odaklı SaaS portalı"]
+    },
+    {
+      "id": "dashboard-theme-09",
+      "file": "dashboard-theme-09.webp",
+      "title": "Geo-Logistics, Route & Destination Overview",
+      "archetype": "geo-logistics",
+      "density": "low-medium",
+      "surface": "warm-light",
+      "layout": "compact-icon-rail + center-visual-stage + right-map-and-list",
+      "widgets": ["vertical-level-gauge", "pass-summary-card", "weather-timeline-card", "regional-choropleth-map", "ranked-location-list"],
+      "best_for": ["lojistik ve rota takibi", "bölgesel dağılım", "seyahat ve saha operasyonları"]
+    },
+    {
+      "id": "dashboard-theme-10",
+      "file": "dashboard-theme-10.webp",
+      "title": "Scientific Assessment Table & Radial KPI Matrix",
+      "archetype": "assessment-results",
+      "density": "high",
+      "surface": "light-with-indigo-rail",
+      "layout": "floating-icon-rail + time-filter-strip + center-table-and-gauges + right-history-list",
+      "widgets": ["vertical-time-range-pills", "multi-column-comparison-table", "4-radial-ring-kpi-cards", "recent-submissions-list", "onboarding-help-card"],
+      "best_for": ["test ve analiz sonuçları", "skor karşılaştırma tabloları", "raporlama ve denetim geçmişi"]
+    },
+    {
+      "id": "dashboard-theme-11",
+      "file": "dashboard-theme-11.webp",
+      "title": "Dark Executive Funnel & Multi-Series Analytics",
+      "archetype": "executive-analytics-dark",
+      "density": "high",
+      "surface": "dark",
+      "layout": "compact-icon-rail + 5-kpi-sparkline-strip + 2x2-chart-grid",
+      "widgets": ["sparkline-kpi-strip", "sankey-conversion-funnel", "donut-distribution-chart", "overlapping-area-trend-chart", "comparative-bar-line-chart"],
+      "best_for": ["üst yönetim (executive) BI paneli", "dönüşüm hunisi ve büyüme analitiği", "karanlık mod finans ve satış kokpiti"]
+    },
+    {
+      "id": "dashboard-theme-12",
+      "file": "dashboard-theme-12.webp",
+      "title": "Organizational Hierarchy Tree & Multi-Ring Score Inspector",
+      "archetype": "org-hierarchy-inspector",
+      "density": "medium-high",
+      "surface": "light-with-dark-score-card",
+      "layout": "main-hierarchy-tree-canvas + right-master-detail-inspector",
+      "widgets": ["hierarchical-org-cards", "role-department-badges", "slide-over-profile-drawer", "concentric-multi-ring-score-gauge", "quick-edit-remove-actions"],
+      "best_for": ["organizasyon şeması ve kültür analizi", "departman ve yönetici hiyerarşisi", "yetkinlik ve skor detay çekmecesi"]
+    },
+    {
+      "id": "dashboard-theme-13",
+      "file": "dashboard-theme-13.webp",
+      "title": "Enterprise Cohort, Retention & Segmentation Reports",
+      "archetype": "enterprise-reporting",
+      "density": "high",
+      "surface": "light-with-emerald-sidebar",
+      "layout": "left-icon-sidebar + category-subtabs + 5-kpi-row + 3-donut-row + bottom-trend-and-map",
+      "widgets": ["domain-sub-navigation-tabs", "5-column-metric-strip", "3-comparative-donut-charts", "dual-series-area-chart", "regional-breakdown-map"],
+      "best_for": ["kurumsal raporlama modülü", "kullanıcı segmentasyonu ve tutundurma (retention)", "çok boyutlu departman kıyaslaması"]
+    },
+    {
+      "id": "dashboard-theme-14",
+      "file": "dashboard-theme-14.webp",
+      "title": "Dark Telemetry, Anomaly Detection & Radar Diagnostics",
+      "archetype": "telemetry-monitoring-dark",
+      "density": "high",
+      "surface": "dark-indigo",
+      "layout": "compact-icon-rail + 4-kpi-cards + main-anomaly-chart + right-radar-and-gauges",
+      "widgets": ["highlighted-hero-kpi-card", "anomaly-callout-line-chart", "csv-export-action", "multi-axis-radar-chart", "radial-capacity-cards", "source-breakdown-cards"],
+      "best_for": ["sistem izleme ve telemetri", "yetkinlik/kültür radar grafiği (4-6 eksenli)", "anomali ve performans takibi"]
+    },
+    {
+      "id": "dashboard-theme-15",
+      "file": "dashboard-theme-15.webp",
+      "title": "System Health, Weekly Strip & Toggle Control Deck",
+      "archetype": "operational-control-deck",
+      "density": "medium",
+      "surface": "light-with-purple-rail",
+      "layout": "left-icon-rail + center-hero-calendar-metrics + right-toggle-and-bar-rail",
+      "widgets": ["warm-hero-banner", "weekly-day-selector-strip", "4-category-metric-cards", "dual-ring-status-cards", "2x2-quick-toggle-cards", "vertical-bar-chart"],
+      "best_for": ["sistem ayarları ve sağlık özeti", "hızlı özellik aç/kapat kontrol merkezi", "haftalık özet ve bakım panelleri"]
+    },
+    {
+      "id": "dashboard-theme-16",
+      "file": "dashboard-theme-16.webp",
+      "title": "Priority Queue, Triage Table & Master-Detail Conversation",
+      "archetype": "triage-master-detail",
+      "density": "high",
+      "surface": "light-with-dark-sidebar",
+      "layout": "left-sidebar + center-priority-cards-and-tables + right-detail-and-activity-panel",
+      "widgets": ["priority-highlight-cards", "assigned-queue-table", "incoming-queue-table", "severity-badges", "tabbed-detail-inspector", "activity-timeline-thread"],
+      "best_for": ["destek ve talep yönetimi", "denetim ve onay kuyruğu", "geri bildirim ve moderasyon merkezi"]
+    },
+    {
+      "id": "dashboard-theme-17",
+      "file": "dashboard-theme-17.webp",
+      "title": "Dark Global Map, 7-Day Forecast & Multi-Node Monitor",
+      "archetype": "global-node-monitor-dark",
+      "density": "medium-high",
+      "surface": "dark",
+      "layout": "top-omnibar + 7-day-card-strip + bottom-global-map-and-node-list",
+      "widgets": ["segmented-mode-toggle", "7-column-time-cards", "hourly-distribution-bars", "interactive-pin-map", "multi-region-comparison-cards"],
+      "best_for": ["zaman serisi ve tahminleme", "coğrafi şube ve lokasyon izleme", "karanlık mod operasyon haritası"]
+    },
+    {
+      "id": "dashboard-theme-18",
+      "file": "dashboard-theme-18.webp",
+      "title": "Engagement Analytics, Demographic Ring & Activity List",
+      "archetype": "engagement-analytics",
+      "density": "medium-high",
+      "surface": "warm-light-with-dark-rail",
+      "layout": "compact-dark-rail + top-context-switcher + hero-kpi-and-ring + activity-table + right-stat-stack",
+      "widgets": ["tenant-company-switcher-pill", "gradient-hero-metric-card", "demographic-ring-chart", "tabbed-activity-list-with-deltas", "weekly-highlight-bar-chart", "progress-stat-cards"],
+      "best_for": ["organizatör ve şirket bazlı analitik (multi-tenant)", "içerik ve etkileşim performansı", "pazarlama ve büyüme metrikleri"]
+    }
+  ]
+}

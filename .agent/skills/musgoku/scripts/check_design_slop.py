@@ -26,11 +26,13 @@ E8 (emoji-icon)             İkon, buton veya rozet olarak ham emoji/unicode kul
 E9 (hardcoded-palette)      Inline style veya CSS kuralında token dışı ham hex kodu kullanımı (§2.6 A.12)
 E10 (mono-outside-code)     Kod/komut seçicileri (code/pre/kbd/samp) dışında monospace font kullanımı
 E11 (blur-orb-slop)         Arka planda yapay zeka klişesi dekoratif neon parıltı topu (blur-[80px+])
+E12 (single-box-auth-slop)  Tam sayfa Login/Auth ekranında masaüstü Split-Hero Dual-Pane yerine dar tek-kutu (max-w-md / max-w-[440px]) kullanımı (§2.6 A.17)
 W1 (missing-tabular-nums)   Tablo veya sayaç/istatistik rakamlarında tabular-nums eksikliği
 W2 (label-uppercase-spam)   Sayfada 3'ten fazla seçicide uppercase + letter-spacing etiket kullanımı
 W3 (horizontal-scroll-slop) Görev ve eylem alanlarında yapay yatay kaydırma
 W4 (spinner-loading-slop)    Veri/içerik yüklenirken iskelet ekran (Skeleton) yerine jenerik spinner kullanımı (§2.6 A.15)
 W5 (unlocked-modal-scroll)   Modal/dialog kaydırılabilir alanında overscroll-contain eksikliği (§2.4.1, §2.6 A.16)
+W6 (pitch-black-auth-slop)   Auth vitrininde (split-hero, sliding-hero, showcase) fotoğraf/görsel yerine düz siyah zemin kullanımı (§2.6 A.17)
 
 Çıkış Kodları:
 - E1-E11 varsa: exit 1
@@ -161,6 +163,17 @@ INLINE_HEX_STYLE_RE = re.compile(
 # E11: AI-slop background blur orb
 BLUR_ORB_TW_RE = re.compile(
     r"""(?=.*?\b(?:absolute|fixed)\b)(?=.*?\brounded-full\b)(?=.*?\bblur-(?:2xl|3xl|\[(?:[6-9]\d|\d{3,})px\]))"""
+)
+
+# E12: Single-box narrow Login/Auth page without desktop Split-Hero Dual-Pane (§2.6 A.17)
+AUTH_PAGE_STEM_RE = re.compile(
+    r"""^(?:login|signin|sign-in|signup|sign-up|register|auth)(?:[-_]?page|[-_]?view|[-_]?screen)?$""",
+    re.IGNORECASE,
+)
+FULLSCREEN_WRAPPER_RE = re.compile(r"""\b(?:(?:min-h-screen|min-h-dvh|h-screen)\b|min-h-\[100(?:d)?vh\])""")
+SINGLE_BOX_AUTH_WIDTH_RE = re.compile(r"""\bmax-w-(?:(?:xs|sm|md)\b|\[[34]\d\dpx\])""")
+SPLIT_HERO_LAYOUT_RE = re.compile(
+    r"""\b(?:(?:md|lg|xl):grid-cols-(?:(?:2|3|12)\b|\[[^\]]+\])|(?:md|lg|xl):flex-row|split-hero|sliding-hero|translate-x-full|auth-switcher)\b"""
 )
 
 # W1: Missing tabular-nums on tables
@@ -433,6 +446,53 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
                 "line": idx,
                 "message": "Arka planda yapay zeka klişesi dekoratif neon parıltı topu (blur orb) tespit edildi. Dağınık renk parıltıları yerine projenin gerçek zemin dokusunu ve temiz kart yüzeyini kullanın.",
             })
+
+    # E12: Single-box narrow Login/Auth page without desktop Split-Hero Dual-Pane
+    if (
+        path.suffix.lower() in (".tsx", ".jsx", ".vue", ".svelte", ".astro")
+        and AUTH_PAGE_STEM_RE.match(path.stem)
+        and not any(k in path.as_posix().lower() for k in ("modal", "dialog", "popup", "drawer"))
+    ):
+        if FULLSCREEN_WRAPPER_RE.search(content) and not SPLIT_HERO_LAYOUT_RE.search(content):
+            m_box = SINGLE_BOX_AUTH_WIDTH_RE.search(content)
+            if m_box:
+                box_line = content[: m_box.start()].count("\n") + 1
+                errors.append({
+                    "code": "E12",
+                    "rule": "single-box-auth-slop",
+                    "file": str(path),
+                    "line": box_line,
+                    "message": (
+                        f"Tam sayfa Login/Auth ekranında masaüstü Split-Hero Dual-Pane veya Sliding-Hero Switcher yerine dar tek-kutu ('{m_box.group(0)}') tespit edildi (§2.6 A.17). "
+                        "Tam sayfa giriş ekranlarında tek sütunlu dar kart tembelliği yasaktır. "
+                        "`python .agent/skills/frontend-design/scripts/get_component.py --theme sliding-hero-auth-switcher-login --adapt-guide` "
+                        "(veya `--theme split-hero-cloud-storage-login --adapt-guide`) komutunu çalıştırarak ekranı DESIGN.md Living Surface tokenlarıyla "
+                        "2 sütunlu Split-Hero veya Kayar Kapaklı (Sliding-Hero Overlay Switcher, örn. border-8 border-white rounded-[24px] w-1/2 translate-x-full) mimariye dönüştürün."
+                    ),
+                })
+
+    # W6: Auth showcase (sliding-hero, split-hero, dual-pane) with flat pitch-black background and no image
+    if (
+        path.suffix.lower() in (".tsx", ".jsx", ".vue", ".svelte", ".astro")
+        and AUTH_PAGE_STEM_RE.match(path.stem)
+        and not any(k in path.as_posix().lower() for k in ("modal", "dialog", "popup", "drawer"))
+    ):
+        if re.search(r"""(?:sliding-hero|split-hero|card-bg|auth-showcase|hero-panel|hero-column|hero-banner|showcase-col|split-pane)""", content, re.IGNORECASE):
+            m_dark = re.search(r"""(?:bg-\[#252528\]|bg-zinc-950|bg-black|bg-\[#0c0d0e\]|bg-slate-950)""", content)
+            if m_dark:
+                has_image = bool(re.search(r"""(?:hero\.jpg|hero\.webp|\.png|\.jpg|\.webp|url\(|<img\b|mock-assets|assets/auth|backgroundImage)""", content, re.IGNORECASE))
+                if not has_image:
+                    dark_line = content[: m_dark.start()].count("\n") + 1
+                    warnings.append({
+                        "code": "W6",
+                        "rule": "pitch-black-auth-slop",
+                        "file": str(path),
+                        "line": dark_line,
+                        "message": (
+                            "Auth vitrininde (split-hero / sliding-hero / showcase) fotoğraf/görsel (hero.jpg, url(...)) bulunamadı; düz koyu zemin tespit edildi (§2.6 A.17). "
+                            "PITCH-BLACK SLOP: `public/assets/auth/hero.jpg` görseli ve scrim karartması ekleyin."
+                        ),
+                    })
 
     # CSS bloklarını (<style> veya .css) E9 (kural içi ham hex), E10 (mono-outside-code) ve W2 (label-uppercase-spam) için tara
     css_chunks = []

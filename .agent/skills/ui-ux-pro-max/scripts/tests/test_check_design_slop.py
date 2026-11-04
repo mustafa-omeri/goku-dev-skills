@@ -364,5 +364,153 @@ class TestCheckDesignSlop(unittest.TestCase):
         self.assertFalse(any(w["code"] == "W5" for w in res["warnings"]))
 
 
+    def test_catches_single_box_auth_slop_e12(self):
+        """Tam sayfa Login/Auth ekranında dar tek-kutu (max-w-[440px] / max-w-md) olup masaüstü Split-Hero (lg:grid-cols-12 / lg:grid-cols-2 / lg:flex-row) yoksa E12 hatası üretmeli."""
+        auth_dir = self.tmp_dir / "src" / "modules" / "auth"
+        auth_dir.mkdir(parents=True, exist_ok=True)
+        login_page = auth_dir / "LoginPage.tsx"
+        login_page.write_text(
+            """
+            import React from 'react';
+            export function LoginPage() {
+                return (
+                    <main className="relative flex min-h-screen items-center justify-center bg-[#ededf3] px-4 py-8">
+                        <div className="relative z-10 w-full max-w-[440px]">
+                            <form className="rounded-2xl bg-white p-8 shadow-sm">
+                                <input type="email" />
+                            </form>
+                        </div>
+                    </main>
+                );
+            }
+            """,
+            encoding="utf-8"
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertEqual(res["exit"], 1)
+        self.assertTrue(any(e["code"] == "E12" for e in res["errors"]))
+
+    def test_allows_split_hero_auth_page_e12(self):
+        """Masaüstü Split-Hero Dual-Pane (lg:grid-cols-12 veya lg:grid-cols-2) kullanan tam sayfa Login ekranı E12 hatası üretmemeli."""
+        auth_dir = self.tmp_dir / "src" / "modules" / "auth"
+        auth_dir.mkdir(parents=True, exist_ok=True)
+        login_page = auth_dir / "LoginPage.tsx"
+        login_page.write_text(
+            """
+            import React from 'react';
+            export function LoginPage() {
+                return (
+                    <main className="relative flex min-h-screen items-center justify-center bg-[#ededf3] px-4 py-8">
+                        <div className="relative z-10 w-full max-w-[1020px] grid grid-cols-1 lg:grid-cols-12 overflow-hidden rounded-3xl shadow-sm">
+                            <aside className="hidden lg:flex lg:col-span-5 flex-col justify-between bg-[#252528] p-10 text-white">
+                                <h2>Recall Memory Engine</h2>
+                            </aside>
+                            <section className="lg:col-span-7 bg-white p-8 sm:p-10">
+                                <form><input type="email" /></form>
+                            </section>
+                        </div>
+                    </main>
+                );
+            }
+            """,
+            encoding="utf-8"
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertFalse(any(e["code"] == "E12" for e in res["errors"]))
+
+    def test_allows_sliding_hero_auth_page_e12(self):
+        """Masaüstü 50%/50% Sliding-Hero Overlay kullanan tam sayfa Login ekranı E12 hatası üretmemeli."""
+        auth_dir = self.tmp_dir / "src" / "modules" / "auth"
+        auth_dir.mkdir(parents=True, exist_ok=True)
+        login_page = auth_dir / "LoginPage.tsx"
+        login_page.write_text(
+            """
+            import React, { useState } from 'react';
+            export function LoginPage() {
+                const [phase, setPhase] = useState<'signin' | 'signup'>('signin');
+                return (
+                    <main className="relative flex min-h-screen items-center justify-center bg-[#ededf3] px-4 py-8">
+                        <div className="card relative w-full max-w-[960px] min-h-[620px] rounded-[24px] bg-white border-8 border-white overflow-hidden shadow-2xl">
+                            {/* Sliding Hero Overlay */}
+                            <div className={`card-bg absolute inset-y-0 left-0 w-1/2 z-20 transition-transform duration-[650ms] ${
+                                phase === 'signin' ? 'translate-x-full' : 'translate-x-0'
+                            }`}>
+                                <button onClick={() => setPhase(phase === 'signin' ? 'signup' : 'signin')}>Toggle</button>
+                            </div>
+                            {/* Left Login Form */}
+                            <div className="form login absolute inset-y-0 left-0 w-1/2 p-8 max-w-md">
+                                <form><input type="email" /></form>
+                            </div>
+                            {/* Right Signup Form */}
+                            <div className="form signup absolute inset-y-0 left-1/2 w-1/2 p-8 max-w-md">
+                                <form><input type="email" /></form>
+                            </div>
+                        </div>
+                    </main>
+                );
+            }
+            """,
+            encoding="utf-8"
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertFalse(any(e["code"] == "E12" for e in res["errors"]))
+
+
+    def test_warns_pitch_black_sliding_hero_without_image_w6(self):
+        login_page = self.tmp_dir / "src" / "modules" / "auth" / "LoginPage.tsx"
+        login_page.parent.mkdir(parents=True, exist_ok=True)
+        login_page.write_text(
+            '''
+            import React from 'react';
+            export function LoginPage() {
+                return (
+                    <main className="relative flex min-h-screen items-center justify-center">
+                        <div className="split-hero relative max-w-[960px] grid grid-cols-2">
+                            <div className="form">Form Content</div>
+                            {/* Slop: Flat pitch-black hero showcase with 0 images */}
+                            <aside className="hero sliding-hero bg-[#252528] text-white">
+                                <h3>Recall Vault</h3>
+                                <div>Feature Card 1</div>
+                                <div>Feature Card 2</div>
+                                <div>Feature Card 3</div>
+                            </aside>
+                        </div>
+                    </main>
+                );
+            }
+            ''',
+            encoding="utf-8"
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertTrue(any(w["code"] == "W6" for w in res["warnings"]))
+
+
+
+    def test_warns_pitch_black_split_hero_without_image_w6(self):
+        login_page = self.tmp_dir / 'src' / 'modules' / 'auth' / 'LoginPage.tsx'
+        login_page.parent.mkdir(parents=True, exist_ok=True)
+        login_page.write_text(
+            """
+            import React from 'react';
+            export function LoginPage() {
+                return (
+                    <main className="relative flex min-h-screen items-center justify-center">
+                        <div className="w-full max-w-[1020px] grid grid-cols-1 lg:grid-cols-12">
+                            {/* Slop: Flat pitch-black split-hero column with 0 images */}
+                            <aside className="split-hero lg:col-span-5 bg-zinc-950 text-white">
+                                <h3>Cloud Storage</h3>
+                                <div>Feature Card 1</div>
+                            </aside>
+                            <div className="form lg:col-span-7">Form Content</div>
+                        </div>
+                    </main>
+                );
+            }
+            """,
+            encoding='utf-8'
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertTrue(any(w['code'] == 'W6' for w in res['warnings']))
+
 if __name__ == "__main__":
     unittest.main()

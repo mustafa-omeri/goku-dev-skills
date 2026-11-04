@@ -31,6 +31,7 @@ TEST_SCRIPTS = [
     ("Test Design Contract", HERE / "test_design_contract.py"),
     ("Test Check Handoff & All Gates", HERE / "test_check_handoff.py"),
     ("Test Project Summary", HERE / "test_project_summary.py"),
+    ("Test Feature Architect", HERE / "test_feature_architect.py"),
 ]
 
 

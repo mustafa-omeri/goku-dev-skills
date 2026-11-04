@@ -38,7 +38,7 @@ const https = require('https');
 
 
 
-const VERSION = '1.20.2';
+const VERSION = '1.21.3';
 
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 
@@ -511,6 +511,11 @@ const SKILLS_MANIFEST = {
     desc: 'Meso active sprint verification orchestrator: validates sprint goals, Gherkin acceptance criteria & 5-layer vertical slice.',
 
     triggers: '/verify-sprint, verify sprint, [VERIFY-SPRINT], sprinti dogrula, sprint bitti mi, verify active sprint',
+  },
+  'feature-architect': {
+    category: 'Session Commands / Ensemble',
+    desc: 'Global autonomous product gap scanner & feature completion architect: detects stub pages, broken routes, orphan backend APIs, dashboard/settings/profile gaps & builds 5-layer slices.',
+    triggers: '/feature-architect, /complete-features, feature architect, [FEATURE-ARCHITECT], eksik ozellikleri tamamla, stub sayfalari bul, urun eksiklerini tara',
 
   },
 
@@ -552,7 +557,7 @@ const PROFILES = {
 
     name: 'Fullstack / All',
 
-    desc: 'All 40 skills, 19 rules, 55 component themes & 11 validation gates (~65 MB)',
+    desc: 'All 44 skills, 20 rules, 55 component themes & 16 validation gates (~65 MB)',
 
     skills: Object.keys(SKILLS_MANIFEST),
 
@@ -646,6 +651,7 @@ const PROFILES = {
 
       'prelaunch-update',
       'project-summary',
+      'feature-architect',
 
     ],
 
@@ -770,6 +776,7 @@ const PROFILES = {
 
       'gs-update',
       'project-summary',
+      'feature-architect',
 
     ],
 

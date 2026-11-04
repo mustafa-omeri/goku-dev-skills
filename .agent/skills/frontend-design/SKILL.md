@@ -61,12 +61,12 @@ Similar to searching `./canvas-fonts` in `canvas-design` for typographic depth, 
 - **Dashboard Layout References**: The `./dashboard-theme/` folder contains 18 curated dashboard screenshots (`dashboard-theme-01.webp` → `dashboard-theme-18.webp`) plus a `README.md` guide. **When the user asks for a dashboard, always inspect this folder first** and borrow layout patterns (sidebar + topbar + card grid, KPI cards, tables, progress rings) instead of inventing a generic admin layout.
 - **Curated Component Themes**: The `./component-themes/` folder contains 55 production-ready HTML/CSS themes across 8 core categories (sidebars, navbars, menus, parallax, logins, footers, cards, accordions). **When the user asks for a sidebar, navbar, login, footer, card, accordion, menu, or parallax, always inspect `./component-themes/` first.** Each theme folder contains its standalone working code and a dedicated `<theme-name>.design.md` detailing aesthetic tone, layout anatomy, agent selection criteria, and framework adaptation.
 - **Zero-Friction CLI Bridges:**
-  * Component Picker: `python .agent/skills/frontend-design/scripts/get_component.py --list` (or `--theme <name> --html` / `--type sidebars`)
+  * Component Picker & Verification Bridge: `python .agent/skills/frontend-design/scripts/get_component.py --list` (or `--verify <theme1,theme2>` to mechanically reject hallucinated theme names, and `--theme <name> --adapt-guide` to get the `STRUCTURAL PORTING BLUEPRINT` + HTML/CSS skeleton)
   * Palette Picker: `python .agent/skills/frontend-design/scripts/get_palette.py --list` (or `--id <1-10> --format css`)
 
 - **Zero-Friction CLI Bridges:**
 
-  * Component Picker: `python .agent/skills/frontend-design/scripts/get_component.py --list` (or `--theme <name> --html` / `--type sidebars`)
+  * Component Picker & Verification Bridge: `python .agent/skills/frontend-design/scripts/get_component.py --list` (or `--verify <theme1,theme2>` to mechanically reject hallucinated theme names, and `--theme <name> --adapt-guide` to get the `STRUCTURAL PORTING BLUEPRINT` + HTML/CSS skeleton)
 
   * Palette Picker: `python .agent/skills/frontend-design/scripts/get_palette.py --list` (or `--id <1-10> --format css`)
 - **How to Use**:

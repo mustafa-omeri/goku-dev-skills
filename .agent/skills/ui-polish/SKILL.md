@@ -1,6 +1,6 @@
 ---
 name: ui-polish
-description: Master Design Orchestrator & UI Sözleşmesi; 16 resmi kilitli temayı, 55 hazır bileşen şablonunu ve 16 UI/UX tasarım becerisini koordine ederek sıfır AI-slop, geometry-matched skeleton ve 375px responsive ergonomisiyle üretim kalitesinde arayüz inşa eder ve doğrular. Tetikleyiciler: "/ui-polish", "ui polish", "[UI-POLISH]", "/ui-polish --skeleton", "arayüz parlat", "polish ui", "skeleton kasetlerini entegre et". Tetiklenmez: sıfırdan backend API ve veritabanı `musgoku`'ya aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
+description: Master Design Orchestrator & UI Sözleşmesi; 16 resmi kilitli temayı, 55 hazır bileşen şablonunu ve 16 UI/UX tasarım becerisini koordine ederek sıfır AI-slop, geometry-matched skeleton ve 375px responsive ergonomisiyle üretim kalitesinde arayüz inşa eder ve doğrular. Tetikleyiciler: "/ui-polish", "ui polish", "[UI-POLISH]", "/ui-polish --skeleton", "/ui-polish --<theme-name>", "arayüz parlat", "polish ui", "skeleton kasetlerini entegre et". Tetiklenmez: sıfırdan backend API ve veritabanı `musgoku`'ya aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
 ---
 
 # UI Polish & Master Design Orchestrator (`/ui-polish`)
@@ -17,24 +17,40 @@ Ajan tek satır CSS veya bileşen kodu değiştirmeden önce projenin çalışma
 |---|---|---|
 | Proje kökünde `DESIGN.md` **yok** VE projede çalışan mevcut arayüz **var** (Brownfield) | **1. Hızlı Baseline & Dönüşüm Modu (`mode: baseline`)** | 💡 **Karar A1 İstisnası:** Kullanıcının açıkça `/ui-polish` çağırması tasarıma dokunma onayıdır. Ajan önce 1 dakikalık hızlı analizle mevcut durumu `<repo-kök>/DESIGN.md` (`mode: baseline`) olarak çıkarıp anti-referans yapar, ardından **duraksamadan doğrudan dönüşüm ve iyileştirme adımlarına (Faz 1–9) geçer**. (Dokunmama kuralı yalnızca rutin özellik geliştirme oturumlarında geçerlidir). |
 | Proje kökünde `DESIGN.md` **yok** VE proje sıfırdan kuruluyor (Greenfield) | **2. Keşif & Tasarım Modu (`mode: crafted`)** | Faz 1 Keşif → Faz 2 Kreatif Yön (1 birincil + 2 alternatif tema) → Faz 3–9 tam icra akışı. |
-| Proje kökünde `DESIGN.md` **var** VE normal `/ui-polish` çağrıldı | **3. İyileştirme Modu (`Refinement`)** | Mevcut `DESIGN.md` sözleşmesine sadık kalınır. Token'lar korunarak zanaat tabanı, 4 UX durumu, 375px mobil dönüşümü ve 10-noktalı canlı düzeltme döngüsü uygulanır. ⛔ **Yaşayan Yüzey Önceliği (Living Surface Supremacy):** Projede çalışan bir arayüz varsa (App/Workspace kabuğu, mevcut kartlar ve modallar), alt ekranlar (Login, Register, Popup, Settings, Modal) tasarlanırken veya parlatılırken ana arayüzün yüzey modu (Light/Dark/Split) ve kart dili okunur ve **BİREBİR MİRAS ALINIR**. `themes.css` içindeki kilitli temalar asla projenin yaşayan açık zeminini ezerek yabancı/karanlık cam kutu (AI slop) dayatamaz. Açık zeminli bir projede kullanıcı açıkça "karanlık moda geç" demedikçe keyfi siyah (`#161619`) zemin ve arka plan blur parıltı topları (blur orbs) üretmek AĞIR ZANAAT İHLALİDİR. |
+| Proje kökünde `DESIGN.md` **var** VE normal `/ui-polish` çağrıldı | **3. İyileştirme & Yapısal Dönüşüm Modu (`Refinement & Structural Upgrade`)** | Mevcut `DESIGN.md` sözleşmesinin **renk/tipografi tokenlarına (%100 Palet Sadakati)** sadık kalınır; ancak **mevcut sıkıcı/dar DOM iskeleti korunmaz!** Seçilen `frontend-design/component-themes/` şablonunun çok katmanlı yapısal mimarisi (Split-Hero, Bento Grid, Segmented Switcher, Katmanlı Kart Hub'ı) projenin Living Surface renkleriyle JSX/TSX'e port edilir. ⛔ **Yaşayan Yüzey Önceliği (Living Surface Supremacy) vs Kozmetik Mikro-Rötuş Yasağı:** Palet sadakati yalnızca renk ve yüzey modunu (Light/Dark/Split) korur; mevcut ekrandaki tek sütunlu dar kutuyu (`max-w-[440px]` / `max-w-md`) olduğu gibi bırakıp sadece `pl-10`, `shadow-sm` veya `aria-*` değiştirerek işi bitirmek (**Cosmetic Micro-Diff Slop**) ve `E12` kapısını tetiklemek **AĞIR ZANAAT İHLALİDİR**. |
 | Proje kökünde `DESIGN.md` **var** VE kullanıcı açıkça `"tasarımı değiştir / yeniden tasarla"` dedi | **4. Yeniden Tasarım Modu (`mode: redesign`)** | `PRODUCT.md` korunur; eski `DESIGN.md` anti-referans kabul edilerek yeni yön seçilir ve tüm arayüz dönüştürülür. |
 | Kullanıcı açıkça `"/ui-polish --skeleton"` veya `"skeleton entegre et"` dedi | **5. Cerrahi Skeleton Kaset Modu (`mode: skeleton-only`)** | Tüm sayfayı yeniden tasarlamak yerine doğrudan hedef bileşenin kaset yapısını (geometry-matched skeleton) kurar; sıfır CLS, semantik tema token'ları ve themes.css shimmer motorunu bağlar. |
 
 ---
 
+## 0.1 Doğrudan Bileşen Teması Kilitleme Bayrağı (`--<theme-name>` / `--theme=<name>`)
+
+Kullanıcı `/ui-polish` komutuna doğrudan 56 bileşen temasından (`component-themes/`) veya 18 dashboard temasından (`dashboard-theme/`) birinin adını bayrak olarak eklediğinde (örn: `/ui-polish TODO-LOGIN-POLISH TODO-POPUP-POLISH TODO-AUTH-SIGNUP --sliding-hero-auth-switcher-login` veya `--sliding-dual-auth-toggle-login` veya `--dark-slate-dock-sidebar`):
+
+1. **Mutlak Kullanıcı Tema Kilidi (Pinned Component Theme):** Ajan bu bayrağı kesin ve bağlayıcı bir direktif kabul eder. İlgili kategori (Login, Sidebar, Card vb.) için başka bir varsayılan tema seçemez.
+2. **Karakteristik Hareket ve Yapısal Portlama Zorunluluğu:** Ajan koda dokunmadan önce `python .agent/skills/frontend-design/scripts/get_component.py --theme <tema-adi> --adapt-guide` komutunu çalıştırarak o temanın **özgün DOM ve CSS hareket mekaniğini** (örn: `sliding-hero-auth-switcher-login` için sağdan sola kayan `%50` genişlikli `.card-bg` vitrin kapağı ve kapak içi hap butonu) okur ve projeye birebir port eder.
+3. **Receipt Eşleşmesi:** Ön Uçuş Makbuzu 3. satırında (`Selected Component Themes`) bu tema adı yer almalı ve `--verify` denetiminden geçmiş olmalıdır.
+4. **Görsel Sadakat ve Buton Yerleşim Standartları:**
+   - **Fotoğraf Vitrini (Hero Photography):** Vitrin kapağında düz siyah/koyu zemin (`#252528`, `bg-black`, `bg-zinc-950`) kullanmak KESİNLİKLE YASAKTIR (Pitch-Black Slop - W6). Ajan, projenin arketipine uygun aynı en-boy oranında (1200×800) atmosferik bir görseli `public/assets/auth/hero.jpg` konumuna kendisi üretir ve karartma scrim'i ile bağlar. Vitrinde 3 özellik kartı doldurulmaz; yalnızca ortalanmış başlık, 1 satır slogan ve outline pill buton yer alır.
+   - **Temiz Form ve Buton Hiyerarşisi:** Masaüstünde formun tepesinde çift katmanlı tab veya uydurma Magic Link sekmeleri yer alamaz. Standart akış: Form Alanları -> `[x] Remember me` + `Forgot password?` yardımcı satırı -> Tam genişlikli `LOGIN` / `SIGN UP` butonu -> `── Or ──` bölücüsü -> `Google` ve `GitHub` sosyal butonlarıdır.
+
+---
+
 ## 1. ZORUNLU ÖN UÇUŞ MAKBUZU (MANDATORY EXECUTION RECEIPT)
 
-Ajan, kod yazmaya başlamadan önce ekrana aşağıdaki **6 satırlık bağlayıcı makbuzu** basmak zorundadır:
+Ajan, kod yazmaya başlamadan önce terminalde `get_component.py --verify` ve `--adapt-guide` komutlarını çalıştırıp doğrulamak ve ekrana aşağıdaki **7 satırlık bağlayıcı makbuzu** basmak zorundadır:
+
+> ⛔ **Uydurma Tema Yasağı (`--verify` Zorunluluğu):** 3. satıra katalogda olmayan hayali tema isimleri (`compact-tactile-credentials`, `tactile-card-hub`, `segmented-pill-control` vb.) yazmak KESİNLİKLE YASAKTIR. Makbuzu basmadan önce `python .agent/skills/frontend-design/scripts/get_component.py --verify <tema1,tema2>` komutu çalıştırılıp `[OK]` çıktısı alınmalı ve `python .agent/skills/frontend-design/scripts/get_component.py --theme <tema-adi> --adapt-guide` ile gerçek HTML/CSS iskeleti okunmalıdır.
 
 ```markdown
 ### 🚀 UI-POLISH MASTER ORCHESTRATION RECEIPT
 1. **Detected Project Archetype:** [SaaS Analytics / Logistics & BI / FinTech / EdTech / E-Commerce / Docs & Tools]
 2. **Selected Locked Theme:** [1 Birincil Tema (Örn: #08 MARITIME AMBER) + 2 Alternatif Aday + 1 cümlelik gerekçe]
-3. **Selected Component Themes (frontend-design):** [Sidebar: dark-slate-dock, Cards: expandable-summary-metric, Nav: floating-pill, Footer: clean-dark-compact]
+3. **Selected Component Themes (frontend-design --verify PASS):** [Logins: split-hero-cloud-storage-login, Sidebar: dark-slate-dock-sidebar, Cards: expandable-summary-metric-card, Nav: floating-pill-marker-navbar]
 4. **Invoked UI/UX Skills:** [canvas-design (manifesto & font), ui-ux-pro-max (icons & motion), design-system (tokens), mock-asset-provider (avatars)]
 5. **Viewport-Native Mobile Transformations (375px):** [Desktop Sidebar -> Bottom Tab Bar + Sheet Drawer; Data Table -> Stacked Summary Cards]
-6. **Top 10 High-Impact UI Flaws Targeted:** [1..10 somut zanaat ve UX kusuru listesi]
+6. **Top 10 High-Impact UI Flaws Targeted:** [1..10 somut zanaat, yapısal iskelet ve UX kusuru listesi]
+7. **Structural Architecture Transformation (Before DOM -> After DOM):** [Örn: LoginPage: Tek sütunlu dar max-w-[440px] kutu -> 2 sütunlu Split-Hero Dual-Pane max-w-[1020px] grid lg:grid-cols-12 (Sol lg:col-span-5 Vitrin + Sağ lg:col-span-7 Form)]
 ```
 
 Bu makbuz basılmadan koda dokunulması zanaat ihlali sayılır.
@@ -132,7 +148,11 @@ Projelerde aksi belirtilmedikçe standart ve varsayılan toast bildirim motoru *
 2. Masaüstündeki sidebar'ı mobilde (`375px`) **Bottom Navigation Bar (ilk 4-5 aksiyon) + Hamburger Drawer** yapısına dönüştür.
 
 ### Faz 5: Hazır Bileşen Enjeksiyonu (`frontend-design` + `ui-ux-pro-max`)
-1. `component-themes/` altındaki hazır şablonları (`navbars`, `menus`, `cards`, `logins`, `footers`) `get_component.py` ile koda uyarla.
+1. `component-themes/` altındaki hazır şablonları (`navbars`, `menus`, `cards`, `logins`, `footers`) `python .agent/skills/frontend-design/scripts/get_component.py --theme <tema-adi> --adapt-guide` ile çekerek hem gerçek HTML/CSS iskeletini hem de `STRUCTURAL PORTING BLUEPRINT` kurallarını koda uyarla.
+   - ⛔ **Tam Sayfa Login / Auth Zorunlu Masaüstü Standardı (`Split-Hero Dual-Pane` veya `Sliding-Hero Overlay Switcher` — `E12` Kapısı):** Tam sayfa giriş/kayıt ekranlarında (`LoginPage.tsx`, `AuthPage.tsx` vb.) tek sütunlu dar kutu (`max-w-[440px]` / `max-w-md`) bırakmak kesinlikle yasaktır (`E12 single-box-auth-slop`). İki onaylı masaüstü mimarisinden biri kurulur:
+     * **Mimari A (Split-Hero Dual-Pane — `split-hero-cloud-storage-login` vb.):** `max-w-[1020px] grid grid-cols-1 lg:grid-cols-12`: Sol `lg:col-span-5` sabit koyu vitrin (`#252528` / `--surface-showcase`) + Sağ `lg:col-span-7` form ve segmented tab bar.
+     * **Mimari B (Sliding-Hero Overlay Switcher — `sliding-hero-auth-switcher-login` / `sliding-dual-auth-toggle-login`):** `max-w-[960px] min-h-[620px] rounded-[24px] bg-white border-8 border-white shadow-[0_12px_80px_rgba(41,30,113,0.12)] overflow-hidden`: Sol %50 Giriş Formu (`phase === 'signin'`), Sağ %50 Kayıt Formu (`phase === 'signup'`) ve bunların üzerinde sağdan sola / soldan sağa kayan (`translate-x-full` <-> `translate-x-0`, `duration-[650ms]`) Recall Vitrin Kapağı (`.card-bg` + `.hero`) ile kapak içi `[KAYIT OL]` / `[GİRİŞ YAP]` hap butonu geçişi. (Masaüstünde form tepesinde sekme barı bulunmaz; mobilde kayar kapak gizlenip segmented switcher açılır).
+   - ⛔ **Popup / Extension / Kompakt Hub Standardı:** Eklenti pencereleri ve kompakt hub'larda 3 katmanlı dokunsal mimari (`Sticky Header & Segmented Omnibar -> Raised Content Cards with hover action pills -> Sticky/Floating Bottom Action Bar`) uygulanır.
 2. Veri tablolarına `tabular-nums` ve sağa hizalama ver; mobilde yatay scroll'u yasaklayarak özet kart listesine dönüştür.
 3. Tüm asenkron veri kaplarına `themes.css` içindeki `.skeleton` shimmer motorunu entegre et (spinner yasaktır).
 
@@ -155,3 +175,13 @@ Projelerde aksi belirtilmedikçe standart ve varsayılan toast bildirim motoru *
    - `python .agent/skills/musgoku/scripts/check_design_slop.py --include-agent`
    - `python .agent/skills/musgoku/scripts/check_theme_contrast.py --include-agent`
 2. Canlı DOM'da en yüksek etkili **10 somut tasarım kusurunu** tespit et, doğrudan kodda düzelt ve doğrulamasını raporla.
+
+
+---
+
+## 4. `/feature-architect` Devir Sözleşmesi (Handoff & UX Protection Shield)
+
+`/feature-architect` onayı sonrasında inşa veya revize edilen her sayfada (Dashboard, Profil, Ayarlar, Stub/404 tamamlamaları) aşağıdaki 3 koruma kalkanı tavizsiz uygulanır ([`design-skills-enforcement.md`](../../rules/design-skills-enforcement.md) §2.4–§2.6):
+1. **Tasarım Sistemi Sadakati & Yaşayan Yüzey Önceliği:** Projenin mevcut `DESIGN.md` token'ları, yüzey modu (Light/Dark) ve ikon/kart dili dışına çıkılmaz; rastgele hex kodları veya arka plan blur küreleri (`E11`) kesinlikle kullanılmaz.
+2. **Mobil Ergonomi & Yatay Kaydırmasız Filtre Kuralı (`W3` / A.13):** Mobil ve dar ekranlarda kullanıcıların sağa kaydırması gerektiğini bilemeyeceği yatay kaydırmalı sekme veya filtre şeritleri (`overflow-x: auto; white-space: nowrap`) kesinlikle yasaktır. Filtre ve sekmeler mobilde `flex-wrap`, açılır çekmece (`bottom-sheet` / `popover`) veya segmentli yapılar olarak kurgulanır.
+3. **4 Zorunlu UX Durumu (`W4`) & Modal Scroll Kilidi (`W5`):** Her ekran Geometry-Matched `.skeleton` yükleme durumu, aksiyon butonlu (`"İlk [Öğe] Ekle"`) Empty State, `Tekrar Dene / Retry` mekanizmalı Error State ve modallarda çift katmanlı arka plan scroll kilidi (`overscroll-contain` + body scroll lock) ile eksiksiz teslim edilir.

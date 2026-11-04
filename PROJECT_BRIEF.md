@@ -4,7 +4,7 @@ type: project-brief
 project: skillSetWorks
 status: active
 created: 2026-10-27
-updated: 2026-11-03
+updated: 2026-11-04
 primary_language: Python 3.11 / Node.js / Markdown
 frameworks: ["pytest", "unittest", "node-cli"]
 database: ["Yok / Kural ve Dağıtım Deposu"]
@@ -28,7 +28,7 @@ related_docs:
 
 ## 1. Teknoloji Yığını & Altyapı
 - **Proje Adı / Slug:** skillSetWorks (`skillSetWorks`)
-- **Paket / Sürüm:** `goku-dev-skills` v1.20.2 (`package.json`)
+- **Paket / Sürüm:** `goku-dev-skills` v1.21.3 (`package.json`)
 - **Birincil Dil:** Python 3.11 / Node.js 18+ / Markdown
 - **Frameworkler & Kütüphaneler:** Python `unittest`, `pytest`, `pytest-cov`, `argparse`, Node.js CLI runtime
 - **Veritabanı / Altyapı:** Yok (Uygulama kodu içermez; kural, skill ve dağıtım motorudur)
@@ -40,11 +40,11 @@ related_docs:
 | Dizin / Modül | Sorumluluk & Kapsam | Kritik Notlar |
 |---|---|---|
 | `.agent/` | Tüm projelerin tek gerçek kaynak (single source of truth) kural ve skill ağacı | Dağıtım kaynağıdır |
-| `.agent/skills/` | Ajan beceri paketleri (musgoku, project-summary, ui-ux-pro-max, tdd, council vb.) | 43 skill |
+| `.agent/skills/` | Ajan beceri paketleri (musgoku, feature-architect, project-summary, ui-ux-pro-max, tdd, council vb.) | 44 skill |
 | `.agent/rules/` | Ajan kuralları ve anayasal sözleşmeler (sinif: OLCULEBILIR/TUTUM/SUREC) | 20 kural (11 ölçülebilir) |
 | `.agent/templates/` | Projelerde açılacak living markdown ve HTML şablonları | Kök şablonları (PROJECT_SUMMARY ve KULLANICI_REHBERI.html dahil) |
 | `bin/` | `goku-dev-skills` npm CLI paket yürütücüsü (`cli.js`) | CLI arabirimi |
-| `tests/` | Depo bütünlüğü, drift, sızıntı ve kural kapısı regresyon testleri | 17 test paketi |
+| `tests/` | Depo bütünlüğü, drift, sızıntı ve kural kapısı regresyon testleri | 18 test paketi |
 | `scripts/` | Skill kataloğu ve yardımcı üretim betikleri | Otomasyon araçları |
 
 ---
@@ -69,5 +69,5 @@ related_docs:
 ---
 
 ## 5. Yaşatma & Operasyonel Döngü
-- **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `test_skills_catalog.py`, `test_project_summary.py`
-- **Son Başarılı Doğrulama:** 2026-11-03 · 17/17 test paketi PASS · 8/8 kapı PASS
+- **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `test_skills_catalog.py`, `test_project_summary.py`, `test_feature_architect.py`
+- **Son Başarılı Doğrulama:** 2026-11-04 · 18/18 test paketi PASS · 8/8 kapı PASS

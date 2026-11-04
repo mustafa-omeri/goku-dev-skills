@@ -116,7 +116,7 @@ CATEGORIES = {
 
         "council", "seo-apply", "commitx", "gs-update",
 
-        "prelaunch", "prelaunch-update", "project-summary"
+        "prelaunch", "prelaunch-update", "project-summary", "feature-architect"
 
     ]
 
@@ -667,12 +667,51 @@ projenin kapsamlı özetini çıkar
 python .agent/skills/project-summary/scripts/summarize_project.py --mode long
 python .agent/skills/project-summary/scripts/summarize_project.py --mode short""",
         "category": "Marka & Doküman"
+    },
+    {
+        "command": "/feature-architect",
+        "aliases": ["/feature-architect", "/complete-features", "[FEATURE-ARCHITECT]", "eksik özellikleri tamamla", "stub sayfaları bul", "ürün eksiklerini tara", "yarım sayfaları tamamla"],
+        "name": "Global Otonom Ürün Denetçisi ve Tamamlayıcısı",
+        "badge": "Ürün & Özellik",
+        "badge_class": "badge-accent",
+        "skills": ["feature-architect", "tdd", "musgoku", "ui-polish", "frontend-design", "ui-ux-pro-max"],
+        "goal": "Stub Sayfa, Kırık Rota, Yetim API & Dashboard/Ayarlar/Profil Tamamlama",
+        "description": "Herhangi bir yazılım projesini tarayarak stub ('Geliştirilme aşamasında / Coming Soon') ekranları, kırık menü linklerini, yetim backend API/DB kolonlarını ve Dashboard/Ayarlar/Profil eksiklerini bulur; 18 dashboard-theme referansı ve 5 katmanlı TDD dikey dilimiyle eksiksiz ürün seviyesine tamamlar.",
+        "sample_prompt": "/feature-architect: Projedeki tüm yarım/stub sayfaları, yetim backend API'lerini ve dashboard/ayarlar/profil eksiklerini tara; tamamlanacak özellikleri raporla.",
+        "protocol": "1. gap_scanner.py (Deterministik Tarama) ➜ 2. Boşluk & Tema Eşleştirme Raporu (Onay Kapısı) ➜ 3. KANBAN/HANDOFF Kaydı ➜ 4. TDD 5-Katmanlı İnşa (tdd + musgoku + ui-polish) ➜ 5. Kalite Kapıları",
+        "usage_snippet": """# Sohbette Doğrudan Tetikleme:
+/feature-architect
+/feature-architect --scan-only
+/feature-architect --peer ../backend-repo
+
+# Deterministik Boşluk Tarayıcı CLI Motoru:
+python .agent/skills/feature-architect/scripts/gap_scanner.py --root . --format md
+python .agent/skills/feature-architect/scripts/gap_scanner.py --root . --peer ../backend --format json""",
+        "category": "Marka & Doküman"
     }
 ]
 
 
 
 CONFIG_METADATA = {
+    "feature-architect": {
+        "status": "Ürün & Özellik Mimarı",
+        "badge_class": "badge-accent",
+        "file": "gap_scanner.py + 18 Dashboard Teması",
+        "features": [
+            "6-Sektörlü Deterministik Tarama (gap_scanner.py)",
+            "i18n JSON & Literal Stub Sayfa Yakalayıcı",
+            "Kırık Menü / Rota & Yetim Backend API Köprüsü",
+            "18 Dashboard Tema Kataloğu (catalog.json)",
+            "Sektör Standartları (Dashboard, Profil, Ayarlar, RBAC)",
+            "Onay Kapısı + TDD 5-Katmanlı Dikey Dilim İnşası"
+        ],
+        "detail": "Projedeki yarım bırakılmış (stub) ekranları, ölü butonları, kırık rotaları ve frontend'e bağlanmamış backend yeteneklerini otomatik tespit eder; kullanıcı onayından sonra TDD ve 18 dashboard referansıyla uçtan uca tamamlar.",
+        "sample_prompt": "/feature-architect: Projedeki yarım/stub sayfaları ve yetim API'leri tara, eksik modülleri tamamla.",
+        "config_snippet": """# Ürün Boşluk ve Stub Tarayıcı CLI:
+python .agent/skills/feature-architect/scripts/gap_scanner.py --root . --format md
+python .agent/skills/feature-architect/scripts/gap_scanner.py --root . --peer ../backend-repo --format json"""
+    },
     "project-summary": {
         "status": "Proje Dokümanı",
         "badge_class": "badge-accent",
@@ -2015,7 +2054,9 @@ SAMPLE_PROMPTS = {
 
     "ui-polish": "/ui-polish --skeleton: Kart bileşenine geometry-matched skeleton kasetini entegre et; 16 kilitli temayla arayüzü parlat ve W4 spinner slop denetimini doğrula.",
     "ui-toast": "/ui-toast --warning --top-left: Sileo yay fiziği toast bildirim motorunu ve konumlandırmasını entegre et.",
-    "plan": "/plan: Karmaşık geliştirme için TDD dikiş noktası ve 5 katmanlı dilim içeren mimari plan hazırla." 
+    "plan": "/plan: Karmaşık geliştirme için TDD dikiş noktası ve 5 katmanlı dilim içeren mimari plan hazırla.",
+    "feature-architect": "/feature-architect: Projedeki tüm yarım/stub sayfaları, kırık menü rotalarını, yetim backend API'lerini ve dashboard/ayarlar/profil eksiklerini tara ve tamamla." 
+
 
 }
 
@@ -2361,7 +2402,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
             "border_var": "var(--accent-primary-border)",
 
-            "commands": ["/council", "/plan"]
+            "commands": ["/council", "/plan", "/feature-architect"]
 
         },
 

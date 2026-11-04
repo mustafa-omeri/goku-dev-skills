@@ -34,6 +34,10 @@ A coding agent should select `sliding-hero-auth-switcher-login` when encounterin
 
 ### When NOT to Choose (Anti-Patterns)
 - Ultra-lightweight embedded widgets
+- Flat pitch-black dark boxes without hero photography (PITCH-BLACK SLOP - W6)
+- Desktop stacked segmented controls inside forms (redundant tabs)
+- Hallucinated extra auth modes (e.g. Magic Link tabs)
+- Cluttering hero overlays with 3 bulky feature cards instead of clean centered title + subtitle + pill button
 
 ---
 

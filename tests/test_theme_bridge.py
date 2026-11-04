@@ -136,5 +136,90 @@ class TestSearchBridge(unittest.TestCase):
         self.assertIn("Ready-Made Local Assets (from frontend-design)", res_ds.stdout)
 
 
+    def test_verify_rejects_hallucinated_theme_names(self):
+        script = FRONTEND_SCRIPTS / "get_component.py"
+        res = subprocess.run(
+            [sys.executable, str(script), "--verify", "compact-tactile-credentials,tactile-card-hub"],
+            capture_output=True, text=True, encoding="utf-8", cwd=str(ROOT_DIR)
+        )
+        self.assertEqual(res.returncode, 1)
+        combined = f"{res.stdout}\n{res.stderr}"
+        self.assertIn("compact-tactile-credentials", combined)
+
+    def test_verify_accepts_real_theme_names(self):
+        script = FRONTEND_SCRIPTS / "get_component.py"
+        res = subprocess.run(
+            [sys.executable, str(script), "--verify", "split-hero-cloud-storage-login,sliding-dual-auth-toggle-login"],
+            capture_output=True, text=True, encoding="utf-8", cwd=str(ROOT_DIR)
+        )
+        self.assertEqual(res.returncode, 0)
+        self.assertIn("[OK]", res.stdout)
+
+    def test_adapt_guide_emits_structural_blueprint(self):
+        script = FRONTEND_SCRIPTS / "get_component.py"
+        res = subprocess.run(
+            [sys.executable, str(script), "--theme", "split-hero-cloud-storage-login", "--adapt-guide"],
+            capture_output=True, text=True, encoding="utf-8", cwd=str(ROOT_DIR)
+        )
+        self.assertEqual(res.returncode, 0)
+        self.assertIn("STRUCTURAL PORTING BLUEPRINT", res.stdout)
+        self.assertIn("Split-Hero", res.stdout)
+
+    def test_adapt_guide_sliding_hero_emits_sliding_overlay_blueprint(self):
+        script = FRONTEND_SCRIPTS / "get_component.py"
+        res = subprocess.run(
+            [sys.executable, str(script), "--theme", "sliding-hero-auth-switcher-login", "--adapt-guide"],
+            capture_output=True, text=True, encoding="utf-8", cwd=str(ROOT_DIR)
+        )
+        self.assertEqual(res.returncode, 0)
+        self.assertIn("SLIDING HERO OVERLAY ARCHITECTURE", res.stdout)
+        self.assertIn("translate-x-full", res.stdout)
+        self.assertIn("border-8", res.stdout)
+
+    def test_adapt_guide_sliding_hero_enforces_photo_backdrop_and_clean_button_layout(self):
+        script = FRONTEND_SCRIPTS / "get_component.py"
+        res = subprocess.run(
+            [sys.executable, str(script), "--theme", "sliding-hero-auth-switcher-login", "--adapt-guide"],
+            capture_output=True, text=True, encoding="utf-8", cwd=str(ROOT_DIR)
+        )
+        self.assertEqual(res.returncode, 0)
+        # 1. Fotoğraf Zemin & Düz Siyah Kutu Yasağı
+        self.assertIn("HERO PHOTOGRAPHY BACKDROP", res.stdout)
+        self.assertIn("public/assets/auth/hero.jpg", res.stdout)
+        self.assertIn("PITCH-BLACK SLOP", res.stdout)
+        self.assertIn("ASLA 3 tane kocaman özellik kartı", res.stdout)
+        # 2. Temiz Buton Hiyerarşisi (Remember me + Forgot password + LOGIN + Or + Socials)
+        self.assertIn("Remember me", res.stdout)
+        self.assertIn("Forgot password?", res.stdout)
+        self.assertIn("── Or ──", res.stdout)
+        self.assertIn("Google", res.stdout)
+        self.assertIn("GitHub", res.stdout)
+        # 3. Uydurma Magic Link Kesinlikle Bulunmamalıdır
+        self.assertNotIn("Magic Link", res.stdout)
+        self.assertNotIn("Magic link", res.stdout)
+
+    def test_adapt_guide_split_hero_also_enforces_photo_backdrop_and_clean_button_layout(self):
+        script = FRONTEND_SCRIPTS / "get_component.py"
+        res = subprocess.run(
+            [sys.executable, str(script), "--theme", "split-hero-cloud-storage-login", "--adapt-guide"],
+            capture_output=True, text=True, encoding="utf-8", cwd=str(ROOT_DIR)
+        )
+        self.assertEqual(res.returncode, 0)
+        # 1. Fotoğraf Zemin & Düz Siyah Kutu Yasağı (Evrensel kural)
+        self.assertIn("HERO PHOTOGRAPHY BACKDROP", res.stdout)
+        self.assertIn("public/assets/auth/hero.jpg", res.stdout)
+        self.assertIn("PITCH-BLACK SLOP", res.stdout)
+        self.assertIn("ASLA 3 tane devasa özellik kartı", res.stdout)
+        # 2. Temiz Buton Hiyerarşisi (Remember me + Forgot password + LOGIN + Or + Socials)
+        self.assertIn("Remember me", res.stdout)
+        self.assertIn("Forgot password?", res.stdout)
+        self.assertIn("── Or ──", res.stdout)
+        self.assertIn("Google", res.stdout)
+        self.assertIn("GitHub", res.stdout)
+        # 3. Uydurma Magic Link Kesinlikle Bulunmamalıdır
+        self.assertNotIn("Magic Link", res.stdout)
+        self.assertNotIn("Magic link", res.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()
