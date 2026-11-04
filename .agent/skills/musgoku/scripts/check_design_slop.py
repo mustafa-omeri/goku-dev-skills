@@ -27,6 +27,7 @@ E9 (hardcoded-palette)      Inline style veya CSS kuralında token dışı ham h
 E10 (mono-outside-code)     Kod/komut seçicileri (code/pre/kbd/samp) dışında monospace font kullanımı
 E11 (blur-orb-slop)         Arka planda yapay zeka klişesi dekoratif neon parıltı topu (blur-[80px+])
 E12 (single-box-auth-slop)  Tam sayfa Login/Auth ekranında masaüstü Split-Hero Dual-Pane yerine dar tek-kutu (max-w-md / max-w-[440px]) kullanımı (§2.6 A.17)
+E13 (magic-link-tab-slop)   Auth sayfasında uydurma Magic Link veya çift katmanlı 'Şifre / Magic Link' alt seçici sekmeleri kullanımı (§2.6 A.17)
 W1 (missing-tabular-nums)   Tablo veya sayaç/istatistik rakamlarında tabular-nums eksikliği
 W2 (label-uppercase-spam)   Sayfada 3'ten fazla seçicide uppercase + letter-spacing etiket kullanımı
 W3 (horizontal-scroll-slop) Görev ve eylem alanlarında yapay yatay kaydırma
@@ -35,7 +36,7 @@ W5 (unlocked-modal-scroll)   Modal/dialog kaydırılabilir alanında overscroll-
 W6 (pitch-black-auth-slop)   Auth vitrininde (split-hero, sliding-hero, showcase) fotoğraf/görsel yerine düz siyah zemin kullanımı (§2.6 A.17)
 
 Çıkış Kodları:
-- E1-E11 varsa: exit 1
+- E1-E13 varsa: exit 1
 - Yalnız W1 varsa: exit 0 (varsayılan) / exit 1 (--strict bayrağıyla)
 - Frontend kodu yoksa: kapsam dışı exit 0
 
@@ -470,6 +471,27 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
                         "2 sütunlu Split-Hero veya Kayar Kapaklı (Sliding-Hero Overlay Switcher, örn. border-8 border-white rounded-[24px] w-1/2 translate-x-full) mimariye dönüştürün."
                     ),
                 })
+
+    # E13: Magic-link or redundant sub-mode switcher tabs in full-page auth (§2.6 A.17)
+    if (
+        path.suffix.lower() in (".tsx", ".jsx", ".vue", ".svelte", ".astro")
+        and AUTH_PAGE_STEM_RE.match(path.stem)
+        and not any(k in path.as_posix().lower() for k in ("modal", "dialog", "popup", "drawer"))
+    ):
+        m_magic = re.search(r'''(?:magic-link|magicLink|tabMagicLink|sendMagicLink|tabPassword|Magic\s*Link)''', content, re.IGNORECASE)
+        if m_magic:
+            magic_line = content[: m_magic.start()].count("\n") + 1
+            errors.append({
+                "code": "E13",
+                "rule": "magic-link-tab-slop",
+                "file": str(path),
+                "line": magic_line,
+                "message": (
+                    f"Auth sayfasında uydurma Magic Link veya gereksiz çift katmanlı 'Şifre ile Giriş / Magic Link' alt seçicisi ('{m_magic.group(0)}') tespit edildi (§2.6 A.17). "
+                    "Giriş formunda yalnızca standart E-posta + Şifre, Remember me / Forgot password, tam genişlikli LOGIN ve sosyal butonlar (Google & GitHub) bulunmalıdır. "
+                    "Giriş Yap / Kayıt Ol varken araya ikinci bir 'Şifre / Magic Link' sekme katmanı koymak yasaktır. Magic Link ve gereksiz alt mod butonlarını tamamen kaldırın."
+                ),
+            })
 
     # W6: Auth showcase (sliding-hero, split-hero, dual-pane) with flat pitch-black background and no image
     if (

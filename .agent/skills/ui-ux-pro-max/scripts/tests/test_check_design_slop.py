@@ -512,5 +512,68 @@ class TestCheckDesignSlop(unittest.TestCase):
         res = check_design_slop.run_checks(self.tmp_dir)
         self.assertTrue(any(w['code'] == 'W6' for w in res['warnings']))
 
+
+    def test_rejects_magic_link_or_redundant_tabs_e13(self):
+        login_page = self.tmp_dir / "src" / "modules" / "auth" / "LoginPage.tsx"
+        login_page.parent.mkdir(parents=True, exist_ok=True)
+        login_page.write_text(
+            """
+            import React from 'react';
+            export function LoginPage() {
+                return (
+                    <main className="relative flex min-h-screen items-center justify-center">
+                        <div className="split-hero w-full max-w-[1020px] grid grid-cols-12">
+                            <aside className="lg:col-span-5"><img src="/assets/auth/hero.jpg" /></aside>
+                            <div className="lg:col-span-7">
+                                {/* Redundant sub-switcher tabs: tabPassword vs tabMagicLink */}
+                                <div className="tabs">
+                                    <button>Şifre ile Giriş</button>
+                                    <button>Magic Link ile Giriş</button>
+                                </div>
+                                <form><input type="email" /></form>
+                            </div>
+                        </div>
+                    </main>
+                );
+            }
+            """,
+            encoding="utf-8"
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertTrue(any(e["code"] == "E13" for e in res["errors"]))
+
+    def test_accepts_clean_auth_credentials_page_e13(self):
+        login_page = self.tmp_dir / "src" / "modules" / "auth" / "LoginPage.tsx"
+        login_page.parent.mkdir(parents=True, exist_ok=True)
+        login_page.write_text(
+            """
+            import React from 'react';
+            export function LoginPage() {
+                return (
+                    <main className="relative flex min-h-screen items-center justify-center">
+                        <div className="split-hero w-full max-w-[1020px] grid grid-cols-12">
+                            <aside className="lg:col-span-5"><img src="/assets/auth/hero.jpg" /></aside>
+                            <div className="lg:col-span-7">
+                                <form>
+                                    <input type="email" />
+                                    <input type="password" />
+                                    <label><input type="checkbox" /> Remember me</label>
+                                    <a href="/forgot">Forgot password?</a>
+                                    <button type="submit">LOGIN</button>
+                                    <div>── Or ──</div>
+                                    <button type="button">Google</button>
+                                    <button type="button">GitHub</button>
+                                </form>
+                            </div>
+                        </div>
+                    </main>
+                );
+            }
+            """,
+            encoding="utf-8"
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertFalse(any(e["code"] == "E13" for e in res["errors"]))
+
 if __name__ == "__main__":
     unittest.main()

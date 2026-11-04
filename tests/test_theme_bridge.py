@@ -221,5 +221,23 @@ class TestSearchBridge(unittest.TestCase):
         self.assertNotIn("Magic link", res.stdout)
 
 
+
+    def test_generate_auth_hero_script_creates_asset(self):
+        script = ROOT_DIR / ".agent" / "skills" / "mock-asset-provider" / "scripts" / "generate_auth_hero.py"
+        self.assertTrue(script.is_file(), "generate_auth_hero.py script should exist")
+        # Run with fallback/local check
+        out_temp = ROOT_DIR / "temp_unit_hero.jpg"
+        try:
+            res = subprocess.run(
+                [sys.executable, str(script), "--archetype", "docs_tools", "--project-name", "Recall Vault", "--output", str(out_temp)],
+                capture_output=True, text=True, encoding="utf-8", cwd=str(ROOT_DIR)
+            )
+            self.assertEqual(res.returncode, 0)
+            self.assertTrue(out_temp.is_file(), "Output hero image should be created")
+            self.assertGreater(out_temp.stat().st_size, 1000, "Image should be larger than 1KB")
+        finally:
+            if out_temp.is_file():
+                out_temp.unlink()
+
 if __name__ == "__main__":
     unittest.main()
