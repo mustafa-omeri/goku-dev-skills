@@ -49,3 +49,21 @@ Bu yetenek, 2 veya daha fazla geçerli alternatif içeren karmaşık mimari, tek
 - **Chairman Nihai Kararı & Gerekçesi:** [Seçilen yol ve neden diğerlerinin elendiği]
 - **Kalıcı Kayıt:** `knowledge-base.md` / `PROJECT_BRIEF.md` güncellendi.
 ```
+
+---
+
+## 5 SDLC Temas Noktası ve Birleşik Planlama Entegrasyonu
+
+Council (Kör Hakemlik) mekanizması izole bir araç değil; SDLC yaşam döngüsünün 5 kritik anında Kademeli Eşik Modeliyle (Tiered Threshold) devreye girer:
+
+1. **Planlama & Tasarım (`/plan`, Adım 2.1):**
+   - 2 veya daha fazla geçerli mimari, veri modeli veya kütüphane yaklaşımı içeren işlerde `PLAN.template.md` içindeki `## 2. 🏛️ Council Deliberation` tablosunu zorunlu olarak işletir (`Option A vs Option B` Borda analizi).
+   - Birleşik Planlama Ekosistemi zincirini kurar: Fikir (`my-idea`) → Şartname (`doc-coauthoring`) → Açık Keşfi (`feature-architect` / `gap_scanner.py`) → Konsey Hakemliği (`council`) → Görev Tahtası (`KANBAN.md`) → TDD Dikiş Noktası & 5 Katmanlı Dilim (`development-workflow.md` Adım 2.2).
+2. **Teknoloji & Kütüphane Seçimi (`/council`):**
+   - Yeni kütüphane veya paket seçiminde (Zustand vs Context, Tailwind v4 vs v3, Auth protokolü vb.) bağımsız hakemlik yapar ve `docs/adr/` kaydı açar.
+3. **Yüksek Riskli Refactoring (Blast Radius > 3):**
+   - 3'ten fazla modülü veya çekirdek tipleri etkileyen refactoring adımlarında Karpathy sadelik filtresi uygular (`karpathy-guidelines` + `codebase-design`).
+4. **Çelişen Hata Hipotezleri (`diagnosing-bugs` Aşama 3):**
+   - Yarış durumu (race condition), bellek sızıntısı veya stale closure gibi çelişkili 2+ kök neden hipotezi varken hangisinin önce prob edileceğini Borda skoruyla belirler.
+5. **Kod İnceleme İhtilafları (`code-review` / `verify-*`):**
+   - Standartlar İncelemesi (Martin Fowler smell kataloğu) ile Şartname İncelemesi (ürün gereksinimleri) çatıştığında tarafsız hakemlik ve bilinçli ödünleşim (trade-off) sentezi üretir.

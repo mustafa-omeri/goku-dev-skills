@@ -66,6 +66,9 @@ Her hipotez **yanlışlanabilir (falsifiable)** olmalıdır:
 
 Tahmini açıkça ifade edemiyorsanız o hipotez bir histir; çöpe atın ya da netleştirin.
 
+💡 **Çelişen Hipotezlerde Konsey Hakemliği (Council Deliberation):**
+Eğer yarış durumu (race condition), bellek sızıntısı veya asenkron önbellek tutarsızlığında birden fazla bağımsız ve çelişen kök neden hipotezi ortaya çıkarsa; tek bir varsayıma takılıp kalmamak için `council` / `karpathy-guidelines` (§5 Council Deliberation) kör hakemliği işletilerek hipotezler Borda skoruyla önceliklendirilir.
+
 ## Aşama 4: Enstrümantasyon (Instrument)
 
 Her prob, Aşama 3'teki somut bir tahmine karşılık gelmelidir. **Her seferinde yalnızca tek bir değişkeni değiştirin.**

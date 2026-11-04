@@ -65,5 +65,6 @@ Bulguları `## Standartlar` ve `## Şartname` başlıkları altında yan yana su
 
 - **Rejection Log (Bilinçli Tercih Kontrolü):** `HANDOFF.md`, `knowledge-base.md` ve `PROJECT_BRIEF.md` içinde belgelenmiş bilinçli mimari ödünler (tradeoffs) "hata" olarak sunulmaz; `## Bilinçli Tercihler (Rejection Log)` tablosuna taşınır (Ayrıntı: `references/stop-conditions-and-rejections.md`).
 - **STOP Koşulları:** Kod incelemesi sonrası refactoring veya onarım adımlarında gerçeklik beklentiyle uyuşmuyorsa (`Reality Mismatch`), alt ajan durur ve onay ister.
+- **Standartlar vs Şartname İhtilaflarında Konsey Hakemliği (Council Deliberation):** Bir eksenin "standart dışı / smell" dediği ancak şartnamenin zorunlu kıldığı çelişkili durumlarda (örn. geriye dönük uyumluluk köprüleri, mecburi parametre yığınları), `council` / `karpathy-guidelines` (§5 Council Deliberation) kör hakemliği işletilerek bilinçli trade-off kararı üretilir ve `knowledge-base.md` / `docs/adr/` kaydına bağlanır.
 
 Raporu şu özetle bitirin: Her iki eksendeki toplam bulgu sayısı ve her eksenin kendi içindeki en kritik sorunu.

@@ -32,6 +32,7 @@ TEST_SCRIPTS = [
     ("Test Check Handoff & All Gates", HERE / "test_check_handoff.py"),
     ("Test Project Summary", HERE / "test_project_summary.py"),
     ("Test Feature Architect", HERE / "test_feature_architect.py"),
+    ("Test Council Workflow Integration", HERE / "test_council_workflow_integration.py"),
 ]
 
 

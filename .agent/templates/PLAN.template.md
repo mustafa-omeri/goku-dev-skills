@@ -26,23 +26,37 @@ Feature: <doldur: Özellik Adı>
 
 ---
 
-## 2. User Review Required (Kullanıcı İncelemesi & Kritik Kararlar)
+## 2. 🏛️ Council Deliberation & Alternatif Yaklaşımlar (2+ Seçenek İncelemesi)
+> [!NOTE] Tek alternatifli basit işlerde 'Doğrudan tek yol / Konsey eşiği altında' yazılır.
+> 2+ alternatifli mimari/teknoloji tercihlerinde Option A vs Option B körlemesi zorunludur.
+
+| Seçenek | Yaklaşım | Avantajlar (+) | Riskler / Dezavantajlar (-) | Borda Puanı |
+|---|---|---|---|:---:|
+| **Option A (Yalın/Karpathy)** | <doldur: Sıfır bağımlılık, yalın çözüm> | <doldur> | <doldur> | <doldur: örn. 2.5> |
+| **Option B (Genişletilebilir)** | <doldur: Modüler, esnek soyutlama> | <doldur> | <doldur> | <doldur: örn. 1.8> |
+
+- **Seçilen Yol & Gerekçe:** <doldur: Kazanan seçenek ve elenen seçeneğin neden tercih edilmediği>
+- **Birleşik Planlama Ekosistemi Bağlantısı:** Fikir (`my-idea`) → Şartname/PRD (`doc-coauthoring`) → Açık Denetimi (`feature-architect`) → Konsey Hakemliği (`council`) → Görev Kartı (`KANBAN.md`) → TDD Dikiş Noktası & 5 Katmanlı Dikey Dilim (`development-workflow.md` Adım 2.2).
+
+---
+
+## 3. User Review Required (Kullanıcı İncelemesi & Kritik Kararlar)
 > [!IMPORTANT]
 > <doldur: Kullanıcının onaylaması gereken mimari kararlar, breaking change'ler veya UX tercihleri.>
 
-## 3. Open Questions (Açık Sorular)
+## 4. Open Questions (Açık Sorular)
 <doldur: Varsa kullanıcıya sorulacak netleştirme soruları; yoksa 'Açık soru bulunmamaktadır.'>
 
 ---
 
-## 4. 📋 Sprint & KANBAN Durumu
+## 5. 📋 Sprint & KANBAN Durumu
 | Kart ID | Mevcut Sütun | Hedef Sütun (Proceed Sonrası) | WIP Limiti Kontrolü |
 |---|---|---|---|
 | `<doldur: ID>` | `Bekliyor` | `Yapılıyor` | Maksimum 3 aktif kart kuralı geçerli |
 
 ---
 
-## 5. 🏗️ 5 Katmanlı Dikey Dilim Mimarisi (Full-Stack Vertical Slice)
+## 6. 🏗️ 5 Katmanlı Dikey Dilim Mimarisi (Full-Stack Vertical Slice)
 > ⛔ Bir katman dahi eksikse Sahte Bitti (Phantom Done) sayılır.
 
 | Katman | Yapılacak İşlem / Değişiklik | İlgili Dosya / Şema |
@@ -55,7 +69,7 @@ Feature: <doldur: Özellik Adı>
 
 ---
 
-## 6. 🧪 TDD Kırmızı-Yeşil Dikiş Noktaları (Seams) ve Sıralı İcra Fazları
+## 7. 🧪 TDD Kırmızı-Yeşil Dikiş Noktaları (Seams) ve Sıralı İcra Fazları
 > ⛔ **PROCEED İCRA KURALI (MANDATORY):** Kullanıcı "Proceed" butonuna bastığında ajan doğrudan üretim koduna GEÇEMEZ. Sırasıyla aşağıdaki fazları icra etmek zorundadır:
 
 ### 🔴 Faz 1: Dikiş Noktası & Kırmızı Test (Red Loop)
@@ -83,7 +97,7 @@ Feature: <doldur: Özellik Adı>
 
 ---
 
-## 7. Proposed Changes (Önerilen Dosya Değişiklikleri)
+## 8. Proposed Changes (Önerilen Dosya Değişiklikleri)
 
 ### [Bileşen / Modül Adı]
 #### [NEW] `yol/yeni_dosya.ext`
@@ -97,7 +111,7 @@ Feature: <doldur: Özellik Adı>
 
 ---
 
-## 8. Verification Plan (Doğrulama Planı)
+## 9. Verification Plan (Doğrulama Planı)
 
 ### Automated Tests (Otomasyon Testleri)
 ```bash

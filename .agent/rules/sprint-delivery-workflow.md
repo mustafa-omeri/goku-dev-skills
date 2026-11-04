@@ -100,7 +100,7 @@ Boş bırakmak yerine kapının seni uyarmasını tercih et.
 
 ### 2.1.1 Antigravity IDE Plan Modu (/plan) ve KANBAN / TDD Köprüsü
 Antigravity IDE içinde `/plan` komutu veya Plan Mode çalıştırıldığında:
-1. Üretilecek olan plan artifact'ı (`<plan_name>.md`), doğrudan [`.agent/templates/PLAN.template.md`](../templates/PLAN.template.md) şablonunu kullanır; TDD dikiş noktalarını (`seam`), 5 katmanlı dikey dilimi ve ilgili KANBAN kartını açıkça belirtir.
+1. Üretilecek olan plan artifact'ı (<plan_name>.md), doğrudan [.agent/templates/PLAN.template.md](../templates/PLAN.template.md) şablonunu kullanır; TDD dikiş noktalarını (seam), 5 katmanlı dikey dilimi, 2+ alternatifli mimari ikilemlerde Council Deliberation (Option A vs Option B) körlemesini ve ilgili KANBAN kartını açıkça belirtir.
 2. ⛔ **Proceed İcra Kilidi (Phase Lock):** Kullanıcı UI'daki "Proceed" butonuna bastığında veya planı onayladığında:
    - İlgili kart `KANBAN.md` üzerinde `Yapılıyor`'a çekilir (WIP limiti maksimum 3 denetlenir).
    - TDD Kırmızı Test yazılıp terminalde **KIRMIZI (FAIL)** olduğu kanıtlanmadan üretim koduna dokunulamaz!

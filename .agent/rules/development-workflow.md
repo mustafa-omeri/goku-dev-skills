@@ -34,6 +34,7 @@ Backend için ayrıntılı matris `references\` altındaki dosyaların içindedi
 |---|---|
 | Kütüphane API'si değişmiş olabilir | `context7` → `resolve-library-id` → `query-docs` |
 | Karmaşık mimari karar, güvenlik sınırı | `sequential-thinking` |
+| 2+ alternatifli mimari karar, kütüphane seçimi, teknoloji ikilemleri | `council` / `karpathy-guidelines` (3 Aşamalı Kör Hakemlik & Borda Skoru) |
 | UI testi / ekran incelemesi | tarayıcı/ekran aracı (proje yapısına göre) |
 | Dosya arama / proje keşfi | dosya sistemi aracı |
 
@@ -53,6 +54,11 @@ Ajan kullanıcının herhangi bir hatırlatma yapmasını beklemeden; `doc-coaut
 Geliştirmeye başlamadan önce ajan sırasıyla şu adımları işletmek zorundadır:
 
 1. **Detaylı Uygulama Planı ("Nasıl Yapılacak?"):**
+   - 🏛️ **Mimari Alternatifler ve Konsey Eşiği (Council Deliberation Threshold):**
+     * **Eşik Kuralı (Tiered Threshold):** Geliştirilecek özellik veya modül için 2 veya daha fazla geçerli mimari yaklaşım, kütüphane seçimi veya veri modeli alternatifi varsa (örn. Zustand vs Context vs Redux, REST vs GraphQL, CSS Grid vs Flexbox layout omurgası, yeni DB şeması/ORM modeli), ajanın tek bir alternatifi dayatması **YASAKTIR**.
+     * **Körleme & Borda Oylaması:** Planda en az `Option A (Yalın/Minimalist)`, `Option B (Genişletilebilir)` ve gerekiyorsa `Option C (Hibrit)` alternatifleri çıkarılır; `council_ranker.py` / Kör Hakemlik mantığıyla artı/eksi ve Borda skoru analizi sunulur.
+     * **Eşik Altı İstisnası (Trivial Bypass):** Tek alternatifli basit bug fix'ler, tek bileşenli CSS/UI rötuşları, rutin CRUD tekrarları veya typo düzeltmeleri için Konsey toplanmaz; doğrudan `musgoku` + `tdd` icra edilir.
+     * **Birleşik Planlama Ekosistemi (Unified Planning Integration):** Planlama adımı izole bir ada değildir; Fikir Havuzu (`my-idea`) → Ürün Açığı Keşfi (`feature-architect` / `gap_scanner.py`) → Şartname & PRD (`doc-coauthoring`) → Mimari Alternatif Konseyi (`council`) → Görev Tahtası (`sprint-delivery-workflow.md` / `KANBAN.md`) → Uygulama Planı (`/plan`, `PLAN.template.md`) → TDD Dikiş Noktası & 5 Katmanlı Dilim (`development-workflow.md` Adım 2.2) zinciriyle birbirine mantıksal olarak bağlanır.
    - **5 Katmanlı Dikey Dilim (Full-Stack Vertical Slice):** DB Şeması/Migration → Backend View/RPC → İstemci API Entegrasyonu → Arayüz/UX → Döngü Kapanışı / Admin Formu.
    - **TDD Dikiş Noktaları (Seams) ve Kırmızı-Yeşil Fazları:** Hangi dikiş noktasında kırmızı test yazılacak, minimal geçiş kodu ne olacak.
    - **Gherkin Kabul Kriterleri:** `Feature` ve `Scenario` (`Given ... When ... Then ...`) somut test adımları.
@@ -277,6 +283,7 @@ Yukarıdaki ölçülebilir kapı komutları (`npm run build`, `pnpm test`, `npx 
    Raporun hemen altında kullanıcıya net iki seçenek sunulur:
    - **1. Anında Dilimli Cerrahi Onarım (Fix Now — Faz 1..N):** Faz 0 ile mühürlenen `🔴 Kritik` maddeleri (3'erli WIP dilimleriyle) ve ardından `🟡 İyileştirme` maddelerini ilgili cerrahi yeteneklerle (`fix-bug`, `tdd`, `db-migration-enforcement`, `ui-polish`, `doc-coauthoring`) sırayla çöz.
    - **2. Görev Panosunda Bırak (Plan Next):** Bulguları PRD `## BULGULAR` ve `HANDOFF.md` üzerinde planlı tutarak oturumu güvenle devret.
+   - **3. Standartlar ve Şartname Çatışmasında Konsey Hakemliği:** Kod incelemesinde (`code-review`) veya retrospektif denetimlerde standart kurallar ile şartname gereksinimleri arasında bir mimari ihtilaf doğarsa, `council` hakemliği ile bilinçli ödünleşim (trade-off) sentezi üretilir ve `knowledge-base.md` / `docs/adr/` kaydına bağlanır.
 
 ---
 
