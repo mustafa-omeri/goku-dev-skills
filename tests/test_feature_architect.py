@@ -54,6 +54,7 @@ class FeatureArchitectContractTests(unittest.TestCase):
             SKILL_DIR / "scripts" / "gap_scanner.py",
             SKILL_DIR / "references" / "report-template.md",
             SKILL_DIR / "references" / "dashboard-matching.md",
+            SKILL_DIR / "references" / "theme-skeleton-matching.md",
         ]
         missing = [str(p.relative_to(ROOT)) for p in required if not p.is_file()]
         self.assertEqual(missing, [], f"Missing feature-architect files: {missing}")

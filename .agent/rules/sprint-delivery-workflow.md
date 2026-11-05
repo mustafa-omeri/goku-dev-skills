@@ -98,13 +98,13 @@ Boş bırakmak yerine kapının seni uyarmasını tercih et.
    - ⛔ **Açık Kaynak (Open-Source) Önceliği Kesin Kuraldır:** Tescilli, kapalı veya ücretli araçlar yerine daima aktif bakımı yapılan, geniş topluluk desteği ve güvenilir lisansı (MIT, Apache 2.0, BSD) olan açık kaynaklı çözümler önceliklendirilmelidir.
    - Planda kütüphanenin adı, lisansı, dokümantasyon linki, neden seçildiği ve açık kaynak gerekçesi belirtilmelidir.
 
-### 2.1.1 Antigravity IDE Plan Modu (/plan) ve KANBAN / TDD Köprüsü
-Antigravity IDE içinde `/plan` komutu veya Plan Mode çalıştırıldığında:
-1. Üretilecek olan plan artifact'ı (<plan_name>.md), doğrudan [.agent/templates/PLAN.template.md](../templates/PLAN.template.md) şablonunu kullanır; TDD dikiş noktalarını (seam), 5 katmanlı dikey dilimi, 2+ alternatifli mimari ikilemlerde Council Deliberation (Option A vs Option B) körlemesini ve ilgili KANBAN kartını açıkça belirtir.
-2. ⛔ **Proceed İcra Kilidi (Phase Lock):** Kullanıcı UI'daki "Proceed" butonuna bastığında veya planı onayladığında:
+### 2.1.1 Çoklu Araç Plan Modu (/plan — Antigravity IDE, Antigravity CLI, Claude Code, OpenCode, Genel CLI) ve KANBAN / TDD Köprüsü
+Antigravity IDE, Antigravity CLI (`agy`), Claude Code (`claude`), OpenCode (`opencode`) veya genel terminal CLI ortamlarında `/plan` komutu veya planlama talebi çalıştırıldığında:
+1. Üretilecek olan plan (`<artifact-dir>/<plan_name>.md` veya `.agent/plans/<plan_name>.md`), doğrudan [.agent/templates/PLAN.template.md](../templates/PLAN.template.md) şablonunu kullanır; TDD dikiş noktalarını (`seam`), 5 katmanlı dikey dilimi, **Tema ve Bileşen İskeleti Sözleşmesini** (16 Kilitli Tema, 55+ Bileşen, 18 Dashboard, Zero-CLS Skeleton), 2+ alternatifli mimari ikilemlerde Council Deliberation (Option A vs Option B) körlemesini ve ilgili KANBAN kartını açıkça belirtir.
+2. ⛔ **Proceed İcra Kilidi (Phase Lock):** Kullanıcı Antigravity IDE'de "Proceed" butonuna bastığında veya CLI/terminal ortamlarında `"proceed"`, `"onay"`, `"uygula"` yazdığında:
    - İlgili kart `KANBAN.md` üzerinde `Yapılıyor`'a çekilir (WIP limiti maksimum 3 denetlenir).
    - TDD Kırmızı Test yazılıp terminalde **KIRMIZI (FAIL)** olduğu kanıtlanmadan üretim koduna dokunulamaz!
-   - Test yeşile döndükten ve 5 katman (DB, API, UI, Skeleton Screen) tamamlandıktan sonra kart `Yapıldı`'ya taşınır.
+   - Test yeşile döndükten ve 5 katman (DB, API, UI, Tema/Bileşen İskeleti, Zero-CLS Skeleton Screen) tamamlandıktan sonra kart `Yapıldı`'ya taşınır.
 
 ### 2.2 Kullanıcı İnceleme (Review), Değişiklik ve Açık Onay Kapısı
 

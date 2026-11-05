@@ -87,11 +87,12 @@ Geliştirmeye başlamadan önce ajan sırasıyla şu adımları işletmek zorund
    - Görevde harici bir kütüphane, araç, servis veya paket kullanılacaksa önceden araştırılır.
    - ⛔ **Açık Kaynak (Open-Source) Önceliği Zorunludur:** Kapalı kaynak veya tescilli araçlar yerine öncelikle aktif geliştirilen, güvenilir lisanslı (MIT, Apache 2.0, BSD) açık kaynaklı alternatifler tercih edilir ve gerekçesi plana eklenir.
 
-6. ⛔ **UX Durumları ve 3 Cihaz Ergonomisi Planı (Responsive Viewport Contract):**
-   - Görev bir arayüz, sayfa veya bileşen içeriyorsa planda şu 3 unsur açıkça tanımlanmalıdır:
-     1. **4 UX Durumu:** Loading (kaset yapısını taklit eden zorunlu Skeleton Screen UI; veri yüklemede spinner yasaktır, spinner yalnız form submit butonunda kullanılır), Empty (açıklayıcı ikon+CTA), Error (inline+çözüm) ve Action Feedback (toast/optimistic).
-     2. **3 Cihaz Ergonomisi:** Mobil (< 768px - tek sütun / Thumb Zone / Bottom Nav / kart listesi), Tablet (768px-1024px - 2 sütun / Split-View / dokunmatik aralıklar), Masaüstü (> 1024px - çok sütunlu zengin ızgara).
-     3. **Modal / Popup Davranışı:** Sayfa token'larıyla uyum, mobilde alttan açılan Bottom Sheet (Drawer) adaptasyonu ve `max-h-[85dvh]` kaydırma/klavye koruması.
+6. ⛔ **Birleşik Tema/Bileşen İskeleti Sözleşmesi, UX Durumları ve 3 Cihaz Ergonomisi Planı (Theme & Responsive Viewport Contract):**
+   - Görev bir arayüz, sayfa veya bileşen içeriyorsa planda ([`theme-skeleton-matching.md`](../skills/feature-architect/references/theme-skeleton-matching.md) omurgasına uygun olarak) şu 4 unsur açıkça tanımlanmalıdır:
+     1. **Birleşik Tema ve Bileşen İskeleti Eşleşmesi:** Projenin Yaşayan Yüzey (`Living Surface` Light/Dark) modu + **16 Resmi Kilitli Tema** (`themes.css` `#01..#16`) + **55+ Doğrulanmış Bileşen Teması** (`python .agent/skills/frontend-design/scripts/get_component.py --list`: `logins`, `sidebars`, `navbars`, `menus`, `cards`, `footers`, `accordions`, `parallax`) + (varsa) **18 Doğrulanmış Dashboard Şablonu** (`catalog.json`).
+     2. **4 UX Durumu & Zero-CLS Skeleton Kasetleri:** Loading (hedef bileşen geometrisini birebir taklit eden zorunlu **Zero-CLS Skeleton Screen UI** kaseti — Profil, Metrik Kart, Tablo Satırı, Dashboard veya Form Kaseti; veri yüklemede spinner yasaktır, spinner yalnız form submit butonunda kullanılır), Empty (açıklayıcı ikon+CTA), Error (inline+çözüm) ve Action Feedback (toast/optimistic).
+     3. **3 Cihaz Ergonomisi:** Mobil (< 768px - tek sütun / Thumb Zone / Bottom Nav / kart listesi), Tablet (768px-1024px - 2 sütun / Split-View / dokunmatik aralıklar), Masaüstü (> 1024px - çok sütunlu zengin ızgara).
+     4. **Modal / Popup Davranışı:** Sayfa token'larıyla uyum, mobilde alttan açılan Bottom Sheet (Drawer) adaptasyonu ve `max-h-[85dvh]` kaydırma/klavye koruması.
 
 7. ⛔ **Ön Etki Analizi ve Patlama Yarıçapı Protokolü (Pre-Edit Impact Analysis & Blast Radius Scan - Sıfır Regresyon):**
    Paylaşılan bir fonksiyon, sınıf, interface, bileşen (React/Vue/TSX component), DTO, enum, API endpoint'i veya veritabanı tablosunu/kolonunu değiştirmeden önce ajan:
@@ -112,20 +113,21 @@ Geliştirmeye başlamadan önce ajan sırasıyla şu adımları işletmek zorund
 
 ---
 
-## Adım 2.2 — Antigravity IDE Plan Modu (`/plan`) ve Proceed İcra Protokolü (Proceed Execution Protocol)
+## Adım 2.2 — Çoklu Araç Plan Modu (`/plan` — Antigravity IDE, Antigravity CLI, Claude Code, OpenCode, Genel CLI) ve Proceed İcra Protokolü
 
-Antigravity IDE içinde planlama modunda (`/plan` veya Plan Mode) çalışırken, sistemin IDE'nin yerleşik `<PLAN>` promptu ile codebase kurallarımız arasında tam deterministik bir köprü kurması ZORUNLUDUR:
+İster **Antigravity IDE** görsel arayüzünde, ister **Antigravity CLI (`agy`)**, **Claude Code (`claude`)**, **OpenCode (`opencode`)** veya **Genel Terminal/CLI** ortamlarında planlama modunda (`/plan`, `agy plan`, `opencode plan` veya plan talebiyle) çalışılsın; sistemin yerleşik planlama akışları ile codebase kurallarımız arasında tam deterministik ve araç-bağımsız (tool-agnostic) bir köprü kurması ZORUNLUDUR:
 
-1. **Zorunlu Plan Şablonu (`.agent/templates/PLAN.template.md`):**
-   - Kullanıcı `/plan` komutu verdiğinde veya plan istendiğinde, ajan IDE'nin beklediği alanları (`Goal Description`, `User Review Required`, `Open Questions`, `Proposed Changes`, `Verification Plan`) eksiksiz karşılayan, ancak **TDD Kırmızı-Yeşil Dikiş Noktaları**, **5 Katmanlı Dikey Dilim Mimarisi** ve **Sprint/KANBAN Durumunu** içeren standart [`.agent/templates/PLAN.template.md`](../templates/PLAN.template.md) şablonuna göre plan üretir.
-   - ⛔ **Serbest Metin ve TDD'siz Plan Yasağı:** TDD fazları, dikiş noktası (`seam`) ve 5 katmanlı dilim içermeyen bir plan artifact'ı üretmek **AĞIR İHLALDİR (Anti-Adhoc-Planning Slop)**.
+1. **Zorunlu Plan Şablonu ve Çoklu Araç Depolama (`.agent/templates/PLAN.template.md`):**
+   - Kullanıcı `/plan` komutu verdiğinde veya plan istendiğinde, ajan standart alanları (`Goal Description`, `User Review Required`, `Open Questions`, `Proposed Changes`, `Verification Plan`) eksiksiz karşılayan; **Council Deliberation**, **5 Katmanlı Dikey Dilim Mimarisi**, **Tema ve Bileşen İskeleti Sözleşmesi** (16 Tema, 55+ Bileşen, 18 Dashboard, Zero-CLS Skeleton), **TDD Kırmızı-Yeşil Dikiş Noktaları** ve **Sprint/KANBAN Durumunu** içeren standart [`.agent/templates/PLAN.template.md`](../templates/PLAN.template.md) şablonuna göre plan üretir.
+   - **Depolama Konumu Fallback'i:** Antigravity IDE/CLI altında plan `<artifact-dir>/<plan_name>.md` olarak yazılır; Claude Code, OpenCode veya `<artifact-dir>` bulunmayan CLI ortamlarında `.agent/plans/<plan_name>.md` (veya `docs/plans/<plan_name>.md`) içine güvenle kaydedilir.
+   - ⛔ **Serbest Metin, Tema İskeletsiz ve TDD'siz Plan Yasağı:** TDD fazları, dikiş noktası (`seam`), tema/bileşen iskeleti sözleşmesi ve 5 katmanlı dilim içermeyen bir plan üretmek **AĞIR İHLALDİR (Anti-Adhoc-Planning Slop)**.
 
 2. ⛔ **PROCEED İCRA PROTOKOLÜ (Proceed Execution Protocol — Kırmızı Test Kanıtı Olmadan Koda Başlama Yasağı):**
-   Kullanıcı plandaki "Proceed" butonuna bastığında, "planı uygula", "onaylıyorum", "devam et" veya benzeri bir onay verdiğinde; ajan **ASLA VE KESİNLİKLE** doğrudan kaynak kod (`src/**`) yazmaya başlayamaz! Plan dokümanında tanımlanan 5 fazı sırasıyla işletmek zorundadır:
+   Kullanıcı Antigravity IDE'de görsel "Proceed" butonuna bastığında VEYA Antigravity CLI, Claude Code, OpenCode ve genel terminalde `"proceed"`, `"planı uygula"`, `"onaylıyorum"`, `"devam et"`, `"başla"` gibi bir onay verdiğinde; ajan **ASLA VE KESİNLİKLE** doğrudan kaynak kod (`src/**`) yazmaya başlayamaz! Plan dokümanında tanımlanan 5 fazı sırasıyla işletmek zorundadır:
    - **Faz 1 (Gherkin & KANBAN Başlangıcı):** `specs/<kart-id>.feature` senaryosu hazırlanır (veya doğrulanır); `KANBAN.md` kartı `Bekliyor`'dan `Yapılıyor`'a çekilir (WIP kontrolü yapılır).
    - **Faz 2 (KIRMIZI TEST KANITI - Red Loop):** Önceden belirlenen dikiş noktasında (`seam`) başarısız olan test dosyası (`*.test.ts`, `*Test.java` vb.) yazılır. Test komutu terminalde çalıştırılır ve testin **KIRMIZI (FAIL)** olduğu çıktı ile kanıtlanır. Test yazılmadan ve fail ettiği gösterilmeden üretim koduna geçmek **SİSTEMATİK YASAKTIR**.
    - **Faz 3 (MİNİMAL YEŞİL KOD - Green Loop):** Yalnızca o kırmızı testi yeşile çevirecek kadar minimal üretim kodu yazılır (spekülatif/hayali kod eklenmez). Test tekrar çalıştırılır ve **YEŞİL (PASS)** olduğu kanıtlanır.
-   - **Faz 4 (5 Katman Tamamlama & UX Durumları):** Varsa DB, View/RPC, API ve UI katmanları bağlanır. Sayfa ve veri yükleme durumlarında **Skeleton Screens UI** uygulanır (spinner yasaktır).
+   - **Faz 4 (5 Katman Tamamlama, Tema İskeleti & UX Durumları):** Varsa DB, View/RPC, API ve UI katmanları bağlanır; seçilen `component-themes/` (`get_component.py`) veya `dashboard-theme/` şablonu uygulanır. Sayfa ve veri yükleme durumlarında **Zero-CLS Skeleton Screens UI** uygulanır (spinner yasaktır).
    - **Faz 5 (Refactor & Kapanış):** Kod sadeleştirilir, ölçülebilir kalite kapıları (`run_all_gates.py`) çalıştırılır, kullanıcı test adımları `docs/KULLANICI_TEST_REHBERI.md`'ye eklenir ve KANBAN kartı `Yapıldı`'ya taşınır.
 
 ---

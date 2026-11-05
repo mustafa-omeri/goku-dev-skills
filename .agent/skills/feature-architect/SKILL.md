@@ -98,11 +98,12 @@ Backend verisi eksik olan bir özellikte asla gizlice `localStorage` veya sabit 
 ### 3.3 Rol ve Yetki (RBAC) Farkındalığı
 `gap_scanner.py` tarafından tespit edilen `roles` envanterini ve rota koruma (`AuthGuard`, `ProtectedRoute`, `@PreAuthorize`, RLS) yapılarını inceleyerek her önerilen ekranın ve bileşenin hangi kullanıcı rollerine görünür olacağını belirt.
 
-### 3.4 Skillset Dashboard Eşleştirme Protokolü (18 Doğrulanmış Şablon)
-Projede bir Dashboard oluşturulacak veya revize edilecekse ezbere arayüz yazma; [`references/dashboard-matching.md`](./references/dashboard-matching.md) protokolünü işlet:
-1. `.agent/skills/frontend-design/dashboard-theme/catalog.json` dosyasındaki 18 doğrulanmış dashboard mimarisini tara.
-2. Projenin veri yoğunluğunu, yaşayan yüzey modunu (Light/Dark) ve eritilecek yetim backend verilerini analiz ederek **en uygun 2 veya 3 şablonu** seç.
-3. Seçilen şablonların `.webp` görsellerini inceleyerek neden bu projeye uygun olduğunu ve hangi yetim verileri/KPI'ları hangi widget'ta göstereceğini raporda açıkla ve kullanıcıdan seçim iste.
+### 3.4 Skillset Birleşik Tema ve Bileşen İskeleti Eşleştirme Protokolü (16 Tema, 55+ Bileşen, 18 Dashboard ve İskelet Kasetleri)
+Projede bir ekran, sayfa, kimlik doğrulama akışı, navigasyon kabuğu veya dashboard oluşturulacak ya da revize edilecekse ezbere ("AI-slop") arayüz yazma; [`references/theme-skeleton-matching.md`](./references/theme-skeleton-matching.md) ve [`references/dashboard-matching.md`](./references/dashboard-matching.md) protokollerini birlikte işlet:
+1. **16 Resmi Kilitli Tema & Yaşayan Yüzey (`themes.css`):** Projenin açık/koyu yüzey modunu (`Living Surface Supremacy`) koruyarak 16 kilitli temadan (`#01 Obsidian Velvet` .. `#16 Warm Alabaster`) uygun semantic token setini eşleştir.
+2. **55+ Doğrulanmış Bileşen Teması (`get_component.py`):** `python .agent/skills/frontend-design/scripts/get_component.py --list` CLI köprüsüyle 8 kategorideki (`logins` [16], `sidebars` [8], `navbars` [1], `menus` [2], `cards` [10], `footers` [15], `accordions` [2], `parallax` [2]) hazır şablonlardan boşluğa uygun olanları seç (Auth için `generate_auth_hero.py` ile proje görseli üret).
+3. **18 Doğrulanmış Dashboard Mimarisi (`catalog.json`):** Veri yoğunluğu ve yetim backend uçları (`orphan_endpoints`) için 18 dashboard şablonundan en uygun 2-3 adayı `.webp` önizlemeleriyle belirle.
+4. **Geometri-Uyumlu İskelet Kasetleri (`Zero-CLS Skeleton`):** Veri yüklenen her ekranda jenerik spinner yerine hedef bileşen geometrisini taklit eden kaseti (Profil, Metrik Kart, Tablo Satırı, Dashboard veya Form Kaseti) ve 4 UX durumunu tanımla.
 
 ### 3.5 Otomatik `/ui-polish` Zincirlemesi ve Mobil UX Kalkanı
 Kullanıcı geliştirme planını onayladığı anda üretilecek veya revize edilecek her ekran için [`ui-polish`](../ui-polish/SKILL.md) standartlarını otomatik alt görev olarak devreye sok:
@@ -112,13 +113,13 @@ Kullanıcı geliştirme planını onayladığı anda üretilecek veya revize edi
 
 ---
 
-## 4. Zorunlu Çıktı Şablonu ve Onay Kapısı (Approval Gate)
+## 4. Zorunlu Çıktı Şablonu, Çoklu Araç Desteği ve Onay Kapısı (Approval Gate)
 
 ⛔ **Analiz tamamlandığında KESİNLİKLE hemen kod yazmaya başlama!**
-Bulgularını [`references/report-template.md`](./references/report-template.md) içindeki standart şablona birebir uyarak sun:
-- Antigravity IDE Plan Modunda çalışıyorsan raporu `<artifact-dir>/feature-architect-report.md` artifact'ı olarak üret (veya standart oturumda doğrudan sohbete bas).
+Bulgularını [`references/report-template.md`](./references/report-template.md) içindeki standart şablona birebir uyarak tüm geliştirme araçlarında (**Antigravity IDE**, **Antigravity CLI (`agy`)**, **Claude Code (`claude`)**, **OpenCode (`opencode`)** ve **Genel Terminal/CLI**) tutarlı biçimde sun:
+- Antigravity IDE veya Antigravity CLI Plan Modunda çalışıyorsan raporu `<artifact-dir>/feature-architect-report.md` artifact'ı olarak üret; Claude Code, OpenCode veya `<artifact-dir>` bulunmayan CLI ortamlarında `.agent/plans/feature-architect-report.md` (veya `docs/plans/`) altına kaydet ya da doğrudan sohbete bas.
 - **Kapsam Notu:** Bu çıktı kuralı yalnızca `/feature-architect` etkileşimli analiz raporu içindir; projenin diğer standart dokümanları ve planları (`docs/<SLUG>_PROJECT_SUMMARY_*.md`, `docs/adr/`, `docs/*-prd.md`, `docs/kullanici-rehberi.html`, `docs/KULLANICI_TEST_REHBERI.md`) her zamanki gibi `docs/` dizini altında üretilmeye devam eder.
-- Raporun sonundaki **4 Karar Sorusunu** (Öncelik sırası, Kademe seçimi, Dashboard şablonu, Veri/API yaklaşımı) kullanıcıya yönelt ve açık onay bekle.
+- Raporun sonundaki **4 Karar Sorusunu** (Öncelik sırası, Kademe seçimi, Tema/Bileşen/Dashboard iskelet seçimi, Veri/API yaklaşımı) kullanıcıya yönelt ve açık onay bekle.
 
 ---
 

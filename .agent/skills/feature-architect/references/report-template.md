@@ -37,7 +37,14 @@
 - **Seçenek 2 (Endüstri Best-Practice):** [Güvenlik/oturum yönetimi, bildirim matrisi, geometry-matched skeleton, empty/error state ve yatay kaydırmasız mobil sekme yapısı]
 - **Seçenek 3 (PRD Vizyoner):** [Projenin iş modeline özel akıllı tercihler, aktivite/denetim zaman çizelgesi veya otomasyon kuralları]
 
-### B. Dashboard Modülü (`/dashboard`) ve Skillset Şablon Seçimi
+### B. Dashboard Modülü (`/dashboard`) ve Birleşik Tema/Bileşen İskeleti Seçimi
+- **Yaşayan Yüzey & 16 Resmi Kilitli Tema Eşleşmesi (`themes.css`):** [Projenin Açık/Koyu yüzey modu + önerilen kilitli tema (`#01 Obsidian Velvet` .. `#16 Warm Alabaster`)]
+- **55+ Doğrulanmış Bileşen Teması Eşleşmesi (`get_component.py`):**
+  - *Auth / Login (`logins`):* `[örn. sliding-hero-auth-switcher-login veya kapsam dışı]`
+  - *Uygulama Kabuğu / Menü (`sidebars` / `navbars` / `menus`):* `[örn. collapsible-expandable-sidebar]`
+  - *Profil / Metrik Kartları & Ayarlar (`cards` / `accordions`):* `[örn. dark-user-profile-widget-card, horizontal-expand-dark-accordion]`
+  - *Karşılama & Alt Bilgi (`parallax` / `footers`):* `[örn. saas-cta-conversion-footer]`
+- **Geometri-Uyumlu İskelet Kasetleri (`Zero-CLS Skeleton`):** `[Profil Kaseti / Metrik Kart Kaseti / Tablo Satırı Kaseti / Dashboard Kaseti / Form Kaseti]`
 - **Mevcut Dashboard Eksikleri:** [Eksik KPI'lar, rol bazlı stub ekranlar, filtreleme ve aksiyon eksikleri]
 - **Skillset'ten Önerilen Dashboard Mimarileri (`.agent/skills/frontend-design/dashboard-theme/catalog.json`):**
   1. **`[dashboard-theme-XX]` — [Şablon Başlığı] (`[archetype]`):** [Neden bu projenin veri yoğunluğuna ve yüzey moduna uygun olduğu + hangi yetim backend verilerini/KPI'ları hangi widget'ta eriteceği]
@@ -49,7 +56,7 @@
   - **Seçenek 3 (PRD Vizyoner):** [Anomali/uyarı kartları, rol bazlı hızlı eylem (quick-action) merkezi ve öngörüsel özetler]
 
 ### C. Diğer Stub ve 404 Sayfaları
-*(Tespit edilen her ek sayfa/modül için alt başlık açılır: Kanıt + RBAC + Veri Hazırlığı + Seçenek 1 MVP / Seçenek 2 Best-Practice / Seçenek 3 PRD Vizyoner)*
+*(Tespit edilen her ek sayfa/modül için alt başlık açılır: Kanıt + RBAC + Veri Hazırlığı + Eşleşen `component-themes/` Şablonu + Zero-CLS İskelet Kaseti + Seçenek 1 MVP / Seçenek 2 Best-Practice / Seçenek 3 PRD Vizyoner)*
 
 ---
 
@@ -58,6 +65,6 @@
 Uygulamaya ve otomatik `/ui-polish` sürecine geçmem için lütfen aşağıdaki 4 tercihinizi paylaşın:
 1. **Öncelik Sırası:** Hangi modül veya sayfalardan başlayalım? *(Örn: Önce Dashboard ve Profil/Ayarlar, ardından diğer stub sayfalar)*
 2. **Kademe Seçimi:** Hangi çözüm seviyesini uygulayalım? *(Seçenek 1: MVP / Seçenek 2: Best-Practice / Seçenek 3: PRD Vizyoner)*
-3. **Dashboard Şablonu:** Skillset'ten önerilen hangi dashboard mimarisini (`dashboard-theme-XX`) baz alalım?
+3. **Tema, Bileşen ve Dashboard İskeleti:** Skillset'ten önerilen hangi kilitli tema (`#01..#16`), bileşen şablonları (`get_component.py`) ve dashboard mimarisini (`dashboard-theme-XX`) baz alalım?
 4. **Veri & API Yaklaşımı:** Backend eksiği (`[Yeni API/DB Gerekli 🔴]`) olan modüllerde **Full-Stack (5 Katman: DB + Backend + API + UI)** olarak mı örelim, yoksa şimdilik tipli servis dikiş noktasıyla **`Mock-UI (YARIM — Eksik Katman HANDOFF'a kaydedilir)`** olarak mı hazırlayalım?
 ```
