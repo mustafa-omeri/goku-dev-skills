@@ -27,6 +27,17 @@ import urllib.parse
 from pathlib import Path
 from typing import Any, Dict, List
 
+# Integration with security_checker
+try:
+    from security_checker import audit_secrets_and_env, check_security_headers
+except ImportError:
+    try:
+        from .security_checker import audit_secrets_and_env, check_security_headers
+    except ImportError:
+        # Fallback to direct path load if run as script
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from security_checker import audit_secrets_and_env, check_security_headers
+
 # Ensure utf-8 stdout
 for stream in (sys.stdout, sys.stderr):
     if hasattr(stream, "reconfigure"):
@@ -145,6 +156,32 @@ def audit_local_directory(target_dir: Path) -> Dict[str, Any]:
         "issues": traps[:10]
     }
 
+    # Run mechanical 20-point security scan (security_checker integration)
+    sec_blockers, sec_warnings = audit_secrets_and_env(target_dir)
+    sec_issues = sec_blockers + sec_warnings
+    results["items"]["security_checker"] = {
+        "status": "FAIL" if sec_blockers else ("MAJOR" if sec_warnings else "PASS"),
+        "issues": sec_issues[:15],
+        "blocker_count": len(sec_blockers),
+        "warning_count": len(sec_warnings)
+    }
+
+    return results
+
+
+def audit_target(target_dir: Path, target_url: str | None = None) -> Dict[str, Any]:
+    results = audit_local_directory(target_dir)
+
+    # Remote security headers and CORS check if URL provided
+    if target_url:
+        net_blockers, net_warnings, headers_found = check_security_headers(target_url)
+        results["items"]["remote_security_headers"] = {
+            "status": "FAIL" if net_blockers else ("MAJOR" if net_warnings else "PASS"),
+            "target_url": target_url,
+            "issues": net_blockers + net_warnings,
+            "headers": headers_found
+        }
+
     return results
 
 
@@ -157,7 +194,7 @@ def main() -> int:
     args = parser.parse_args()
     target_path = Path(args.dir).resolve()
 
-    report = audit_local_directory(target_path)
+    report = audit_target(target_path, args.url)
 
     if args.json:
         print(json.dumps(report, indent=2, ensure_ascii=False))

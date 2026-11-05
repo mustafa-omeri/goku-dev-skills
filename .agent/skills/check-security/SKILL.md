@@ -36,8 +36,9 @@ Herkese açık veri toplayan her formda (geri bildirim, iletişim, bülten, baş
 
 ### 4. Halka 4 — Secret, Credential ve Ortam Değişkeni Sızıntısı
 - Kaynak kodda, istemci paketlerinde (`VITE_*`, `NEXT_PUBLIC_*`) veya git çalışma ağacında özel anahtar (`service_role`, `SECRET_KEY`, veritabanı parolası) sızıntısı olmadığını doğrula.
-- Birleşik doğrulama kapılarını çalıştır:
+- Mekanik 20 maddelik güvenlik tarayıcısını ve birleşik doğrulama kapılarını çalıştır:
   ```bash
+  python .agent/skills/prelaunch-audit/scripts/security_checker.py --dir .
   python .agent/skills/musgoku/scripts/run_all_gates.py
   ```
 

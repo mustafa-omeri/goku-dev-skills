@@ -57,6 +57,35 @@ Bu skill iki farklı çalışma moduna sahiptir:
 
 ---
 
+## 20 Maddelik Uygulama Güvenliği Çekirdeği (Security Core S1-S20)
+
+Canlıya çıkış öncesinde hacklenme, sızıntı ve yetki ihlallerini önleyen 20 maddelik mekanik güvenlik kontrol listesi; ayrıntılar için [security-compliance.md](references/security-compliance.md) belgesini inceleyin. Doğrulama komutu: `python .agent/skills/prelaunch-audit/scripts/security_checker.py --dir .` (veya canlıda `--url <URL>`).
+
+| # | Güvenlik Maddesi (OWASP) | Önem Derecesi | Mekanik Geçme Kriteri (`security_checker.py`) |
+|---|---|---|---|
+| S1 | **Hide API Keys** | BLOCKER | Kaynakta veya istemci kodunda canlı Stripe, AWS, GitHub vb. secret key bulunmaması |
+| S2 | **Check Env Variables** | BLOCKER | `VITE_*` veya `NEXT_PUBLIC_*` içinde `SECRET`, `PRIVATE`, `PASSWORD` sızıntısı olmaması |
+| S3 | **Protect Admin Routes** | BLOCKER | `/admin` rotalarının sunucu tarafı guard/middleware arkasında olması |
+| S4 | **Proper Authentication** | BLOCKER | Hassas uç noktaların anonim erişime kapalı olması, JWT/oturum kontrolü |
+| S5 | **Check User Access (RBAC/IDOR)** | CRITICAL | Parametrik kaynak erişimlerinde (`/users/:id`) kiracı/kullanıcı sahipliği (RLS) kontrolü |
+| S6 | **Sanitize Forms** | CRITICAL | Zod/Bean Validation ile tip ve uzunluk doğrulaması yapılması |
+| S7 | **Protect Against XSS** | CRITICAL | `dangerouslySetInnerHTML`, `innerHTML`, `eval()` kullanımının denetlenmesi |
+| S8 | **Add Rate Limiting** | CRITICAL | Login, register ve public form uç noktalarında hız sınırlayıcı varlığı |
+| S9 | **Secure API Endpoints** | CRITICAL | HTTP metod sınırları, CSRF koruması ve yetkisiz endpoint erişim yasağı |
+| S10| **Check CORS Settings** | BLOCKER | `Access-Control-Allow-Origin: *` ile `Allow-Credentials: true` kombinasyonunun bulunmaması |
+| S11| **Add Security Headers** | CRITICAL | HSTS, CSP, X-Content-Type-Options: nosniff, X-Frame-Options başlıklarının bulunması |
+| S12| **Turn Off Debug Mode** | BLOCKER | Prod yapılandırmasında `DEBUG=True`, `NODE_ENV=development` veya public `.map` olmaması |
+| S13| **Update Dependencies** | CRITICAL | `package.json`, `pom.xml`, `requirements.txt` içinde kritik/yüksek CVE olmaması |
+| S14| **Remove Unused Packages** | ORTA | Kullanılmayan ölü bağımlılıkların temizlenmesi (`knip`, `check-unused.ps1`) |
+| S15| **Check Exposed Files** | BLOCKER | Dağıtım veya web-root dizininde `.env*`, `.git/`, `*.pem`, `*.sql` dosyası olmaması |
+| S16| **Secure Database** | BLOCKER | Ham SQL string birleştirmesi (SQLi) olmaması, Supabase/Postgres RLS açık olması |
+| S17| **Hash Passwords Properly** | BLOCKER | Parolaların MD5/SHA1 ile değil, Argon2id veya bcrypt (work factor >= 10) ile saklanması |
+| S18| **Check Git for Leaked Secrets**| BLOCKER | Git index veya commit geçmişinde canlı secret bulunmaması |
+| S19| **Run Full Security Audit** | YÜKSEK | İhtiyaç halinde `.agent/skills/security-audit` tam denetim modunun koşturulması |
+| S20| **Make No Mistakes** | GO/NO-GO | Blocker seviyesinde tek bir hata dahi varsa kesin NO-GO (exit 1) üretilmesi |
+
+---
+
 ## Koşullu Ek Maddeler (21-27)
 
 Yalnızca site türüne uyuyorsa uygulanır; uymuyorsa raporda `N/A + gerekçe` belirtilir.

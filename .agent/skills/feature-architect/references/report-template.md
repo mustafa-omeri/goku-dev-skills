@@ -56,7 +56,11 @@
   - **Seçenek 3 (PRD Vizyoner):** [Anomali/uyarı kartları, rol bazlı hızlı eylem (quick-action) merkezi ve öngörüsel özetler]
 
 ### C. Diğer Stub ve 404 Sayfaları
-*(Tespit edilen her ek sayfa/modül için alt başlık açılır: Kanıt + RBAC + Veri Hazırlığı + Eşleşen `component-themes/` Şablonu + Zero-CLS İskelet Kaseti + Seçenek 1 MVP / Seçenek 2 Best-Practice / Seçenek 3 PRD Vizyoner)*
+*(Tespit edilen her ek sayfa/modül için alt başlık açılır: Kanıt + RBAC + Veri Hazırlığı + Eşleşen `component-themes/` Şablonu + Zero-CLS İskelet Kaseti + Güvenlik Temeli (OWASP/Sanitization/RateLimit) + Seçenek 1 MVP / Seçenek 2 Best-Practice / Seçenek 3 PRD Vizyoner)*
+
+### D. Güvenlik Temeli ve OWASP Uyum Ön Analizi (`security_checker.py`)
+- **Tespit Edilen Güvenlik ve Yetki İhtiyaçları:** [Eksik admin guard'ları, public form sanitizasyonu, CORS/Header gereksinimleri, hassas endpoint auth kontrolü]
+- **Tavsiye Edilen Güvenlik Kalkanı:** [Zod şeması, honeypot/Turnstile, Argon2id/bcrypt, RLS politikası]
 
 ---
 
@@ -65,6 +69,6 @@
 Uygulamaya ve otomatik `/ui-polish` sürecine geçmem için lütfen aşağıdaki 4 tercihinizi paylaşın:
 1. **Öncelik Sırası:** Hangi modül veya sayfalardan başlayalım? *(Örn: Önce Dashboard ve Profil/Ayarlar, ardından diğer stub sayfalar)*
 2. **Kademe Seçimi:** Hangi çözüm seviyesini uygulayalım? *(Seçenek 1: MVP / Seçenek 2: Best-Practice / Seçenek 3: PRD Vizyoner)*
-3. **Tema, Bileşen ve Dashboard İskeleti:** Skillset'ten önerilen hangi kilitli tema (`#01..#16`), bileşen şablonları (`get_component.py`) ve dashboard mimarisini (`dashboard-theme-XX`) baz alalım?
+3. **Tema, Bileşen, Dashboard ve Güvenlik Temeli:** Skillset'ten önerilen hangi kilitli tema (`#01..#16`), bileşen şablonları (`get_component.py`), dashboard mimarisini (`dashboard-theme-XX`) ve OWASP güvenlik temelini baz alalım?
 4. **Veri & API Yaklaşımı:** Backend eksiği (`[Yeni API/DB Gerekli 🔴]`) olan modüllerde **Full-Stack (5 Katman: DB + Backend + API + UI)** olarak mı örelim, yoksa şimdilik tipli servis dikiş noktasıyla **`Mock-UI (YARIM — Eksik Katman HANDOFF'a kaydedilir)`** olarak mı hazırlayalım?
 ```

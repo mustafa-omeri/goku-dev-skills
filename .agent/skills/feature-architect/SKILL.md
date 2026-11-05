@@ -111,6 +111,13 @@ Kullanıcı geliştirme planını onayladığı anda üretilecek veya revize edi
 - **Mobil UX ve Yatay Kaydırmasız Filtre Kuralı (W3 / A.13):** Mobil ve dar ekranlarda kullanıcıların sağa kaydırması gerektiğini bilemeyeceği yatay kaydırmalı şeritler (`overflow-x: auto; white-space: nowrap`) **KESİNLİKLE YASAKTIR**. Sekme, kategori ve filtre grupları mobilde alt satıra sarmalanan (`flex-wrap`), açılır çekmece (`bottom-sheet` / `popover`) veya segmentli yapılar olarak kurgulanır.
 - **4 Zorunlu UX Durumu ve Scroll Kilidi (W4 & W5):** Her ekranda Geometry-Matched Skeleton Loading (veri yüklemede spinner yasaktır), CTA butonlu Empty State, Retry mekanizmalı Error State ve modallarda çift katmanlı arka plan scroll kilidi (`overscroll-contain` + body scroll lock) zorunludur.
 
+### 3.6 Güvenlik Temeli ve OWASP Uyum Planlaması (Security Baseline by Design)
+Eksik özellikleri tespit edip tamamlarken güvenliği canlıya alma (prelaunch) aşamasına erteleme; tasarım ve planlama anında [`security_checker.py`](../prelaunch-audit/scripts/security_checker.py) ve 20 maddelik güvenlik kontrol listesini (`references/security-compliance.md`) devreye sok:
+1. **Rotalar & Yetkilendirme (Madde 3, 4, 5):** Yeni `/admin`, `/settings` veya hassas sayfalar için `ProtectedRoute`, `AuthGuard` ve sunucu tarafı RBAC zorunluluğunu plana dahil et.
+2. **Formlar & Girdi Temizliği (Madde 6, 7, 8):** Yeni formlarda Zod/Bean Validation ile input sanitization, spam koruması (Turnstile/honeypot) ve rate limiting katmanlarını baştan tanımla.
+3. **API & Veritabanı Güvenliği (Madde 9, 10, 16):** Uç noktalarda CORS politikası, güvenli HTTP metodları ve veritabanı tablolarında Row Level Security (RLS) politikalarını dikey dilimin 1. ve 2. katmanına zorunlu ekle.
+4. **Gizli Anahtarlar & Env (Madde 1, 2, 12, 17):** İstemciye sızan secret bulunmadığını, parolaların Argon2id veya bcrypt ile hash'lendiğini ve debug modunun kapalı olduğunu plan aşamasında doğrula.
+
 ---
 
 ## 4. Zorunlu Çıktı Şablonu, Çoklu Araç Desteği ve Onay Kapısı (Approval Gate)
