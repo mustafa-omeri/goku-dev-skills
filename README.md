@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Version](https://img.shields.io/badge/version-1.24.0-blue.svg?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/goku-dev-skills)
+[![Version](https://img.shields.io/badge/version-1.25.0-blue.svg?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/goku-dev-skills)
 [![Skills](https://img.shields.io/badge/skills-44%20battle--tested-8A2BE2.svg?style=for-the-badge&logo=expertsexchange)](./.agent/skills/)
 [![Rules](https://img.shields.io/badge/rules-20%20enforced-orange.svg?style=for-the-badge&logo=codereview)](./.agent/rules/)
 [![Gates](https://img.shields.io/badge/gates-15%20deterministic-success.svg?style=for-the-badge&logo=checkmarx)](./.agent/skills/musgoku/scripts/)
