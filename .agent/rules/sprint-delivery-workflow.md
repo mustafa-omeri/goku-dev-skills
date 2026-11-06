@@ -135,6 +135,33 @@ Sprint devam ederken kullanıcı tarafından talep edilen ve yapılması onaylan
 4. **TDD Kırmızı → Yeşil Döngüsü:**
    Yeni talep koda dökülürken doğrudan üretim kodu yazılmaz; [`tdd`](../skills/tdd/SKILL.md) disiplini gereğince belirlenen dikiş noktasında (`seam`) önce kırmızı test yazılır, minimal kodla yeşile çevrilir ve doğrulanır.
 
+### 2.5 Otonom Sprint Kapanış Kilidi, /verify-sprint ve Cerrahi Onarım İzlenebilirlik Protokolü (Auto-Remediation & Audit Trail Loop)
+
+Sprintteki son kartın `Yapıldı`'ya taşınması veya sprintin tamamlandığının bildirilmesi anında şu kapalı devre protokol işletilir:
+
+1. 🔒 **Sprint Kapanış Kilidi (Sprint-Done Lock):**
+   Ajan, sprintteki kartların tamamlandığı anda kullanıcıdan manuel komut beklemeden **otonom olarak** `/verify-sprint` ve `python .agent/skills/verify-sprint/scripts/sprint_auditor.py` çalıştırır. Rapor yeşil (`ONAYLANDI` / Sıfır Bulgu) olmadan sprint kapanışı veya commit onayına geçilemez.
+2. ⚠️ **Bulgu Tespiti ve Yapısal Mühürleme:**
+   Eğer bir kart ilk geliştirmede birim testlerinden geçmiş olsa bile, `/verify-sprint` ve `sprint_auditor.py` tarafından bir eksiklik (eksik 5 katman, mock kalıntısı, kullanıcı test senaryosu yokluğu veya şartname sapması) yakalanırsa:
+   - Kart `KANBAN.md` üzerinde derhal `Yapıldı`'dan `Yapılıyor` / `Bekliyor` sütununa geri çekilir.
+   - `HANDOFF.md` §3 canlı görev panosuna `1. ⏭️ [DOM]-US-XXX` formatıyla en üst sıradan eklenir.
+   - Ötelenmesi gerekenler `RELEASE_PLAN.md`'ye yansıtılır.
+3. 🛠️ **Tam Otonom Cerrahi Onarım Döngüsü (Auto-Remediation Loop - Seçenek A):**
+   Ajan ara onaylarla süreci bölmeden doğrudan ilgili cerrahi yetenekleri (`tdd`, `fix-bug`, `db-migration-enforcement`, `ui-polish`) devreye sokar. Eksik katmanları tamamlar, mock'ları gerçek view/endpoint'e bağlar, yeni/regresyon testlerini yazıp yeşile çevirir.
+4. 🛡️ **Uçtan Uca İzlenebilirlik ve Denetim Kaydı (Verification & Remediation Audit Trail):**
+   Onarım tamamlandıktan ve ikinci denetim (`re-audit`) sıfır bulgu verdikten sonra, `SPRINT_PLAN.md` (ve `RELEASE_PLAN.md`) dosyasına şu kalıcı izlenebilirlik günlüğü eklenir:
+   ```markdown
+   ### 🛡️ Sprint Doğrulama & Cerrahi Onarım İzlenebilirlik Kaydı (Audit Trail)
+   - **Kart / Madde:** `[Kart ID]` · `[Madde Başlığı]` (Sprint: S[X], Madde: [Y])
+   - **1. İlk Geliştirme Durumu:** ✅ Geliştirme tamamlandı, ilk birim/entegrasyon testleri yeşil (PASS).
+   - **2. /verify-sprint Denetim Bulgusu:** ❌ [Tespit edilen spesifik bulgu, eksik katman veya şartname sapması].
+   - **3. Planlanan ve Uygulanan Onarım:** 🛠️ [Yapılan cerrahi müdahale, açılan dosya/katman, kaldırılan mock].
+   - **4. Onarım Doğrulama Testleri:** 🧪 [Çalıştırılan yeni/regresyon testleri ve komutları] -> ✅ PASS.
+   - **5. İkinci Denetim Sonucu:** 🎯 Yeni `/verify-sprint` çalıştırıldı -> Sıfır bulgu (Zero Findings), kart resmen `Yapıldı` sütununa taşındı ve sprint onaylandı.
+   ```
+5. 🏁 **Resmi Kapanış:**
+   Audit Trail işlendikten sonra kart `Yapıldı`'ya taşınır ve kullanıcıya devir raporunda şeffaf olarak sunulur.
+
 ---
 
 ## 3. Kanban sözleşmesi

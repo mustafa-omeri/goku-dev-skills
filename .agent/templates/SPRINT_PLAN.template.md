@@ -80,6 +80,20 @@ yalnızca `KANBAN.md` içindeki `sprint` alanı değişir.
 |---|---|---|---|
 | 1 | <risk> | <düşük/orta/yüksek> | <önlem> |
 
+## Doğrulama ve Cerrahi Onarım İzlenebilirlik Kayıtları (Audit Trail)
+
+> `/verify-sprint` denetiminde bulgu yakalanıp cerrahi olarak onarılan kartlar için zorunlu kayıttır:
+
+<!--
+### 🛡️ Sprint Doğrulama & Cerrahi Onarım İzlenebilirlik Kaydı (Audit Trail)
+- **Kart / Madde:** `S<n>-<xx>` · `<Başlık>` (Sprint: S<n>, Madde: <no>)
+- **1. İlk Geliştirme Durumu:** ✅ Geliştirme tamamlandı, ilk birim/entegrasyon testleri yeşil (PASS).
+- **2. /verify-sprint Denetim Bulgusu:** ❌ <Tespit edilen spesifik bulgu, eksik katman veya şartname sapması>.
+- **3. Planlanan ve Uygulanan Onarım:** 🛠️ <Yapılan cerrahi müdahale, açılan dosya/katman, kaldırılan mock>.
+- **4. Onarım Doğrulama Testleri:** 🧪 <Çalıştırılan yeni/regresyon testleri ve komutları> -> ✅ PASS.
+- **5. İkinci Denetim Sonucu:** 🎯 Yeni /verify-sprint çalıştırıldı -> Sıfır bulgu (Zero Findings), kart resmen Yapıldı sütununa taşındı ve sprint onaylandı.
+-->
+
 ## Taşınan Açık İşler (bu sprint kapandığında)
 
 `RELEASE_PLAN.md` bu bölümden üretilir. Kapanmayan her kart id'si

@@ -105,8 +105,9 @@ Projede bir ekran, sayfa, kimlik doğrulama akışı, navigasyon kabuğu veya da
 3. **18 Doğrulanmış Dashboard Mimarisi (`catalog.json`):** Veri yoğunluğu ve yetim backend uçları (`orphan_endpoints`) için 18 dashboard şablonundan en uygun 2-3 adayı `.webp` önizlemeleriyle belirle.
 4. **Geometri-Uyumlu İskelet Kasetleri (`Zero-CLS Skeleton`):** Veri yüklenen her ekranda jenerik spinner yerine hedef bileşen geometrisini taklit eden kaseti (Profil, Metrik Kart, Tablo Satırı, Dashboard veya Form Kaseti) ve 4 UX durumunu tanımla.
 
-### 3.5 Otomatik `/ui-polish` Zincirlemesi ve Mobil UX Kalkanı
-Kullanıcı geliştirme planını onayladığı anda üretilecek veya revize edilecek her ekran için [`ui-polish`](../ui-polish/SKILL.md) standartlarını otomatik alt görev olarak devreye sok:
+### 3.5 Otomatik `/ui-polish` Zincirlemesi, Kaset Eşleştirme ve Mobil UX Kalkanı
+⛔ **Analiz Aşamasında Kaçak Kod Değiştirme Yasağı (No Premature Edits):**
+Raporlama/analiz fazında ajan KESİNLİKLE hiçbir kaynak kod dosyasına girip gizlice stil, renk veya markup değiştiremez. Tasarım iskeleti plan aşamasında `get_component.py --list` ve `catalog.json` üzerinden somut olarak seçilip rapora bağlanır; fiili kod dokunuşu ise ancak kullanıcı onay verdikten sonra `/ui-polish` standartlarıyla Faz 3'te icra edilir:
 - **Tasarım Sistemi Sadakati ve Yaşayan Yüzey Önceliği (Living Surface Supremacy):** Projenin mevcut `DESIGN.md` token'ları, yüzey modu (Açık/Koyu) ve kart dili birebir miras alınır; harici/yama stiller veya keyfi siyah arka planlar dayatılmaz.
 - **Mobil UX ve Yatay Kaydırmasız Filtre Kuralı (W3 / A.13):** Mobil ve dar ekranlarda kullanıcıların sağa kaydırması gerektiğini bilemeyeceği yatay kaydırmalı şeritler (`overflow-x: auto; white-space: nowrap`) **KESİNLİKLE YASAKTIR**. Sekme, kategori ve filtre grupları mobilde alt satıra sarmalanan (`flex-wrap`), açılır çekmece (`bottom-sheet` / `popover`) veya segmentli yapılar olarak kurgulanır.
 - **4 Zorunlu UX Durumu ve Scroll Kilidi (W4 & W5):** Her ekranda Geometry-Matched Skeleton Loading (veri yüklemede spinner yasaktır), CTA butonlu Empty State, Retry mekanizmalı Error State ve modallarda çift katmanlı arka plan scroll kilidi (`overscroll-contain` + body scroll lock) zorunludur.
@@ -120,24 +121,32 @@ Eksik özellikleri tespit edip tamamlarken güvenliği canlıya alma (prelaunch)
 
 ---
 
-## 4. Zorunlu Çıktı Şablonu, Çoklu Araç Desteği ve Onay Kapısı (Approval Gate)
+## 4. Zorunlu Çıktı Şablonu, Çoklu Araç Desteği, Çift Yönlü Kalıcılık (Dual-Persistence) ve Onay Kapısı
 
 ⛔ **Analiz tamamlandığında KESİNLİKLE hemen kod yazmaya başlama!**
 Bulgularını [`references/report-template.md`](./references/report-template.md) içindeki standart şablona birebir uyarak tüm geliştirme araçlarında (**Antigravity IDE**, **Antigravity CLI (`agy`)**, **Claude Code (`claude`)**, **OpenCode (`opencode`)** ve **Genel Terminal/CLI**) tutarlı biçimde sun:
-- Antigravity IDE veya Antigravity CLI Plan Modunda çalışıyorsan raporu `<artifact-dir>/feature-architect-report.md` artifact'ı olarak üret; Claude Code, OpenCode veya `<artifact-dir>` bulunmayan CLI ortamlarında `.agent/plans/feature-architect-report.md` (veya `docs/plans/`) altına kaydet ya da doğrudan sohbete bas.
-- **Kapsam Notu:** Bu çıktı kuralı yalnızca `/feature-architect` etkileşimli analiz raporu içindir; projenin diğer standart dokümanları ve planları (`docs/<SLUG>_PROJECT_SUMMARY_*.md`, `docs/adr/`, `docs/*-prd.md`, `docs/kullanici-rehberi.html`, `docs/KULLANICI_TEST_REHBERI.md`) her zamanki gibi `docs/` dizini altında üretilmeye devam eder.
-- Raporun sonundaki **4 Karar Sorusunu** (Öncelik sırası, Kademe seçimi, Tema/Bileşen/Dashboard iskelet seçimi, Veri/API yaklaşımı) kullanıcıya yönelt ve açık onay bekle.
+
+1. **Çift Yönlü Kalıcılık Zorunluluğu (Dual-Persistence):**
+   - Rapor ve mimari plan; hem Antigravity IDE UI'ında interaktif panel olarak görüntülenebilmesi için `<artifact-dir>/feature-architect-report.md` (veya `<plan_name>.md`) artifact'ı olarak üretilir,
+   - **HEM DE** projenin Git versiyon kontrolünde kalıcı olarak saklanması ve oturumlar arası kaybolmaması için hedef projenin `docs/plans/feature-architect-report.md` (veya `.agent/plans/<plan_name>.md`) dizinine **aynı anda (çift yönlü)** yazılır/kopyalanır.
+2. **Zorunlu İçerik Standartları:**
+   - **Council Deliberation:** 3 kademeli öneriler ve mimari tercihler `council` hakemliği ve Borda puanı ile analiz edilir.
+   - **TDD Dikiş Noktaları (Seams):** İcra öncesinde dahi hangi test dosyasında, hangi dikiş noktasında test yazılacağı, çalıştırılacak test komutu ve beklenen kırmızı FAIL kanıtı raporda tanımlanır.
+   - **Birleşik Tema ve Bileşen İskeleti:** 16 resmi kilitli tema, 55+ doğrulanmış bileşen teması (`get_component.py --list`), 18 dashboard şablonu (`catalog.json`) ve Zero-CLS iskelet kasetleri tablo halinde mühürlenir.
+   - **5 Katmanlı Dikey Dilim:** DB, View/RPC, API, UI ve Döngü Kapanışı katmanları listelenir.
+3. **Onay Kapısı (Approval Gate):**
+   - Raporun sonundaki **4 Karar Sorusunu** (Öncelik sırası, Kademe seçimi, Tema/Bileşen/Dashboard iskelet seçimi, Veri/API yaklaşımı) kullanıcıya yönelt ve açık onay bekle.
 
 ---
 
 ## 5. Onay Sonrası Deterministik İcra Akışı
 
-Kullanıcı seçimini ve onayını verdiğinde:
+Kullanıcı seçimini ve onayını verdiğinde doğrudan üretim koduna geçilemez; sırasıyla aşağıdaki fazlar icra edilir:
 1. **Görev Kaydı:** Seçilen modülleri hedef projenin `HANDOFF.md` §3 Canlı Görev Panosuna (ve varsa `KANBAN.md`'ye) kaydet.
-2. **TDD Kırmızı → Yeşil Döngüsü (`tdd`):** Her modül için önce dikiş noktasında (`seam`) testi yaz, kırmızı (FAIL) olduğunu kanıtla, ardından minimal kodla yeşile (PASS) geçir.
-3. **5 Katmanlı Dikey Dilim (`musgoku`):** Full-Stack seçildiyse `1. DB/Migration → 2. Backend/View/RPC → 3. İstemci API → 4. Arayüz/UX → 5. Döngü Kapanışı` sırasıyla inşa et (`DB_MIGRATIONS.md` ve `PROJECT_BRIEF.md` ikili eşlemesini unutma).
-4. **Otomatik `/ui-polish` İcrası:** Her ekranda `/ui-polish` Ön Uçuş Makbuzunu bas, seçilen dashboard/bileşen temasını uygula ve `check_design_slop.py` (W3, W4, W5, E11) kapısını sıfır hatayla geçir.
-5. **Rehber ve Doğrulama:** Tamamlanan özellikleri `docs/KULLANICI_TEST_REHBERI.md` ve `docs/kullanici-rehberi.html` dosyalarına işle; `run_all_gates.py` ile tüm kapıları doğrula.
+2. **Faz 1 — TDD Kırmızı Test Kanıtı (`tdd`):** Önceden belirlenen dikiş noktasında (`seam`) testi yaz, terminalde çalıştır ve **KIRMIZI (FAIL)** olduğunu kanıtla (fail kanıtı olmadan koda geçmek yasaktır).
+3. **Faz 2 — Minimal Yeşil Kod (`tdd`):** Yalnızca testi yeşile çevirecek kadar üretim kodu yaz, testin **YEŞİL (PASS)** olduğunu kanıtla.
+4. **Faz 3 — 5 Katmanlı Dikey Dilim & Otomatik `/ui-polish` İcrası (`musgoku` & `ui-polish`):** Full-Stack seçildiyse `1. DB/Migration → 2. Backend/View/RPC → 3. İstemci API → 4. Arayüz/UX → 5. Döngü Kapanışı` sırasıyla inşa et. `/ui-polish` Ön Uçuş Makbuzunu bas, seçilen dashboard/bileşen temasını ve Zero-CLS iskelet kasetini uygula, `check_design_slop.py` (W3, W4, W5, E11) kapısını sıfır hatayla geçir.
+5. **Faz 4 — Rehber ve Doğrulama:** Tamamlanan özellikleri `docs/KULLANICI_TEST_REHBERI.md` ve `docs/kullanici-rehberi.html` dosyalarına işle; `run_all_gates.py` ile tüm kapıları doğrula.
 
 ---
 

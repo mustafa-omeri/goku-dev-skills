@@ -38,7 +38,7 @@ const https = require('https');
 
 
 
-const VERSION = '1.25.0';
+const VERSION = '1.26.0';
 
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 
@@ -2595,7 +2595,17 @@ async function cmdUpdate(options) {
 
             if (fs.existsSync(rootAgents)) {
 
-              fs.writeFileSync(rootAgents, content, 'utf8');
+              try {
+
+                const rootText = fs.readFileSync(rootAgents, 'utf8');
+
+                if (rootText.includes('Global Ajan Sözleşmesi')) {
+
+                  fs.writeFileSync(rootAgents, content, 'utf8');
+
+                }
+
+              } catch (_) {}
 
             }
 
@@ -2861,7 +2871,17 @@ async function cmdUpdate(options) {
 
               if (fs.existsSync(rootAgents)) {
 
-                fs.writeFileSync(rootAgents, newContentBuf);
+                try {
+
+                  const rootText = fs.readFileSync(rootAgents, 'utf8');
+
+                  if (rootText.includes('Global Ajan Sözleşmesi')) {
+
+                    fs.writeFileSync(rootAgents, newContentBuf);
+
+                  }
+
+                } catch (_) {}
 
               }
 

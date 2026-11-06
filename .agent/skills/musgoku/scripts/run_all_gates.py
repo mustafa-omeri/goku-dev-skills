@@ -35,6 +35,7 @@ FAST_PYTHON_GATES = [
     ("Tema Kontrastı & WCAG", ".agent/skills/musgoku/scripts/check_theme_contrast.py", []),
     ("Frontend i18n", ".agent/skills/i18n-localization/scripts/i18n_checker.py", []),
     ("Sprint & Kanban Panosu", ".agent/skills/musgoku/scripts/check_sprint_board.py", []),
+    ("Sprint Kabul & 5 Katman (sprint_auditor)", ".agent/skills/verify-sprint/scripts/sprint_auditor.py", []),
     ("Vite SPA İzolasyonu", ".agent/skills/musgoku/scripts/check_vite_spa.py", []),
 ]
 

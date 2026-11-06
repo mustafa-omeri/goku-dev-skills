@@ -11,9 +11,21 @@ Bu yetenek, projenin **aktif sprinti** (`SPRINT_PLAN.md`) ve hemen öncesinde ta
 
 ## Ne Zaman Kullanılır?
 
+- **🔒 Otonom Sprint Kapanış Kilidi (Sprint-Done Lock):** Sprint kapsamındaki son kart `Yapıldı` sütununa taşındığında veya sprintin bittiği beyan edildiğinde ajan manuel komut beklemeden **otonom olarak** tetikler.
 - Kullanıcı *"bu sprint bitti mi"*, *"sprinti doğrula"*, *"/verify-sprint"* veya *"sprint kabul denetimi"* dediğinde.
 - Bir sprintteki kartlar `Yapılıyor`'dan `Yapıldı`'ya taşınmadan hemen önce.
 - `RELEASE_PLAN.md` hazırlanırken ve sprint kapanış devri yapılırken.
+
+---
+
+## Deterministik CLI Denetim Kapısı
+
+Sprint kabul ve 5 katman bütünlüğü prompt tahminine bırakılmaz; aşağıdaki kapı ile mekanik olarak taranır:
+```powershell
+python .agent/skills/verify-sprint/scripts/sprint_auditor.py
+# veya JSON çıktısı:
+python .agent/skills/verify-sprint/scripts/sprint_auditor.py --json
+```
 
 ---
 
@@ -42,12 +54,28 @@ Sprint kapsamındaki her özellik için 5 katmanı doğrula:
 - Kapanmayan açık kartlar `RELEASE_PLAN.md`'ye aktarılmış mı?
 - `HANDOFF.md` §3 canlı görev panosu güncellenmiş mi?
 
-### 5. Sprint Engellenme ve Bulgu Yönetimi Protokolü (Zorunlu İcra Adımı)
-⛔ **Engellenen Sprinti Raporda Bırakıp Çekilme Yasağı:** Denetim sonucunda bir kartın testi kırmızıysa veya katmanı eksikse sprint kapanışı `ENGELLENDİ` ilan edilir ve şu durum kalıcılığı adımları otonom işletilir:
+### 5. Sprint Engellenme, Otonom Cerrahi Onarım ve İzlenebilirlik Protokolü (Zorunlu İcra Adımı)
+⛔ **Engellenen Sprinti Raporda Bırakıp Çekilme Yasağı:** Denetim sonucunda bir kartın testi kırmızıysa veya katmanı eksikse sprint kapanışı `ENGELLENDİ` ilan edilir ve şu döngü tavizsiz işletilir:
 1. **`KANBAN.md` Geri Çekme:** Eksik/başarısız kart asla `Yapıldı`'da bırakılamaz. Derhal `Yapılıyor` veya `Bekliyor` sütununa geri çekilir; durum `🔴 Kapatılamaz (YARIM)` olarak işaretlenir.
 2. **`RELEASE_PLAN.md` Senkronu:** Sprint kapsamından çıkarılan veya ötelenen kartlar `RELEASE_PLAN.md` içindeki Ötelenen Kartlar bölümüne kaydedilir (`sprint-delivery-workflow.md` §2.4).
 3. **`HANDOFF.md` §3 Canlı Görev Panosu:** Kapanmayan kartın eksik parçası, `HANDOFF.md` §3 tablosuna `1. ⏭️ [DOM]-US-XXX` formatıyla en üst sıradan kaydedilir.
-4. **Kullanıcıya İcra Menüsü Sunumu:** Raporun altında kullanıcıya anında seçenekler sunulur.
+4. **Tam Otonom Cerrahi Onarım Döngüsü (Auto-Remediation Loop - Seçenek A):**
+   - Ajan ara onay sormadan bulguları cerrahi olarak çözer (`tdd` ile eksik katman inşası, `fix-bug` ile mock kalıntısı temizliği, `db-migration-enforcement` ile migration oluşturma).
+   - Yeni doğrulama ve regresyon testlerini çalıştırıp yeşile (PASS) çevirir.
+5. **Kalıcı İzlenebilirlik ve Denetim Kaydı (Verification & Remediation Audit Trail):**
+   - Onarım tamamlandıktan sonra `SPRINT_PLAN.md` ve `RELEASE_PLAN.md` dosyalarına deterministik formatta denetim kaydı işlenir:
+   ```markdown
+   ### 🛡️ Sprint Doğrulama & Cerrahi Onarım İzlenebilirlik Kaydı (Audit Trail)
+   - **Kart / Madde:** `[Kart ID]` · `[Madde Başlığı]` (Sprint: S[X], Madde: [Y])
+   - **1. İlk Geliştirme Durumu:** ✅ Geliştirme tamamlandı, ilk birim/entegrasyon testleri yeşil (PASS).
+   - **2. /verify-sprint Denetim Bulgusu:** ❌ [Tespit edilen spesifik bulgu, eksik katman veya şartname sapması].
+   - **3. Planlanan ve Uygulanan Onarım:** 🛠️ [Yapılan cerrahi müdahale, açılan dosya/katman, kaldırılan mock].
+   - **4. Onarım Doğrulama Testleri:** 🧪 [Çalıştırılan yeni/regresyon testleri ve komutları] -> ✅ PASS.
+   - **5. İkinci Denetim Sonucu:** 🎯 Yeni `/verify-sprint` çalıştırıldı -> Sıfır bulgu (Zero Findings), kart resmen `Yapıldı` sütununa taşındı ve sprint onaylandı.
+   ```
+6. **İkinci Kontrol (Re-Audit) ve Kapanış:**
+   - `python .agent/skills/verify-sprint/scripts/sprint_auditor.py` tekrar çalıştırılır.
+   - Sıfır bulgu (Zero Findings) kanıtlandığında kart resmen `Yapıldı` yapılır ve sprint `ONAYLANDI` olarak kapatılır.
 
 ---
 

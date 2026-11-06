@@ -57,3 +57,19 @@ Genel yöntem: `KULLANICI_TEST_REHBERI.md`.
 - **Düzeltilen:** <davranış değişikliği>
 - **Bilinmeyen davranış değişikliği:** <yoksa "yoktur" yaz — uydurma>
 - **Kapsam dışı:** <bu sürümde olmayanlar>
+
+---
+
+## 7. Doğrulama ve Cerrahi Onarım İzlenebilirlik Kayıtları (Audit Trail)
+
+> Sprint kapanışında `/verify-sprint` denetiminde bulgu yakalanıp cerrahi onarımla çözülen maddeler:
+
+<!--
+### 🛡️ Sprint Doğrulama & Cerrahi Onarım İzlenebilirlik Kaydı (Audit Trail)
+- **Kart / Madde:** `S<n>-<xx>` · `<Başlık>` (Sprint: S<n>, Madde: <no>)
+- **1. İlk Geliştirme Durumu:** ✅ Geliştirme tamamlandı, ilk birim/entegrasyon testleri yeşil (PASS).
+- **2. /verify-sprint Denetim Bulgusu:** ❌ <Tespit edilen spesifik bulgu, eksik katman veya şartname sapması>.
+- **3. Planlanan ve Uygulanan Onarım:** 🛠️ <Yapılan cerrahi müdahale, açılan dosya/katman, kaldırılan mock>.
+- **4. Onarım Doğrulama Testleri:** 🧪 <Çalıştırılan yeni/regresyon testleri ve komutları> -> ✅ PASS.
+- **5. İkinci Denetim Sonucu:** 🎯 Yeni /verify-sprint çalıştırıldı -> Sıfır bulgu (Zero Findings), kart resmen Yapıldı sütununa taşındı ve sprint onaylandı.
+-->
