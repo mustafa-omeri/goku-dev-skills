@@ -1,0 +1,174 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FeatureArchitectCouncilContract",
+  "description": "Anti-Override (Zero-Drop) output contract for each of the 6 specialist council hats in feature-architect.",
+  "type": "object",
+  "required": [
+    "agent_id",
+    "role",
+    "health_score",
+    "audits",
+    "ui_ux_mismatches",
+    "new_features",
+    "non_negotiable_constraints"
+  ],
+  "properties": {
+    "agent_id": {
+      "type": "string",
+      "enum": [
+        "snr-product-owner",
+        "snr-software-architect",
+        "principal-ui-ux-specialist",
+        "snr-seo-specialist",
+        "snr-growth-marketing",
+        "snr-qa-security-auditor"
+      ]
+    },
+    "role": {
+      "type": "string",
+      "minLength": 2
+    },
+    "applicability": {
+      "type": "string",
+      "enum": ["applicable", "not_applicable"],
+      "default": "applicable",
+      "description": "Allows hats such as Technical SEO to declare not_applicable on private CLI or internal-only tools."
+    },
+    "not_applicable_reason": {
+      "type": "string",
+      "description": "Mandatory justification when applicability is not_applicable."
+    },
+    "health_score": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "maximum": 100,
+      "description": "0-100 domain health score when applicable; null when not_applicable."
+    },
+    "audits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "category",
+          "severity",
+          "location",
+          "evidence",
+          "confidence",
+          "issue",
+          "fix_proposal"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^(PO|ARCH|UX|SEO|GRW|QA)-[0-9]{2,}$",
+            "description": "Unique finding identifier prefixed by hat code, e.g. ARCH-01, PO-02."
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "STUB_PAGE",
+              "BROKEN_ROUTE",
+              "ORPHAN_API_DB",
+              "CORE_MODULE_GAP",
+              "ARCHITECTURE",
+              "UI_UX",
+              "PRODUCT",
+              "PERFORMANCE",
+              "SEO",
+              "GROWTH",
+              "SECURITY",
+              "QA"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+          },
+          "location": {
+            "type": "string",
+            "minLength": 1,
+            "description": "File path with optional :line, route path, or API endpoint."
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Concrete file:line, symbol, or gap_scanner proof backing this finding."
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["verified", "candidate"]
+          },
+          "issue": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fix_proposal": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "ui_ux_mismatches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "screen_or_component",
+          "theme_reference_gap",
+          "ux_impact",
+          "correction"
+        ],
+        "properties": {
+          "screen_or_component": { "type": "string", "minLength": 1 },
+          "theme_reference_gap": { "type": "string", "minLength": 1 },
+          "ux_impact": { "type": "string", "minLength": 1 },
+          "correction": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "new_features": {
+      "type": "array",
+      "description": "Beyond-PRD high-leverage product, architecture, growth, UX, SEO, or security feature proposals.",
+      "items": {
+        "type": "object",
+        "required": [
+          "feature_id",
+          "title",
+          "rationale",
+          "user_value",
+          "reach",
+          "impact_score",
+          "confidence",
+          "effort",
+          "five_layer_slice_summary"
+        ],
+        "properties": {
+          "feature_id": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1 },
+          "rationale": { "type": "string", "minLength": 1 },
+          "user_value": { "type": "string", "minLength": 1 },
+          "reach": { "type": "integer", "minimum": 1, "maximum": 10 },
+          "impact_score": { "type": "integer", "minimum": 1, "maximum": 10 },
+          "confidence": { "type": "number", "enum": [0.5, 0.8, 1.0] },
+          "effort": { "type": "string", "enum": ["S", "M", "L", "XL"] },
+          "target_location": { "type": "string" },
+          "five_layer_slice_summary": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Canonical 5-Layer Vertical Slice: 1. DB/Migration -> 2. Backend/View/RPC -> 3. Client API -> 4. UI/UX + Zero-CLS Skeleton -> 5. Loop Closure (Admin/Management)."
+          }
+        }
+      }
+    },
+    "non_negotiable_constraints": {
+      "type": "array",
+      "description": "Red-line engineering or product rules that cannot be overridden by another hat's proposal.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

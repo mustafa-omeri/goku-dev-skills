@@ -94,7 +94,7 @@ CATEGORIES = {
 
     "Teslimat & Kalite": [
 
-        "git-release-workflow", "production-docker-architect",
+        "git-release-workflow", "production-docker-architect", "deployment-architect",
 
         "karpathy-guidelines", "task-observer",
 
@@ -670,23 +670,25 @@ python .agent/skills/project-summary/scripts/summarize_project.py --mode short""
     },
     {
         "command": "/feature-architect",
-        "aliases": ["/feature-architect", "/complete-features", "[FEATURE-ARCHITECT]", "eksik özellikleri tamamla", "stub sayfaları bul", "ürün eksiklerini tara", "yarım sayfaları tamamla"],
-        "name": "Global Otonom Ürün Denetçisi ve Tamamlayıcısı",
-        "badge": "Ürün & Özellik",
+        "aliases": ["/feature-architect", "/complete-features", "[FEATURE-ARCHITECT]", "ürün konseyi", "product council", "eksik özellikleri tamamla", "stub sayfaları bul", "ürün eksiklerini tara", "yarım sayfaları tamamla"],
+        "name": "Global Otonom Ürün Denetçisi ve 6 Şapkalı Strateji Konseyi",
+        "badge": "Ürün & Konsey",
         "badge_class": "badge-accent",
-        "skills": ["feature-architect", "tdd", "musgoku", "ui-polish", "frontend-design", "ui-ux-pro-max"],
-        "goal": "Stub Sayfa, Kırık Rota, Yetim API & Dashboard/Ayarlar/Profil Tamamlama",
-        "description": "Herhangi bir yazılım projesini tarayarak stub ('Geliştirilme aşamasında / Coming Soon') ekranları, kırık menü linklerini, yetim backend API/DB kolonlarını ve Dashboard/Ayarlar/Profil eksiklerini bulur; 18 dashboard-theme referansı ve 5 katmanlı TDD dikey dilimiyle eksiksiz ürün seviyesine tamamlar.",
-        "sample_prompt": "/feature-architect: Projedeki tüm yarım/stub sayfaları, yetim backend API'lerini ve dashboard/ayarlar/profil eksiklerini tara; tamamlanacak özellikleri raporla.",
-        "protocol": "1. gap_scanner.py (Deterministik Tarama) ➜ 2. Boşluk & Tema Eşleştirme Raporu (Onay Kapısı) ➜ 3. KANBAN/HANDOFF Kaydı ➜ 4. TDD 5-Katmanlı İnşa (tdd + musgoku + ui-polish) ➜ 5. Kalite Kapıları",
+        "skills": ["feature-architect", "council", "tdd", "musgoku", "ui-polish", "frontend-design", "ui-ux-pro-max"],
+        "goal": "6 Şapkalı Konsey Denetimi, Stub/404/Yetim API Tespiti & 5 Katmanlı Tamamlama",
+        "description": "Herhangi bir yazılım projesini tarayarak stub ('Geliştirilme aşamasında / Coming Soon') ekranları, kırık menü linklerini, yetim backend API/DB kolonlarını ve Dashboard/Ayarlar/Profil eksiklerini bulur; engine_advisor.py ile tek veya alt ajanlı 6 uzman konseyini (PO, Arch, UX, SEO, Growth, QA) çalıştırır, Zero-Drop kapısıyla konsolide eder ve 5 katmanlı TDD dikey dilimiyle tamamlar.",
+        "sample_prompt": "/feature-architect: Projedeki tüm yarım/stub sayfaları, yetim backend API'lerini ve eksikleri 6 uzman şapkasıyla incele; konsolide plan raporu hazırla.",
+        "protocol": "1. gap_scanner.py + engine_advisor.py (Kanıt & Motor Seçimi) ➜ 2. 6 Şapka Denetimi (PO/Arch/UX/SEO/Growth/QA) ➜ 3. council_merger.py (Zero-Drop Konsolide Rapor & Onay) ➜ 4. TDD 5-Katmanlı İnşa",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
 /feature-architect
-/feature-architect --scan-only
-/feature-architect --peer ../backend-repo
+/feature-architect --mode=council
+/feature-architect --mode=full --engine=multi
+/feature-architect --hats po,arch,ux,qa --peer ../backend-repo
 
-# Deterministik Boşluk Tarayıcı CLI Motoru:
+# Deterministik CLI Araçları (Tarayıcı, Motor Danışmanı ve Konsey Birleştirici):
 python .agent/skills/feature-architect/scripts/gap_scanner.py --root . --format md
-python .agent/skills/feature-architect/scripts/gap_scanner.py --root . --peer ../backend --format json""",
+python .agent/skills/feature-architect/scripts/engine_advisor.py --root . --subagents yes --format json
+python .agent/skills/feature-architect/scripts/council_merger.py --sample --format md""",
         "category": "Marka & Doküman"
     }
 ]
@@ -695,22 +697,23 @@ python .agent/skills/feature-architect/scripts/gap_scanner.py --root . --peer ..
 
 CONFIG_METADATA = {
     "feature-architect": {
-        "status": "Ürün & Özellik Mimarı",
+        "status": "Ürün & 6 Şapkalı Konsey",
         "badge_class": "badge-accent",
-        "file": "gap_scanner.py + 18 Dashboard Teması",
+        "file": "gap_scanner.py + engine_advisor.py + council_merger.py + 6 Ajan",
         "features": [
-            "6-Sektörlü Deterministik Tarama (gap_scanner.py)",
-            "i18n JSON & Literal Stub Sayfa Yakalayıcı",
-            "Kırık Menü / Rota & Yetim Backend API Köprüsü",
-            "18 Dashboard Tema Kataloğu (catalog.json)",
-            "Sektör Standartları (Dashboard, Profil, Ayarlar, RBAC)",
-            "Onay Kapısı + TDD 5-Katmanlı Dikey Dilim İnşası"
+            "6 Şapkalı Uzman Konseyi (PO, Arch, UX, SEO, Growth, QA)",
+            "Dinamik Motor Danışmanı (engine_advisor.py: Single vs Multi)",
+            "Zero-Drop Birleştirici & CRITICAL 60 Tavanı (council_merger.py)",
+            "5D Deterministik Boşluk Tarama (gap_scanner.py)",
+            "16 Tema, 55+ Bileşen ve 18 Dashboard Tema Eşleştirmesi",
+            "RICE Beyond-PRD İnovasyon & 5 Katmanlı TDD İnşası"
         ],
-        "detail": "Projedeki yarım bırakılmış (stub) ekranları, ölü butonları, kırık rotaları ve frontend'e bağlanmamış backend yeteneklerini otomatik tespit eder; kullanıcı onayından sonra TDD ve 18 dashboard referansıyla uçtan uca tamamlar.",
-        "sample_prompt": "/feature-architect: Projedeki yarım/stub sayfaları ve yetim API'leri tara, eksik modülleri tamamla.",
-        "config_snippet": """# Ürün Boşluk ve Stub Tarayıcı CLI:
+        "detail": "Projedeki yarım bırakılmış (stub) ekranları, kırık rotaları ve yetim API/DB kolonlarını 6 uzman şapkasıyla ezilmeden denetler; proje ölçeğine göre tek veya alt ajanlı motor önerir ve onay sonrası 5 katmanlı TDD ile tamamlar.",
+        "sample_prompt": "/feature-architect: Projedeki tüm eksikleri ve PRD ötesi fırsatları 6 uzman konsey ile incele.",
+        "config_snippet": """# Ürün Boşluk, Motor Danışmanı ve Konsey Birleştirici CLI:
 python .agent/skills/feature-architect/scripts/gap_scanner.py --root . --format md
-python .agent/skills/feature-architect/scripts/gap_scanner.py --root . --peer ../backend-repo --format json"""
+python .agent/skills/feature-architect/scripts/engine_advisor.py --root . --subagents yes --format json
+python .agent/skills/feature-architect/scripts/council_merger.py --sample --format md"""
     },
     "project-summary": {
         "status": "Proje Dokümanı",

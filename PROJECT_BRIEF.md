@@ -28,11 +28,11 @@ related_docs:
 
 ## 1. Teknoloji Yığını & Altyapı
 - **Proje Adı / Slug:** skillSetWorks (`skillSetWorks`)
-- **Paket / Sürüm:** `goku-dev-skills` v1.25.0 (`package.json`)
+- **Paket / Sürüm:** `goku-dev-skills` v1.28.0 (`package.json`)
 - **Birincil Dil:** Python 3.11 / Node.js 18+ / Markdown
 - **Frameworkler & Kütüphaneler:** Python `unittest`, `pytest`, `pytest-cov`, `argparse`, Node.js CLI runtime
 - **Veritabanı / Altyapı:** Yok (Uygulama kodu içermez; kural, skill ve dağıtım motorudur)
-- **Build / Yönetim Araçları:** `delivery.py` (Projelere dağıtım aracı), `rules_gates.py` (Kural denetleyicisi), `run_all_gates.py` (Birleşik kapı koşturucu), `check_handoff.py` (Oturum devri kapısı), `bin/cli.js` (CLI paketi)
+- **Build / Yönetim Araçları:** `delivery.py` (Projelere dağıtım aracı), `rules_gates.py` (Kural denetleyicisi), `run_all_gates.py` (Birleşik kapı koşturucu), `check_handoff.py` (Oturum devri kapısı), `gap_scanner.py` / `engine_advisor.py` / `council_merger.py` (Feature Architect 6 şapkalı konsey motoru), `bin/cli.js` (CLI paketi)
 
 ---
 
@@ -40,11 +40,11 @@ related_docs:
 | Dizin / Modül | Sorumluluk & Kapsam | Kritik Notlar |
 |---|---|---|
 | `.agent/` | Tüm projelerin tek gerçek kaynak (single source of truth) kural ve skill ağacı | Dağıtım kaynağıdır |
-| `.agent/skills/` | Ajan beceri paketleri (musgoku, feature-architect, project-summary, ui-ux-pro-max, tdd, council vb.) | 44 skill |
+| `.agent/skills/` | Ajan beceri paketleri (musgoku, feature-architect, project-summary, ui-ux-pro-max, tdd, council vb.) | 45 skill |
 | `.agent/rules/` | Ajan kuralları ve anayasal sözleşmeler (sinif: OLCULEBILIR/TUTUM/SUREC) | 20 kural (11 ölçülebilir) |
 | `.agent/templates/` | Projelerde açılacak living markdown ve HTML şablonları | Kök şablonları (PROJECT_SUMMARY ve KULLANICI_REHBERI.html dahil) |
 | `bin/` | `goku-dev-skills` npm CLI paket yürütücüsü (`cli.js`) | CLI arabirimi |
-| `tests/` | Depo bütünlüğü, drift, sızıntı ve kural kapısı regresyon testleri | 22 test paketi |
+| `tests/` | Depo bütünlüğü, drift, sızıntı ve kural kapısı regresyon testleri | 23 test paketi |
 | `scripts/` | Skill kataloğu ve yardımcı üretim betikleri | Otomasyon araçları |
 
 ---
@@ -69,5 +69,5 @@ related_docs:
 ---
 
 ## 5. Yaşatma & Operasyonel Döngü
-- **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `test_skills_catalog.py`, `test_project_summary.py`, `test_feature_architect.py`, `test_council_workflow_integration.py`, `test_theme_skeleton_integration.py`, `test_prelaunch_security.py`, `test_clean_url_routing.py`
-- **Son Başarılı Doğrulama:** 2026-11-05 · 22/22 test paketi PASS · 8/8 kapı PASS
+- **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `test_skills_catalog.py`, `test_project_summary.py`, `test_feature_architect.py`, `test_feature_architect_council.py`, `test_council_workflow_integration.py`, `test_theme_skeleton_integration.py`, `test_prelaunch_security.py`, `test_clean_url_routing.py`
+- **Son Başarılı Doğrulama:** 2026-11-06 · 23/23 test paketi PASS · Birleşik kapılar PASS

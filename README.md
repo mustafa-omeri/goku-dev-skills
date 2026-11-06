@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Version](https://img.shields.io/badge/version-1.27.0-blue.svg?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/goku-dev-skills)
+[![Version](https://img.shields.io/badge/version-1.28.0-blue.svg?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/goku-dev-skills)
 [![Skills](https://img.shields.io/badge/skills-44%20battle--tested-8A2BE2.svg?style=for-the-badge&logo=expertsexchange)](./.agent/skills/)
 [![Rules](https://img.shields.io/badge/rules-20%20enforced-orange.svg?style=for-the-badge&logo=codereview)](./.agent/rules/)
 [![Gates](https://img.shields.io/badge/gates-15%20deterministic-success.svg?style=for-the-badge&logo=checkmarx)](./.agent/skills/musgoku/scripts/)
@@ -374,7 +374,7 @@ All 12 ensemble slash commands are registered as first-class skills under `.agen
 | **`/seo-apply`** | `seo-growth` → `frontend-design` + `seo_checker.py` | **End-to-End SEO & GEO Builder:** Injects semantic HTML head tags, OpenGraph, JSON-LD Schema.org, AI crawler `robots.txt`, `sitemap.xml`, and `/llms.txt`, verified by `seo_checker.py --strict`. |
 | **`/commitx`** | `git-release-workflow` | **Express Autonomous Release:** Runs quality gates, stages changes, generates semantic tags (`vX.Y.Z`), commits, and pushes to remote without intermediate prompts. |
 | **`/gs-update`** | `musgoku` (`references/skill-set-update.md`) | **Surgical Zero-Bloat Sync:** Synchronizes installed skills and rules with upstream repository while preserving `## Proje Bazlı Ek Kurallar`. |
-| **`/feature-architect`** | `feature-architect` (`gap_scanner.py`) → `tdd` → `musgoku` → `ui-polish` | **Global Autonomous Product Gap Scanner & Feature Completion Architect:** Detects stub pages (i18n JSON & JSX literals), dead action toasts, broken routes, orphan backend APIs/DB fields, and Dashboard/Profile/Settings gaps; matches 18 dashboard themes (`catalog.json`) and builds approved modules via 5-layer TDD. |
+| **`/feature-architect`** | `feature-architect` (`gap_scanner.py` + `engine_advisor.py` + `council_merger.py` + 6 Hats) → `tdd` → `musgoku` → `ui-polish` | **Global Autonomous Product Gap Scanner, 6-Hat Strategy Council & Completion Architect:** Runs deterministic gap scan, evaluates project scale to advise single vs. parallel multi-agent execution, convenes 6 specialist hats (`PO`, `ARCH`, `UX`, `SEO`, `GRW`, `QA`) under a Zero-Drop contract, ranks Beyond-PRD features via RICE, and builds approved slices via 5-layer TDD. |
 | **`/project-summary`** | `project-summary` (`summarize_project.py`) → `doc-coauthoring` | **Consolidated Project Summary & PRD Synthesizer:** Generates `docs/<SLUG>_PROJECT_SUMMARY_SHORT.md` or `LONG.md` synthesizing all PRDs and living architectural state. |
 
 ---

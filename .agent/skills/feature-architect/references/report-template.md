@@ -1,79 +1,90 @@
-# Feature Architect — Standart Tespit ve Özellik Mimari Planı Rapor Şablonu
+# Feature Architect — 6 Şapkalı Konsey Konsolide Plan ve Rapor Şablonu
 
 > **Dil Kuralı:** Raporun dili, çalışılan projenin birincil dokümantasyon diline (`PRODUCT.md` / `README.md`) göre otomatik seçilir (Türkçe projede Türkçe, İngilizce projede İngilizce).
-> **Kanıt Kuralı:** Tablodaki her satır `gap_scanner.py` çıktısından veya ajanın bizzat açıp doğruladığı dosyadan `dosya:satır` kanıtı taşımak zorundadır.
-> **Çift Yönlü Kalıcılık (Dual-Persistence Zorunluluğu):** Bu rapor hem Antigravity IDE arayüzünde görüntülenebilmesi için `<artifact-dir>/feature-architect-report.md` artifact'ı olarak üretilir, **HEM DE** projenin Git reposunda kalıcı olarak saklanması için `docs/plans/feature-architect-report.md` (veya `.agent/plans/`) yoluna eşzamanlı olarak yazılır.
+> **Kanıt ve Zero-Drop Kuralı:** Tablodaki her bulgu `gap_scanner.py` veya ajanın açıp doğruladığı dosyadan `dosya:satır` kanıtı taşır. Hiçbir uzmanın `CRITICAL` veya `HIGH` bulgusu özetlenirken silinemez; rapor sunumundan önce `python .agent/skills/feature-architect/scripts/council_merger.py --inputs docs/plans/council/<YYYY-MM-DD> --check-report <rapor.md>` kapısından `exit 0` ile geçmek zorunludur.
+> **Çift Yönlü Kalıcılık (Dual-Persistence):** Bu rapor hem `<artifact-dir>/feature-architect-report.md` artifact'ı olarak üretilir, **HEM DE** hedef projenin `docs/plans/council/<YYYY-MM-DD>/feature-architect-council-report.md` ve `docs/plans/feature-architect-report.md` (veya `.agent/plans/`) konumlarına eşzamanlı yazılır.
 
 ---
+
+## Adım 0 — Ön Onay: Motor Seçimi Sorusu (`engine_advisor.py` — Alt Ajan Destekli Ortamlarda)
+
+Ortam alt ajan çağrısını destekliyorsa (`--subagents yes`) ve kullanıcı `--engine` bayrağı vermediyse, 6 şapka denetimine başlamadan önce kullanıcıya şu şablonla motor seçimi sorulur:
 
 ```markdown
-# 🧭 [Proje Adı] — Ürün Eksik Analizi ve Özellik Mimari Planı
+🧭 **Motor Seçimi (`/feature-architect`)** — Proje Ölçeği: **`[small | medium | large]`** (`[X]` kaynak dosya · `[Y]` LOC · `[Z]` rota · `[P]` peer repo · `[G]` tespit edilen boşluk)
+- **Analiz Gerekçesi:** `[engine_advisor.py tarafından üretilen kanıtlı gerekçe]`
+1. **[Önerilen Motor — örn. Alt Ajanlı Paralel (`multi`) veya Tek Ajan Sıralı (`single`)]:** `[Açıklama]`
+2. **[Alternatif Motor]:** `[Açıklama]`
+
+6 uzmanlı konsey denetimine hangi motorla başlayalım? (`single` / `multi`)
+```
+
+---
+
+## Nihai Konsolide Plan Raporu Şablonu (7 Ana Konsey Bölümü + İcra Sözleşmesi)
+
+```markdown
+# 🧭 [Proje Adı] — 6 Şapkalı Ürün Konseyi Denetimi ve 5 Katmanlı Mimari Tamamlama Planı
 
 > **Hedef Dal / Sürüm:** `[örn. main / v1.2.0]` · **Tarih:** `[YYYY-MM-DD]`  
-> **Denetçi / Görevli:** Kıdemli Ürün Yöneticisi (PM), UX Mimarı & Full-Stack Başmühendis  
-> **Görevlendirilen Skill'ler:** `feature-architect`, `doc-coauthoring`, `council`, `tdd`, `ui-polish`, `frontend-design`  
-> **Kullanılan MCP'ler:** `context7`, `myFilesystem` (veya "kullanılmadı")  
-> **Kalıcı Plan Konumu:** `docs/plans/feature-architect-report.md` & `<artifact-dir>/feature-architect-report.md`  
+> **Konsey Orkestratörü:** Baş Hakem (Chief Council Arbiter) + 6 Uzman Şapka (`PO`, `ARCH`, `UX`, `SEO`, `GRW`, `QA`)  
+> **Yürütme Motoru & İzolasyon:** `[Paralel Alt Ajanlı (Tam Kör İzolasyon) VEYA Tek Ajan Sıralı İzolasyon (Kör izolasyon zayıflatılmış)]`  
+> **Görevlendirilen Skill'ler:** `feature-architect`, `council`, `doc-coauthoring`, `tdd`, `ui-polish`, `frontend-design`, `prelaunch-audit`  
+> **Kalıcı Konsey Dizini:** `docs/plans/council/[YYYY-MM-DD]/` & `<artifact-dir>/feature-architect-report.md`  
 
 ---
 
-## 1. Yönetici Özeti ve Proje DNA'sı
+## 1. Konsey Sağlık Karnesi ve Proje DNA'sı
 - **Proje Amacı (PRD Özeti):** [Projenin temel değer önerisi ve hedef kitlesi]
-- **Mevcut Teknoloji & UI Yapısı:** [Frontend, Backend, DB, i18n, UI Kütüphanesi ve Yaşayan Yüzey Modu (Light/Dark)]
-- **Genel Tamamlanma Oranı:** [Aktif & Çalışan Rotalar / Toplam Menü & Rota Sayısı — gap_scanner.py verisiyle]
+- **Teknoloji & UI Yapısı:** [Frontend, Backend, DB, i18n ve Yaşayan Yüzey Modu (Light/Dark)]
+- **Ağırlıklı Ham Ortalama:** `[XX.X / 100]` (`[Aktif Uzman Sayısı]` uzman üzerinden eşit ağırlık)
+- **Proje Olgunluk Skoru:** **`[YY.Y / 100]`** *(Çözülmemiş CRITICAL bulgu varsa maksimum `60.0` CRITICAL tavanı uygulanır)*
+- **En Zayıf Halka:** `[En düşük skorlu uzman şapka ve skoru]`
 - **Kanıt Tarama Özeti:** `[stub_pages: X | stub_actions: Y | broken_routes: Z | orphan_endpoints: W | orphan_fields: V]`
 
----
-
-## 2. Kritik Tespitler: Stub Sayfalar, Ölü Kontroller, 404 Rotaları ve Yetim Özellikler
-
-| Kategori | Modül / Sayfa | Rota / Sembol | Mevcut Durum | Kanıt (`dosya:satır` / `i18n_key`) | RBAC (Roller) | Veri & API Hazırlığı |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Stub Sayfa** | [Örn: Raporlar] | `/reports` | Stub ("Geliştirme aşamasında") | `src/pages/Reports.tsx:42` (`reports.underDevelopmentDesc`) | Admin, Yönetici | `[Kısmen Hazır ⚠️]` (API var, filtre yok) |
-| **Stub Eylem** | [Örn: Dışa Aktar] | `onExportClick` | Ölü Buton / Toast ("Yakında") | `src/features/Detail.tsx:118` (`export.comingSoon`) | Tüm Roller | `[Yeni API/DB Gerekli 🔴]` |
-| **404 Rota** | [Örn: API Ayarları] | `/settings/api` | 404 (Menüde var, rota yok) | `src/components/Sidebar.tsx:84` | Sadece Admin | `[Yeni API/DB Gerekli 🔴]` |
-| **Yetim API** | [Örn: Denetim İzi] | `GET /api/v1/audit-logs` | Backend'de hazır, UI'da yok | `AuditController.java:51` | Admin | `[Veri Hazır ✅]` (Sadece UI Gerekli) |
-| **Yetim Alan** | [Örn: Son Giriş IP] | `User.lastLoginIp` | Şemada var, ekranda yok | `prisma/schema.prisma:28` | Tüm Roller | `[Veri Hazır ✅]` (Profilde gösterilebilir) |
+| Uzman Şapka | Kod | Durum | Sağlık Skoru | Öne Çıkan Durum Özeti |
+| :--- | :---: | :---: | :---: | :--- |
+| **Snr. Product Owner** | `PO` | Aktif | `[0-100]` | [Kullanıcı yolculuğu ve çekirdek modül özeti] |
+| **Snr. Software Architect** | `ARCH` | Aktif | `[0-100]` | [5 katmanlı mimari, yetim API/DB ve rota özeti] |
+| **Principal UI/UX Specialist** | `UX` | Aktif | `[0-100]` | [16 tema, 18 dashboard, Zero-CLS 4 durum ve mobil ergonomi] |
+| **Snr. Technical SEO** | `SEO` | `[Aktif / N/A]` | `[0-100 / —]` | [Semantik yapı, JSON-LD, CWV veya N/A gerekçesi] |
+| **Snr. Growth & Marketing** | `GRW` | Aktif | `[0-100]` | [Onboarding hızı, mikro-metinler ve PLG büyüme kancaları] |
+| **Snr. QA & Security Auditor** | `QA` | Aktif | `[0-100]` | [OWASP güvenlik temeli, RBAC/RLS ve 5 katmanlı TDD kapsamı] |
 
 ---
 
-## 3. Çekirdek Modül Denetimi ve 3 Kademeli Geliştirme Önerileri
+## 2. Tamamlama Envanteri (Stub, Kırık Rota, Yetim API/DB, Dashboard/Profil/Ayarlar)
 
-### A. Profil ve Ayarlar Modülü (`/profile`, `/settings`)
-- **Tespit Edilen UX ve Fonksiyon Eksikleri:** [Mevcut sayfadaki eksikler + burada eritilebilecek yetim backend verileri/endpoint'leri]
-- **RBAC Görünürlüğü:** [Hangi sekmeler tüm kullanıcılara, hangileri yalnız Admin/Yönetici rollerine açık]
-- **Seçenek 1 (Hızlı & Temiz MVP):** [Mevcut API ve verilerle hemen devreye alınacak temiz çözüm]
-- **Seçenek 2 (Endüstri Best-Practice):** [Güvenlik/oturum yönetimi, bildirim matrisi, geometry-matched skeleton, empty/error state ve yatay kaydırmasız mobil sekme yapısı]
-- **Seçenek 3 (PRD Vizyoner):** [Projenin iş modeline özel akıllı tercihler, aktivite/denetim zaman çizelgesi veya otomasyon kuralları]
-
-### B. Dashboard Modülü (`/dashboard`) ve Analitik Paneli
-- **Mevcut Dashboard Eksikleri:** [Eksik KPI'lar, rol bazlı stub ekranlar, filtreleme ve aksiyon eksikleri]
-- **Seçenek 1 (MVP):** [Temel özet KPI kartları ve son aktiviteler]
-- **Seçenek 2 (Best-Practice):** [Mobil uyumlu yatay kaydırmasız tarih/durum filtreleri, karşılaştırmalı grafikler, tam skeleton/empty/error durumları]
-- **Seçenek 3 (PRD Vizyoner):** [Anomali/uyarı kartları, rol bazlı hızlı eylem (quick-action) merkezi ve öngörüsel özetler]
-
-### C. Diğer Stub ve 404 Sayfaları
-*(Tespit edilen her ek sayfa/modül için alt başlık: Kanıt + RBAC + Veri Hazırlığı + Seçenek 1 / Seçenek 2 / Seçenek 3)*
+| Bulgu ID | Kategori | Önem | Modül / Konum (`dosya:satır`) | Somut Kanıt (`evidence`) | RBAC (Roller) | Veri & API Hazırlığı |
+| :---: | :--- | :---: | :--- | :--- | :--- | :--- |
+| `PO-01` | `STUB_PAGE` | `HIGH` | `/reports` (`src/pages/Reports.tsx:42`) | `reports.underDevelopmentDesc` | Admin, Yönetici | `[Kısmen Hazır ⚠️]` |
+| `ARCH-01` | `BROKEN_ROUTE` | `HIGH` | `/settings/api` (`src/components/Sidebar.tsx:84`) | Menüde var, Router'da yok | Sadece Admin | `[Yeni API/DB Gerekli 🔴]` |
+| `ARCH-02` | `ORPHAN_API_DB` | `MEDIUM` | `GET /api/v1/audit-logs` (`AuditController.java:51`) | Backend'de hazır, istemcide yok | Admin | `[Veri Hazır ✅]` |
+| `QA-01` | `SECURITY` | `CRITICAL` | `DELETE /api/v1/users/:id` (`UserController.java:93`) | Sunucu tarafı RBAC kontrolü eksik | Sadece Admin | `[Kısmen Hazır ⚠️]` |
 
 ---
 
-## 4. 🏛️ Council Deliberation & Alternatif Yaklaşımlar (Borda Puanı)
-> [!NOTE]
-> Modüller için önerilen kademeler ve mimari alternatifler `council` standartlarına göre kör hakemlik ve Borda skoru ile analiz edilmiştir:
+## 3. 6 Uzman Gözünden Kritik Bulgular (Ezilmemiş İzole Özetler ve 3 Kademeli Çözümler)
 
-| Seçenek / Kademe | Yaklaşım & Kapsam | Avantajlar (+) | Riskler / Dezavantajlar (-) | Borda Puanı |
-|---|---|---|---|:---:|
-| **Option A (Seçenek 1 - Yalın MVP)** | Mevcut API/DB ile hızlı, sıfır-slop yalın ekranlar. | [Hızlı teslim, sıfır DB riski] | [İleri seviye analitik ve otomasyon eksik kalır] | [örn. 2.1] |
-| **Option B (Seçenek 2 - Best-Practice)** | Tam skeleton UI, güvenlik sekmeleri, gelişmiş filtreler (Önerilen). | [Kusursuz UX, kurumsal SaaS standartları] | [Bir miktar daha fazla bileşen kodu] | [örn. 2.8] |
-| **Option C (Seçenek 3 - PRD Vizyoner)** | Akıllı öngörüsel kartlar, anomali tespiti, otomasyon. | [Maksimum rekabet avantajı, derinlik] | [Ek backend/algoritma geliştirme ihtiyacı] | [örn. 1.6] |
+*(Her uzmanın kendi imzasıyla sunduğu kritik tespitler, Ezilmez Kırmızı Çizgileri ve çekirdek modüller [Profil/Ayarlar, Dashboard, Güvenlik Temeli ve OWASP uyumu] için Seçenek 1: MVP / Seçenek 2: Best-Practice / Seçenek 3: PRD Vizyoner alternatifleri burada yer alır. Hiçbir `CRITICAL` veya `HIGH` bulgu ID'si atlanamaz).*
 
-- **Önerilen Yol & Gerekçe:** [Council değerlendirmesi sonucu öne çıkan seçenek ve gerekçesi]
+- **PO (`snr-product-owner`):** [Bulgular + Kırmızı Çizgiler + 3 Kademeli Çekirdek Modül Önerisi]
+- **ARCH (`snr-software-architect`):** [Bulgular + Kırmızı Çizgiler]
+- **UX (`principal-ui-ux-specialist`):** [Bulgular + Kırmızı Çizgiler]
+- **SEO (`snr-seo-specialist`):** [Bulgular + Kırmızı Çizgiler veya Kapsam Dışı Gerekçesi]
+- **GRW (`snr-growth-marketing`):** [Bulgular + Kırmızı Çizgiler]
+- **QA (`snr-qa-security-auditor` — Güvenlik Temeli & OWASP):** [OWASP 20 madde denetimi, RBAC/IDOR/RLS bulguları + Kırmızı Çizgiler]
 
 ---
 
-## 5. 🎨 Birleşik Tema ve Bileşen İskeleti Sözleşmesi (`ui-polish` & `theme-skeleton-matching`)
-> ⛔ **SIFIR AI-SLOP KURALI:** Ezbere bileşen veya keyfi renk yazmak yasaktır; CLI araçlarıyla doğrulanmış şablonlar mühürlenmiştir:
+## 4. UI/UX ve Birleşik Tema / 18 Dashboard-Theme Uyumsuzluk Raporu
 
+### 4.1 Ekran Bazlı Görsel ve Deneyimsel Sapmalar (`ui_ux_mismatches`)
+| Ekran / Bileşen | Tema / Referans Sapması | UX & CWV Etkisi | Önerilen Düzeltme |
+| :--- | :--- | :--- | :--- |
+| `[örn. src/pages/Dashboard.tsx]` | `[Ham dönen spinner + yatay taşan filtre]` | `[CLS zıplaması + mobilde gizli filtre]` | `[Zero-CLS kaset + flex-wrap filtre]` |
+
+### 4.2 Birleşik Tema ve Bileşen İskeleti Sözleşmesi (`ui-polish` & `theme-skeleton-matching`)
 | İskelet Boyutu | Seçilen Şablon / Kaset / Token | Kaynak / CLI Komutu |
 |---|---|---|
 | **1. Yaşayan Yüzey & 16 Kilitli Tema** | `[Light/Dark Living Surface + #01..#16 kilitli tema]` | `.agent/skills/frontend-design/themes/themes.css` |
@@ -84,51 +95,52 @@
 
 ---
 
-## 6. 🏗️ 5 Katmanlı Dikey Dilim Mimarisi (Full-Stack Vertical Slice)
+## 5. Gözden Kaçan Yeni Feature'lar (Beyond-PRD Innovation Matrix — RICE Sıralaması)
+
+| RICE Skoru | Özellik Başlığı | Öneren Uzman(lar) | Reach / Impact / Conf / Efor | Kullanıcı & İş Değeri | Kanonik 5 Katmanlı Dilim Özeti |
+| :---: | :--- | :--- | :---: | :--- | :--- |
+| **`[40.5]`** | `[Örn: Aktif Oturumlar ve Cihaz İptali]` | `PO`, `QA` | `9 / 9 / 1.0 / M` | `[Çalınan oturumları anında kapatma]` | `[DB -> RPC -> API -> Security UI + Skeleton -> Audit Log]` |
+
+---
+
+## 6. Konsey Uzlaşı ve Çatışma Matrisi (Sinerji Kümeleri, Hibrit 3. Yol & Borda Hakemliği)
+
+### 6.1 Sinerji Kümeleri (Yüksek Öncelikli Ortak Hedefler)
+- **`[Dosya / Rota]`** (`[Baz Önem]` -> **`[Yükseltilmiş Önem]`**) · İşaret Eden Uzmanlar: `[PO, GRW, UX]` · Birleştirilen Bulgular: `[PO-01, GRW-01, UX-02]`.
+
+### 6.2 Uzman Çatışmaları ve Hibrit Mühendislik Çözümü (Trade-off Decisions)
+| Konum / Konu | Öneren Uzman & Talep | Kırmızı Çizgi Sahibi & Kısıt | Baş Hakem Hibrit 3. Yol Kararı (ve gerekirse Borda Skoru) |
+| :--- | :--- | :--- | :--- |
+| `[örn. Landing.tsx]` | `GRW`: İlk girişte kayıt duvarı | `SEO` & `UX`: Bot engelleme ve CLS yasağı | `[Sayfa içi yapışkan değer çubuğu — CLS=0, tam indekslenebilir]` |
+
+---
+
+## 7. 5 Katmanlı TDD Uygulama Yol Haritası (Fazlandırılmış Backlog & Dikiş Noktaları)
+
+### 7.1 Kanonik 5 Katmanlı Dikey Dilim Matrisi
 > ⛔ Bir katman dahi eksikse Sahte Bitti (Phantom Done) sayılır.
 
 | Katman | Yapılacak İşlem / Değişiklik | İlgili Dosya / Şema |
 |---|---|---|
-| **1. DB / Şema / Migration** | [Yeni tablo, kolon, RLS veya 'Kapsam dışı / Salt UI'] | `[örn. supabase/migrations/024_*.sql veya Mevcut]` |
-| **2. Backend / View / RPC** | [Endpoint, DTO, servis, controller veya 'Kapsam dışı'] | `[örn. RPC / Controller]` |
-| **3. İstemci API Entegrasyonu** | [Fetch/Axios istemcisi, tip tanımları, API fonksiyonu] | `[örn. src/modules/.../api.ts]` |
-| **4. Arayüz / UX & Eylemler** | [Bileşen, form, 4 UX Durumu + Zorunlu Zero-CLS Skeleton Screens UI] | `[örn. src/modules/.../Component.tsx]` |
-| **5. Döngü Kapanışı (Admin/Yönetim)** | [Verinin onay/yönetim ekranı veya 'Kullanıcı döngüsü'] | `[örn. UserMenu / AdminPage]` |
+| **1. DB / Şema / Migration** | `[Yeni tablo, kolon, indeks, RLS veya 'Mevcut şema yeterli']` | `[örn. migrations/024_*.sql]` |
+| **2. Backend / View / RPC** | `[Repository + Service + Controller/Endpoint + OWASP RBAC/Validasyon]` | `[örn. Controller / Service]` |
+| **3. İstemci API Entegrasyonu** | `[Tipli servis adaptörü, hata zarfı eşlemesi]` | `[örn. src/services/*Service.ts]` |
+| **4. Arayüz / UX & Eylemler** | `[Bileşen, form, 4 UX Durumu + Zorunlu Zero-CLS Skeleton Screens UI]` | `[örn. src/pages/*.tsx]` |
+| **5. Döngü Kapanışı (Admin/Yönetim)** | `[Verinin yönetim/denetim/geri alma döngüsü]` | `[örn. AdminAuditView / Settings]` |
 
----
-
-## 7. 🧪 TDD Kırmızı-Yeşil Dikiş Noktaları (Seams) ve Sıralı İcra Fazları
-> ⛔ **PROCEED İCRA KURALI (MANDATORY):** Kullanıcı onay verdiğinde doğrudan kaynak koduna geçilemez; sırasıyla aşağıdaki fazlar icra edilir:
-
-### 🔴 Faz 1: Dikiş Noktası & Kırmızı Test (Red Loop)
-- **Test Dosyası:** `[örn. tests/.../feature.test.ts]`
-- **Test Edilen Dikiş Noktası (Public Seam):** `[Dahili detaylar değil, genel bileşen/servis davranışı]`
-- **Çalıştırılacak Test Komutu:** `[örn. npx vitest run tests/.../feature.test.ts]`
-- **Beklenen Başarısızlık Kanıtı:** Testin çalıştırılarak **KIRMIZI (FAIL)** olduğunun terminalde kanıtlanması zorunludur.
-
-### 🟢 Faz 2: Minimal Geçiş Kodu (Green Loop)
-- **Üretim Kod Dosyası:** `[örn. src/.../FeatureComponent.tsx]`
-- **Kapsam:** Yalnızca Faz 1'deki testi yeşile döndürecek minimal kod yazılır (spekülatif kod eklenmez).
-- **Çalıştırılacak Test Komutu:** `[örn. npx vitest run tests/.../feature.test.ts]`
-- **Beklenen Başarı Kanıtı:** Testin **YEŞİL (PASS)** olduğunun kanıtlanması.
-
-### 🧩 Faz 3: 5 Katman Tamamlama, Tema İskeleti & `/ui-polish` İcrası
-- Varsa API, DB ve UI katmanları bağlanır; seçilen `component-themes/` veya `dashboard-theme/` şablonu projenin yaşayan yüzey token'larıyla uygulanır.
-- `/ui-polish` Ön Uçuş Makbuzu basılır; veri yükleme durumlarında **Zero-CLS Skeleton Screens UI** uygulanır.
-- 3 Cihaz ergonomisi (Mobil <768px, Tablet 768-1024px, Masaüstü >1024px) ve çift katmanlı scroll kilidi doğrulanır.
-
-### 🧹 Faz 4: Refactor, Kapılar & Kapanış
-- Kod temizliği (`code-review` & `codebase-design` standartları).
-- Zorunlu kapıların çalıştırılması: `python .agent/skills/musgoku/scripts/rules_gates.py`.
-- Kullanıcı test senaryosunun `docs/KULLANICI_TEST_REHBERI.md` ve interaktif `docs/kullanici-rehberi.html` dosyalarına işlenmesi.
+### 7.2 TDD Kırmızı-Yeşil Dikiş Noktaları (Seams) ve Sıralı İcra Fazları
+1. **🔴 Faz 1 — Dikiş Noktası & Kırmızı Test:** `[Test dosyası, genel dikiş noktası (public seam), çalıştırılacak test komutu ve beklenen FAIL kanıtı]`
+2. **🟢 Faz 2 — Minimal Geçiş Kodu:** `[Yalnızca Faz 1 testini yeşile çevirecek üretim kodu ve PASS kanıtı]`
+3. **🧩 Faz 3 — 5 Katman Tamamlama & `/ui-polish` İcrası:** `[Tema iskeleti, Zero-CLS kasetleri ve 375px->1440px mobil ergonomi doğrulaması]`
+4. **🧹 Faz 4 — Refactor, Kapılar & Kapanış:** `[python .agent/skills/musgoku/scripts/run_all_gates.py + docs/KULLANICI_TEST_REHBERI.md + docs/kullanici-rehberi.html]`
 
 ---
 
 ## ⚡ 8. Karar ve Başlangıç Onayı (Lütfen Seçiminizi Belirtin)
 
-Uygulamaya ve TDD döngüsüne geçmem için lütfen aşağıdaki 4 tercihinizi paylaşın:
-1. **Öncelik Sırası:** Hangi modül veya sayfalardan başlayalım? *(Örn: Önce Ayarlar ve Profil/Güvenlik, ardından Analitik/Insights)*
+Uygulamaya ve TDD kırmızı-yeşil döngüsüne geçmem için lütfen aşağıdaki 4 tercihinizi paylaşın:
+1. **Öncelik ve Kapsam Seçimi:** Tamamlama envanterindeki hangi modüllerden başlayalım ve **Beyond-PRD (Bölüm 5)** listesinden dahil etmek istediğiniz yeni özellikler hangileri?
 2. **Kademe Seçimi:** Hangi çözüm seviyesini uygulayalım? *(Seçenek 1: MVP / Seçenek 2: Best-Practice / Seçenek 3: PRD Vizyoner)*
-3. **Tema, Bileşen ve Dashboard Seçimi:** Skillset'ten önerilen hangi kilitli tema (`#01..#16`), bileşen şablonları (`get_component.py`) ve dashboard mimarisini (`dashboard-theme-XX`) baz alalım?
-4. **Veri & API Yaklaşımı:** Backend eksiği (`[Yeni API/DB Gerekli 🔴]`) olan modüllerde **Full-Stack (5 Katman: DB + Backend + API + UI)** olarak mı örelim, yoksa şimdilik tipli servis dikiş noktasıyla **`Mock-UI (YARIM — Eksik Katman HANDOFF'a kaydedilir)`** olarak mı hazırlayalım?
+3. **Tema, Bileşen ve Dashboard Seçimi:** Önerilen hangi kilitli tema (`#01..#16`), bileşen şablonları (`get_component.py`) ve dashboard mimarisini (`dashboard-theme-XX`) baz alalım?
+4. **Veri & API Yaklaşımı:** Backend eksiği (`[Yeni API/DB Gerekli 🔴]`) olan maddelerde **Full-Stack (5 Katman: DB + Backend + API + UI + Döngü Kapanışı)** olarak mı örelim, yoksa tipli servis dikiş noktasıyla **`Mock-UI (YARIM — Eksik Katman HANDOFF'a kaydedilir)`** olarak mı hazırlayalım?
 ```

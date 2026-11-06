@@ -36,6 +36,7 @@ TEST_SCRIPTS = [
     ("Test Theme Skeleton Integration", HERE / "test_theme_skeleton_integration.py"),
     ("Test Prelaunch Security", HERE / "test_prelaunch_security.py"),
     ("Test Clean URL Routing", HERE / "test_clean_url_routing.py"),
+    ("Test Feature Architect Six-Hat Council", HERE / "test_feature_architect_council.py"),
 ]
 
 

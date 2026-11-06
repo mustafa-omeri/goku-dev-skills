@@ -38,7 +38,7 @@ const https = require('https');
 
 
 
-const VERSION = '1.27.0';
+const VERSION = '1.28.0';
 
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 
@@ -174,6 +174,11 @@ const SKILLS_MANIFEST = {
 
   },
 
+  'deployment-architect': {
+    category: 'Containers / Cloud',
+    desc: 'Production deployment & infrastructure orchestrator: VPS, PaaS, Cloud Container & hybrid architectures with rollback playbooks.',
+    triggers: '/deploy-plan, deployment plani, vps kurulumu, prod config hazirla, rollback plani, hibrit dagitim',
+  },
   'brand': {
 
     category: 'Brand Identity',
@@ -514,8 +519,8 @@ const SKILLS_MANIFEST = {
   },
   'feature-architect': {
     category: 'Session Commands / Ensemble',
-    desc: 'Global autonomous product gap scanner & feature completion architect: detects stub pages, broken routes, orphan backend APIs, dashboard/settings/profile gaps & builds 5-layer slices.',
-    triggers: '/feature-architect, /complete-features, feature architect, [FEATURE-ARCHITECT], eksik ozellikleri tamamla, stub sayfalari bul, urun eksiklerini tara',
+    desc: 'Global product gap scanner, 6-Hat Strategy Council & feature completion architect: runs PO/Arch/UX/SEO/Growth/QA council (single or multi-agent via engine_advisor), Zero-Drop merger & 5-layer TDD slices.',
+    triggers: '/feature-architect, /complete-features, feature architect, [FEATURE-ARCHITECT], product council, urun konseyi, eksik ozellikleri tamamla, stub sayfalari bul, urun eksiklerini tara',
 
   },
 
@@ -612,6 +617,7 @@ const PROFILES = {
       'task-observer',
 
       'production-docker-architect',
+      'deployment-architect',
 
       'diagnosing-bugs',
 
@@ -747,6 +753,7 @@ const PROFILES = {
       'task-observer',
 
       'production-docker-architect',
+      'deployment-architect',
 
       'diagnosing-bugs',
 
@@ -878,6 +885,7 @@ const PROFILES = {
       'task-observer',
 
       'production-docker-architect',
+      'deployment-architect',
 
     ],
 
