@@ -1,0 +1,28 @@
+# DEPLOYMENT_TARGET.template.yaml — Deklaratif Hedef Ortam Şablonu
+# Bu dosya docs/deployment/target.yaml konumuna kopyalanıp doldurulduğunda,
+# deployment-architect doğrudan bu ayarlara göre DEPLOYMENT_PLAN.md üretir.
+
+environment: production
+target_type: hybrid # vps | paas | cloud_container | hybrid
+
+# Arayüz (Frontend) Katmanı
+frontend:
+  target: paas # paas | vps | cdn
+  provider: vercel # vercel | cloudflare | netlify | nginx
+  domain: app.example.com
+
+# Sunucu (Backend) Katmanı
+backend:
+  target: vps # vps | cloud_container | paas
+  runtime: docker-compose # docker-compose | systemd | k8s
+  host: api.example.com
+  port: 8080
+  reverse_proxy: nginx # nginx | caddy | traefik
+  ssl: certbot # certbot | cloudflare | custom
+
+# Veritabanı Katmanı
+database:
+  target: managed # managed | vps_local | external
+  provider: postgresql # postgresql | mysql | supabase | rds
+  port: 5432
+  ssl_required: true

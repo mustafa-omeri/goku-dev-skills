@@ -17,3 +17,7 @@ Bu yetenek, bir ürün veya web uygulamasının canlı ortama (production) çık
    - WCAG 2.2 AA kontrast ve klavye erişilebilirliği, güvenlik başlıkları (CSP, HSTS).
 4. **Mekanik Doğrulama:**
    - `python .agent/skills/prelaunch-audit/scripts/prelaunch_checker.py` çalıştırarak eksiksiz 20 madde raporunu üret.
+5. **Dağıtım Köprüsü (Deployment Bridge — GO Kararı Sonrası):**
+   - Karar **`GO`** çıktığında kullanıcıya hedef ortamı belirleme ve dağıtım planı çıkarma daveti sunulur:
+     `🚀 PRELAUNCH GO: Ürününüz canlıya çıkmaya hazır! Dağıtım ortamınızı (VPS, PaaS, Cloud Container, Hibrit) belirleyerek DEPLOYMENT_PLAN.md ve üretim konfigürasyonlarını oluşturmak için /deploy-plan çalıştırabilirsiniz.`
+   - Kullanıcı ortamı seçtiğinde veya `/deploy-plan` dediğinde [`deployment-architect`](../deployment-architect/SKILL.md) otonom olarak devreye girer.

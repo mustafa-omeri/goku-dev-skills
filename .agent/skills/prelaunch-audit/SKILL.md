@@ -137,3 +137,8 @@ Yalnızca site türüne uyuyorsa uygulanır; uymuyorsa raporda `N/A + gerekçe` 
 | 13| robots.txt | PASS | prelaunch_checker.py (Disallow: / yok) | Tamamlandı |
 ...
 ```
+
+### Sonraki Adım: Dağıtım ve Canlı Altyapı Planı (Deployment Bridge)
+Karar **`GO`** ise ürün yasal, SEO ve güvenlik açısından onaylanmıştır. Fiilen sunucuya/canlıya alma adımları için [`deployment-architect`](../deployment-architect/SKILL.md) devreye alınır (`/deploy-plan`):
+- Hedef ortam belirlenir (VPS, PaaS, Cloud Container veya Hibrit React+SpringBoot).
+- `docs/deployment/DEPLOYMENT_PLAN.md`, `.env.production.template`, DB migration hook ve Rollback playbook üretilir.
