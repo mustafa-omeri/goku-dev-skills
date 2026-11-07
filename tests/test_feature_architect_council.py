@@ -24,6 +24,7 @@ PROTOCOL_PATH = SKILL_DIR / "references" / "council-protocol.md"
 REPORT_TEMPLATE_PATH = SKILL_DIR / "references" / "report-template.md"
 MERGER_TESTS = SKILL_DIR / "scripts" / "tests" / "test_council_merger.py"
 ADVISOR_TESTS = SKILL_DIR / "scripts" / "tests" / "test_engine_advisor.py"
+PHASE56_TESTS = SKILL_DIR / "scripts" / "tests" / "test_fa_phase5_6_runtime_evolution_cache.py"
 
 EXPECTED_AGENTS = [
     ("01-snr-product-owner.md", "snr-product-owner", "PO"),
@@ -43,14 +44,15 @@ REQUIRED_AGENT_HEADINGS = [
 ]
 
 FORBIDDEN_PROJECT_RE = re.compile(
-    r"\bocai\b|FEProjectv1|FEProject\b|bookmarkManagerProject|bookmarkManager|\bkalansure\b",
+    r"\bocai\b|FEProjectv1|FEProject\b|bookmarkManagerProject|bookmarkManager|\bkalansure\b"
+    r"|peopleside|performinds|mocktest\.com|mockuser\d*|\bpassword123\b",
     re.IGNORECASE,
 )
 
 
 class FeatureArchitectCouncilEcosystemTests(unittest.TestCase):
     def test_01_unit_suites_pass(self) -> None:
-        for suite in (MERGER_TESTS, ADVISOR_TESTS):
+        for suite in (MERGER_TESTS, ADVISOR_TESTS, PHASE56_TESTS):
             self.assertTrue(suite.is_file(), f"Missing test suite: {suite}")
             res = subprocess.run(
                 [sys.executable, str(suite)],
@@ -83,12 +85,25 @@ class FeatureArchitectCouncilEcosystemTests(unittest.TestCase):
         audit_req = set(schema["properties"]["audits"]["items"]["required"])
         self.assertIn("evidence", audit_req)
         self.assertIn("confidence", audit_req)
+        self.assertIn("blocked_by", schema["properties"]["audits"]["items"]["properties"])
         feat_req = set(schema["properties"]["new_features"]["items"]["required"])
         self.assertIn("reach", feat_req)
         self.assertIn("confidence", feat_req)
+        feat_id_prop = schema["properties"]["new_features"]["items"]["properties"]["feature_id"]
+        self.assertIn("pattern", feat_id_prop)
+        self.assertIn("health_score_rationale", schema["properties"])
+        self.assertIn("allOf", schema)
+        self.assertGreaterEqual(len(schema["allOf"]), 7)
 
     def test_03_six_agent_files_have_required_frontmatter_and_sections(self) -> None:
         self.assertTrue(AGENTS_DIR.is_dir(), f"Missing agents directory: {AGENTS_DIR}")
+        v3_required_markers = [
+            "Authority & Responsibility Boundaries",
+            "Existing Finding & Feature Deduplication",
+            "Anti-Slop & Zero-Fabrication Policy",
+            "Final Self-Validation Checklist",
+            "health_score_rationale",
+        ]
         for filename, agent_id, prefix in EXPECTED_AGENTS:
             path = AGENTS_DIR / filename
             self.assertTrue(path.is_file(), f"Missing hat file: {path}")
@@ -99,8 +114,11 @@ class FeatureArchitectCouncilEcosystemTests(unittest.TestCase):
             self.assertIn(f"agent_id: {agent_id}", text)
             self.assertIn(f"id_prefix: {prefix}", text)
             self.assertIn("contract: ../schemas/council-contract.schema.json", text)
+            self.assertGreaterEqual(len(text.splitlines()), 150, f"{filename} lacks deep v3 methodology")
             for heading_pat in REQUIRED_AGENT_HEADINGS:
                 self.assertRegex(text, re.compile(heading_pat, re.MULTILINE), f"{filename} missing {heading_pat}")
+            for marker in v3_required_markers:
+                self.assertIn(marker, text, f"{filename} missing v3 governance section {marker!r}")
 
     def test_04_skill_md_and_protocol_document_engine_gate_and_modes(self) -> None:
         skill_text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")

@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FeatureArchitectKnowledgeGraphV2",
+  "description": "Canonical causal graph linking Routes, Screens, Components, Hooks, HTTP Calls, Endpoints, Services, Repositories, Entities, Tables, Roles, and ADRs.",
+  "type": "object",
+  "required": ["schema_version", "summary", "nodes", "edges"],
+  "properties": {
+    "schema_version": { "type": "string", "const": "feature-architect/knowledge-graph@2" },
+    "summary": {
+      "type": "object",
+      "required": ["nodes_count", "edges_count", "unresolved_edges_count", "pipeline_integrity_pct"]
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "name"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "type": "string" },
+          "name": { "type": "string" },
+          "file": { "type": "string" },
+          "line": { "type": "integer" },
+          "root_label": { "type": "string" },
+          "attrs": { "type": "object" }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source", "target", "kind", "unresolved"],
+        "properties": {
+          "source": { "type": "string" },
+          "target": { "type": "string" },
+          "kind": { "type": "string" },
+          "derivation": { "type": "string" },
+          "evidence_ref": { "type": "string" },
+          "unresolved": { "type": "boolean" },
+          "attrs": { "type": "object" }
+        }
+      }
+    }
+  }
+}

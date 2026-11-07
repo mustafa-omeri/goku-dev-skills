@@ -53,14 +53,14 @@ Ortam alt ajan çağrısını destekliyorsa (`--subagents yes`) ve kullanıcı `
 
 ---
 
-## 2. Tamamlama Envanteri (Stub, Kırık Rota, Yetim API/DB, Dashboard/Profil/Ayarlar)
+## 2. Tamamlama Envanteri ve 6 Fiilli Karar Matrisi (`CONNECT | FIX | REFACTOR | COMPLETE | REMOVE | DEFER`)
 
-| Bulgu ID | Kategori | Önem | Modül / Konum (`dosya:satır`) | Somut Kanıt (`evidence`) | RBAC (Roller) | Veri & API Hazırlığı |
-| :---: | :--- | :---: | :--- | :--- | :--- | :--- |
-| `PO-01` | `STUB_PAGE` | `HIGH` | `/reports` (`src/pages/Reports.tsx:42`) | `reports.underDevelopmentDesc` | Admin, Yönetici | `[Kısmen Hazır ⚠️]` |
-| `ARCH-01` | `BROKEN_ROUTE` | `HIGH` | `/settings/api` (`src/components/Sidebar.tsx:84`) | Menüde var, Router'da yok | Sadece Admin | `[Yeni API/DB Gerekli 🔴]` |
-| `ARCH-02` | `ORPHAN_API_DB` | `MEDIUM` | `GET /api/v1/audit-logs` (`AuditController.java:51`) | Backend'de hazır, istemcide yok | Admin | `[Veri Hazır ✅]` |
-| `QA-01` | `SECURITY` | `CRITICAL` | `DELETE /api/v1/users/:id` (`UserController.java:93`) | Sunucu tarafı RBAC kontrolü eksik | Sadece Admin | `[Kısmen Hazır ⚠️]` |
+| Bulgu ID | Karar Fiili (`decision`) | Kategori | Önem | Modül / Konum (`dosya:satır`) | Somut Kanıt (`evidence`) | Güvenlik Ön Koşulu (`blocked_by`) | Veri & API Hazırlığı |
+| :---: | :---: | :--- | :---: | :--- | :--- | :---: | :--- |
+| `PO-01` | `COMPLETE` | `STUB_PAGE` | `HIGH` | `/reports` (`src/pages/Reports.tsx:42`) | `reports.underDevelopmentDesc` | — | `[Kısmen Hazır ⚠️]` |
+| `ARCH-01` | `FIX` | `BROKEN_ROUTE` | `HIGH` | `/settings/api` (`src/components/Sidebar.tsx:84`) | Menüde var, Router'da yok | `QA-01` | `[Yeni API/DB Gerekli 🔴]` |
+| `ARCH-02` | `CONNECT` | `ORPHAN_API_DB` | `MEDIUM` | `GET /api/v1/audit-logs` (`AuditController.java:51`) | Backend'de hazır, istemcide yok | — | `[Veri Hazır ✅]` |
+| `QA-01` | `FIX` | `SECURITY` | `CRITICAL` | `DELETE /api/v1/users/:id` (`UserController.java:93`) | Sunucu tarafı RBAC kontrolü eksik | — | `[Kısmen Hazır ⚠️]` |
 
 ---
 

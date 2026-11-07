@@ -4,7 +4,7 @@ type: project-brief
 project: skillSetWorks
 status: active
 created: 2026-10-27
-updated: 2026-11-06
+updated: 2026-11-07
 primary_language: Python 3.11 / Node.js / Markdown
 frameworks: ["pytest", "unittest", "node-cli"]
 database: ["Yok / Kural ve Dağıtım Deposu"]
@@ -32,7 +32,7 @@ related_docs:
 - **Birincil Dil:** Python 3.11 / Node.js 18+ / Markdown
 - **Frameworkler & Kütüphaneler:** Python `unittest`, `pytest`, `pytest-cov`, `argparse`, Node.js CLI runtime
 - **Veritabanı / Altyapı:** Yok (Uygulama kodu içermez; kural, skill ve dağıtım motorudur)
-- **Build / Yönetim Araçları:** `delivery.py` (Projelere dağıtım aracı), `rules_gates.py` (Kural denetleyicisi), `run_all_gates.py` (Birleşik kapı koşturucu), `check_handoff.py` (Oturum devri kapısı), `gap_scanner.py` / `engine_advisor.py` / `council_merger.py` (Feature Architect 6 şapkalı konsey motoru), `bin/cli.js` (CLI paketi)
+- **Build / Yönetim Araçları:** `delivery.py` (Projelere dağıtım aracı), `rules_gates.py` (Kural denetleyicisi), `run_all_gates.py` (Birleşik kapı koşturucu), `check_handoff.py` (Oturum devri kapısı), `fa_scan.py` / `kg_query.py` / `review_units.py` / `fa_engine` (`discovery`, `graph`, `snapshot`, `intelligence`, `runtime`, `evolution`, `cache`) / `gap_scanner.py` / `engine_advisor.py` / `council_merger.py` (Feature Architect v2 deterministik tam-yığın mimari zeka, kanonik bilgi grafiği, V1-V8 kanıt yönetişimli Council v3, L3 runtime doğrulayıcı ve artımlı önbellek motoru), `bin/cli.js` (CLI paketi)
 
 ---
 
@@ -44,7 +44,7 @@ related_docs:
 | `.agent/rules/` | Ajan kuralları ve anayasal sözleşmeler (sinif: OLCULEBILIR/TUTUM/SUREC) | 20 kural (11 ölçülebilir) |
 | `.agent/templates/` | Projelerde açılacak living markdown ve HTML şablonları | Kök şablonları (PROJECT_SUMMARY ve KULLANICI_REHBERI.html dahil) |
 | `bin/` | `goku-dev-skills` npm CLI paket yürütücüsü (`cli.js`) | CLI arabirimi |
-| `tests/` | Depo bütünlüğü, drift, sızıntı ve kural kapısı regresyon testleri | 23 test paketi |
+| `tests/` | Depo bütünlüğü, drift, sızıntı, altın benchmark ve kural kapısı regresyon testleri | 24 test paketi (`feature-architect-bench/` 14 sentetik senaryo dahil) |
 | `scripts/` | Skill kataloğu ve yardımcı üretim betikleri | Otomasyon araçları |
 
 ---
@@ -69,5 +69,5 @@ related_docs:
 ---
 
 ## 5. Yaşatma & Operasyonel Döngü
-- **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `test_skills_catalog.py`, `test_project_summary.py`, `test_feature_architect.py`, `test_feature_architect_council.py`, `test_council_workflow_integration.py`, `test_theme_skeleton_integration.py`, `test_prelaunch_security.py`, `test_clean_url_routing.py`
-- **Son Başarılı Doğrulama:** 2026-11-06 · 23/23 test paketi PASS · Birleşik kapılar PASS
+- **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `test_skills_catalog.py`, `test_project_summary.py`, `test_feature_architect.py`, `test_feature_architect_council.py`, `test_feature_architect_bench.py`, `test_council_workflow_integration.py`, `test_theme_skeleton_integration.py`, `test_prelaunch_security.py`, `test_clean_url_routing.py`
+- **Son Başarılı Doğrulama:** 2026-11-07 · 24/24 kaynak test paketi + 49/49 Feature Architect v2 birim testi PASS (`check_agents_parity` dağıtım bekliyor) · Birleşik kapılar PASS

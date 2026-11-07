@@ -71,27 +71,41 @@ python .agent/skills/feature-architect/scripts/engine_advisor.py --root . --suba
 
 ---
 
-## 4. Faz 3 — Ezilmezlik, Baş Hakem ve Zero-Drop Kapısı (`council_merger.py`)
+## 4. Faz 3 — Ezilmezlik, Baş Hakem, V1–V8 Anti-Slop Kapıları ve 2. Tur Çapraz Sorgu (`council_merger.py`)
 
 6 uzmanın JSON çıktıları diske yazıldıktan sonra **Baş Hakem (Chief Council Arbiter)** serbest metin yazmadan önce deterministik birleştiriciyi çalıştırır:
 
 ```bash
-python .agent/skills/feature-architect/scripts/council_merger.py --inputs docs/plans/council/<YYYY-MM-DD> --output docs/plans/council/<YYYY-MM-DD>/merged.json
+python .agent/skills/feature-architect/scripts/council_merger.py --inputs docs/plans/council/<YYYY-MM-DD> --project-root . --kg docs/plans/council/<YYYY-MM-DD>/project-knowledge-graph.json --challenges docs/plans/council/<YYYY-MM-DD>/challenges.json --output docs/plans/council/<YYYY-MM-DD>/merged.json
 ```
 
-### Birleştirme ve Hakem Kuralları
-1. **Sağlık Skoru, En Zayıf Halka ve `CRITICAL` Tavanı:**
-   - Aktif (`applicable`) uzmanlar eşit ağırlıkla (`1.0`) ortalanır; `not_applicable` uzmanlar (örn. dahili araçta SEO) paydadan çıkarılır.
+### Birleştirme, V1–V8 Kanıt Yönetişimi ve Hakem Kuralları
+1. **Sağlık Skoru, `health_score_rationale`, 4 Eksenli Hazırlık Radarı ve `CRITICAL` Tavanı:**
+   - Aktif (`applicable`) uzmanlar eşit ağırlıkla (`1.0`) ortalanır; `not_applicable` uzmanlar (örn. dahili araçta SEO) paydadan çıkarılır (`not_applicable` olduğunda `health_score: null` ve bulgu dizileri boş olmalıdır).
+   - Aktif her uzman puanının neden kırıldığını `health_score_rationale` (min 20 karakter) alanında somut bulgu sayılarıyla açıklar.
+   - Tekil skor yanında **4 Eksenli Hazırlık Radarı (`readiness_axes`)** hesaplanır: `product_depth` (`PO` + `GRW`), `architecture_contract_integrity` (`ARCH`), `ux_operational_readiness` (`UX` + `SEO`) ve `security_quality_assurance` (`QA`).
    - En düşük puanlı uzman **En Zayıf Halka** olarak karnede ayrıca vurgulanır.
    - Çözülmemiş tek bir `CRITICAL` bulgu dahi varsa **Proje Olgunluk Skoru en fazla `60.0` olabilir** (`critical_cap_applied: true`).
-2. **Sinerji Kümeleme (`synergy_clusters`):**
+2. **V1–V8 Kanıt Yönetişimi ve Anti-Slop Kapıları (`governance`):**
+   - **V1 (`HALLUCINATED_EVIDENCE_PATH`):** `--project-root` verildiğinde diskte var olmayan `dosya:satır` referansı taşıyan halüsinasyon bulgular `rejected_finding_ids` listesine alınarak elenir.
+   - **V2 (`UNREACHABLE_LEGACY_COMPONENT`):** `--kg` (`project-knowledge-graph.json`) verildiğinde aktif hiçbir `Route` düğümünden erişilemeyen ölü/legacy bileşenler için açılan `STUB_PAGE` bulguları 6 şapkanın tamamında otomatik olarak **`REMOVE`** kararına çevrilir.
+   - **V4 (`GENERIC_BOILERPLATE_CONSTRAINT`):** Projeye özgü dosya/sözleşme referansı içermeyen klişe kısıtlar bayraklanır.
+   - **V5 (`CROSS_SECTION_DUPLICATE_FEATURE` / `CROSS_SECTION_DUPLICATE_MISMATCH`):** 6 şapkanın tamamında aynı raporda `audits[]` içinde yer alan bir sorunun `ui_ux_mismatches[]` veya `new_features[]` altında tekrar edilmesi engellenir ve mükerrer kayıtlar bastırılır.
+   - **V6 (6 Şapka Yetki Sınırı ve Anti-Slop Kapıları):** `PO_BOUNDARY_TECHNICAL_ARCHITECTURE`, `PO_BOUNDARY_VISUAL_THEME`, `ARCH_BOUNDARY_VISUAL_STYLING`, `FABRICATED_METRIC_CLAIM` (kanıtsız `%XX artırır` metrik iddiaları), `SEO_PROTECTED_ROUTE_INDEXING` (korumalı rotalara indeks önerisi) ve `QA_CLIENT_ONLY_SECURITY_FIX` (sunucu doğrulaması olmadan salt istemci güvenlik yaması) uyarılarıyla tüm 6 şapka denetlenir.
+   - **V7 (6 Karar Fiili Sınıflandırması — `decision`):** Her bulguya deterministik olarak `CONNECT | FIX | REFACTOR | COMPLETE | REMOVE | DEFER` fiillerinden biri atanır.
+   - **V8 (Zero-Drop Kapısı):** Hiçbir `CRITICAL` veya `HIGH` bulgu kimliği konsolide raporda düşürülemez.
+   - **Konsey Klasörü Toplu Denetimi (`--audit-council-dir`):** Mevcut bir `docs/plans/council/<YYYY-MM-DD>/` klasöründeki `01..06-*.json` çıktıları, rol/önek uyumu, V1–V8 ihlalleri ve `/council` Borda hakemlik adayları `python .agent/skills/feature-architect/scripts/council_merger.py --audit-council-dir docs/plans/council/<YYYY-MM-DD>` komutuyla tek seferde denetlenebilir.
+3. **2. Tur Çapraz Sorgu (`Round 2 Challenge Round` — `challenges.json`):**
+   - `ARCH` şapkası, `PO` veya `UX` tarafından `COMPLETE` (sıfırdan geliştirme) önerilen bir akışın Backend'de hazır karşılığı varsa bunu kanıtıyla **`CONNECT`** kararına dönüştürür (`challenge_resolutions`).
+   - `QA` şapkası, aynı konumda `CRITICAL` bir güvenlik/RBAC açığı varsa ilgili bulguya `blocked_by: ["QA-xx"]` güvenlik ön koşulu ekler.
+4. **Sinerji Kümeleme (`synergy_clusters`):**
    - 2 veya daha fazla uzmanın aynı normalize dosya/uç konumunda bildirdiği bulgular **"Yüksek Öncelikli Ortak Hedef"** altında birleştirilir ve önem derecesi bir kademe yükseltilir (`MEDIUM -> HIGH`, `HIGH -> CRITICAL`).
-3. **Çatışma Çözüm Masası (`conflict_candidates` -> Hibrit 3. Yol):**
+5. **Çatışma Çözüm Masası (`conflict_candidates` -> Hibrit 3. Yol):**
    - Bir uzmanın önerisi başka bir uzmanın `non_negotiable_constraints` kırmızı çizgisiyle aynı konumda kesiştiğinde hiçbir uzman görüşü silinmez.
    - Baş Hakem her iki kırmızı çizgiyi de koruyan **Hibrit Mühendislik Çözümü (3. Yol)** üretir. Eğer 2+ geçerli hibrit mimari alternatif doğarsa `python .agent/skills/karpathy-guidelines/scripts/council_ranker.py --sample` protokolündeki Borda oylamasıyla kazanan hibrit yol seçilir.
-4. **Beyond-PRD RICE Sıralaması (`features_ranked`):**
+6. **Beyond-PRD RICE Sıralaması (`features_ranked`):**
    - Yeni özellik önerileri `RICE = (reach * impact_score * confidence) / effort_puanı` (`S=1, M=2, L=3, XL=5`) formülüyle puanlanır; birden fazla uzmanın önerdiği aynı başlıklı özellikler birleştirilip ortak imzayla en üste taşınır.
-5. **Zorunlu Zero-Drop Doğrulama Kapısı (`--check-report`):**
+7. **Zorunlu Zero-Drop Doğrulama Kapısı (`--check-report`):**
    - Baş Hakem konsolide Markdown raporunu yazdıktan sonra, hiçbir `CRITICAL` veya `HIGH` bulgu kimliğinin (`PO-01`, `QA-01` vb.) özetlenirken düşürülmediğini kanıtlamak için şu kapıyı çalıştırmak **ZORUNLUDUR**:
    ```bash
    python .agent/skills/feature-architect/scripts/council_merger.py --inputs docs/plans/council/<YYYY-MM-DD> --check-report docs/plans/council/<YYYY-MM-DD>/feature-architect-council-report.md

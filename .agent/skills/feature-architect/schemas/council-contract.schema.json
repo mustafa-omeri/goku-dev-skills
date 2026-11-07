@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "FeatureArchitectCouncilContract",
-  "description": "Anti-Override (Zero-Drop) output contract for each of the 6 specialist council hats in feature-architect.",
+  "description": "Evidence-governed, Anti-Override (Zero-Drop) output contract for each of the 6 specialist council hats in feature-architect v2.",
   "type": "object",
   "required": [
     "agent_id",
@@ -32,17 +32,22 @@
       "type": "string",
       "enum": ["applicable", "not_applicable"],
       "default": "applicable",
-      "description": "Allows hats such as Technical SEO to declare not_applicable on private CLI or internal-only tools."
+      "description": "Allows hats such as Technical SEO or Growth to declare not_applicable on private CLI or internal-only tools."
     },
     "not_applicable_reason": {
       "type": "string",
-      "description": "Mandatory justification when applicability is not_applicable."
+      "description": "Mandatory justification (minLength 10) when applicability is not_applicable; must be omitted or empty when applicable."
     },
     "health_score": {
       "type": ["integer", "null"],
       "minimum": 0,
       "maximum": 100,
-      "description": "0-100 domain health score when applicable; null when not_applicable."
+      "description": "0-100 domain health score when applicable; must be null when not_applicable."
+    },
+    "health_score_rationale": {
+      "type": ["string", "null"],
+      "minLength": 20,
+      "description": "Evidence-based explanation of how health_score was evaluated across the role's dimensions."
     },
     "audits": {
       "type": "array",
@@ -93,11 +98,32 @@
           "evidence": {
             "type": "string",
             "minLength": 1,
-            "description": "Concrete file:line, symbol, or gap_scanner proof backing this finding."
+            "description": "Concrete file:line, symbol, or context-snapshot/knowledge-graph proof backing this finding."
           },
           "confidence": {
             "type": "string",
             "enum": ["verified", "candidate"]
+          },
+          "decision": {
+            "type": "string",
+            "enum": ["CONNECT", "FIX", "REFACTOR", "COMPLETE", "REMOVE", "DEFER", "INVESTIGATE"],
+            "description": "Optional 6-Verb architectural decision direction."
+          },
+          "verification_level": {
+            "type": "string",
+            "enum": ["L1", "L2", "L3"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["CONFIRMED", "INFERRED", "UNVERIFIED"]
+          },
+          "blocked_by": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(PO|ARCH|UX|SEO|GRW|QA)-[0-9]+$"
+            },
+            "description": "Optional list of security or architectural finding IDs that must be resolved before this item."
           },
           "issue": {
             "type": "string",
@@ -145,7 +171,11 @@
           "five_layer_slice_summary"
         ],
         "properties": {
-          "feature_id": { "type": "string", "minLength": 1 },
+          "feature_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^FEAT-(PO|ARCH|UX|SEO|GRW|QA)-[0-9]+$"
+          },
           "title": { "type": "string", "minLength": 1 },
           "rationale": { "type": "string", "minLength": 1 },
           "user_value": { "type": "string", "minLength": 1 },
@@ -164,11 +194,91 @@
     },
     "non_negotiable_constraints": {
       "type": "array",
-      "description": "Red-line engineering or product rules that cannot be overridden by another hat's proposal.",
+      "description": "Project-specific red-line engineering or product rules backed by evidence that cannot be overridden by another hat's proposal.",
       "items": {
         "type": "string",
         "minLength": 1
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "applicability": { "const": "not_applicable" }
+        },
+        "required": ["applicability"]
+      },
+      "then": {
+        "required": ["not_applicable_reason"],
+        "properties": {
+          "not_applicable_reason": { "type": "string", "minLength": 10 },
+          "health_score": { "type": "null" },
+          "audits": { "maxItems": 0 },
+          "ui_ux_mismatches": { "maxItems": 0 },
+          "new_features": { "maxItems": 0 }
+        }
+      },
+      "else": {
+        "properties": {
+          "health_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "health_score_rationale": { "type": "string", "minLength": 20 }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "agent_id": { "const": "snr-product-owner" } } },
+      "then": {
+        "properties": {
+          "audits": { "items": { "properties": { "id": { "pattern": "^PO-[0-9]+$" } } } },
+          "new_features": { "items": { "properties": { "feature_id": { "pattern": "^FEAT-PO-[0-9]+$" } } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "agent_id": { "const": "snr-software-architect" } } },
+      "then": {
+        "properties": {
+          "audits": { "items": { "properties": { "id": { "pattern": "^ARCH-[0-9]+$" } } } },
+          "new_features": { "items": { "properties": { "feature_id": { "pattern": "^FEAT-ARCH-[0-9]+$" } } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "agent_id": { "const": "principal-ui-ux-specialist" } } },
+      "then": {
+        "properties": {
+          "audits": { "items": { "properties": { "id": { "pattern": "^UX-[0-9]+$" } } } },
+          "new_features": { "items": { "properties": { "feature_id": { "pattern": "^FEAT-UX-[0-9]+$" } } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "agent_id": { "const": "snr-seo-specialist" } } },
+      "then": {
+        "properties": {
+          "audits": { "items": { "properties": { "id": { "pattern": "^SEO-[0-9]+$" } } } },
+          "new_features": { "items": { "properties": { "feature_id": { "pattern": "^FEAT-SEO-[0-9]+$" } } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "agent_id": { "const": "snr-growth-marketing" } } },
+      "then": {
+        "properties": {
+          "audits": { "items": { "properties": { "id": { "pattern": "^GRW-[0-9]+$" } } } },
+          "new_features": { "items": { "properties": { "feature_id": { "pattern": "^FEAT-GRW-[0-9]+$" } } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "agent_id": { "const": "snr-qa-security-auditor" } } },
+      "then": {
+        "properties": {
+          "audits": { "items": { "properties": { "id": { "pattern": "^QA-[0-9]+$" } } } },
+          "new_features": { "items": { "properties": { "feature_id": { "pattern": "^FEAT-QA-[0-9]+$" } } } }
+        }
+      }
+    }
+  ]
 }

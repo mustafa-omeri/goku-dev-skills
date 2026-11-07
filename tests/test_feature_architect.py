@@ -25,7 +25,8 @@ GEN_CATALOG = ROOT / "scripts" / "generate_skills_catalog.py"
 CATALOG_HTML = ROOT / ".agent" / "skills-catalog.html"
 
 FORBIDDEN_PROJECT_RE = re.compile(
-    r"\bocai\b|FEProjectv1|FEProject\b|bookmarkManagerProject|bookmarkManager|\bkalansure\b",
+    r"\bocai\b|FEProjectv1|FEProject\b|bookmarkManagerProject|bookmarkManager|\bkalansure\b"
+    r"|peopleside|performinds|mocktest\.com|mockuser\d*|\bpassword123\b",
     re.IGNORECASE,
 )
 

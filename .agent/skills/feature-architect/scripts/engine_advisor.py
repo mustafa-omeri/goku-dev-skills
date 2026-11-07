@@ -121,10 +121,18 @@ def collect_metrics(
             sys.path.insert(0, str(scripts_dir))
         import gap_scanner  # type: ignore
 
-        gap_data = gap_scanner.scan(resolved_root, peer_paths, set())
+        gap_data = gap_scanner.scan(resolved_root, peer_paths or None, None)
+
+    effective_peers = list(peer_paths)
+    seen_peer_set = {p.as_posix() for p in effective_peers}
+    for gp in gap_data.get("roots", {}).get("peers", []):
+        gp_path = Path(gp).resolve()
+        if gp_path.is_dir() and gp_path.as_posix() not in seen_peer_set:
+            seen_peer_set.add(gp_path.as_posix())
+            effective_peers.append(gp_path)
 
     total_files, total_loc = _walk_source_stats(resolved_root)
-    for peer in peer_paths:
+    for peer in effective_peers:
         p_files, p_loc = _walk_source_stats(peer)
         total_files += p_files
         total_loc += p_loc

@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FeatureArchitectSnapshotV2",
+  "description": "Deterministic Level 1 & Level 2 system intelligence snapshot produced by fa_scan.py.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "engine_version",
+    "input_hash",
+    "project_metadata",
+    "discovery_metadata",
+    "analyzer_versions",
+    "analysis_coverage",
+    "readiness_radar",
+    "entities_summary",
+    "graph_summary",
+    "unresolved_dependencies",
+    "facts",
+    "limitations",
+    "v1_projection"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "const": "feature-architect/snapshot@2" },
+    "engine_version": { "type": "string" },
+    "input_hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "project_metadata": { "type": "object" },
+    "discovery_metadata": { "type": "object" },
+    "analyzer_versions": { "type": "object" },
+    "analysis_coverage": { "type": "object" },
+    "readiness_radar": { "type": "object" },
+    "entities_summary": { "type": "object" },
+    "graph_summary": { "type": "object" },
+    "unresolved_dependencies": { "type": "array" },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "code", "category", "fact_type", "status", "confidence", "severity", "summary", "location", "evidence"],
+        "properties": {
+          "id": { "type": "string" },
+          "code": { "type": "string" },
+          "category": { "type": "string" },
+          "fact_type": { "type": "string", "enum": ["structural", "behavioral"] },
+          "status": { "type": "string", "enum": ["CONFIRMED", "INFERRED", "UNKNOWN"] },
+          "confidence": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "severity": { "type": "string", "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"] },
+          "summary": { "type": "string" },
+          "location": { "type": "string" },
+          "evidence": { "type": "array" }
+        }
+      }
+    },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "v1_projection": { "type": "object" }
+  }
+}

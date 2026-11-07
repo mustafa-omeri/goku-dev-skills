@@ -1,0 +1,241 @@
+{
+  "schema": "feature-architect/synthetic-bench@2",
+  "scenarios": [
+    {
+      "id": "S01_sibling_peer_discovery",
+      "title": "Parameterless sibling peer discovery verified by API overlap vs decoy repo",
+      "primary_subdir": "web-ui",
+      "expect_confirmed_peer": "orders-api",
+      "expect_rejected_peer": "decoy-backend",
+      "expected_codes": [],
+      "forbidden_codes": ["BROKEN_DATA_PIPELINE"],
+      "files": {
+        "web-ui/package.json": "{\"name\": \"web-ui\", \"dependencies\": {\"react\": \"^18.2.0\"}}",
+        "web-ui/vite.config.ts": "export default { server: { proxy: { '/api': 'http://localhost:8085' } } };\n",
+        "web-ui/docs/adr/0001-base.md": "# ADR 0001\nModular client-server split.\n",
+        "web-ui/src/api/orders.ts": "export const fetchOrders = () => apiClient.get('/api/v1/orders/active');\n",
+        "orders-api/pom.xml": "<project><artifactId>orders-api</artifactId></project>\n",
+        "orders-api/src/main/resources/application.yml": "server:\n  port: 8085\n",
+        "orders-api/src/main/java/org/acme/OrderController.java": "@RestController\n@RequestMapping(\"/api/v1/orders\")\npublic class OrderController {\n  @GetMapping(\"/active\")\n  public Object active() { return null; }\n}\n",
+        "decoy-backend/package.json": "{\"name\": \"decoy-backend\", \"dependencies\": {\"express\": \"^4.18.0\"}}",
+        "decoy-backend/src/index.js": "app.get('/api/v1/ unrelated/ping', (req, res) => res.send('ok'));\n"
+      }
+    },
+    {
+      "id": "S02_broken_route_with_existing_endpoint",
+      "title": "Client navigation link points to undeclared 404 route while backend capability exists",
+      "primary_subdir": "app-fe",
+      "expected_codes": ["BROKEN_ROUTE"],
+      "forbidden_codes": [],
+      "files": {
+        "app-fe/package.json": "{\"name\": \"app-fe\", \"dependencies\": {\"react\": \"^18.2.0\", \"react-router-dom\": \"^6.20.0\"}}",
+        "app-fe/docs/adr/0001-base.md": "# ADR 0001\n",
+        "app-fe/src/App.tsx": "export function App() {\n  return (\n    <Routes>\n      <Route path=\"/dashboard\" element={<DashboardView />} />\n    </Routes>\n  );\n}\n",
+        "app-fe/src/Sidebar.tsx": "export function Sidebar() {\n  return <nav><Link to=\"/dashboard\">Home</Link><Link to=\"/workspaces/new\">Create Workspace</Link></nav>;\n}\n",
+        "app-fe/src/api/wsApi.ts": "export const listWorkspaces = () => apiClient.get('/api/v1/workspaces');\n",
+        "app-be/pom.xml": "<project><artifactId>app-be</artifactId></project>\n",
+        "app-be/src/main/java/org/acme/WorkspaceController.java": "@RestController\n@RequestMapping(\"/api/v1/workspaces\")\npublic class WorkspaceController {\n  @GetMapping\n  public Object list() { return null; }\n  @PostMapping\n  @PreAuthorize(\"hasRole('ADMIN')\")\n  public Object create() { return null; }\n}\n"
+      }
+    },
+    {
+      "id": "S03_dto_contract_mismatch",
+      "title": "Static DTO contract field & scalar type mismatch between client TS interface and backend DTO",
+      "primary_subdir": "fe",
+      "expected_codes": ["DTO_CONTRACT_MISMATCH"],
+      "forbidden_codes": ["BROKEN_DATA_PIPELINE"],
+      "files": {
+        "fe/package.json": "{\"name\": \"fe\", \"dependencies\": {\"react\": \"^18.2.0\"}}",
+        "fe/docs/adr/0001-base.md": "# ADR\n",
+        "fe/src/api/billingApi.ts": "export interface InvoiceSummaryDto {\n  invoiceNumber: string;\n  currencyIso: string;\n  totalCents: boolean;\n}\nexport const getInvoiceSummary = () => apiClient.get<ApiResponse<InvoiceSummaryDto>>('/api/v1/invoices/summary');\n",
+        "be/pom.xml": "<project><artifactId>be</artifactId></project>\n",
+        "be/src/main/java/org/acme/dto/InvoiceSummaryDto.java": "package org.acme.dto;\npublic class InvoiceSummaryDto {\n  private String invoiceNumber;\n  private Long totalCents;\n}\n",
+        "be/src/main/java/org/acme/InvoiceController.java": "package org.acme;\n@RestController\n@RequestMapping(\"/api/v1/invoices\")\npublic class InvoiceController {\n  @GetMapping(\"/summary\")\n  public ResponseEntity<InvoiceSummaryDto> summary() { return null; }\n}\n"
+      }
+    },
+    {
+      "id": "S04_ui_authz_mismatch",
+      "title": "UI exposes action to TEAM_LEAD while backend restricts endpoint to ORG_ADMIN",
+      "primary_subdir": "fe",
+      "expected_codes": ["UI_AUTHORIZATION_MISMATCH"],
+      "forbidden_codes": ["BACKEND_AUTHORIZATION_GAP"],
+      "files": {
+        "fe/package.json": "{\"name\": \"fe\", \"dependencies\": {\"react\": \"^18.2.0\"}}",
+        "fe/docs/adr/0001-base.md": "# ADR\n",
+        "fe/src/pages/TeamsToolbar.tsx": "export function TeamsToolbar({ role }: { role: string }) {\n  if (role === 'TEAM_LEAD' || role === 'ORG_ADMIN') {\n    return <button onClick={() => apiClient.post('/api/v1/teams', {})}>Add Team</button>;\n  }\n  return null;\n}\n",
+        "be/pom.xml": "<project><artifactId>be</artifactId></project>\n",
+        "be/src/main/java/org/acme/TeamController.java": "@RestController\n@RequestMapping(\"/api/v1/teams\")\npublic class TeamController {\n  @PreAuthorize(\"hasRole('ORG_ADMIN')\")\n  @PostMapping\n  public Object createTeam() { return null; }\n}\n"
+      }
+    },
+    {
+      "id": "S05_unwired_callback_prop",
+      "title": "Optional action callback prop bound to button inside child component is omitted at parent call site",
+      "primary_subdir": "fe",
+      "expected_codes": ["UNWIRED_ACTION_PROP"],
+      "forbidden_codes": [],
+      "files": {
+        "fe/package.json": "{\"name\": \"fe\", \"dependencies\": {\"react\": \"^18.2.0\"}}",
+        "fe/docs/adr/0001-base.md": "# ADR\n",
+        "fe/src/components/KpiCard.tsx": "interface KpiCardProps {\n  heading: string;\n  onInspectDetails?: () => void;\n}\nexport function KpiCard({ heading, onInspectDetails }: KpiCardProps) {\n  return <div><h4>{heading}</h4><button onClick={onInspectDetails}>See Details</button></div>;\n}\n",
+        "fe/src/pages/HomeView.tsx": "import { KpiCard } from '../components/KpiCard';\nexport function HomeView() {\n  const { data } = useQuery({ queryKey: ['kpis'], queryFn: () => fetch('/api/kpis') });\n  return <section><KpiCard heading=\"Throughput\" /></section>;\n}\n"
+      }
+    },
+    {
+      "id": "S06_dummy_dataset_and_fe_only_screen",
+      "title": "Hardcoded quick-actions dataset with '#' links and local-state-only preferences screen",
+      "primary_subdir": "fe",
+      "expected_codes": ["HARDCODED_UI_DATASET", "DEAD_ACTION_CONTROL", "UI_WITHOUT_BACKEND"],
+      "forbidden_codes": [],
+      "files": {
+        "fe/package.json": "{\"name\": \"fe\", \"dependencies\": {\"react\": \"^18.2.0\"}}",
+        "fe/docs/adr/0001-base.md": "# ADR\n",
+        "fe/src/pages/QuickPanelView.tsx": "const shortcutItems = [\n  { id: 'a', title: 'Invite Member', count: 4, href: '#' },\n  { id: 'b', title: 'Export Ledger', count: 9, href: '#' }\n];\nexport function QuickPanelView() {\n  const { data } = useQuery({ queryKey: ['q'], queryFn: () => fetch('/api/q') });\n  return <div>{shortcutItems.map(x => <a key={x.id} href={x.href}>{x.title}</a>)}</div>;\n}\n",
+        "fe/src/pages/AlertMatrixPage.tsx": "import { useState } from 'react';\nexport function AlertMatrixPage() {\n  const [grid, setGrid] = useState({ digest: true });\n  const handleSave = () => setGrid({ ...grid });\n  return <div><button onClick={handleSave}>Save</button></div>;\n}\n"
+      }
+    },
+    {
+      "id": "S07_broken_data_pipeline",
+      "title": "Client hook calls endpoint absent on verified peer backend (UNRESOLVED handled_by edge)",
+      "primary_subdir": "fe",
+      "expected_codes": ["BROKEN_DATA_PIPELINE"],
+      "forbidden_codes": [],
+      "files": {
+        "fe/package.json": "{\"name\": \"fe\", \"dependencies\": {\"react\": \"^18.2.0\"}}",
+        "fe/docs/adr/0001-base.md": "# ADR\n",
+        "fe/src/api/analyticsApi.ts": "export const getHealth = () => apiClient.get('/api/v1/analytics/health');\nexport const getForecastSeries = () => apiClient.get('/api/v1/analytics/forecast-series');\n",
+        "fe/src/hooks/useForecast.ts": "export function useForecast() { return analyticsApi.getForecastSeries(); }\n",
+        "be/pom.xml": "<project><artifactId>be</artifactId></project>\n",
+        "be/src/main/java/org/acme/AnalyticsController.java": "@RestController\n@RequestMapping(\"/api/v1/analytics\")\npublic class AnalyticsController {\n  @GetMapping(\"/health\")\n  public Object health() { return null; }\n}\n"
+      }
+    },
+    {
+      "id": "S08_resource_ownership_idor_gap",
+      "title": "Org-scoped entity fetched by raw findById without organization ownership verification",
+      "primary_subdir": "be",
+      "expected_codes": ["RESOURCE_OWNERSHIP_GAP"],
+      "forbidden_codes": [],
+      "files": {
+        "be/pom.xml": "<project><artifactId>be</artifactId></project>\n",
+        "be/docs/adr/0001-base.md": "# ADR\n",
+        "be/src/main/java/org/acme/DocumentRecord.java": "@Entity\npublic class DocumentRecord {\n  private Long id;\n  private Long organizationId;\n}\n",
+        "be/src/main/java/org/acme/DocumentRecordRepository.java": "public interface DocumentRecordRepository extends JpaRepository<DocumentRecord, Long> {}\n",
+        "be/src/main/java/org/acme/DocumentService.java": "@Service\npublic class DocumentService {\n  private final DocumentRecordRepository repository;\n  public DocumentRecord readRaw(Long id) {\n    return repository.findById(id).orElse(null);\n  }\n}\n"
+      }
+    },
+    {
+      "id": "S09_missing_fk_index_and_risky_ddl",
+      "title": "Unindexed SQL foreign key column and destructive DROP COLUMN migration",
+      "primary_subdir": "service",
+      "expected_codes": ["MISSING_FK_INDEX", "RISKY_MIGRATION_DDL"],
+      "forbidden_codes": [],
+      "files": {
+        "service/pom.xml": "<project><artifactId>service</artifactId></project>\n",
+        "service/docs/adr/0001-base.md": "# ADR\n",
+        "service/db/V1__init.sql": "CREATE TABLE subscriptions (\n  id BIGINT PRIMARY KEY,\n  account_id BIGINT NOT NULL REFERENCES accounts(id)\n);\nALTER TABLE subscriptions DROP COLUMN old_tier;\n"
+      }
+    },
+    {
+      "id": "S10_circular_module_and_layer_drift",
+      "title": "Strongly connected module dependency cycle and UI direct ORM import drift",
+      "primary_subdir": "app",
+      "expected_codes": ["CIRCULAR_MODULE_DEPENDENCY", "ARCHITECTURAL_LAYER_DRIFT"],
+      "forbidden_codes": [],
+      "files": {
+        "app/package.json": "{\"name\": \"app\", \"dependencies\": {\"react\": \"^18.2.0\"}}",
+        "app/docs/adr/0001-base.md": "# ADR\n",
+        "app/src/modules/orders/orderLogic.ts": "import { reserveStock } from '../inventory/inventoryLogic';\nexport const placeOrder = () => reserveStock();\n",
+        "app/src/modules/inventory/inventoryLogic.ts": "import { placeOrder } from '../orders/orderLogic';\nexport const reserveStock = () => placeOrder();\n",
+        "app/src/modules/orders/OrderBadge.tsx": "import { PrismaClient } from '@prisma/client';\nexport function OrderBadge() { return <span>Badge</span>; }\n"
+      }
+    },
+    {
+      "id": "S11_openapi_version_and_schema_skew",
+      "title": "OpenAPI spec defines v1 schema while client expects renamed property and calls v2 endpoint",
+      "primary_subdir": "fe",
+      "expected_codes": ["DTO_CONTRACT_MISMATCH", "API_VERSION_SKEW"],
+      "forbidden_codes": [],
+      "files": {
+        "fe/package.json": "{\"name\": \"fe\", \"dependencies\": {\"react\": \"^18.2.0\"}}",
+        "fe/docs/adr/0001-base.md": "# ADR\n",
+        "fe/src/api/catalogApi.ts": "export interface CatalogItemDto {\n  legacySku: string;\n}\nexport const listV1 = () => apiClient.get<CatalogItemDto>('/api/v1/catalog/items');\nexport const listV2 = () => apiClient.get('/api/v2/catalog/items');\n",
+        "be/pom.xml": "<project><artifactId>be</artifactId></project>\n",
+        "be/openapi.json": "{\n  \"openapi\": \"3.0.3\",\n  \"paths\": {\n    \"/api/v1/catalog/items\": {\n      \"get\": {\n        \"responses\": {\n          \"200\": {\n            \"content\": {\n              \"application/json\": {\n                \"schema\": { \"$ref\": \"#/components/schemas/CatalogItemDto\" }\n              }\n            }\n          }\n        }\n      }\n    }\n  },\n  \"components\": {\n    \"schemas\": {\n      \"CatalogItemDto\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"itemCode\": { \"type\": \"string\" }\n        }\n      }\n    }\n  }\n}\n",
+        "be/src/main/java/org/acme/CatalogController.java": "@RestController\n@RequestMapping(\"/api/v1/catalog\")\npublic class CatalogController {\n  @GetMapping(\"/items\")\n  public Object items() { return null; }\n}\n"
+      }
+    },
+    {
+      "id": "S12_url_filter_chain_no_false_positive",
+      "title": "URL-level SecurityFilterChain protects controller without annotations while flagging explicit permitAll mutation",
+      "primary_subdir": "be",
+      "expected_codes": ["BACKEND_AUTHORIZATION_GAP"],
+      "forbidden_codes": [],
+      "expected_location_substr": "DebugResetController.java",
+      "forbidden_location_substr": "ProtectedPaymentController.java",
+      "files": {
+        "be/pom.xml": "<project><artifactId>be</artifactId></project>\n",
+        "be/docs/adr/0001-base.md": "# ADR\n",
+        "be/src/main/java/org/acme/SecurityConfig.java": "public class SecurityConfig {\n  public SecurityFilterChain chain(HttpSecurity http) {\n    http.authorizeHttpRequests(a -> a.requestMatchers(\"/api/v1/payments/**\").hasRole(\"TREASURER\"));\n    http.authorizeHttpRequests(a -> a.requestMatchers(\"/api/v1/admin-debug/**\").permitAll());\n    return http.build();\n  }\n}\n",
+        "be/src/main/java/org/acme/ProtectedPaymentController.java": "@RestController\n@RequestMapping(\"/api/v1/payments\")\npublic class ProtectedPaymentController {\n  @PostMapping(\"/settle\")\n  public Object settle() { return null; }\n}\n",
+        "be/src/main/java/org/acme/DebugResetController.java": "@RestController\n@RequestMapping(\"/api/v1/admin-debug\")\npublic class DebugResetController {\n  @DeleteMapping(\"/wipe\")\n  public void wipe() {}\n}\n"
+      }
+    },
+    {
+      "id": "S13_multi_schema_conflict_and_n_plus_one",
+      "title": "Competing Prisma + raw SQL schema definitions and repository query inside loop",
+      "primary_subdir": "svc",
+      "expected_codes": ["SCHEMA_SOURCE_CONFLICT", "STATIC_N_PLUS_ONE_CANDIDATE", "BUNDLE_BUDGET_RISK"],
+      "forbidden_codes": [],
+      "files": {
+        "svc/package.json": "{\"name\": \"svc\", \"dependencies\": {\"react\": \"^18.2.0\"}}",
+        "svc/vite.config.ts": "export default { build: { chunkSizeWarningLimit: 3000 } };\n",
+        "svc/docs/adr/0001-base.md": "# ADR\n",
+        "svc/prisma/schema.prisma": "model Ledger {\n  id String @id\n}\n",
+        "svc/sql/V1__ledger.sql": "CREATE TABLE ledgers (id VARCHAR(36) PRIMARY KEY);\n",
+        "svc/src/main/java/org/acme/BatchSyncService.java": "@Service\npublic class BatchSyncService {\n  private final LedgerRepository ledgerRepository;\n  public void runBatch(List<Long> ids) {\n    for (Long id : ids) {\n      ledgerRepository.findById(id);\n    }\n  }\n}\n"
+      }
+    },
+    {
+      "id": "S14_clean_reference_fullstack_repo",
+      "title": "Zero-defect clean reference full-stack repository (False Positive Rate baseline)",
+      "primary_subdir": "clean-fe",
+      "clean_reference": true,
+      "expected_codes": [],
+      "forbidden_codes": [
+        "BROKEN_ROUTE",
+        "BROKEN_DATA_PIPELINE",
+        "DTO_CONTRACT_MISMATCH",
+        "UI_AUTHORIZATION_MISMATCH",
+        "BACKEND_AUTHORIZATION_GAP",
+        "RESOURCE_OWNERSHIP_GAP",
+        "UNWIRED_ACTION_PROP",
+        "DEAD_ACTION_CONTROL",
+        "HARDCODED_UI_DATASET",
+        "UI_WITHOUT_BACKEND",
+        "MISSING_FK_INDEX",
+        "RISKY_MIGRATION_DDL",
+        "CIRCULAR_MODULE_DEPENDENCY",
+        "ARCHITECTURAL_LAYER_DRIFT",
+        "BUNDLE_BUDGET_RISK",
+        "SCHEMA_SOURCE_CONFLICT"
+      ],
+      "files": {
+        "clean-fe/package.json": "{\"name\": \"clean-fe\", \"dependencies\": {\"react\": \"^18.2.0\", \"react-router-dom\": \"^6.20.0\"}}",
+        "clean-fe/vite.config.ts": "export default { server: { proxy: { '/api': 'http://localhost:8090' } }, build: { chunkSizeWarningLimit: 500 } };\n",
+        "clean-fe/docs/adr/0001-clean-arch.md": "# ADR 0001: Clean Vertical Slice\n",
+        "clean-fe/src/api/tasksApi.ts": "export interface TaskItemDto {\n  id: number;\n  title: string;\n}\nexport const fetchTasks = () => apiClient.get<ApiResponse<TaskItemDto>>('/api/v1/tasks');\nexport const createTask = (title: string) => apiClient.post('/api/v1/tasks', { title });\n",
+        "clean-fe/src/components/TaskCard.tsx": "interface TaskCardProps {\n  title: string;\n  onOpen?: () => void;\n}\nexport function TaskCard({ title, onOpen }: TaskCardProps) {\n  return <div><span>{title}</span><button onClick={onOpen}>Open</button></div>;\n}\n",
+        "clean-fe/src/pages/TasksPage.tsx": "import { TaskCard } from '../components/TaskCard';\nexport function TasksPage({ role }: { role: string }) {\n  const { data } = useQuery({ queryKey: ['tasks'], queryFn: () => tasksApi.fetchTasks() });\n  return (\n    <main>\n      <TaskCard title=\"Sample\" onOpen={() => {}} />\n      {role === 'PROJECT_ADMIN' && <button onClick={() => apiClient.post('/api/v1/tasks', {})}>New</button>}\n    </main>\n  );\n}\n",
+        "clean-fe/src/App.tsx": "export function App() {\n  return (\n    <Routes>\n      <Route path=\"/tasks\" element={<TasksPage role=\"PROJECT_ADMIN\" />} />\n    </Routes>\n  );\n}\n",
+        "clean-fe/src/Navbar.tsx": "export function Navbar() {\n  return <nav><Link to=\"/tasks\">Tasks</Link></nav>;\n}\n",
+        "clean-be/pom.xml": "<project><artifactId>clean-be</artifactId></project>\n",
+        "clean-be/docs/adr/0001-clean-be.md": "# ADR 0001\n",
+        "clean-be/src/main/resources/application.yml": "server:\n  port: 8090\n",
+        "clean-be/src/main/resources/db/migration/V1__tasks.sql": "CREATE TABLE tasks (\n  id BIGINT PRIMARY KEY,\n  organization_id BIGINT NOT NULL REFERENCES organizations(id),\n  created_by VARCHAR(64),\n  deleted_at TIMESTAMP NULL\n);\nCREATE INDEX idx_tasks_org ON tasks(organization_id);\n",
+        "clean-be/src/main/java/org/acme/dto/TaskItemDto.java": "package org.acme.dto;\npublic class TaskItemDto {\n  private Long id;\n  private String title;\n}\n",
+        "clean-be/src/main/java/org/acme/TaskEntity.java": "package org.acme;\n@Entity\npublic class TaskEntity {\n  private Long id;\n  private Long organizationId;\n  private String title;\n  public Long getOrganizationId() { return organizationId; }\n}\n",
+        "clean-be/src/main/java/org/acme/TaskEntityRepository.java": "package org.acme;\npublic interface TaskEntityRepository extends JpaRepository<TaskEntity, Long> {}\n",
+        "clean-be/src/main/java/org/acme/TaskService.java": "package org.acme;\n@Service\npublic class TaskService {\n  private final TaskEntityRepository repository;\n  public TaskEntity getScoped(Long id, Long currentOrgId) {\n    TaskEntity entity = repository.findById(id).orElse(null);\n    if (entity != null && !entity.getOrganizationId().equals(currentOrgId)) { return null; }\n    return entity;\n  }\n}\n",
+        "clean-be/src/main/java/org/acme/TaskController.java": "package org.acme;\n@RestController\n@RequestMapping(\"/api/v1/tasks\")\npublic class TaskController {\n  private final TaskService taskService;\n  @GetMapping\n  public ResponseEntity<TaskItemDto> list() { return null; }\n  @PreAuthorize(\"hasRole('PROJECT_ADMIN')\")\n  @PostMapping\n  public ResponseEntity<TaskItemDto> create() { return null; }\n}\n"
+      }
+    }
+  ]
+}

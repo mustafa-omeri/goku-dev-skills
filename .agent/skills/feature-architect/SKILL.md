@@ -1,5 +1,6 @@
 ---
 name: feature-architect
+version: "2.0.0"
 description: >-
   Global Otonom Ürün Denetçisi, 6 Şapkalı Strateji Konseyi ve Tamamlayıcısı:
   stub sayfaları, 404 rotalarını, yetim verileri ve çekirdek modülleri
@@ -51,18 +52,21 @@ python .agent/skills/feature-architect/scripts/engine_advisor.py --root . --suba
 
 ---
 
-## 1. Faz 1 — Deterministik Kanıt ve Ortak Röntgen (`gap_scanner.py`)
+## 1. Faz 1 — Deterministik Sistem Zekâsı, Canonical Knowledge Graph ve Röntgen (`fa_scan.py`, `kg_query.py`, `gap_scanner.py`)
 
-⛔ **Kanıtsız Tespit Yasağı (No Hallucinated Gaps):**
-LLM hafızasından veya tahminden sayfa, rota ya da yetim özellik uydurmak kesinlikle yasaktır. Her analiz oturumunun ilk adımı deterministik kanıt tarayıcısını çalıştırıp `docs/plans/council/<YYYY-MM-DD>/context-snapshot.json` özetini üretmektir:
+⛔ **Kanıtsız Tespit Yasağı (No Hallucinated Gaps) ve 3 Seviyeli Analiz Ayrımı:**
+LLM hafızasından veya tahminden sayfa, rota ya da yetim özellik uydurmak kesinlikle yasaktır. Yapısal gerçekler (`fact_type: structural`) ile çalışma zamanı davranış iddiaları (`fact_type: behavioral` — L3 kanıtı olmadan en fazla `INFERRED`) birbirine karıştırılmaz. Her analiz oturumunun ilk adımı modüler deterministik v2 tarayıcısını çalıştırıp `docs/plans/council/<YYYY-MM-DD>/context-snapshot.json` ve `knowledge-graph.json` çıktılarını üretmektir:
 
 ```bash
+python .agent/skills/feature-architect/scripts/fa_scan.py --root . --out-dir docs/plans/council/<YYYY-MM-DD> --format json
+python .agent/skills/feature-architect/scripts/kg_query.py --kg docs/plans/council/<YYYY-MM-DD>/knowledge-graph.json unresolved
 python .agent/skills/feature-architect/scripts/gap_scanner.py --root . --json
 ```
 
-- **Çoklu Repo (`--peer`):** `PROJECT_BRIEF.md` veya çalışma alanında ayrı bir backend/frontend deposu tespit edilirse `--peer <yol>` parametresi eklenir (bulunamazsa kullanıcıya sorulur).
+- **Otomatik Doğrulamalı Çoklu Repo Keşfi (`discovery.py` & `--peer`):** `fa_scan.py` (ve geriye uyumlu `gap_scanner.py` v1 shim katmanı), `--peer` verilmese dahi `PROJECT_BRIEF.md`, çalışma alanı (`.code-workspace`), `docker-compose`, dev-proxy portları ve kardeş dizinleri tarar; istemci API yollarıyla sunucu uç noktalarının örtüşmesini doğrulayarak gerçek eş servisi `CONFIRMED` statüsüyle bağlar (klasör adı tek başına asla kanıt sayılmaz).
+- **Canonical Knowledge Graph Sorguları (`kg_query.py`):** Uzman şapkalar ham veri yığını yerine `trace --from <NodeId>`, `unresolved --kind handled_by,navigates_to`, `consumers <NodeId>`, `impact <NodeId>` ve `role-surface <Role>` sorgularıyla uçtan uca zincir kanıtı toplar.
 - **Odaklı Tarama (`--focus`):** Kullanıcı `/feature-architect --focus settings,profile,routes` gibi dar kapsam belirttiyse derin okuma o modüllere yoğunlaştırılır.
-- **Aday (`candidate`) Doğrulama Kuralı:** `"confidence": "candidate"` olarak işaretlenen yetim uç nokta (`orphan_endpoints`) ve yetim şema alanları (`orphan_fields`), kaynak dosya açılarak teyit edilmeden `"verified"` olarak yazılamaz.
+- **Aday (`candidate` / `INFERRED`) Doğrulama Kuralı:** `INFERRED` veya `"confidence": "candidate"` olarak işaretlenen bulgular L2/L3 veya kaynak dosya kanıtıyla teyit edilmeden `CONFIRMED` / `"verified"` olarak sunulamaz.
 
 ---
 
