@@ -6,7 +6,7 @@
 -->
 
 > **Hedef Dal / Sürüm:** `<doldur: örn. main / v1.19.0>` · **Tarih:** `<doldur: YYYY-MM-DD>`  
-> **Görevlendirilen Skill'ler:** `<doldur: örn. musgoku, tdd, frontend-design, ui-ux-pro-max, security-audit>`  
+> **Görevlendirilen Skill'ler:** `<doldur: örn. musgoku, tdd, frontend-design, ui-ux-pro-max, diagram-design, security-audit>`  
 > **Kullanılan MCP'ler:** `<doldur: context7, sequential-thinking veya kullanılmadı>`  
 > **İlgili KANBAN Kartı:** `<doldur: örn. [SPRINT-XX]-[KART-ID] veya Yeni Kart>`  
 > **Desteklenen Ortamlar:** `Antigravity IDE`, `Antigravity CLI (agy)`, `Claude Code (claude)`, `OpenCode (opencode)`, `Genel Terminal / CLI`  
@@ -59,6 +59,7 @@ Feature: <doldur: Özellik Adı>
 
 ## 6. 🏗️ 5 Katmanlı Dikey Dilim Mimarisi (Full-Stack Vertical Slice)
 > ⛔ Bir katman dahi eksikse Sahte Bitti (Phantom Done) sayılır.
+> 💡 **Teknik Mimari & Diyagram Sözleşmesi (`diagram-design`):** Karmaşık sistem topolojisi, C4 mimari katmanları, mikroservis/servis etkileşimleri, ER veri modelleri, sequence mesajlaşmaları veya durum makineleri gereken planlarda; generic Mermaid yerine `diagram-design` motoru (`skills/diagram-design/SKILL.md`) kullanılarak `docs/architecture/` veya `<artifact-dir>/` altında bağımsız, editoryal HTML/SVG şemaları üretilebilir.
 
 | Katman | Yapılacak İşlem / Değişiklik | İlgili Dosya / Şema |
 |---|---|---|

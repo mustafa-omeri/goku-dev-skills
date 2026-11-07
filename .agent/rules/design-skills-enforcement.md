@@ -296,6 +296,7 @@ skill sahiplenmez.** Çakışma şüphesinde bu tabloya bak ve doğru olanı aç
 | Logo & CIP **brief'i**, sosyal medya görseli akışı, yönlendirme | `design` |
 | UI kart, profil, etkinlik mock görselleri (placeholder alternatifi) | `mock-asset-provider` |
 | Kullanıcı onboarding ve ürün tanıtım turu (rehberli adımlar, coachmarks) | `onboarding-tour` |
+| 45 tip editoryal mimari, veri modeli, sequence ve akış şemaları (HTML/SVG) | `diagram-design` |
 | IDE benzeri uygulama arayüzü | `web-ide-ux-architect` (kapsam dışı ilan eder) |
 
 **Kapsam dışı ilan edilen:** `web-ide-ux-architect`

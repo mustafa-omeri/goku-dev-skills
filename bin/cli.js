@@ -38,7 +38,7 @@ const https = require('https');
 
 
 
-const VERSION = '1.28.0';
+const VERSION = '1.30.0';
 
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 
@@ -524,6 +524,11 @@ const SKILLS_MANIFEST = {
 
   },
 
+  'diagram-design': {
+    category: 'Architecture Visuals',
+    desc: '45 editorial diagram types: architecture, architecture delta, sequence, ER, flowcharts as standalone HTML + inline SVG.',
+    triggers: 'diyagram, mimari sema, sema ciz, akis diyagrami, diagram, architecture diagram, sequence diagram, er diagram, sankey, wardley',
+  },
 };
 
 
@@ -658,6 +663,7 @@ const PROFILES = {
       'prelaunch-update',
       'project-summary',
       'feature-architect',
+      'diagram-design',
 
     ],
 

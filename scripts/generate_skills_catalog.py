@@ -80,7 +80,8 @@ CATEGORIES = {
 
         "design-system", "canvas-design", "banner-design", "design",
 
-        "mock-asset-provider", "web-ide-ux-architect", "onboarding-tour"
+        "mock-asset-provider", "web-ide-ux-architect", "onboarding-tour",
+        "diagram-design"
 
     ],
 

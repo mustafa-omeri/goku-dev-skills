@@ -78,6 +78,7 @@ Kullanıcının belirli bir isteği doğrudan ve kestirmeden ajana bildirmesini 
 | /ui-polish --skeleton, skeleton ekle, iskelet ekran entegre et, kaset yapısıyla skeleton, skeleton screen / add skeleton, skeleton loading, wireframe skeleton, ui-polish skeleton | `ui-polish` + `ui-styling` | `skills/ui-polish/SKILL.md` §2.1 |
 | /ui-polish --<theme-name>, tema kilitle, sliding-hero, sliding-hero-auth-switcher-login, pinned theme | `ui-polish` + `frontend-design` | `skills/ui-polish/SKILL.md` §0.1 |
 | gsap, gsap ekle, scrollsmoother, smooth scroll, autoscroll, otoskrol, pürüzsüz kaydırma / gsap, scrollsmoother, smooth scroll, autoscroll, smooth momentum | `ui-ux-pro-max` + `frontend-design` | `skills/ui-ux-pro-max/scripts/gsap_init.py` + `references/gsap-integration-guide.md` |
+| diyagram, mimari şema, şema çiz, akış diyagramı, c4 şeması, er şeması, sequence diyagramı, wardley map, sankey / diagram, architecture diagram, sequence diagram, er diagram, flowchart, wardley | `diagram-design` | `skills/diagram-design/SKILL.md` |
 
 ### A2. Marka, sunum, doküman
 
