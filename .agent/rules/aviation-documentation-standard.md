@@ -29,8 +29,9 @@ ajan yanıtları havacılık güvenlik kartı netliğinde olmalıdır.
 
 ## 2. Beş Temel Kural (Core Rules)
 
-### 1. Sıfır Lakırdı (Zero Fluff — Minimum Text, Maximum Visuals)
+### 1. Sıfır Lakırdı ve Caveman Nesir Sıkıştırması (Zero Fluff & Caveman Prose Compression)
 - ⛔ Sohbet nezaketleri ("Tabii ki!", "Harika bir fikir!", "Bu rehberde size şunları anlatacağım..."), giriş dolgu paragrafları veya uzun teorik açıklamalar YASAKTIR.
+- ✅ **Caveman Altın Kuralı (`karpathy-guidelines/references/token-efficient-communication.md`):** Kod blokları, diff'ler, fonksiyon imzaları ve dosya yolları %100 eksiksiz korunur; açıklayıcı nesir (prose) ise telegrafik, yüksek bilgi yoğunluklu ve dolgusuz tutulur.
 - ✅ Açıklamalar doğrudan ASCII akış şemaları, Markdown tabloları veya girdiden çıktıya somut eşleşmelerle ifade edilir.
 - ✅ Tüm eylemler emir kipiyle, tek cümlelik net komutlar halinde yazılır ("Şunu çalıştırın:", "Şu URL'e gidin:").
 
