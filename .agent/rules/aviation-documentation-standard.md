@@ -66,10 +66,10 @@ ajan yanıtları havacılık güvenlik kartı netliğinde olmalıdır.
 
 ---
 
-## 3. Ajan Sohbet Yanıtları Protokolü (Chat Response Contract)
+## 3. Ajan Sohbet Yanıtları Protokolü ve Negatif Sınır (Chat Response Contract & Anti-Panic Receipt Rule)
 
 Kullanıcı ajana "bu proje nasıl kurulur?", "X hatasını nasıl çözerim?", "şu sayfayı nasıl test ederim?" veya
-"hangi komutları çalıştırmalıyım?" gibi yönerge/nasıl yapılır sorusu sorduğunda ajan yanıtını şu şablonda üretir:
+"hangi komutları çalıştırmalıyım?" gibi **kullanıcının bizzat uygulayacağı ileriye dönük yönerge/nasıl yapılır sorusu** sorduğunda ajan yanıtını şu şablonda üretir:
 
 ```markdown
 ### 📋 [İşlem / Görev Adı] (Aviation Quick-Card)
@@ -89,6 +89,10 @@ Kullanıcı ajana "bu proje nasıl kurulur?", "X hatasını nasıl çözerim?", 
 |---|---|---|
 | `[Hata mesajı]` | `[Kök neden]` | `[Düzeltme komutu]` |
 ```
+
+> ⛔ **Negatif Sınır — Tamamlanmış İşlem Makbuzlarında Acil Çıkış Tablosu Yasağı (Anti-Panic Receipt Rule):**
+> - `🚨 Ditching & Emergency Exit` tablosu **yalnızca kullanıcının bizzat çalıştıracağı adımlar içeren** kılavuz, test rehberi ve "nasıl yapılır" yanıtlarında kullanılır.
+> - Ajanın zaten bizzat çalıştırıp **`0` hatayla tamamladığı** otonom işlem makbuzlarında (ör. `/commitx` / `git push` tamamlandı raporu, bitmiş dosya okuma/analiz özeti veya basit durum bildirimi) **ASLA** `🚨 Ditching & Emergency Exit` tablosu basılmaz! İşlem başarıyla bitmişken *"Authentication failed / Non-fast-forward olursa şunu yapın"* tablosu basmak gereksiz kontrol, token israfı ve sahte telaş/hata algısı yaratır.
 
 ---
 
