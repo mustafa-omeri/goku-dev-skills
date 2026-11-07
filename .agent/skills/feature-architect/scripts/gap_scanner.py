@@ -105,6 +105,13 @@ def main(argv: list[str] | None = None) -> int:
     focus_list = [f.strip() for f in args.focus.split(",") if f.strip()] if args.focus else None
     report = scan(root_path, peers=args.peer or None, focus=focus_list)
 
+    for c in report.get("roots", {}).get("peer_candidates", []):
+        if c.get("confirmed"):
+            print(
+                f"🔗 [FA-ENGINE] Sibling Peer Bound: {c['name']} ({c['path']}) — confidence={c['confidence']} [{'; '.join(c.get('signals', []))}]",
+                file=sys.stderr,
+            )
+
     if args.json or args.format == "json":
         print(json.dumps(report, ensure_ascii=False, indent=2))
     else:

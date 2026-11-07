@@ -126,7 +126,6 @@ CATEGORIES = {
 
 
 SLASH_COMMANDS = [
-
     {
         "command": "/ui-polish",
         "aliases": ["/ui-polish", "ui polish", "[UI-POLISH]", "/ui-polish --skeleton", "skeleton kasetlerini entegre et", "--redesign", "[OVERDRIVE]"],
@@ -140,8 +139,8 @@ SLASH_COMMANDS = [
         ],
         "goal": "16 Kilitli Tema (themes.css), 5 Çalışma Modu, Cerrahi Skeleton Kasetleri & Sıfır AI-Slop",
         "description": "Web ve mobil arayüzleri 16 UI&UX tasarım becerisi, 16 resmi kilitli tema (#01 SLATE BREEZE .. #16 SOFT CLAY), geometry-matched skeleton ekranları (Zero CLS, W4 kapısı), /ui-toast bildirimleri ve 6-satırlık bağlayıcı ön uçuş makbuzuyla üretim kalitesinde inşa eder ve doğrular.",
-        "sample_prompt": "/ui-polish --skeleton: Kart bileşenine geometry-matched skeleton kasetini entegre et, CLS sıçramasını ve spinner kullanımını engelle.",
-        "protocol": "1. Ön Uçuş Makbuzu ➜ 2. Mod Tespiti (baseline | crafted | refinement | redesign | skeleton-only) ➜ 3. F1-F6 Zanaat İcrası ➜ 4. F7 4 Mekanik Kapı (contract, slop, contrast, W4 skeleton) & Doğrulama",
+        "sample_prompt": "/ui-polish --skeleton @[src/components/UserProfile.tsx]: Bileşene geometry-matched skeleton kasetini entegre et, CLS sıçramasını ve spinner kullanımını engelle.",
+        "protocol": "1. Ön Uçuş & Token Analizi -> Kilitli tema (#01..#16) tespiti ➜ 2. Mod Tespiti -> (baseline | crafted | refinement | redesign | skeleton-only) teyidi ➜ 3. F1-F6 Zanaat İcrası -> Zero-CLS skeleton & bileşen inşası ➜ 4. 4 Mekanik Kapı Doğrulaması -> 0 hata ve test raporu",
         "usage_snippet": """# 1. Cerrahi Skeleton Kaset Modu (/ui-polish --skeleton):
 /ui-polish --skeleton @[src/components/UserProfile.tsx]
 # Kaset analizi, themes.css shimmer motoru, geometry-matched skeleton, zero CLS
@@ -155,12 +154,25 @@ SLASH_COMMANDS = [
 /ui-polish @[src/index.css]
 
 # 4. Mod C (Redesign - 16 Kilitli Tema ile Yeniden Tasarım):
+⚠️ CRITICAL: --redesign modu mevcut bileşen CSS ve layout yapısını kilitli tema kurallarına göre cerrahi olarak dönüştürür; uncommitted değişikliklerinizi yedekleyin.
 /ui-polish --redesign @[src/pages/Dashboard.tsx]
 
 # 5. Dört Mekanik Tasarım Doğrulama Kapısı (0 Hata Zorunlu):
 python .agent/skills/musgoku/scripts/check_design_contract.py --strict
 python .agent/skills/musgoku/scripts/check_design_slop.py --strict   # W4: Spinner slop & Skeleton denetimi
 python .agent/skills/musgoku/scripts/check_theme_contrast.py --strict""",
+        "emergency": [
+            {
+                "symptom": "W4 Skeleton Kapısı Başarısız (check_design_slop.py FAIL)",
+                "cause": "Sayfada jenerik spinner, donuk boşluk veya asenkron veri yüklenirken CLS sıçraması var.",
+                "action": "themes.css kaset shimmer sınıfını ekleyin ve geometry-matched skeleton bileşenini bağlayın."
+            },
+            {
+                "symptom": "Eksik Token Hatası (check_design_contract.py FAIL)",
+                "cause": "DESIGN.md içindeki renk/font tokenları ile CSS değişkenleri uyumsuz.",
+                "action": "python .agent/skills/musgoku/scripts/check_design_contract.py --strict çalıştırıp eksik CSS değişkenini tanımlayın."
+            }
+        ],
         "category": "Tasarım & UI"
     },
     {
@@ -172,8 +184,8 @@ python .agent/skills/musgoku/scripts/check_theme_contrast.py --strict""",
         "skills": ["ui-polish", "frontend-design", "ui-styling", "ui-ux-pro-max"],
         "goal": "6 Konfigürasyon, iOS Yay Mekaniği, Swipe-to-Dismiss & Sıfır AI-Slop",
         "description": "Projelerde varsayılan toast sağlayıcısı olan Sileo mimarisini devreye alır. 6 konum seçeneği (top-left, top-center, top-right, bottom-left, bottom-center, bottom-right), fiziksel yay animasyonları (stiffness: 380, damping: 28), kart destesi istiflemesi ve donanım hızlandırmalı CSS kuralları sunar.",
-        "sample_prompt": "/ui-toast --warning --top-left: Sol üstte sarı uyarı durumunda Sileo bildirim kasetini entegre et.",
-        "protocol": "1. Konum & Durum Tespiti ➜ 2. Sileo Provider / Portal Katmanı ➜ 3. Spring Animasyon & Stacking ➜ 4. A11y Live Region Duyurusu",
+        "sample_prompt": "/ui-toast --warning --top-left: Sol üst konuma yay fiziğiyle çalışan Sileo uyarı bildirim kasetini entegre et.",
+        "protocol": "1. Konum & Durum Tespiti -> (top/bottom, left/center/right, durum) seçimi ➜ 2. Sileo Provider Entegrasyonu -> DOM portal katmanı kurulumu ➜ 3. Spring Animasyonu İcrası -> Stiffness:380 damping:28 yay fiziği ve kart istifi ➜ 4. A11y Doğrulaması -> aria-live bildirim testi",
         "usage_snippet": """# 1. Konuma Göre Toast Bildirimi:
 /ui-toast --top-left
 /ui-toast --bottom-center
@@ -185,6 +197,18 @@ python .agent/skills/musgoku/scripts/check_theme_contrast.py --strict""",
 
 # 3. Kütüphane Adıyla Çağırma:
 /ui-toast --sileo --warning --top-left""",
+        "emergency": [
+            {
+                "symptom": "Toast ekranda görünmüyor",
+                "cause": "Portal kök elementi (<div id='sileo-portal'>) DOM ağacına eklenmemiş.",
+                "action": "Root layout veya App.tsx içine SileoProvider veya portal kasetini ekleyin."
+            },
+            {
+                "symptom": "Animasyon titriyor veya sıçrıyor",
+                "cause": "Donanım hızlandırma (transform: translate3d) veya will-change kuralı eksik.",
+                "action": "CSS kuralına will-change: transform, opacity ve translate3d ekleyin."
+            }
+        ],
         "category": "Tasarım & UI"
     },
     {
@@ -197,455 +221,384 @@ python .agent/skills/musgoku/scripts/check_theme_contrast.py --strict""",
         "goal": "TDD Dikiş Noktası, 5 Katmanlı Dilim, KANBAN Kartı & Önce Kırmızı Test",
         "description": "Antigravity IDE'de karmaşık geliştirmeler için standart PLAN.template.md şablonunda mimari plan üretir. Kullanıcı Proceed butonuna bastığında doğrudan üretim koduna geçilmesini engeller; dikiş noktasında önce test yazılıp FAIL olduğu kanıtlandıktan sonra minimal yeşil kod icra edilir.",
         "sample_prompt": "/plan: Yeni kullanıcı profil sayfası için TDD dikiş noktası ve 5 katmanlı dilim içeren mimari plan hazırla.",
-        "protocol": "1. PLAN.template.md Oluşturma ➜ 2. Kullanıcı 'Proceed' Onayı ➜ 3. Dikiş Noktasında Kırmızı Test (FAIL) ➜ 4. Yeşil Kod & 5 Katman İcrası",
+        "protocol": "1. PLAN.template.md Üretimi -> Dikiş noktası ve 5 katmanlı dilim mimarisi ➜ 2. Kullanıcı 'Proceed' Onayı -> İcra yetkisi teyidi ➜ 3. Kırmızı Test Yazımı -> Terminalde kırmızı (FAIL) kanıtı ➜ 4. Yeşil Kod & 5 Katman İcrası -> Minimal geçiş ve katman bütünlüğü",
         "usage_snippet": """# 1. Plan Modu Tetikleme:
 /plan [Özellik Açıklaması]
 
 # 2. Plan Onayı ve İcra Protokolü:
-# Kullanıcı 'Proceed' dedikten sonra:
+⚠️ CRITICAL: Plan onayı ('Proceed') verilmeden asla üretim koduna geçmeyin; önce dikiş noktasında kırmızı test yazıp FAIL olduğunu kanıtlayın.
 # Adım 2.1: Test yazımı ve terminalde FAIL kanıtı
 # Adım 2.2: Minimal geçiş kodu ve 5 katmanlı dikey dilim""",
+        "emergency": [
+            {
+                "symptom": "Test ilk çalıştırmada yeşil çıktı (False Positive)",
+                "cause": "Test gerçek fonksiyonu çağırmıyor veya assert kontrolü mock tarafından yutuluyor.",
+                "action": "Assert ifadesini gerçek kodun dönmesi gereken sonuca göre düzeltin ve kırmızı (FAIL) olduğunu kanıtlayın."
+            },
+            {
+                "symptom": "Kullanıcı Proceed butonuna bastı ama ajan durdu",
+                "cause": "Plan artifact feedback döngüsü tamamlanmadı.",
+                "action": "HANDOFF.md §3 canlı görev panosundaki 1. sıradaki TDD dikiş adımını çalıştırmaya başlayın."
+            }
+        ],
         "category": "Kod & Mimari"
     },
-
     {
-
         "command": "/verify-last",
-
         "aliases": ["/verify-last", "verify last", "[VERIFY-LAST]"],
-
         "name": "Mikro: Son Geliştirmeler & Çalışma Ağacı Doğrulama",
-
         "badge": "Mikro Kalite",
-
         "badge_class": "badge-info",
-
         "skills": ["verify-last", "musgoku", "development-workflow"],
-
         "goal": "Uncommitted Çalışma Ağacı (git status) & Son Commit (HEAD~1..HEAD) Cerrahi Denetimi",
-
         "description": "Anlık oturumda en son yapılan değişiklikleri, git status / uncommitted çalışma ağacını veya en son commit'i (HEAD~1..HEAD) kapsam-duyarlı derleme, tip, birim testi ve etkilenen katman bütünlüğü açısından doğrular.",
-
         "sample_prompt": "/verify-last: Son yapılan geliştirmeleri, uncommitted dosyaları ve regresyon riskini cerrahi olarak denetle.",
-
-        "protocol": "1. git status & diff Analizi ➜ 2. Kapsam-Duyarlı Kalite Kapıları (build/tsc/test) ➜ 3. Etkilenen Katman Denetimi ➜ 4. Hızlı Kullanıcı Test Adımı",
-
+        "protocol": "1. git status & diff Analizi -> Değişen dosya ve uncommitted ağaç dökümü ➜ 2. Kapsam-Duyarlı Kalite Kapıları -> build/tsc/test exit kodları ➜ 3. Katman Bütünlüğü Denetimi -> Etkilenen 5 katman kontrolü ➜ 4. Kullanıcı Doğrulama Adımı -> Anında test senaryosu çıktısı",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
-
 /verify-last
-
 /verify-last son commit'i ve açık dosyaları doğrula
 
-
-
 # Arkada Çalıştırılan Kapsam-Duyarlı Kontroller:
-
 git status --short
-
 git diff --stat
-
 python .agent/skills/musgoku/scripts/rules_gates.py --strict
-
 python .agent/skills/musgoku/scripts/check_project_brief.py""",
-
+        "emergency": [
+            {
+                "symptom": "TypeScript / Derleme Hatası (npx tsc FAIL)",
+                "cause": "Son düzenlenen dosyada eksik import, tip uyumsuzluğu veya kırık arayüz var.",
+                "action": "npx tsc --noEmit çalıştırıp ilgili satırdaki tip tanımını düzeltin."
+            },
+            {
+                "symptom": "Uncommitted dosyalarda beklenmeyen değişiklikler var",
+                "cause": "Yanlış dizinde komut çalıştırılmış veya geçici dosyalar gitignore edilmemiş.",
+                "action": "git status --short ile listeyi inceleyin; geçici dosyaları silin veya .gitignore'a ekleyin."
+            }
+        ],
         "category": "Teslimat & Kalite"
-
     },
-
     {
-
         "command": "/verify-sprint",
-
         "aliases": ["/verify-sprint", "verify sprint", "[VERIFY-SPRINT]"],
-
         "name": "Mezo: Aktif & Son Sprint Hedefleri Kabul Denetimi",
-
         "badge": "Mezo Kalite",
-
         "badge_class": "badge-warning",
-
         "skills": ["verify-sprint", "sprint-delivery-workflow", "tdd"],
-
         "goal": "Gherkin AC, Kart Başına 5 Katmanlı Dilim & KULLANICI_TEST_REHBERI",
-
         "description": "Aktif sprinti (SPRINT_PLAN.md) ve tamamlanan sprint sınırındaki kartları (KANBAN.md) denetler; Gherkin senaryolarını, kart başına 5 katmanlı dikey dilimi ve kullanıcı test rehberini doğrular.",
-
         "sample_prompt": "/verify-sprint: Aktif sprint hedeflerini, kart kabul kriterlerini (Gherkin) ve 5 katman dikey dilim bütünlüğünü denetle.",
-
-        "protocol": "1. SPRINT_PLAN.md & KANBAN.md Senkronu ➜ 2. Gherkin (.feature) AC Doğrulaması ➜ 3. Kart Başına 5 Katman Matrisi ➜ 4. docs/KULLANICI_TEST_REHBERI.md Kanıtı",
-
+        "protocol": "1. SPRINT_PLAN & KANBAN Senkronu -> Aktif sprint kart durumları ➜ 2. Gherkin AC Doğrulaması -> Given-When-Then test kanıtı ➜ 3. Kart Başına 5 Katman Matrisi -> Şema/API/UI tam dilim kontrolü ➜ 4. KULLANICI_TEST_REHBERI Kanıtı -> Manuel doğrulama adımları",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
-
 /verify-sprint
-
 /verify-sprint aktif sprint kartlarını ve Gherkin senaryolarını denetle
 
-
-
 # Mekanik Sprint Panosu Kapısı:
-
 python .agent/skills/musgoku/scripts/check_sprint_board.py""",
-
+        "emergency": [
+            {
+                "symptom": "check_sprint_board.py FAIL (Eksik KANBAN veya SPRINT_PLAN)",
+                "cause": "Aktif sprint kartları KANBAN.md ile SPRINT_PLAN.md arasında eşleşmiyor.",
+                "action": "python .agent/skills/musgoku/scripts/check_sprint_board.py çalıştırıp hata veren kart ID'sini eşitleyin."
+            },
+            {
+                "symptom": "Kart 'Yapıldı' görünüyor ama katman eksik (Phantom Done)",
+                "cause": "Sadece UI yazılmış, DB migration veya backend endpoint'i açılmamış.",
+                "action": "Kartı hemen 'Yapılıyor' durumuna çekin ve eksik katmanı HANDOFF.md 1. sıraya yazın."
+            }
+        ],
         "category": "Teslimat & Kalite"
-
     },
-
     {
-
         "command": "/verify-prd",
-
         "aliases": ["/verify-prd", "/prd-verify", "[VERIFY-PRD]"],
-
         "name": "Makro: PRD & Tüm Proje Kabul Kriterleri Doğrulama Motoru",
-
         "badge": "Makro Kalite & Güven",
-
         "badge_class": "badge-info",
-
         "skills": ["verify-prd", "doc-coauthoring", "code-review", "Katman Bütünlüğü (5-Layer)"],
-
         "goal": "\"Bitti ama doğru mu bitti?\" Sahte Bitti (Phantom Done) Avcısı",
-
         "description": "Tüm proje ve PRD genelinde şartnamedeki kabul kriterlerini (Gherkin AC), 5 Katmanlı Dikey Dilimi (DB Migration, View/RPC, Client API, UI UX, Admin Formu), unutulmuş mock/localStorage kalıntılarını ve kapsam sapmalarını (Scope Creep) denetleyip kanıt karnesi üretir.",
-
         "sample_prompt": "/verify-prd: Tüm projeyi PRD şartnamesine göre denetle; 5 katman dikey dilim bütünlüğünü ve sahte bitti (Phantom Done) risklerini raporla.",
-
-        "protocol": "1. Gherkin AC & PRD Denetimi ➜ 2. 5 Katmanlı Dikey Dilim Analizi ➜ 3. Mock Kalıntısı & Scope Creep Taraması ➜ 4. Deterministik Test Kanıtı & Kabul Karnesi",
-
+        "protocol": "1. PRD Şartname & Gherkin AC Denetimi -> Tüm hedeflerin eşleşme tablosu ➜ 2. 5 Katmanlı Dikey Dilim Analizi -> DB/View/API/UI/Admin dilim kanıtı ➜ 3. Mock & Scope Creep Taraması -> Unutulmuş sahte veri tespiti ➜ 4. Deterministik Kabul Karnesi -> Nihai kabul raporu ve skor",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
-
 /verify-prd
-
 /verify-prd tüm projeyi PRODUCT.md ve PRD hedeflerine göre denetle
 
-
-
 # Denetlenen 5 Katmanlı Dikey Dilim:
-
 # 1. DB/Şema/Migration (check_db_migrations.py)
-
 # 2. Backend/View/RPC (check_api_docs.py)
-
 # 3. İstemci API Entegrasyonu (Canlı View/Endpoint)
-
 # 4. Arayüz/UX & Durumlar (check_design_contract.py)
-
 # 5. Yönetim/Admin Formu & Döngü Kapanışı""",
-
+        "emergency": [
+            {
+                "symptom": "Kodda unutulmuş mock veri veya localStorage kalıntısı bulundu",
+                "cause": "Geliştirme aşamasında geçici olarak yazılan mock array veya hardcoded json kaldırılmamış.",
+                "action": "Mock veriyi kaldırıp gerçek backend API endpoint bağlantısını ve hata durumunu bağlayın."
+            },
+            {
+                "symptom": "5 Katman bütünlüğü bozuk (Veritabanı migration'ı eksik)",
+                "cause": "UI bileşeni yeni kolon bekliyor ancak DB şemasında bu kolon açılmamış.",
+                "action": "Yeni migration dosyasını oluşturun ve DB_MIGRATIONS.md kütüğünü güncelleyin."
+            }
+        ],
         "category": "Teslimat & Kalite"
-
     },
-
     {
-
         "command": "/check-security",
-
         "aliases": ["/check-security", "[CHECK-SECURITY]"],
-
         "name": "Güvenlik, Savunma & İstismar Kalkanı",
-
         "badge": "Güvenlik & Savunma",
-
         "badge_class": "badge-danger",
-
         "skills": ["security-audit", "development-workflow", "prelaunch-audit"],
-
         "goal": "OWASP Zafiyet Avcılığı & Public Form 6-Katman Savunması",
-
         "description": "OWASP zafiyet avcılığı, public form kalkanı (Context Binding, Honeypot, Turnstile, Rate-limit, Sanitization, Blind Insert RLS) ve secrets/env sızıntı denetimi yürütür.",
-
         "sample_prompt": "/check-security: Sistem genelinde yetki aşımı, public form abuse riskleri ve env sızıntılarını derinlemesine tara.",
-
-        "protocol": "1. Guidance/Full-Audit Zafiyet Taraması ➜ 2. Halka 2 Public Form Savunması (Turnstile, Rate-limit, RLS) ➜ 3. Secret/Env Sızıntı & Bulgular Doğrulaması",
-
+        "protocol": "1. Zafiyet & Yetki Aşımı Taraması -> OWASP Top 10 ve boundary ihlali analizi ➜ 2. Public Form Savunması -> 6-katmanlı (Turnstile, Rate-limit, RLS) koruma ➜ 3. Secrets / Env Sızıntı Denetimi -> Açıkta kalan API anahtarı kontrolü ➜ 4. Bulgular Defteri Doğrulaması -> Sıfır yüksek risk kanıtı",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
-
 /check-security
-
 /check-security public formları ve RLS politikalarını denetle
 
-
-
 # Bulgular ve Kapsam Defteri Doğrulayıcıları:
-
+⚠️ CRITICAL: Canlı üretim ortamında ASLA gizli anahtarları (SECRET_KEY, DB credentials) git repoya commitlemeyin veya public API yanıtlarında açık etmeyin.
 node .agent/skills/security-audit/scripts/validate-findings.cjs
-
 node .agent/skills/security-audit/scripts/validate-coverage-ledger.cjs""",
-
+        "emergency": [
+            {
+                "symptom": "Git geçmişinde veya kodda gizli anahtar (secret key) bulundu",
+                "cause": ".env dosyası git'e eklenmiş veya kod içine API anahtarı hardcoded yazılmış.",
+                "action": "İlgili anahtarı derhal iptal edip yenileyin; anahtarı .env içine taşıyıp .gitignore'a ekleyin."
+            },
+            {
+                "symptom": "Public formda bot istismarı ve spam riski var",
+                "cause": "Turnstile veya CAPTCHA doğrulaması backend tarafında onaylanmıyor, rate-limit eksik.",
+                "action": "Backend controller katmanına IP tabanlı rate-limiting ve token doğrulama filtresi ekleyin."
+            }
+        ],
         "category": "Teslimat & Kalite"
-
     },
-
     {
-
         "command": "/fix-bug",
-
         "aliases": ["/fix-bug", "[FIX-BUG]"],
-
         "name": "Sistematik Hata Teşhis & Kırmızı Döngü",
-
         "badge": "Hata Teşhisi",
-
         "badge_class": "badge-warning",
-
         "skills": ["diagnosing-bugs", "musgoku", "karpathy-guidelines"],
-
         "goal": "Önce Kırmızı Geri Bildirim Döngüsü & Cerrahi Onarım",
-
         "description": "Uygulama koduna dokunmadan önce hatayı deterministik olarak kanıtlayan kırmızı test/kanıt döngüsü kurar, 3 hipotez üretip sınar, cerrahi onarım yapar ve Karpathy gereksiz kod temizliği işletir.",
-
         "sample_prompt": "/fix-bug: Çöken endpoint için önce kırmızı geri bildirim döngüsü kur, 3 hipotez üret ve cerrahi düzeltme yap.",
-
-        "protocol": "1. Kırmızı Döngü (diagnosing-bugs) ➜ 2. Hipotez & İzolasyon ➜ 3. Cerrahi Onarım (musgoku) ➜ 4. Regresyon Testi & Sadeleştirme (karpathy-guidelines)",
-
+        "protocol": "1. Kırmızı Geri Bildirim Döngüsü -> Hatayı kanıtlayan kırmızı test çıktısı ➜ 2. 3 Hipotez Üretimi & İzolasyon -> Kök neden deneyi ➜ 3. Cerrahi Onarım İcrası -> Semptom değil kök neden düzeltmesi ➜ 4. Regresyon Testi & Sadeleştirme -> Yeşil test ve Karpathy temizliği",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
-
 /fix-bug <hata açıklaması veya log>
 
-
-
 # Zorunlu 6 Aşama (bug-diagnosis-enforcement.md):
-
+⚠️ CRITICAL: Hatayı deterministik olarak kanıtlayan kırmızı test veya log döngüsü kurmadan ASLA üretim kodunu değiştirmeyin.
 # Faz 1: Kırmızı Geri Bildirim Döngüsü (Hata kanıtlanmadan kod değişmez)
-
 # Faz 2: 3 Somut Hipotez Üretimi
-
 # Faz 3: En Küçük Deney ile Hipotez Eleme
-
 # Faz 4: Kök Neden Onarımı (Semptom gizleme yasak)
-
 # Faz 5: Regresyon Testi (Kırmızı -> Yeşil)
-
 # Faz 6: knowledge-base.md Kaydı""",
-
+        "emergency": [
+            {
+                "symptom": "Hata yerel ortamda yeniden üretilemiyor (Cannot reproduce)",
+                "cause": "Ortam değişkenleri (.env), veritabanı tohum verisi veya oturum durumu eksik.",
+                "action": "Girdileri ve ortam değişkenlerini loglayarak en küçük izole birim testini yazın."
+            },
+            {
+                "symptom": "Yapılan düzeltme başka bir sayfayı/testi bozdu (Regresyon)",
+                "cause": "Düzeltme derin modül sınırlarını ihlal etti veya ortak bir tipe yan etki yarattı.",
+                "action": "Düzeltmeyi geri alın; bozulmayı yakalayan regresyon testini ekleyip cerrahi onarım yapın."
+            }
+        ],
         "category": "Teslimat & Kalite"
-
     },
-
     {
-
         "command": "/council",
-
         "aliases": ["/council", "[COUNCIL]", "llm council"],
-
         "name": "3-Aşamalı LLM Konsey Hakemliği",
-
         "badge": "Mimari Hakemlik",
-
         "badge_class": "badge-info",
-
         "skills": ["karpathy-guidelines", "doc-coauthoring", "domain-modeling"],
-
         "goal": "Anonim Kör Akran İncelemesi (Borda Skoru) & ADR Kararı",
-
         "description": "2+ alternatifli mimari ikilem ve riskli refactoring kararlarında 3 aşamalı anonim körleme (Stage 1 Proposals → Stage 2 Blind Review & Borda Skoru → Stage 3 Chairman Synthesis) ve docs/adr/ altında mimari karar kaydı üretir.",
-
         "sample_prompt": "/council: Mimari ikilem için 3 alternatifli kör hakemlik konseyi topla, Borda puanı hesapla ve ADR kaydı çıkar.",
-
-        "protocol": "Stage 1 (Option A/B/C Önerileri) ➜ Stage 2 (Kör Hakemlik & council_ranker.py) ➜ Stage 3 (Chairman Sentezi) ➜ docs/adr/ Karar Kaydı",
-
+        "protocol": "1. Stage 1: Alternatif Önerileri -> Option A/B/C mimari tasarım taslakları ➜ 2. Stage 2: Anonim Kör Hakemlik -> Bağımsız puanlama ve Borda skoru ➜ 3. Stage 3: Chairman Sentezi -> Uzlaşı ve nihai mimari seçim ➜ 4. ADR Karar Dokümanı -> docs/adr/ altına resmi kayıt",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
-
 /council <mimari ikilem veya teknoloji seçimi>
 
-
-
 # Borda Skoru ve Sıralama Hesaplayıcı CLI:
-
 python .agent/skills/karpathy-guidelines/scripts/council_ranker.py --sample""",
-
+        "emergency": [
+            {
+                "symptom": "Konsey üyeleri eşit Borda puanı verdi (Beraberlik)",
+                "cause": "Alternatiflerin maliyet ve risk analizleri yeterince ayrıştırılmamış.",
+                "action": "Karpathy gereksiz karmaşıklık ilkesine göre en az kod üreten en basit seçeneği seçin."
+            },
+            {
+                "symptom": "ADR dokümanı eksik veya şablona uymuyor",
+                "cause": "docs/adr/ dizini oluşturulmamış veya durum (Accepted) damgası eksik.",
+                "action": "docs/adr/ altına YYYYMMDD-baslik.md formatında karar gerekçesini kaydedin."
+            }
+        ],
         "category": "Kod & Mimari"
-
     },
-
     {
-
         "command": "/prelaunch",
-
         "aliases": ["/prelaunch", "[PRELAUNCH]"],
-
         "name": "Canlıya Alma Kalite & Uyum Denetimi",
-
         "badge": "Lansman & Uyum",
-
         "badge_class": "badge-success",
-
         "skills": ["prelaunch-audit"],
-
         "goal": "20 Maddelik Lansman, KVKK/GDPR, Consent Mode v2 & WCAG 2.2 AA",
-
         "description": "20 maddelik çekirdek kontrol listesi + 7 koşullu madde (KVKK m.10, 7499 s. Kanun yurt dışı aktarımı, Google Consent Mode v2, ham HTML SEO, WCAG 2.2 AA Axe, robots.txt, sitemap.xml, llms.txt) ile GO/NO-GO karar raporu üretir.",
-
         "sample_prompt": "/prelaunch: Sitemizi yayına almaya hazır mıyız? 20 maddelik çekirdek denetimi ve yasal onay mekanizmalarını doğrula.",
-
-        "protocol": "1. prelaunch_checker.py (Yerel Dosya/Tuzak) ➜ 2. html-audit.mjs (Ham HTML SEO) ➜ 3. consent-check.mjs (Çerez/İzleyici) ➜ 4. axe-runner.mjs (WCAG 2.2 AA) ➜ PRELAUNCH-REPORT.md",
-
+        "protocol": "1. prelaunch_checker.py -> 20 maddelik çekirdek kontrol listesi ➜ 2. html-audit.mjs -> Ham HTML SEO ve meta etiket analizi ➜ 3. consent-check & axe-runner -> KVKK/GDPR ve WCAG 2.2 AA erişilebilirlik ➜ 4. PRELAUNCH-REPORT.md -> GO / NO-GO lansman kararı",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
-
 /prelaunch
 
-
-
 # Otomasyon Denetim Betikleri:
-
+⚠️ CRITICAL: NO-GO kararı çıkaran kritik bir engel (KVKK açık rıza ihlali, sızan anahtar, ham HTML SEO sıfır) varken ASLA projeyi canlıya almayın.
 python .agent/skills/prelaunch-audit/scripts/prelaunch_checker.py --dir .
-
 node .agent/skills/prelaunch-audit/scripts/html-audit.mjs https://example.com
-
 node .agent/skills/prelaunch-audit/scripts/consent-check.mjs https://example.com
-
 node .agent/skills/prelaunch-audit/scripts/axe-runner.mjs https://example.com""",
-
+        "emergency": [
+            {
+                "symptom": "WCAG 2.2 AA Erişilebilirlik Hatası (Axe Runner FAIL)",
+                "cause": "Düğmelerde aria-label eksik, renk kontrastı yetersiz veya form etiketleri bağlanmamış.",
+                "action": "Eksik aria-label ve alt özniteliklerini ekleyin; kontrast oranını en az 4.5:1 yapın."
+            },
+            {
+                "symptom": "Consent Mode v2 çalışmıyor (Kullanıcı onaysız izleme yapılıyor)",
+                "cause": "Google Tag Manager veya analiz betikleri açık rıza verilmeden önce tetikleniyor.",
+                "action": "GTM tetikleyicisini 'consent_update' olayına bağlayın ve varsayılanı 'denied' yapın."
+            }
+        ],
         "category": "Teslimat & Kalite"
-
     },
-
     {
-
         "command": "/prelaunch-update",
-
         "aliases": ["/prelaunch-update", "[PRELAUNCH-UPDATE]"],
-
         "name": "Mevzuat & Platform Kuralları Güncelleyici",
-
         "badge": "Mevzuat Senkronu",
-
         "badge_class": "badge-warning",
-
         "skills": ["prelaunch-audit"],
-
         "goal": "Dinamik Mevzuat, İdari Para Cezası ve Bot Kuralları Senkronu",
-
         "description": "KVKK yeniden değerleme oranı idari para cezaları, 7499 s. Kanun bildirim limitleri, Ticaret Bakanlığı 28/B kuralları ve Google Search / AI crawler değişikliklerini resmi kaynaklardan sorgulayıp referans dosyalarını cerrahi günceller.",
-
         "sample_prompt": "/prelaunch-update: Güncel KVKK ve GDPR idari para cezalarını resmi tebliğlerden sorgula ve dokümanları güncelle.",
-
-        "protocol": "1. prelaunch_updater.py --check (Tazelik Kontrolü) ➜ 2. --generate-prompt (Resmi Kaynak Sorgusu) ➜ 3. Markdown Referanslarının Cerrahi Güncellenmesi",
-
+        "protocol": "1. prelaunch_updater.py --check -> Mevzuat referanslarının tazelik durumu ➜ 2. Resmi Kaynak Taraması -> Güncel tebliğ ve ceza miktarı verileri ➜ 3. Cerrahi Markdown Senkronu -> prelaunch kural dokümanlarının güncellenmesi ➜ 4. Tazelik Kanıtı -> Doğrulama exit kodu 0",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
-
 /prelaunch-update
 
-
-
 # Tazelik Denetimi ve Araştırma Promptu Üretimi:
-
 python .agent/skills/prelaunch-audit/scripts/prelaunch_updater.py --check
-
 python .agent/skills/prelaunch-audit/scripts/prelaunch_updater.py --generate-prompt""",
-
+        "emergency": [
+            {
+                "symptom": "Tazelik denetimi bayat referans uyarısı verdi",
+                "cause": "Mevzuat yıl/oran değişiklikleri üzerinden 90 günden fazla zaman geçmiş.",
+                "action": "python .agent/skills/prelaunch-audit/scripts/prelaunch_updater.py --generate-prompt ile güncel veriyi çekin."
+            },
+            {
+                "symptom": "Resmi tebliğ bağlantısı 404 dönüyor",
+                "cause": "Resmi Gazete veya bakanlık URL yapısı değişmiş.",
+                "action": "URL'yi resmi ana kaynak ana diziniyle güncelleyip referans tablosuna işleyin."
+            }
+        ],
         "category": "Teslimat & Kalite"
-
     },
-
     {
-
         "command": "/seo-apply",
-
         "aliases": ["/seo-apply", "[SEO-APPLY]"],
-
         "name": "Uçtan Uca SEO & GEO (AI Search) Altyapısı",
-
         "badge": "SEO & Growth",
-
         "badge_class": "badge-accent",
-
         "skills": ["seo-growth", "frontend-design"],
-
         "goal": "Teknik SEO, JSON-LD Schema.org & AI Crawler (/llms.txt) Kurulumu",
-
         "description": "Kod tabanına bizzat girer; semantik meta başlık (50-60 kr), açıklama (120-155 kr), canonical, OpenGraph, JSON-LD Schema.org, AI crawler robots.txt, sitemap.xml ve /llms.txt dosyalarını üretip seo_checker.py --strict ile doğrular.",
-
         "sample_prompt": "/seo-apply: Sitemiz için JSON-LD şemaları, OpenGraph etiketleri, robots.txt ve llms.txt dosyalarını kur ve doğrula.",
-
-        "protocol": "1. seo-growth (Strateji & Şema Seçimi) ➜ 2. frontend-design (Head/Meta & JSON-LD Enjeksiyonu) ➜ 3. robots.txt / sitemap.xml / llms.txt ➜ 4. seo_checker.py --strict",
-
+        "protocol": "1. SEO & GEO Stratejisi -> Hedef anahtar kelime ve schema.org tipi ➜ 2. Head / Meta & JSON-LD -> Canonical, OG, Twitter ve schema enjeksiyonu ➜ 3. robots.txt / sitemap / llms.txt -> AI crawler ve arama motoru dizin dosyaları ➜ 4. seo_checker.py --strict -> 0 hata ile doğrulama raporu",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
-
 /seo-apply
 
-
-
 # Deterministik SEO & AI Crawler Doğrulama Kapısı:
-
 python .agent/skills/seo-growth/scripts/seo_checker.py --strict""",
-
+        "emergency": [
+            {
+                "symptom": "seo_checker.py FAIL (Meta başlık veya açıklama uzunluk hatası)",
+                "cause": "Meta title 50-60 karakter, description 120-155 karakter aralığı dışında.",
+                "action": "Meta etiket metinlerini belirtilen karakter limitlerine göre cerrahi olarak kısaltın/uzatın."
+            },
+            {
+                "symptom": "JSON-LD şeması Google zengin sonuç testinde hata veriyor",
+                "cause": "Gerekli '@type', 'name' veya 'offers' alanı eksik veya JSON sözdizimi kırık.",
+                "action": "Eksik zorunlu şema alanını ekleyin ve schema.org JSON-LD validator ile doğrulayın."
+            }
+        ],
         "category": "Marka & Doküman"
-
     },
-
     {
-
         "command": "/commitx",
-
         "aliases": ["/commitx", "commitx", "commitle"],
-
         "name": "Peşin Yetkili Otonom Sürüm Yayını",
-
         "badge": "Sürüm & Git",
-
         "badge_class": "badge-success",
-
         "skills": ["git-release-workflow"],
-
         "goal": "Ara Onaysız Otomatik Kapı Doğrulaması, Commit, Semver Tag & Push",
-
         "description": "Kullanıcının peşin yetkisiyle kapsam-duyarlı doğrulama kapılarını çalıştırır; ara onay sormadan git add → git commit → semantik git tag (vX.Y.Z) → git push zincirini kesintisiz tamamlar.",
-
         "sample_prompt": "commitx: Değişiklikleri doğrula, semantik tag artır ve uzak depoya push et.",
-
-        "protocol": "1. Kalite Kapıları & HANDOFF/KB Güncellemesi ➜ 2. Semver Tag Hesaplama ➜ 3. git add -A & git commit ➜ 4. git tag -a vX.Y.Z ➜ 5. git push origin HEAD & --tags",
-
+        "protocol": "1. Kalite Kapıları & HANDOFF Senkronu -> Tüm test ve kapıların yeşil kanıtı ➜ 2. Semantik Tag Hesaplama -> Semver (vX.Y.Z) sürüm artış tespiti ➜ 3. git add & git commit -> Atomik ve kurallara uygun commit mesajı ➜ 4. git tag & git push -> Uzak depoya etiket ve dal gönderimi",
         "usage_snippet": """# Sohbette Tek Kelimeyle Peşin Yetkili Yayın:
-
+⚠️ CRITICAL: Kullanıcıdan peşin onay almadan ASLA git commit veya push komutunu çalıştırmayın; onay sonrası ara soru sormadan otonom tamamlayın.
 commitx
-
 commitle
-
 /commitx""",
-
+        "emergency": [
+            {
+                "symptom": "Doğrulama kapısı FAIL verdi ve commit durduruldu",
+                "cause": "Değişen dosyalarda derleme hatası, başarısız test veya bayat kapı tablosu var.",
+                "action": "Hata veren kapıyı (npx tsc, rules_gates.py vb.) bağımsız çalıştırıp hatayı düzeltin."
+            },
+            {
+                "symptom": "git push reddedildi (Rejected - non-fast-forward)",
+                "cause": "Uzak depoda yerelde olmayan yeni commitler var.",
+                "action": "git pull --rebase çalıştırarak uzak depodaki değişiklikleri yerel commitlerin arkasına alın."
+            }
+        ],
         "category": "Teslimat & Kalite"
-
     },
-
     {
-
         "command": "/goku-skills-update",
-
         "aliases": ["/goku-skills-update", "/gs-update", "GS güncelle", "skill update", "goku update", "skillset güncelle"],
-
         "name": "Cerrahi Skill Seti Senkronu",
-
         "badge": "Bakım & Senkron",
-
         "badge_class": "badge-info",
-
         "skills": ["musgoku", "gs-update"],
-
         "goal": "Workspace & Global Cerrahi Güncelleme",
-
-        "description": "Kullanıcıya workspace veya global kapsamını sorarak AGENTS.md içindeki \'## Proje Bazlı Ek Kurallar\' bloğunu korur ve kurulu olmayan becerileri/temaları indirmeden cerrahi güncelleme yapar.",
-
+        "description": "Kullanıcıya workspace veya global kapsamını sorarak AGENTS.md içindeki '## Proje Bazlı Ek Kurallar' bloğunu korur ve kurulu olmayan becerileri/temaları indirmeden cerrahi güncelleme yapar.",
         "sample_prompt": "/goku-skills-update: Kurulu skill setini güncelle, kapsamı (workspace / global) sorarak ilerle.",
-
-        "protocol": "1. npx goku-dev-skills update --check (Önizleme) ➜ 2. Cerrahi Dosya Senkronu ➜ 3. Proje Bazlı Ek Kurallar Bloğu Geri Yazımı ➜ 4. rules_gates.py --strict Doğrulaması",
-
+        "protocol": "1. npx goku-dev-skills update --check -> Değişiklik ve sürüm farkı önizlemesi ➜ 2. Cerrahi Dosya Senkronu -> Kurulu skill ve kuralların güncellenmesi ➜ 3. Proje Bazlı Ek Kurallar Korunması -> AGENTS.md özel bloğunun geri yazımı ➜ 4. rules_gates.py --strict -> 0 ihlal ile sistem doğrulaması",
         "usage_snippet": """# 1. Disk Değişikliği Yapmadan Güncellemeleri Önizle:
-
 npx goku-dev-skills update --check
 
-
-
 # 2. Yalnızca Kurulu Skill ve Kuralları Cerrahi Güncelle:
-
+⚠️ CRITICAL: Güncelleme sırasında AGENTS.md içindeki '## Proje Bazlı Ek Kurallar' bloğu ASLA ezilmemelidir; cerrahi geri yazım uygulanır.
 npx goku-dev-skills update
 
-
-
 # 3. GitHub Uzak Depodan Doğrudan Güncelle:
-
 npx goku-dev-skills update --remote""",
-
+        "emergency": [
+            {
+                "symptom": "Özel proje kuralları güncelleme sonrası kayboldu",
+                "cause": "AGENTS.md üzerine doğrudan tam dosya kopyalaması yapılmış.",
+                "action": "git diff ile silinen bloğu tespit edin ve '## Proje Bazlı Ek Kurallar' altına geri ekleyin."
+            },
+            {
+                "symptom": "Kural kapısı başarısız oldu (rules_gates.py FAIL)",
+                "cause": "Yeni eklenen kuralın dosya başlığında veya kapı tablosunda uyumsuzluk var.",
+                "action": "python .agent/skills/musgoku/scripts/rules_gates.py --strict çıktısını okuyup tabloyu senkronlayın."
+            }
+        ],
         "category": "Kod & Mimari"
     },
     {
@@ -658,7 +611,7 @@ npx goku-dev-skills update --remote""",
         "goal": "Slug İle /docs Altında Kısa veya Kapsamlı PRD Konsolidasyonu",
         "description": "Projenin kısa (short) veya kapsamlı (long) özetini slug ile /docs altında üretir. Long modunda projedeki tüm PRD ve referans dokümanlarını tek bir belgede konsolide eder; dil uyumu, versiyonlama damgası ve PROJECT_BRIEF.md senkronizasyonunu zorunlu kılar.",
         "sample_prompt": "projenin kapsamlı özetini çıkar: Tüm PRD ve referans dokümanlarını tek bir dokümanda konsolide et.",
-        "protocol": "1. Slug & Dil Tespiti ➜ 2. PRD & Referans Taraması ➜ 3. Konsolidasyon & Versiyonlama Damgası ➜ 4. docs/<SLUG>_PROJECT_SUMMARY_<MODE>.md & PROJECT_BRIEF.md Senkronu",
+        "protocol": "1. Slug & Dil Tespiti -> Proje adı ve varsayılan dil analizi ➜ 2. PRD & Referans Taraması -> docs/ altındaki tüm belgelerin toplanması ➜ 3. Konsolidasyon & Versiyonlama Damgası -> Tarih/saat damgalı sentez metni ➜ 4. docs/<SLUG>_PROJECT_SUMMARY_<MODE>.md Senkronu -> Dosya yazımı ve brief eşitleme",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
 /project-summary
 /proje-ozeti --short
@@ -667,6 +620,18 @@ projenin kapsamlı özetini çıkar
 # Otomasyon CLI Motoru:
 python .agent/skills/project-summary/scripts/summarize_project.py --mode long
 python .agent/skills/project-summary/scripts/summarize_project.py --mode short""",
+        "emergency": [
+            {
+                "symptom": "Proje slug'ı tespit edilemedi",
+                "cause": "package.json, pom.xml veya repo kök dizin adı okunamadı.",
+                "action": "Kullanıcıya veya HANDOFF.md dosyasına bakarak slug adını manuel belirtin."
+            },
+            {
+                "symptom": "Özet dokümanı dil uyumsuzluğu içeriyor",
+                "cause": "Proje Türkçe olmasına rağmen İngilizce özet üretilmiş (veya tersi).",
+                "action": "PROJE DİLİ kuralına uygun dilde dokümanı yeniden üretin."
+            }
+        ],
         "category": "Marka & Doküman"
     },
     {
@@ -679,7 +644,7 @@ python .agent/skills/project-summary/scripts/summarize_project.py --mode short""
         "goal": "6 Şapkalı Konsey Denetimi, Stub/404/Yetim API Tespiti & 5 Katmanlı Tamamlama",
         "description": "Herhangi bir yazılım projesini tarayarak stub ('Geliştirilme aşamasında / Coming Soon') ekranları, kırık menü linklerini, yetim backend API/DB kolonlarını ve Dashboard/Ayarlar/Profil eksiklerini bulur; engine_advisor.py ile tek veya alt ajanlı 6 uzman konseyini (PO, Arch, UX, SEO, Growth, QA) çalıştırır, Zero-Drop kapısıyla konsolide eder ve 5 katmanlı TDD dikey dilimiyle tamamlar.",
         "sample_prompt": "/feature-architect: Projedeki tüm yarım/stub sayfaları, yetim backend API'lerini ve eksikleri 6 uzman şapkasıyla incele; konsolide plan raporu hazırla.",
-        "protocol": "1. gap_scanner.py + engine_advisor.py (Kanıt & Motor Seçimi) ➜ 2. 6 Şapka Denetimi (PO/Arch/UX/SEO/Growth/QA) ➜ 3. council_merger.py (Zero-Drop Konsolide Rapor & Onay) ➜ 4. TDD 5-Katmanlı İnşa",
+        "protocol": "1. gap_scanner.py & engine_advisor.py -> Stub/404/yetim API tespiti ve motor seçimi ➜ 2. 6 Şapkalı Konsey Denetimi -> PO, Arch, UX, SEO, Growth, QA analizleri ➜ 3. council_merger.py -> Zero-drop konsolide rapor ve onay ➜ 4. TDD 5-Katmanlı İnşa -> Eksik özelliklerin dikey dilimle tamamlanması",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
 /feature-architect
 /feature-architect --mode=council
@@ -687,9 +652,22 @@ python .agent/skills/project-summary/scripts/summarize_project.py --mode short""
 /feature-architect --hats po,arch,ux,qa --peer ../backend-repo
 
 # Deterministik CLI Araçları (Tarayıcı, Motor Danışmanı ve Konsey Birleştirici):
+⚠️ CRITICAL: 6 Şapkalı konsey raporu kullanıcı tarafından onaylanmadan asla doğrudan çoklu sayfa üretimine başlamayın.
 python .agent/skills/feature-architect/scripts/gap_scanner.py --root . --format md
 python .agent/skills/feature-architect/scripts/engine_advisor.py --root . --subagents yes --format json
 python .agent/skills/feature-architect/scripts/council_merger.py --sample --format md""",
+        "emergency": [
+            {
+                "symptom": "gap_scanner.py hiçbir eksik bulamadı ama projede yarım sayfa var",
+                "cause": "Stub sayfa kalıbı regex filtresine takılmadı (farklı metin kullanılmış).",
+                "action": "Aranan kelimelere sayfa içindeki özel ifadeyi ekleyip gap_scanner'ı tekrar çalıştırın."
+            },
+            {
+                "symptom": "Konsey önerileri arasında çelişki çıktı (Örn: SEO vs UX)",
+                "cause": "Uzman şapkaları farklı hedefleri maksimize etmeye çalışıyor.",
+                "action": "council_merger.py Borda önceliklendirmesini uygulayın ve kullanıcıya karar sorusu yöneltin."
+            }
+        ],
         "category": "Marka & Doküman"
     }
 ]
@@ -6806,6 +6784,18 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
       <div class="workspace-body">
 
+        <!-- Aviation Safety Guidance Banner (FAA AC 121-24C) -->
+        <div class="aviation-safety-strip" style="background:linear-gradient(90deg, rgba(59,130,246,0.08) 0%, rgba(16,185,129,0.08) 100%); border:1px solid rgba(59,130,246,0.25); border-radius:var(--radius-sm); padding:0.55rem 0.85rem; margin-bottom:0.75rem; display:flex; align-items:center; justify-content:space-between; gap:0.75rem; font-size:0.78rem;">
+          <div style="display:flex; align-items:center; gap:0.5rem; color:var(--text-primary); font-weight:600;">
+            <span style="font-size:1.1rem; line-height:1;">✈️</span>
+            <span>FAA AC 121-24C Dokümantasyon Standardı: Sıfır Lakırdı · Kronolojik Sıralı Akış (Eylem ➜ Beklenen Çıktı) · Acil Durum Çıkışı</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.4rem;">
+            <span style="font-family:var(--font-mono); font-size:0.72rem; color:var(--status-info); background:var(--bg-surface-elevated); padding:2px 8px; border-radius:4px; border:1px solid var(--border-subtle);">check_aviation_docs: [OK]</span>
+            <span style="font-family:var(--font-mono); font-size:0.72rem; color:var(--status-success); background:var(--bg-surface-elevated); padding:2px 8px; border-radius:4px; border:1px solid var(--border-subtle);">OLCULEBILIR</span>
+          </div>
+        </div>
+
         <!-- Quick Slash Ribbon (Taşmayan Yerleşim - B.9 Adaptive Action Hub) -->
 
         <div class="quick-slash-ribbon" role="region" aria-label="Oturum Slash Komutları" id="quickSlashRibbon">
@@ -7643,6 +7633,62 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
         </div>
 
+        <div>
+
+          <div class="drawer-section-title" style="color:var(--status-danger);display:flex;align-items:center;gap:0.35rem;">
+
+            <span>🚨</span> Ditching & Emergency Exit (FAA AC 121-24C Acil Çıkış Tablosu)
+
+          </div>
+
+          <div class="emergency-table-box" style="background:var(--bg-surface-elevated);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);overflow-x:auto;">
+
+            <table style="width:100%;border-collapse:collapse;text-align:left;font-size:0.75rem;">
+
+              <thead>
+
+                <tr style="background:rgba(239,68,68,0.08);border-bottom:1px solid var(--border-subtle);">
+
+                  <th style="padding:0.45rem 0.6rem;color:var(--status-danger);font-weight:700;">Belirti / Hata</th>
+
+                  <th style="padding:0.45rem 0.6rem;color:var(--text-secondary);font-weight:700;">Olası Neden</th>
+
+                  <th style="padding:0.45rem 0.6rem;color:var(--text-primary);font-weight:700;">Anında Düzeltici Eylem</th>
+
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                <tr>
+
+                  <td style="padding:0.45rem 0.6rem;border-bottom:1px solid var(--border-subtle);color:var(--status-danger);font-family:var(--font-mono);font-size:0.75rem;font-weight:600;">Trigger tetiklenmedi / Tanınmadı</td>
+
+                  <td style="padding:0.45rem 0.6rem;border-bottom:1px solid var(--border-subtle);color:var(--text-secondary);font-size:0.75rem;">Prompt içinde sözlükte tanımlı tetikleyici veya slash komut kalıbı geçmedi.</td>
+
+                  <td style="padding:0.45rem 0.6rem;border-bottom:1px solid var(--border-subtle);color:var(--text-primary);font-size:0.75rem;">Tetikleyiciler listesinden tam eşleşen anahtar ifadeyi prompta ekleyin.</td>
+
+                </tr>
+
+                <tr>
+
+                  <td style="padding:0.45rem 0.6rem;color:var(--status-danger);font-family:var(--font-mono);font-size:0.75rem;font-weight:600;">Sözleşme / Kapı İhlali (FAIL)</td>
+
+                  <td style="padding:0.45rem 0.6rem;color:var(--text-secondary);font-size:0.75rem;">Skill zanaat tabanı veya AGENTS.md sözleşme maddesi eksik uygulandı.</td>
+
+                  <td style="padding:0.45rem 0.6rem;color:var(--text-primary);font-size:0.75rem;">python .agent/skills/musgoku/scripts/rules_gates.py --strict ile eksikleri giderin.</td>
+
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
       `;
 
 
@@ -7710,6 +7756,22 @@ def generate_catalog_html(skills: list[dict]) -> str:
         (sIdx < cmd.skills.length - 1 ? `<span class="chain-arrow" style="color:var(--text-tertiary);margin:0 0.15rem;">→</span>` : '')
 
       ).join(' ');
+
+
+
+      const emergencyRowsHtml = (cmd.emergency || []).map(em => `
+
+        <tr>
+
+          <td style="padding:0.45rem 0.6rem;border-bottom:1px solid var(--border-subtle);color:var(--status-danger);font-family:var(--font-mono);font-size:0.75rem;font-weight:600;">${{escapeHtml(em.symptom)}}</td>
+
+          <td style="padding:0.45rem 0.6rem;border-bottom:1px solid var(--border-subtle);color:var(--text-secondary);font-size:0.75rem;">${{escapeHtml(em.cause)}}</td>
+
+          <td style="padding:0.45rem 0.6rem;border-bottom:1px solid var(--border-subtle);color:var(--text-primary);font-size:0.75rem;">${{escapeHtml(em.action)}}</td>
+
+        </tr>
+
+      `).join('');
 
 
 
@@ -7814,6 +7876,44 @@ def generate_catalog_html(skills: list[dict]) -> str:
           <div class="drawer-box" style="cursor:pointer;" onclick="copySlashPromptByName('${{escapeHtml(cmd.command)}}')" title="Promptu kopyalamak için tıkla">
 
             <p class="drawer-box-text" style="font-style:italic;color:var(--text-primary);">"${{escapeHtml(cmd.sample_prompt)}}"</p>
+
+          </div>
+
+        </div>
+
+        <div>
+
+          <div class="drawer-section-title" style="color:var(--status-danger);display:flex;align-items:center;gap:0.35rem;">
+
+            <span>🚨</span> Ditching & Emergency Exit (FAA AC 121-24C Acil Çıkış Tablosu)
+
+          </div>
+
+          <div class="emergency-table-box" style="background:var(--bg-surface-elevated);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);overflow-x:auto;">
+
+            <table style="width:100%;border-collapse:collapse;text-align:left;font-size:0.75rem;">
+
+              <thead>
+
+                <tr style="background:rgba(239,68,68,0.08);border-bottom:1px solid var(--border-subtle);">
+
+                  <th style="padding:0.45rem 0.6rem;color:var(--status-danger);font-weight:700;">Belirti / Hata</th>
+
+                  <th style="padding:0.45rem 0.6rem;color:var(--text-secondary);font-weight:700;">Olası Neden</th>
+
+                  <th style="padding:0.45rem 0.6rem;color:var(--text-primary);font-weight:700;">Anında Düzeltici Eylem</th>
+
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                ${{emergencyRowsHtml || '<tr><td colspan="3" style="padding:0.5rem;text-align:center;color:var(--text-tertiary);">Acil durum kaydı bulunamadı</td></tr>'}}
+
+              </tbody>
+
+            </table>
 
           </div>
 

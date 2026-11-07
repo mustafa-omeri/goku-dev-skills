@@ -205,12 +205,15 @@ class ApiContractAnalyzer:
 
             if server_fields is not None:
                 missing_fields: list[str] = []
+                missing_optional_fields: list[str] = []
                 type_mismatches: list[str] = []
                 for tf in ts_iface["fields"]:
                     fname = tf["name"]
                     if fname not in server_fields:
                         if not tf["optional"]:
                             missing_fields.append(fname)
+                        else:
+                            missing_optional_fields.append(fname)
                     else:
                         fe_fam = _canonical_scalar_family(tf["type"])
                         be_fam = _canonical_scalar_family(server_fields[fname])
@@ -259,6 +262,47 @@ class ApiContractAnalyzer:
                                 "ts_type": ts_type_name,
                                 "missing_fields": missing_fields,
                                 "type_mismatches": type_mismatches,
+                            },
+                        )
+                    )
+                elif len(missing_optional_fields) >= 3 and (
+                    len(missing_optional_fields) / max(1, len(ts_iface["fields"])) >= 0.4
+                ):
+                    facts.append(
+                        Fact.create(
+                            fact_id=f"API-DRIFT-{len(facts)+1:03d}",
+                            code="DTO_SCHEMA_DRIFT",
+                            category="ARCHITECTURE",
+                            fact_type="structural",
+                            severity="MEDIUM",
+                            summary=(
+                                f"DTO schema drift on `{call['method']} {call['raw_path']}` (`{ts_type_name}`): "
+                                f"client interface declares {len(missing_optional_fields)} optional field(s) "
+                                f"(`{', '.join(missing_optional_fields)}`) absent from backend `{ts_type_name}`."
+                            ),
+                            location=f"{ts_iface['file']}:{ts_iface['line']}",
+                            evidence=[
+                                EvidenceRef(
+                                    kind="code",
+                                    level="L1",
+                                    derivation="syntax",
+                                    ref=f"{ts_iface['file']}:{ts_iface['line']}",
+                                    line=ts_iface["line"],
+                                    excerpt=f"interface {ts_type_name}",
+                                ),
+                                EvidenceRef(
+                                    kind="code",
+                                    level="L1",
+                                    derivation="syntax",
+                                    ref=server_ref or f"{call['file']}:{call['line']}",
+                                    line=1,
+                                    excerpt=ts_type_name,
+                                ),
+                            ],
+                            attrs={
+                                "endpoint": f"{call['method']} {call['raw_path']}",
+                                "ts_type": ts_type_name,
+                                "missing_optional_fields": missing_optional_fields,
                             },
                         )
                     )

@@ -45,11 +45,12 @@ Her bir geliştirilen veya dokümante edilen özellik, aşağıdaki **4 zorunlu 
      * **3. İstemci Entegrasyonu:** API client metodu, SDK fonksiyonu veya veri çekme kancası (`useQuery`, `fetch`).
      * **4. UI Bileşenleri & State:** Ekran bileşeni (`src/components/...`), state yönetimi ve kullanıcı etkileşimi.
      * **5. Admin / Döngü Kapanışı:** Verinin sisteme nasıl girdiği (admin formu, submission ekranı).
-3. 🚀 **Nasıl Kullanılır? (Adım Adım Playbook):**
-   - **Sayfa Rotası:** Kullanıcının hangi URL veya ekrana gideceği (`/dashboard`, `/settings/profile` vb.).
-   - **Menü ve Adım Adımları:** Sırasıyla tıklanacak menü, buton etiketleri.
-   - **Form ve Giriş Alanları:** Doldurulması gereken alanlar ve doğrulama akışı.
-   - **Beklenen Sonuç:** İşlem tamamlandığında ekranda ne görüleceği (toast mesajı, yönlendirme, güncellenen tablo).
+3. 🚀 **Nasıl Kullanılır? (Adım Adım Playbook — FAA AC 121-24C):**
+   - Sıfır lakırdı (Zero Fluff), kesin kronolojik sıralı eylemler.
+   - Her adım deterministik formatta: `[Adım N]. [Eylem / Tıklama / Giriş] -> [Beklenen Görsel Çıktı / Ekran Değişimi]`.
+   - Sayfa rotası, tıklanacak buton etiketleri ve form alanları atomik olarak belirtilir.
+   - Riskli/yıkıcı eylemlerde komuttan/eylemden önce `⚠️ CRITICAL:` bloğu yer alır.
+   - Playbook çekmecesi sonunda `| Belirti / Hata | Olası Neden | Anında Düzeltici Eylem |` hızlı sorun giderme tablosu zorunludur.
 4. 📱 **Dört Arayüz Durumu (Interactive States Preview):**
    - Kart üzerinde interaktif olarak simüle edilebilen 4 UX durumu:
      * **İskelet Ekran (Skeleton Screens UI):** Veri yüklenirken sayfa kaset yapısını birebir taklit eden gri shimmer animasyonu.

@@ -159,6 +159,7 @@ front matter `sinif:` / `kapi:` alanları.
 | Yığın | Zorunlu komut | Ayrıntı |
 |---|---|---|
 | Backend / API dokümantasyonu | `python .agent/skills/musgoku/scripts/check_api_docs.py` | [`api-documentation-enforcement.md`](./api-documentation-enforcement.md) |
+| Dokümantasyon / Kılavuz ve Yanıt Standardı (FAA AC 121-24C) | `python .agent/skills/musgoku/scripts/check_aviation_docs.py` | [`aviation-documentation-standard.md`](./aviation-documentation-standard.md) |
 | Backend / Veritabanı migration | `python .agent/skills/musgoku/scripts/check_db_migrations.py` | [`db-migration-enforcement.md`](./db-migration-enforcement.md) |
 | Tasarım / sözleşme ve DESIGN.md uyumu | `python .agent/skills/musgoku/scripts/check_design_contract.py` | [`design-skills-enforcement.md`](./design-skills-enforcement.md) |
 | Tasarım / skill sahipliği | `python .agent/skills/musgoku/scripts/check_design_skills.py` | [`design-skills-enforcement.md`](./design-skills-enforcement.md) |

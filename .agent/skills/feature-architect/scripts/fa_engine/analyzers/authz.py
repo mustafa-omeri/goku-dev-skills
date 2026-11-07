@@ -140,6 +140,82 @@ class AuthorizationSurfaceAnalyzer:
                                 )
                             )
 
+        # 1B. UI_AUTHORIZATION_MISMATCH via unguarded action items & role-restricted route targets (e.g. QuickActionsPanel add-company)
+        route_role_map: dict[str, dict[str, Any]] = fe_state.get("route_role_map", {})
+        action_items: list[dict[str, Any]] = fe_state.get("action_items", [])
+        jsx_usages: list[dict[str, Any]] = fe_state.get("jsx_usages", [])
+        for act in action_items:
+            if act.get("has_role_guard"):
+                continue
+            target_seg = act.get("target", "").strip("/").split("/")[0]
+            rmeta = route_role_map.get(target_seg)
+            if not rmeta:
+                continue
+            allowed_nav_roles = set(rmeta.get("roles") or [])
+            if allowed_nav_roles and allowed_nav_roles == {"ADMIN"}:
+                non_admin_callers = [
+                    u
+                    for u in jsx_usages
+                    if u.get("component") == act.get("component")
+                    and "actions" not in (u.get("passed_props") or [])
+                    and any(tok in u.get("file", "").lower() for tok in ("company", "employee", "user", "department"))
+                ]
+                caller_desc = (
+                    f" (mounted unfiltered in `{non_admin_callers[0]['file']}:{non_admin_callers[0]['line']}`)"
+                    if non_admin_callers
+                    else ""
+                )
+                ev_list = [
+                    EvidenceRef(
+                        kind="code",
+                        level="L1",
+                        derivation="syntax",
+                        ref=f"{act['file']}:{act['line']}",
+                        line=act["line"],
+                        excerpt=f"id: '{act['id']}' -> {act['target']}",
+                    ),
+                    EvidenceRef(
+                        kind="code",
+                        level="L1",
+                        derivation="syntax",
+                        ref=f"{rmeta['file']}:{rmeta['line']}",
+                        line=rmeta["line"],
+                        excerpt=f"path: '{target_seg}', roles: {sorted(allowed_nav_roles)}",
+                    ),
+                ]
+                if non_admin_callers:
+                    c0 = non_admin_callers[0]
+                    ev_list.append(
+                        EvidenceRef(
+                            kind="code",
+                            level="L1",
+                            derivation="syntax",
+                            ref=f"{c0['file']}:{c0['line']}",
+                            line=c0["line"],
+                            excerpt=c0.get("excerpt", f"<{act['component']} />"),
+                        )
+                    )
+                facts.append(
+                    Fact.create(
+                        fact_id=f"AUTHZ-ACT-{len(facts)+1:03d}",
+                        code="UI_AUTHORIZATION_MISMATCH",
+                        category="SECURITY",
+                        fact_type="structural",
+                        severity="HIGH",
+                        summary=(
+                            f"Action `{act['id']}` (`{act['target']}`) in `{act['file']}:{act['line']}` has no role guard{caller_desc}, "
+                            f"exposing an `{', '.join(sorted(allowed_nav_roles))}`-only domain operation to unauthorized roles (e.g. `COMPANY_AUTHORISED`)."
+                        ),
+                        location=f"{act['file']}:{act['line']}",
+                        evidence=ev_list,
+                        attrs={
+                            "action_id": act["id"],
+                            "target": act["target"],
+                            "required_roles": sorted(allowed_nav_roles),
+                        },
+                    )
+                )
+
         # 2. BACKEND_AUTHORIZATION_GAP (respecting SecurityFilterChain rules to avoid false positives!)
         for ep in endpoints:
             if ep["method"] not in {"POST", "PUT", "PATCH", "DELETE"}:

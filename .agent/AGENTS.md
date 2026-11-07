@@ -80,6 +80,7 @@ ve [`.agent\rules\project-brief-maintenance.md`](rules/project-brief-maintenance
 1. Doğrulama kapılarını çalıştır (aşağıdaki kapılar).
 2. `docs/KULLANICI_TEST_REHBERI.md` dosyasını güncelle (yoksa `docs/` altında `.agent/templates/KULLANICI_TEST_REHBERI.template.md` şablonundan oluştur).
    Kullanıcının bizzat gözüyle tarayıcıda veya konsolda özellikleri adım adım nasıl doğrulayacağını yaz.
+   ✈️ **FAA AC 121-24C Standart Zorunluluğu:** Test adımları laf kalabalığından arındırılmış olmalı; her adım `[Adım N]. [Eylem / Komut] -> [Beklenen Görsel Çıktı]` formatında kurgulanmalı, riskli komutlar öncesinde `⚠️ CRITICAL:` yer almalı ve doküman sonunda zorunlu `| Belirti / Hata | Olası Neden | Anında Düzeltici Eylem |` acil durum tablosu bulunmalıdır (bkz. `aviation-documentation-standard.md`).
    ⛔ **Otomasyon Yeşilliği Yanılgısına Düşme:** Otomasyon testlerinin (unit, typecheck, e2e, lint, build) yeşil
    olması kodun çalıştığını kanıtlar; kullanıcının çıktıyı gözüyle nasıl doğrulayacağını göstermez.
    Kullanıcı test adımları sunulmadan iş bitti sayılamaz ve commit onayına geçilemez.
@@ -89,9 +90,16 @@ ve [`.agent\rules\project-brief-maintenance.md`](rules/project-brief-maintenance
    Her özellik kartı 4 zorunlu bölümü içermelidir:
    - 🎯 **Amaç & Katma Değer:** Ne işe yarar, hangi problemi çözer?
    - 🏗️ **Nasıl Yapıldı? (5 Katmanlı Dilim Mimarisi):** DB/Entity, Backend API/Endpoint/RPC, İstemci Entegrasyonu, UI Bileşenleri & State, Skeleton Screens UI.
-   - 🚀 **Nasıl Kullanılır? (Playbook):** Sayfa rotası, menü adımları, buton etiketleri, form alanları ve doğrulama akışı.
+   - 🚀 **Nasıl Kullanılır? (Playbook - FAA AC 121-24C):** Sayfa rotası, menü adımları, buton etiketleri, form alanları ve `Eylem -> Beklenen Görsel Çıktı` akışı ile sorun giderme tablosu.
    - 📱 **Arayüz Durumları:** Skeleton screens yükleme durumu, dolu durum, boş durum (empty state) ve hata/yeniden dene akışı.
    💡 **İstisna (Minor Rötüş & Dahili Değişiklikler):** Kullanıcı akışını veya özellik yeteneğini değiştirmeyen dahili düzeltmeler için rehbere ekleme yapılmaz; raporda *"Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"* beyan edilir.
+3.1. ✈️ **Dokümantasyon, Kılavuz ve Ajan Yanıt Standardı (FAA AC 121-24C Aviation Passenger Safety Card):**
+   Projelerde üretilen tüm kullanıcı kılavuzları, kurulum rehberleri (`setup`), 'nasıl yapılır' dokümanları, AI kod ajanlarına verilen talimatlar ve **ajanın sohbet içinde nasıl yapılacağını anlattığı tüm yanıtlar** istisnasız FAA AC 121-24C standardına bağlanır:
+   - **Sıfır Lakırdı (Zero Fluff):** Nezaket cümleleri ve teorik dolgu paragrafları yasaktır; doğrudan ASCII akış, Markdown tablosu veya girdi-çıktı blokları kullanılır.
+   - **Kronolojik & Sıralı Akış:** `1, 2, 3...` adımları deterministik `[Eylem] -> [Beklenen Görsel Çıktı]` sözdizimiyle yazılır.
+   - **Brace Position (Kritik Uyarılar):** Yıkıcı/riskli komutlardan (DROP, TRUNCATE, rm -rf, force push, config ezme) **önce** `⚠️ CRITICAL: [Sonuç ve önleyici adım]` verilir.
+   - **Ditching / Emergency Exit:** İstisnasız her kılavuz veya talimat yanıtı sonunda `| Belirti / Hata | Olası Neden | Anında Düzeltici Eylem |` acil kurtarma tablosuyla biter.
+   - **Kopyala-Yapıştır Hazır:** Kodlar eksiksiz parametreli, tırnak hatasız ve atomiktir (`...` veya `<TODO>` bırakılamaz). Kapı: `check_aviation_docs.py`.
 4. ⛔ **Sahte Bitti (Phantom Done) ve Katman Bütünlüğü Denetimi:**
    Bir özellik veya sprint için "BİTTİ / TAMAMLANDI" beyanında bulunabilmek için yalnızca birim/mock testlerinin yeşil olması ASLA YETMEZ. Veri odaklı veya sunucu/istemci etkileşimli her özellikte 5 Katmanlı Dikey Dilim (Full-Stack Vertical Slice: 1. DB/Şema/Migration → 2. Backend/View/RPC → 3. İstemci API Entegrasyonu → 4. Arayüz/UX & Eylemler → 5. Yönetim/Döngü Kapanışı) eksiksiz kanıtlanmalıdır:
    - Sadece UI bileşeni ve TypeScript/Java tipi yazıp veritabanı şemasını (tablo/kolon/migration) açmamak,
@@ -171,6 +179,7 @@ kanıtlayamazsın — sadece beyan edersin.** Bu ayrım gizli değildir.
 | Yığın | Zorunlu komut | Ayrıntı |
 |---|---|---|
 | Backend / API dokümantasyonu | `python .agent/skills/musgoku/scripts/check_api_docs.py` | [`api-documentation-enforcement.md`](rules/api-documentation-enforcement.md) |
+| Dokümantasyon / Kılavuz ve Yanıt Standardı (FAA AC 121-24C) | `python .agent/skills/musgoku/scripts/check_aviation_docs.py` | [`aviation-documentation-standard.md`](rules/aviation-documentation-standard.md) |
 | Backend / Veritabanı migration | `python .agent/skills/musgoku/scripts/check_db_migrations.py` | [`db-migration-enforcement.md`](rules/db-migration-enforcement.md) |
 | Tasarım / sözleşme ve DESIGN.md uyumu | `python .agent/skills/musgoku/scripts/check_design_contract.py` | [`design-skills-enforcement.md`](rules/design-skills-enforcement.md) |
 | Tasarım / skill sahipliği | `python .agent/skills/musgoku/scripts/check_design_skills.py` | [`design-skills-enforcement.md`](rules/design-skills-enforcement.md) |

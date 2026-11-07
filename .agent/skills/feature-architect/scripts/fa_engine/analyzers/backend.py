@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from ..discovery import extract_java_endpoints_quick
-from ..model import CoverageReport, Edge, Node, ProjectProfile, iter_repo_files, normalize_api_path
+from ..model import CoverageReport, Edge, EvidenceRef, Fact, Node, ProjectProfile, iter_repo_files, normalize_api_path
 from .base import AnalyzerContext, AnalyzerResult
 
 EXPRESS_ROUTE_RE = re.compile(
@@ -56,6 +56,7 @@ class BackendAnalyzer:
         applicable, reason = self.applies(ctx.profile)
         nodes: list[Node] = []
         edges: list[Edge] = []
+        facts: list[Fact] = []
         scanned = 0
         endpoints: list[dict[str, Any]] = []
         dtos: dict[str, dict[str, Any]] = {}
@@ -245,6 +246,87 @@ class BackendAnalyzer:
                                 evidence_ref=f"{rel}:1",
                             )
                         )
+                    # Check public @Service methods for ignored query/filter parameters & gated/synthetic analytics
+                    for sm_m in re.finditer(
+                        r"public\s+([A-Za-z0-9_<>,\s\[\]]+?)\s+([a-z][A-Za-z0-9_]*)\s*\(([^)]*)\)\s*\{",
+                        txt,
+                    ):
+                        ret_t = sm_m.group(1).strip()
+                        m_name = sm_m.group(2).strip()
+                        raw_params = sm_m.group(3).strip()
+                        brace_start = sm_m.end() - 1
+                        depth = 0
+                        end_pos = brace_start
+                        for idx_c in range(brace_start, len(txt)):
+                            if txt[idx_c] == "{":
+                                depth += 1
+                            elif txt[idx_c] == "}":
+                                depth -= 1
+                                if depth == 0:
+                                    end_pos = idx_c
+                                    break
+                        m_body = txt[brace_start + 1 : end_pos]
+                        m_line = txt[: sm_m.start()].count("\n") + 1
+                        if m_body.count("\n") >= 3 and raw_params:
+                            for p_part in raw_params.split(","):
+                                p_toks = p_part.strip().split()
+                                if len(p_toks) >= 2:
+                                    p_name = p_toks[-1].strip()
+                                    if p_name in {"period", "interval", "startDate", "endDate", "range", "filter"}:
+                                        if not re.search(rf"\b{re.escape(p_name)}\b", m_body):
+                                            loc_prefix = f"[{label}] " if label != "primary" else ""
+                                            facts.append(
+                                                Fact.create(
+                                                    fact_id=f"BE-PARAM-{len(facts)+1:03d}",
+                                                    code="IGNORED_SERVICE_PARAMETER",
+                                                    category="ARCHITECTURE",
+                                                    fact_type="structural",
+                                                    severity="HIGH",
+                                                    summary=(
+                                                        f"{loc_prefix}Service method `{cname}.{m_name}` (`{rel}:{m_line}`) accepts parameter "
+                                                        f"`{p_name}` but never references it in the method body, causing UI filter/period controls to silently no-op."
+                                                    ),
+                                                    location=f"{rel}:{m_line}",
+                                                    evidence=[
+                                                        EvidenceRef(
+                                                            kind="code",
+                                                            level="L1",
+                                                            derivation="syntax",
+                                                            ref=f"{rel}:{m_line}",
+                                                            line=m_line,
+                                                            excerpt=sm_m.group(0).strip()[:160],
+                                                        )
+                                                    ],
+                                                    attrs={"service": cname, "method": m_name, "ignored_param": p_name},
+                                                )
+                                            )
+                        if "hasEnoughData" in m_body and "anyMatch" in m_body:
+                            loc_prefix = f"[{label}] " if label != "primary" else ""
+                            facts.append(
+                                Fact.create(
+                                    fact_id=f"BE-TREND-{len(facts)+1:03d}",
+                                    code="SYNTHETIC_OR_GATED_ANALYTICS_PIPELINE",
+                                    category="ARCHITECTURE",
+                                    fact_type="structural",
+                                    severity="HIGH",
+                                    summary=(
+                                        f"{loc_prefix}Analytics pipeline `{cname}.{m_name}` (`{rel}:{m_line}`) gates `hasEnoughData` "
+                                        f"on a fixed short-window query (`anyMatch(v -> v > 0)`), causing dashboard trend charts to render empty when recent window activity is zero."
+                                    ),
+                                    location=f"{rel}:{m_line}",
+                                    evidence=[
+                                        EvidenceRef(
+                                            kind="code",
+                                            level="L1",
+                                            derivation="syntax",
+                                            ref=f"{rel}:{m_line}",
+                                            line=m_line,
+                                            excerpt=sm_m.group(0).strip()[:160],
+                                        )
+                                    ],
+                                    attrs={"service": cname, "method": m_name, "return_type": ret_t},
+                                )
+                            )
                 if "@Repository" in txt or "JpaRepository" in txt or "CrudRepository" in txt:
                     nodes.append(
                         Node(id=f"Repository:{cname}", kind="Repository", name=cname, file=rel, root_label=label)
@@ -510,5 +592,6 @@ class BackendAnalyzer:
             applicability_reason=reason,
             nodes=nodes,
             edges=edges,
+            facts=facts,
             coverage=CoverageReport(scanned_files=scanned),
         )

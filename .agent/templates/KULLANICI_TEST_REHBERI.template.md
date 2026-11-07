@@ -132,3 +132,17 @@ Bu durumda ajan **"bu çıktı doğrudan kullanıcı tarafından gözlemlenemez,
 Bir çıktıyı onaylarken şunu yazabilirsiniz:
 
 > "Test ettim: `<komut/ekran>` → `<sonuç>`, `<bozma testi>` → `<beklenen kırmızı>`."
+
+---
+
+## 7. 🚨 Ditching & Emergency Exit (Sorun Giderme ve Hızlı Kurtarma)
+
+> Test veya doğrulama sırasında beklenmedik bir hata, terminal çökmesi veya ekran donması yaşandığında
+> aşağıdaki acil çıkış tablosundaki adımı uygulayın:
+
+| Belirti / Hata | Olası Neden | Anında Düzeltici Eylem |
+|---|---|---|
+| `Port already in use` / Adres kullanımda | Önceki test oturumundan kalan arka plan süreci | İlgili portu kapatın: `npx kill-port <PORT>` (veya `pwsh Stop-Process`) ve sunucuyu yeniden başlatın. |
+| `SyntaxError` / `TypeError` derleme hatası | Eksik paket veya bayat node_modules | `npm install` (veya `mvn clean compile`) çalıştırarak bağımlılıkları yenileyin. |
+| `Migration mismatch` / Tablo bulunamadı | Veritabanı şeması test verisiyle senkron değil | `python .agent/skills/musgoku/scripts/check_db_migrations.py` çalıştırın ve eksik migration'ı uygulayın. |
+| Ekran boş / beyaz donma (White screen) | Console JS runtime exception | Tarayıcıda `F12` açıp Console sekmesindeki kırmızı hatayı kopyalayın ve `/fix-bug` ile bildirin. |

@@ -86,3 +86,14 @@ Canlı ortamda beklenmeyen bir çökme yaşanırsa aşağıdaki adımlar tavizsi
    ```bash
    docker compose logs -f --tail=100 | grep -i error
    ```
+
+---
+
+## 🚨 Bölüm 6: Ditching & Emergency Exit (Dağıtım Acil Durum Tablosu)
+
+| Belirti / Hata | Olası Neden | Anında Düzeltici Eylem |
+|---|---|---|
+| `502 Bad Gateway` | Uygulama container'ı ayağa kalkmadı veya port yanlış eşlendi | `docker compose logs app` çıktısını inceleyin; port mapping'i ve `.env.production` değişkenlerini doğrulayın. |
+| `SSL Certificate Error` | Certbot DNS/Port 80 doğrulamasını tamamlayamadı | Nginx port 80 yönlendirmesini kontrol edin; `certbot renew --dry-run` ile sertifikayı manuel tetikleyin. |
+| `DB Connection Refused` | DB container/servisi hazır olmadan backend başladı | Healthcheck bağımlılığını (`depends_on: condition: service_healthy`) kontrol edin; `docker compose restart app` çalıştırın. |
+| `Migration Failed` | Veritabanı şema uyuşmazlığı veya kilitlenme | ⚠️ CRITICAL: Veri kaybını önlemek için doğrudan tablo silmeyin; down-migration veya alınan anlık yedeği geri yükleyin. |

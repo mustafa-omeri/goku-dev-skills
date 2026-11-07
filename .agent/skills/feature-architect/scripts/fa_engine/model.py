@@ -359,6 +359,14 @@ class PeerCandidate:
     matched_paths: list[str] = field(default_factory=list)
     signals: list[str] = field(default_factory=list)
 
+    @property
+    def score(self) -> int:
+        return self.confidence
+
+    @property
+    def reasons(self) -> list[str]:
+        return list(self.signals)
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "path": self.path,
@@ -417,6 +425,7 @@ class ProjectProfile:
     proxy_ports: list[int] = field(default_factory=list)
     server_ports: dict[str, list[int]] = field(default_factory=dict)
     ts_compiler_path: str | None = None
+    prd_files: list[str] = field(default_factory=list)
 
     @property
     def confirmed_peer_paths(self) -> list[Path]:
@@ -452,4 +461,5 @@ class ProjectProfile:
             "topology": self.topology,
             "proxy_ports": sorted(set(self.proxy_ports)),
             "ts_ast_available": bool(self.ts_compiler_path),
+            "prd_files": sorted(set(self.prd_files)),
         }

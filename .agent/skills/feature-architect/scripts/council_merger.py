@@ -102,6 +102,12 @@ VALID_DECISIONS = {
     "INVESTIGATE",
 }
 
+VALID_CERTAINTIES = {
+    "FINAL",
+    "CONDITIONAL",
+    "RESEARCH_REQUIRED",
+}
+
 SEVERITY_ORDER = ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
 SEVERITY_RANK = {name: idx for idx, name in enumerate(SEVERITY_ORDER)}
 EFFORT_POINTS = {"S": 1, "M": 2, "L": 3, "XL": 5}
@@ -296,6 +302,9 @@ def validate_report(obj: Any) -> list[str]:
                 dec = item.get("decision")
                 if dec is not None and (not isinstance(dec, str) or dec not in VALID_DECISIONS):
                     errors.append(f"{prefix}.decision={dec!r} must be one of {sorted(VALID_DECISIONS)}.")
+                cert = item.get("decision_certainty")
+                if cert is not None and (not isinstance(cert, str) or cert not in VALID_CERTAINTIES):
+                    errors.append(f"{prefix}.decision_certainty={cert!r} must be one of {sorted(VALID_CERTAINTIES)}.")
 
     mismatches = obj.get("ui_ux_mismatches")
     if mismatches is not None:
@@ -451,6 +460,7 @@ def merge(
     project_root: Path | str | None = None,
     kg_data: dict[str, Any] | None = None,
     challenges: list[dict[str, Any]] | None = None,
+    snapshot_data: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Validate and synthesize specialist hat reports into a deterministic council bundle."""
     if not reports:
@@ -625,6 +635,20 @@ def merge(
                             "agent_id": aid,
                             "finding_id": aud["id"],
                             "detail": aud.get("fix_proposal", ""),
+                        }
+                    )
+
+                # V10: Reject fix proposals that recommend localStorage/sessionStorage instead of backend persistence
+                fix_prop_txt = aud.get("fix_proposal", "")
+                if re.search(r"\b(?:localStorage|sessionStorage)\b", fix_prop_txt, re.IGNORECASE) and not re.search(
+                    r"\b(?:remove|replace|migrate|eliminate|instead\s+of)\b", fix_prop_txt, re.IGNORECASE
+                ):
+                    governance["warnings"].append(
+                        {
+                            "code": "V10_PHANTOM_DONE_LOCALSTORAGE_PROPOSAL",
+                            "agent_id": aid,
+                            "finding_id": aud["id"],
+                            "detail": fix_prop_txt,
                         }
                     )
 
@@ -826,6 +850,19 @@ def merge(
                     }
                 )
 
+            # V10: Reject feature slice proposals that recommend localStorage/sessionStorage instead of backend persistence
+            if re.search(r"\b(?:localStorage|sessionStorage)\b", slice_summary, re.IGNORECASE) and not re.search(
+                r"\b(?:remove|replace|migrate|eliminate|instead\s+of)\b", slice_summary, re.IGNORECASE
+            ):
+                governance["warnings"].append(
+                    {
+                        "code": "V10_PHANTOM_DONE_LOCALSTORAGE_PROPOSAL",
+                        "agent_id": aid,
+                        "feature_id": feat.get("feature_id", ""),
+                        "detail": slice_summary,
+                    }
+                )
+
             # V5: Cross-Section Duplicate Feature check across all 6 hats
             feat_tokens = _extract_topic_tokens(
                 f"{feat.get('title', '')} {feat.get('rationale', '')} {feat.get('target_location', '')}"
@@ -894,7 +931,138 @@ def merge(
 
     features_ranked.sort(key=lambda f: (-f["rice_score"], -f["impact_score"], f["title"].lower()))
 
+    # V9: Snapshot Defect Coverage Check (ensure confirmed CRITICAL/HIGH facts from context-snapshot.json are addressed)
+    if snapshot_data and isinstance(snapshot_data.get("facts"), list):
+        all_touched_locs: set[str] = set()
+        for locs in agent_touched_locations.values():
+            all_touched_locs.update(locs)
+        for sf in snapshot_data["facts"]:
+            if not isinstance(sf, dict):
+                continue
+            if sf.get("status") == "confirmed" and sf.get("severity") in ("CRITICAL", "HIGH"):
+                sf_loc = _normalize_location(str(sf.get("location", "")))
+                if sf_loc and sf_loc not in all_touched_locs:
+                    governance["warnings"].append(
+                        {
+                            "code": "V9_UNADDRESSED_SNAPSHOT_DEFECTS",
+                            "fact_id": sf.get("fact_id", ""),
+                            "fact_code": sf.get("code", ""),
+                            "location": sf.get("location", ""),
+                            "detail": sf.get("summary", ""),
+                        }
+                    )
+
+        # V11: Prevent snr-seo-specialist from bailing out with not_applicable when Web Performance / Bundle defects exist
+        has_web_perf_scope = any(
+            isinstance(sf, dict) and sf.get("code") in ("BUNDLE_BUDGET_RISK", "EAGER_SUBROUTER_BUNDLE", "BROKEN_ROUTE")
+            for sf in snapshot_data["facts"]
+        )
+        if has_web_perf_scope:
+            for a in per_agent:
+                if a["agent_id"] == "snr-seo-specialist" and a["applicability"] == "not_applicable":
+                    governance["warnings"].append(
+                        {
+                            "code": "V11_WEB_PERF_BAILOUT",
+                            "agent_id": "snr-seo-specialist",
+                            "detail": (
+                                "snr-seo-specialist declared not_applicable on a Web/SPA project with active "
+                                "bundle/routing performance defects (BUNDLE_BUDGET_RISK / EAGER_SUBROUTER_BUNDLE); "
+                                "Web Performance & CWV must be audited even when routes are behind AuthGuard."
+                            ),
+                        }
+                    )
+
     applicable_count = sum(1 for a in per_agent if a["applicability"] == "applicable")
+
+    # 7-Question Decision Traceability & Deferred/Removed Rationale Preservation
+    audits_by_id_map = {a["id"]: a for a in all_audits}
+    conflicts_by_finding: dict[str, list[dict[str, Any]]] = {}
+    for cc in conflict_candidates:
+        conflicts_by_finding.setdefault(cc["finding_id"], []).append(cc)
+    challenges_by_finding: dict[str, list[dict[str, Any]]] = {}
+    for cr in challenge_resolutions:
+        challenges_by_finding.setdefault(str(cr["target_id"]), []).append(cr)
+
+    decision_traceability_log: list[dict[str, Any]] = []
+    deferred_and_removed_decisions: list[dict[str, Any]] = []
+
+    for aud in all_audits:
+        fid = aud["id"]
+        norm_loc = aud["normalized_location"]
+        loc_entries = by_location.get(norm_loc, [])
+        supporting_agents = sorted({e["agent_id"] for e in loc_entries} | {aud["agent_id"]})
+
+        obj_agents: set[str] = set()
+        for bid in aud.get("blocked_by", []):
+            blocker_aud = audits_by_id_map.get(bid)
+            if blocker_aud:
+                obj_agents.add(blocker_aud["agent_id"])
+            else:
+                obj_agents.add(bid)
+        for cc in conflicts_by_finding.get(fid, []):
+            obj_agents.add(cc["constraint_agent"])
+        for cr in challenges_by_finding.get(fid, []):
+            if cr.get("challenger"):
+                obj_agents.add(str(cr["challenger"]))
+
+        explicit_cert = aud.get("decision_certainty")
+        if isinstance(explicit_cert, str) and explicit_cert in VALID_CERTAINTIES:
+            certainty = explicit_cert
+        elif (
+            aud.get("confidence") == "candidate"
+            or aud.get("status") in ("INFERRED", "UNVERIFIED")
+            or aud.get("decision") in ("DEFER", "INVESTIGATE")
+        ):
+            certainty = "RESEARCH_REQUIRED"
+        elif aud.get("blocked_by") or conflicts_by_finding.get(fid):
+            certainty = "CONDITIONAL"
+        else:
+            certainty = "FINAL"
+
+        aud["decision_certainty"] = certainty
+
+        rej_alt = str(aud.get("rejected_alternatives") or "").strip()
+        if not rej_alt:
+            rej_alt = "Keeping existing implementation unchanged was rejected due to verified defect/gap evidence."
+        exp_val = str(aud.get("expected_value") or "").strip()
+        if not exp_val:
+            exp_val = str(aud.get("fix_proposal") or "").strip()
+        risks_txt = str(aud.get("risks") or "").strip()
+        if not risks_txt:
+            if aud.get("blocked_by"):
+                risks_txt = f"Blocked by {', '.join(aud['blocked_by'])}; must resolve prerequisite security/architecture blockers first."
+            else:
+                risks_txt = "Mitigated via 5-Layer Vertical Slice and TDD seam verification."
+
+        trace_entry = {
+            "id": fid,
+            "agent_id": aud["agent_id"],
+            "decision": aud["decision"],
+            "severity": aud["severity"],
+            "location": aud["location"],
+            "problem_solved": aud["issue"],
+            "supporting_evidence": aud["evidence"],
+            "supporting_agents": supporting_agents,
+            "objecting_or_blocking_agents": sorted(obj_agents),
+            "rejected_alternatives": rej_alt,
+            "expected_user_business_value": exp_val,
+            "technical_operational_risks": risks_txt,
+            "decision_certainty": certainty,
+        }
+        decision_traceability_log.append(trace_entry)
+
+        if aud["decision"] in ("REMOVE", "DEFER", "INVESTIGATE"):
+            deferred_and_removed_decisions.append(
+                {
+                    "id": fid,
+                    "agent_id": aud["agent_id"],
+                    "decision": aud["decision"],
+                    "location": aud["location"],
+                    "issue": aud["issue"],
+                    "rationale": f"{aud['fix_proposal']} | Rejected/Deferred rationale: {rej_alt}",
+                    "decision_certainty": certainty,
+                }
+            )
 
     return {
         "schema": SCHEMA_VERSION,
@@ -916,6 +1084,8 @@ def merge(
         "ui_ux_mismatches": ui_ux_mismatches,
         "features_ranked": features_ranked,
         "constraints_by_agent": constraints_by_agent,
+        "decision_traceability_log": decision_traceability_log,
+        "deferred_and_removed_decisions": deferred_and_removed_decisions,
         "governance": governance,
     }
 
@@ -1005,6 +1175,37 @@ def format_markdown(merged: dict[str, Any]) -> str:
             )
     else:
         lines.append("- Yeni özellik önerisi yok.")
+
+    lines.extend(["", "## 6. 7 Soruluk Karar İzlenebilirliği (Decision Traceability Matrix)"])
+    trace_log = merged.get("decision_traceability_log", [])
+    if trace_log:
+        lines.extend(
+            [
+                "| ID | Karar | Kesinlik | Çözülen Problem & Kanıt | Destekleyen / İtiraz Eden | Elenen Alternatif | Değer & Risk |",
+                "| :---: | :---: | :---: | :--- | :--- | :--- | :--- |",
+            ]
+        )
+        for tr in trace_log:
+            sup = ", ".join(f"`{a}`" for a in tr.get("supporting_agents", []))
+            obj_list = tr.get("objecting_or_blocking_agents", [])
+            obj_str = ", ".join(f"`{a}`" for a in obj_list) if obj_list else "Yok"
+            lines.append(
+                f"| `{tr['id']}` | `{tr['decision']}` | **`{tr['decision_certainty']}`** | "
+                f"{tr['problem_solved']} (`{tr['supporting_evidence']}`) | "
+                f"Destek: {sup} / İtiraz-Blokaj: {obj_str} | {tr['rejected_alternatives']} | "
+                f"Değer: {tr['expected_user_business_value']} · Risk: {tr['technical_operational_risks']} |"
+            )
+    else:
+        lines.append("- Karar izlenebilirlik kaydı yok.")
+
+    def_rem = merged.get("deferred_and_removed_decisions", [])
+    if def_rem:
+        lines.extend(["", "### 6.1 Reddedilen ve Ertelenen Öneriler Gerekçe Kaydı (`REMOVE` / `DEFER`)"])
+        for dr in def_rem:
+            lines.append(
+                f"- **`{dr['id']}`** (`{dr['decision']}` · `{dr['decision_certainty']}` · `{dr['location']}`): "
+                f"{dr['issue']} -> **Gerekçe:** {dr['rationale']}"
+            )
 
     return "\n".join(lines) + "\n"
 
@@ -1240,9 +1441,13 @@ def audit_council_directory(
                 missing_rationale_agents.append(aid)
 
     kg_path = cdir / "project-knowledge-graph.json"
+    if not kg_path.is_file():
+        kg_path = cdir / "knowledge-graph.json"
     kg_data = json.loads(kg_path.read_text(encoding="utf-8")) if kg_path.is_file() else None
     chal_path = cdir / "challenges.json"
     challenges = json.loads(chal_path.read_text(encoding="utf-8")) if chal_path.is_file() else None
+    snap_path = cdir / "context-snapshot.json"
+    snap_data = json.loads(snap_path.read_text(encoding="utf-8")) if snap_path.is_file() else None
 
     merged: dict[str, Any] = {}
     if valid_reports:
@@ -1251,6 +1456,7 @@ def audit_council_directory(
             project_root=project_root,
             kg_data=kg_data,
             challenges=challenges,
+            snapshot_data=snap_data,
         )
 
     report_md_path = cdir / "feature-architect-council-report.md"
@@ -1299,6 +1505,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--project-root", help="Optional target project root for V1 file/line existence checks")
     parser.add_argument("--kg", help="Optional path to project-knowledge-graph.json for V2 route reachability checks")
     parser.add_argument("--challenges", help="Optional path to challenges.json for Round 2 cross-examination")
+    parser.add_argument("--snapshot", help="Optional path to context-snapshot.json for V9 defect coverage check")
     parser.add_argument("--format", choices=["json", "md"], default="json", help="Output format")
     parser.add_argument("--output", help="Optional output file path")
     parser.add_argument("--check-report", help="Consolidated Markdown report path to verify against Zero-Drop rule")
@@ -1331,12 +1538,14 @@ def main(argv: list[str] | None = None) -> int:
         weights = _parse_weight_arg(args.weights)
         kg_data = json.loads(Path(args.kg).read_text(encoding="utf-8")) if args.kg else None
         challenges = json.loads(Path(args.challenges).read_text(encoding="utf-8")) if args.challenges else None
+        snapshot_data = json.loads(Path(args.snapshot).read_text(encoding="utf-8")) if args.snapshot else None
         merged = merge(
             reports,
             weights=weights,
             project_root=Path(args.project_root) if args.project_root else None,
             kg_data=kg_data,
             challenges=challenges,
+            snapshot_data=snapshot_data,
         )
     except (ValueError, json.JSONDecodeError, OSError) as exc:
         print(f"[ERROR] {exc}", file=sys.stderr)

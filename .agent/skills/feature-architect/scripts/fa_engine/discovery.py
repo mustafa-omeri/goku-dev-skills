@@ -685,6 +685,15 @@ def discover_project(
     profile.has_schema_conflict = has_conflict
     profile.tenancy_model = tenancy
 
+    prd_found: list[str] = []
+    for label, r in active_roots:
+        for mf in iter_repo_files(r, {".md"}):
+            rel = mf.relative_to(r).as_posix()
+            low_name = mf.name.lower()
+            if low_name in {"product.md", "prd.md"} or "prd" in low_name or "product_spec" in low_name:
+                prd_found.append(f"{label}:{rel}" if label != "primary" else rel)
+    profile.prd_files = sorted(set(prd_found))
+
     has_fe = bool(profile.frontend_stacks)
     has_be = bool(profile.backend_stacks)
     if has_fe and has_be:

@@ -56,7 +56,7 @@ class BuildHealthAnalyzer:
             m = CHUNK_LIMIT_RE.search(txt)
             if m:
                 limit_kb = int(m.group(1))
-                if limit_kb > 1000:
+                if limit_kb > 500:
                     mline = txt[: m.start()].count("\n") + 1
                     facts.append(
                         Fact.create(
@@ -66,8 +66,8 @@ class BuildHealthAnalyzer:
                             fact_type="structural",
                             severity="MEDIUM",
                             summary=(
-                                f"`{cfg_name}:{mline}` inflates `chunkSizeWarningLimit` to `{limit_kb} kB`, "
-                                f"masking oversized initial JavaScript bundles instead of splitting chunks."
+                                f"`{cfg_name}:{mline}` inflates `chunkSizeWarningLimit` to `{limit_kb} kB` (above Vite's 500 kB default), "
+                                f"masking oversized JavaScript bundles instead of splitting chunks."
                             ),
                             location=f"{cfg_name}:{mline}",
                             evidence=[
@@ -116,6 +116,47 @@ class BuildHealthAnalyzer:
                                 excerpt=f"{len(declared_routes)} declared routes, 0 lazy splits",
                             )
                         ],
+                    )
+                )
+
+        # Check nested sub-routers (e.g. MainDashboard.tsx) that declare >= 6 <Route> tags with eager imports
+        seen_router_files: set[str] = set()
+        for cmeta in fe_state.get("components", {}).values():
+            cfile = cmeta.get("file", "")
+            if not cfile or cfile in seen_router_files or cfile in {"src/App.tsx", "src/router.tsx", "src/routes.tsx"}:
+                continue
+            seen_router_files.add(cfile)
+            fp = root / cfile
+            if not fp.is_file():
+                continue
+            ctxt = fp.read_text(encoding="utf-8", errors="replace")
+            route_tag_count = len(re.findall(r"<Route\b", ctxt))
+            if route_tag_count >= 6 and "lazy(" not in ctxt and "import(" not in ctxt:
+                r_m = re.search(r"<Routes\b|<Route\b", ctxt)
+                rline = (ctxt[: r_m.start()].count("\n") + 1) if r_m else 1
+                facts.append(
+                    Fact.create(
+                        fact_id=f"BUILD-SUBROUTER-{len(facts)+1:03d}",
+                        code="EAGER_SUBROUTER_BUNDLE",
+                        category="PERFORMANCE",
+                        fact_type="structural",
+                        severity="HIGH",
+                        summary=(
+                            f"Nested router `{cfile}:{rline}` eagerly imports and mounts {route_tag_count} `<Route>` "
+                            f"screens without `React.lazy()`, bloating the authenticated shell chunk beyond 500 kB."
+                        ),
+                        location=f"{cfile}:{rline}",
+                        evidence=[
+                            EvidenceRef(
+                                kind="code",
+                                level="L1",
+                                derivation="syntax",
+                                ref=f"{cfile}:{rline}",
+                                line=rline,
+                                excerpt=f"{route_tag_count} <Route> definitions with 0 React.lazy() splits",
+                            )
+                        ],
+                        attrs={"route_count": route_tag_count},
                     )
                 )
 

@@ -53,14 +53,14 @@ Ortam alt ajan çağrısını destekliyorsa (`--subagents yes`) ve kullanıcı `
 
 ---
 
-## 2. Tamamlama Envanteri ve 6 Fiilli Karar Matrisi (`CONNECT | FIX | REFACTOR | COMPLETE | REMOVE | DEFER`)
+## 2. Tamamlama Envanteri, 6 Fiilli Karar ve 7 Soruluk İzlenebilirlik Matrisi (`CONNECT | FIX | REFACTOR | COMPLETE | REMOVE | DEFER`)
 
-| Bulgu ID | Karar Fiili (`decision`) | Kategori | Önem | Modül / Konum (`dosya:satır`) | Somut Kanıt (`evidence`) | Güvenlik Ön Koşulu (`blocked_by`) | Veri & API Hazırlığı |
-| :---: | :---: | :--- | :---: | :--- | :--- | :---: | :--- |
-| `PO-01` | `COMPLETE` | `STUB_PAGE` | `HIGH` | `/reports` (`src/pages/Reports.tsx:42`) | `reports.underDevelopmentDesc` | — | `[Kısmen Hazır ⚠️]` |
-| `ARCH-01` | `FIX` | `BROKEN_ROUTE` | `HIGH` | `/settings/api` (`src/components/Sidebar.tsx:84`) | Menüde var, Router'da yok | `QA-01` | `[Yeni API/DB Gerekli 🔴]` |
-| `ARCH-02` | `CONNECT` | `ORPHAN_API_DB` | `MEDIUM` | `GET /api/v1/audit-logs` (`AuditController.java:51`) | Backend'de hazır, istemcide yok | — | `[Veri Hazır ✅]` |
-| `QA-01` | `FIX` | `SECURITY` | `CRITICAL` | `DELETE /api/v1/users/:id` (`UserController.java:93`) | Sunucu tarafı RBAC kontrolü eksik | — | `[Kısmen Hazır ⚠️]` |
+| Bulgu ID | Karar Fiili (`decision`) | Kesinlik (`decision_certainty`) | Kategori | Önem | Modül / Konum (`dosya:satır`) | Somut Kanıt (`evidence`) | Destekleyen / Bloklayan (`blocked_by`) | Elenen Alternatif (`rejected_alternatives`) | Beklenen Değer & Risk (`expected_value` / `risks`) | Veri & API Hazırlığı |
+| :---: | :---: | :---: | :--- | :---: | :--- | :--- | :---: | :--- | :--- | :--- |
+| `PO-01` | `COMPLETE` | `FINAL` | `STUB_PAGE` | `HIGH` | `/reports` (`src/pages/Reports.tsx:42`) | `reports.underDevelopmentDesc` | `PO, UX` / — | `[Sayfayı tamamen kaldırma elendi: aktif menüde]` | `[Değer: Rapor erişimi / Risk: Büyük veri sorgusu]` | `[Kısmen Hazır ⚠️]` |
+| `ARCH-01` | `FIX` | `CONDITIONAL` | `BROKEN_ROUTE` | `HIGH` | `/settings/api` (`src/components/Sidebar.tsx:84`) | Menüde var, Router'da yok | `ARCH` / `QA-01` | `[Kırık linki gizlemek yerine yetkili rotaya bağlama]` | `[Değer: 404 eliminasyonu / Risk: RBAC sızıntısı]` | `[Yeni API/DB Gerekli 🔴]` |
+| `ARCH-02` | `CONNECT` | `FINAL` | `ORPHAN_API_DB` | `MEDIUM` | `GET /api/v1/audit-logs` (`AuditController.java:51`) | Backend'de hazır, istemcide yok | `ARCH, QA` / — | `[Sıfırdan yeni endpoint yazma elendi: mevcut uç hazır]` | `[Değer: Denetim izi görünürlüğü / Risk: Sayfalama]` | `[Veri Hazır ✅]` |
+| `QA-01` | `FIX` | `FINAL` | `SECURITY` | `CRITICAL` | `DELETE /api/v1/users/:id` (`UserController.java:93`) | Sunucu tarafı RBAC kontrolü eksik | `QA` / — | `[Salt UI'da butonu gizleme elendi: API ucu açık kalır]` | `[Değer: Kiracı izolasyonu / Risk: Yetkisiz silme]` | `[Kısmen Hazır ⚠️]` |
 
 ---
 
@@ -112,6 +112,14 @@ Ortam alt ajan çağrısını destekliyorsa (`--subagents yes`) ve kullanıcı `
 | Konum / Konu | Öneren Uzman & Talep | Kırmızı Çizgi Sahibi & Kısıt | Baş Hakem Hibrit 3. Yol Kararı (ve gerekirse Borda Skoru) |
 | :--- | :--- | :--- | :--- |
 | `[örn. Landing.tsx]` | `GRW`: İlk girişte kayıt duvarı | `SEO` & `UX`: Bot engelleme ve CLS yasağı | `[Sayfa içi yapışkan değer çubuğu — CLS=0, tam indekslenebilir]` |
+
+### 6.3 7 Soruluk Karar İzlenebilirliği ve Reddedilen/Ertelenen Öneriler Gerekçe Kaydı (`REMOVE` / `DEFER` Log)
+> **Council Soul Kuralı:** Bir öneri reddedildiğinde (`REMOVE`) veya ertelendiğinde (`DEFER`) bunun gerekçesi asla kaybolmaz.
+
+| Karar ID | Karar Fiili (`REMOVE` / `DEFER`) | Kesinlik (`decision_certainty`) | Konum / Başlık | Red veya Erteleme Gerekçesi (`rationale` & `rejected_alternatives`) | Koşul / Sonraki Adım |
+| :---: | :---: | :---: | :--- | :--- | :--- |
+| `[örn. PO-04]` | `REMOVE` | `FINAL` | `[örn. QuickActions: Yeni Şirket Ekle]` | `[COMPANY_AUTHORISED rolünün şirket açma yetkisi yok; aktif akışta yanıltıcı 404 üretiyor]` | `[Rol bazlı menüden kaldırılacak]` |
+| `[örn. ARCH-05]` | `DEFER` | `RESEARCH_REQUIRED` | `[örn. İkincil Analitik Önbelleği]` | `[Mevcut veri hacminde Redis katmanı aşırı mühendislik; önce indeks optimizasyonu ölçülecek]` | `[Yük testi sonrası yeniden değerlendirilecek]` |
 
 ---
 

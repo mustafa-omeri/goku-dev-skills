@@ -128,6 +128,43 @@ def run_scan_with_graph(
             )
         )
 
+    # Emit missing PRD / product specification reconciliation fact for non-trivial apps
+    fe_routes = ctx.shared_state.get("frontend", {}).get("declared_routes", [])
+    be_eps = ctx.shared_state.get("backend", {}).get("endpoints", [])
+    has_primary_prd = any(not p.startswith("peer_") for p in profile.prd_files)
+    if not has_primary_prd and (len(fe_routes) >= 4 or len(be_eps) >= 4):
+        from fa_engine.model import EvidenceRef, Fact
+
+        peer_prd_hint = (
+            f" (peer spec found: `{', '.join(profile.prd_files)}`, but primary repo has no `PRODUCT.md`/PRD)"
+            if profile.prd_files
+            else ""
+        )
+        graph_facts.append(
+            Fact.create(
+                fact_id="DISC-PRD-001",
+                code="MISSING_PRD_SPEC",
+                category="PRODUCT",
+                fact_type="structural",
+                severity="MEDIUM",
+                summary=(
+                    f"No formal `PRODUCT.md` or PRD specification found in primary root (`{len(fe_routes)}` routes, "
+                    f"`{len(be_eps)}` endpoints){peer_prd_hint}; product requirements and council decisions must be reconciled into `PRODUCT.md`."
+                ),
+                location="PRODUCT.md:1",
+                evidence=[
+                    EvidenceRef(
+                        kind="doc",
+                        level="L1",
+                        derivation="manifest",
+                        ref="PRODUCT.md:1",
+                        line=1,
+                        excerpt=f"primary_prd_files=0; peer_prd_files={len(profile.prd_files)}",
+                    )
+                ],
+            )
+        )
+
     snapshot = build_snapshot_v2(
         profile=profile,
         focus=focus,
@@ -165,18 +202,30 @@ def _format_summary_markdown(snap: dict[str, Any]) -> str:
     lines = [
         "# Feature Architect v2 — Deterministic System Intelligence Summary",
         "",
-        f"- **Root:** `{snap['project_metadata']['root']}` · **Topology:** `{snap['project_metadata']['topology']}` · **Tenancy:** `{snap['project_metadata']['tenancy_model']}`",
-        f"- **Verified Peers:** `{', '.join(disc['confirmed_peers']) or 'none'}`",
-        f"- **Input Hash:** `{snap['input_hash']}`",
+    ]
+    if disc["confirmed_peers"]:
+        for c in disc.get("peer_candidates", []):
+            if c.get("confirmed"):
+                lines.append(
+                    f"> 🔗 **Sibling Peer Bound Automatically:** `{c['name']}` (`{c['path']}`) — confidence={c['confidence']} ({'; '.join(c.get('signals', []))})"
+                )
+        lines.append("")
+    lines.extend(
+        [
+            f"- **Root:** `{snap['project_metadata']['root']}` · **Topology:** `{snap['project_metadata']['topology']}` · **Tenancy:** `{snap['project_metadata']['tenancy_model']}`",
+            f"- **Verified Peers:** `{', '.join(disc['confirmed_peers']) or 'none'}`",
+            f"- **PRD / Product Specs:** `{', '.join(disc.get('prd_files', [])) or 'NONE (MISSING_PRD_SPEC)'}`",
+            f"- **Input Hash:** `{snap['input_hash']}`",
         "",
         "## 4-Axis Measured Readiness Radar",
         f"1. **Analysis Coverage:** `{radar['analysis_coverage_files']}` files scanned (`{radar['failed_analyzers_count']}` analyzer failures)",
         f"2. **Knowledge Graph Pipeline Integrity:** `{radar['pipeline_integrity_pct']}%` (`{snap['graph_summary']['unresolved_edges_count']}` unresolved edges)",
         f"3. **Confirmed Structural Risks:** CRITICAL={radar['confirmed_risks']['CRITICAL']} · HIGH={radar['confirmed_risks']['HIGH']} · MEDIUM={radar['confirmed_risks']['MEDIUM']}",
         f"4. **Inferred Risks (Needs L2/L3 Verification):** CRITICAL={radar['inferred_risks']['CRITICAL']} · HIGH={radar['inferred_risks']['HIGH']} · MEDIUM={radar['inferred_risks']['MEDIUM']} (Max Depth: `{radar['max_verification_level']}`)",
-        "",
-        f"## Top Structural & Contract Facts (`{len(snap['facts'])}` total)",
-    ]
+            "",
+            f"## Top Structural & Contract Facts (`{len(snap['facts'])}` total)",
+        ]
+    )
     for f in snap["facts"][:25]:
         lines.append(
             f"- **[{f['status']} · {f['severity']} · conf={f['confidence']}]** `{f['code']}` at `{f['location']}` — {f['summary']}"
@@ -212,6 +261,14 @@ def main(argv: list[str] | None = None) -> int:
         focus=focus_list,
         run_build=args.build,
     )
+
+    disc = snapshot.get("discovery_metadata", {})
+    for c in disc.get("peer_candidates", []):
+        if c.get("confirmed"):
+            print(
+                f"🔗 [FA-ENGINE] Sibling Peer Bound: {c['name']} ({c['path']}) — confidence={c['confidence']} [{'; '.join(c.get('signals', []))}]",
+                file=sys.stderr,
+            )
 
     if args.out_dir:
         out = Path(args.out_dir)

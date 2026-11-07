@@ -137,16 +137,22 @@ Güvenliği prelaunch aşamasına erteleme; planlama anında [`security_checker.
 
 ---
 
-## 4. 6 Şapkalı Konsey Orkestrasyonu ve Zero-Drop Konsolidasyonu (`council-protocol.md`)
+## 4. 6 Şapkalı Konsey Orkestrasyonu, Council Soul ve Zero-Drop Konsolidasyonu (`council-protocol.md`)
 
 Faz 2 ve Faz 3'ün tüm teknik ayrıntıları [`references/council-protocol.md`](./references/council-protocol.md) dosyasındadır:
 
+0. **Council Soul — Altı Şapkanın Ortak Davranış Sözleşmesi ve 7 Soruluk Karar İzlenebilirliği:**
+   - **Ortak Akıl & İki Aşamalı Karar:** Hiçbir şapkanın kararı tek başına nihai değildir. **1. Turda** her uzman kendi alanında bağımsız değerlendirir (diğerlerine uymak için görüş değiştirmez); **2. Turda** diğer uzmanların kanıtları, itirazları ve kırmızı çizgileriyle birlikte tartılır. Çoğunluk oyu tek başına yeterli değildir; reddedilen (`REMOVE`) veya ertelenen (`DEFER`) önerilerin gerekçesi `deferred_and_removed_decisions` altında korunur.
+   - **Araştırma, MCP ve Skill Keşfi:** Tanımlı olduğunda `context7`, `sequential-thinking`, `notebooklm` MCP'leri, web araştırması ve çalışma alanı skill'leri (`/ui-polish`, `get_component.py`, `onboarding-tour`) kullanılır; mevcut olmayan MCP/entegrasyonlar varmış gibi gösterilmez, kanıt (`CONFIRMED`/`verified`) ile uzman çıkarımı (`INFERRED`/`candidate`) ayrılır.
+   - **Production-Ready (12 Boyut), Bağlamsal Trade-Off ve Mevcut Yapıyı Koruma:** 12 üretim boyutu proje ölçeğine göre değerlendirilir (küçük projeye aşırı mühendislik önerilmez); popüler kalıplar (*Pagination vs Load More vs Infinite Scroll*, *Modal vs Drawer*, *Tab vs Ayrı Sayfa*, *Monolith vs Microservices*, *yeni servis vs mevcut servisi geliştirme*) bağlama göre kıyaslanır ve önce mevcut çalışan yapı/`DESIGN.md` korunur.
+   - **7 Soruluk Karar İzlenebilirliği (`decision_traceability_log`):** Her karar (1) Hangi problem çözülüyor, (2) Hangi kanıtlar destekliyor, (3) Hangi uzmanlar destekliyor/itiraz ediyor, (4) Alternatifler neden elendi (`rejected_alternatives`), (5) Beklenen değer nedir (`expected_value`), (6) Teknik/operasyonel riskler nelerdir (`risks`), (7) Karar kesinliği nedir (`decision_certainty`: `FINAL | CONDITIONAL | RESEARCH_REQUIRED`) sorularını yanıtlar.
 1. **Faz 2 — 6 Uzman Şapka Denetimi (`schemas/council-contract.schema.json`):**
    - `agents/01-snr-product-owner.md` (`PO`), `agents/02-snr-software-architect.md` (`ARCH`), `agents/03-principal-ui-ux-specialist.md` (`UX`), `agents/04-snr-seo-specialist.md` (`SEO`), `agents/05-snr-growth-marketing.md` (`GRW`) ve `agents/06-snr-qa-security-auditor.md` (`QA`) birbirlerinin çıktısını görmeden JSON raporlarını `docs/plans/council/<YYYY-MM-DD>/` altına üretir.
 2. **Faz 3 — Deterministik Birleştirme ve Baş Hakem Sentezi (`council_merger.py`):**
    ```bash
-   python .agent/skills/feature-architect/scripts/council_merger.py --inputs docs/plans/council/<YYYY-MM-DD> --output docs/plans/council/<YYYY-MM-DD>/merged.json
+   python .agent/skills/feature-architect/scripts/council_merger.py --inputs docs/plans/council/<YYYY-MM-DD> --snapshot docs/plans/council/<YYYY-MM-DD>/context-snapshot.json --output docs/plans/council/<YYYY-MM-DD>/merged.json
    ```
+   - **Defect-First Grounded Engineering Kapısı (`V9` & `V10`):** `context-snapshot.json` içindeki tüm `confirmed` `CRITICAL` ve `HIGH` yapısal kusurlar (`BROKEN_ROUTE`, `UNWIRED_ACTION_PROP`, `UI_AUTHORIZATION_MISMATCH`, `LOCALSTORAGE_PHANTOM_PERSISTENCE`, `IGNORED_SERVICE_PARAMETER`, `SYNTHETIC_OR_GATED_ANALYTICS_PIPELINE`, `EAGER_SUBROUTER_BUNDLE`, `RESOURCE_OWNERSHIP_GAP`) 6 şapka tarafından öncelikle ele alınmak zorundadır (`V9_UNADDRESSED_SNAPSHOT_DEFECTS`); `localStorage` ile sahte kalıcılık önerilmesi `V10_PHANTOM_DONE_LOCALSTORAGE_PROPOSAL` ile reddedilir.
    - **Sağlık Karnesi & `CRITICAL` Tavanı:** Eşit ağırlıklı ortalama alınır (`not_applicable` şapkalar hariç tutulur), **En Zayıf Halka** vurgulanır ve çözülmemiş `CRITICAL` bulgu varsa proje olgunluk skoru **`60.0` tavanını aşamaz**.
    - **Sinerji & Çatışma Çözümü:** Ortak konumdaki bulgular birleştirilip seviyesi yükseltilir; kırmızı çizgi (`non_negotiable_constraints`) çatışmalarında hiçbir görüş silinmeden **Hibrit Mühendislik Çözümü (3. Yol)** üretilir (2+ hibrit alternatif varsa `council_ranker.py` Borda skoruyla seçilir).
    - **Zero-Drop Kapısı (Zorunlu):** Konsolide rapor kullanıcıya sunulmadan önce hiçbir `CRITICAL` veya `HIGH` bulgu ID'sinin düşürülmediği doğrulanır:

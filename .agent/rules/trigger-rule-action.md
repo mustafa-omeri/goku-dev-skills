@@ -65,6 +65,7 @@ Yönlendirme tek yerden yapılır:
 | Konu | Kural |
 |---|---|
 | API dokümantasyonu zorunluluğu | [api-documentation-enforcement.md](./api-documentation-enforcement.md) |
+| Dokümantasyon, kılavuz ve yanıt standardı (FAA AC 121-24C) | [aviation-documentation-standard.md](./aviation-documentation-standard.md) |
 | Veritabanı migration ve revizyon zorunluluğu | [db-migration-enforcement.md](./db-migration-enforcement.md) |
 
 ---

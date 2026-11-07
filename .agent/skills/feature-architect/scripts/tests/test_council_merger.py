@@ -843,6 +843,299 @@ class CouncilMergerUnitTests(unittest.TestCase):
             self.assertIn("FABRICATED_METRIC_CLAIM", wcodes)
             self.assertIn("borda_arbitration_ready", audit_res)
 
+    def test_g5_v9_unaddressed_snapshot_defects_and_v10_localstorage_proposal(self) -> None:
+        po = _make_hat_report(
+            "snr-product-owner",
+            "Senior Product Owner & Domain Strategist",
+            "PO",
+            audits=[
+                {
+                    "id": "PO-01",
+                    "category": "CORE_MODULE_GAP",
+                    "severity": "HIGH",
+                    "location": "src/features/settings/Settings.tsx:10",
+                    "evidence": "src/features/settings/Settings.tsx:10 -> empty settings view",
+                    "confidence": "verified",
+                    "issue": "Settings view lacks persistence.",
+                    "fix_proposal": "Persist user preferences in localStorage for quick MVP.",
+                }
+            ],
+        )
+        snapshot = {
+            "facts": [
+                {
+                    "fact_id": "FE-PROP-001",
+                    "code": "UNWIRED_ACTION_PROP",
+                    "status": "confirmed",
+                    "severity": "HIGH",
+                    "location": "src/features/dashboard/views/CompanyDashboardView.tsx:290",
+                    "summary": "<InsightsPanel /> omits optional action prop onActionClick.",
+                },
+                {
+                    "fact_id": "BUILD-BUNDLE-001",
+                    "code": "BUNDLE_BUDGET_RISK",
+                    "status": "confirmed",
+                    "severity": "MEDIUM",
+                    "location": "vite.config.js:84",
+                    "summary": "chunkSizeWarningLimit inflated to 800 kB.",
+                },
+            ]
+        }
+        seo_na = {
+            "agent_id": "snr-seo-specialist",
+            "role": "Senior Technical SEO & Web Performance Specialist",
+            "applicability": "not_applicable",
+            "health_score": None,
+            "health_score_rationale": None,
+            "not_applicable_reason": "Internal B2B application behind AuthGuard.",
+            "audits": [],
+            "ui_ux_mismatches": [],
+            "new_features": [],
+            "non_negotiable_constraints": [],
+        }
+        merged = council_merger.merge([po, seo_na], snapshot_data=snapshot)
+        wcodes = {w["code"] for w in merged["governance"]["warnings"]}
+        self.assertIn("V9_UNADDRESSED_SNAPSHOT_DEFECTS", wcodes)
+        self.assertIn("V10_PHANTOM_DONE_LOCALSTORAGE_PROPOSAL", wcodes)
+        self.assertIn("V11_WEB_PERF_BAILOUT", wcodes)
+
+    def test_g6_fa_engine_radical_benchmark_detectors(self) -> None:
+        import fa_scan
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fe = root / "fe"
+            be = root / "be"
+            (fe / "src" / "features" / "dashboard").mkdir(parents=True)
+            (fe / "src" / "services").mkdir(parents=True)
+            (fe / "src" / "components").mkdir(parents=True)
+            (be / "src" / "main" / "java" / "com" / "acme").mkdir(parents=True)
+
+            (fe / "package.json").write_text(
+                json.dumps({"name": "fe", "dependencies": {"react": "^18.0.0", "react-router-dom": "^6.0.0"}}),
+                encoding="utf-8",
+            )
+            (fe / "vite.config.js").write_text(
+                "export default { server: { proxy: { '/api': 'http://localhost:8081' } }, build: { chunkSizeWarningLimit: 800 } };\n",
+                encoding="utf-8",
+            )
+            (fe / "src" / "App.tsx").write_text(
+                "import React from 'react';\n"
+                "export function App() {\n"
+                "  return (\n"
+                "    <Routes>\n"
+                "      <Route\n"
+                "        path=\"/main/*\"\n"
+                "        element={<MainDashboard />}\n"
+                "      />\n"
+                "      <Route path=\"/login\" element={<Login />} />\n"
+                "      <Route path=\"/a\" element={<A />} />\n"
+                "      <Route path=\"/b\" element={<B />} />\n"
+                "    </Routes>\n"
+                "  );\n"
+                "}\n",
+                encoding="utf-8",
+            )
+            (fe / "src" / "features" / "dashboard" / "MainDashboard.tsx").write_text(
+                "const adminNavItems = [\n"
+                "  { path: 'companies', title: 'Companies', roles: [Role.ADMIN] },\n"
+                "];\n"
+                "export function InsightsPanel({ onActionClick }: InsightsPanelProps) {\n"
+                "  return <button onClick={() => onActionClick?.(item)}>Detay</button>;\n"
+                "}\n"
+                "export interface InsightsPanelProps {\n"
+                "  onActionClick?: (item: any) => void;\n"
+                "}\n"
+                "export function QuickActionsPanel({ actions }: QuickActionsPanelProps) {\n"
+                "  const defaultActions = [\n"
+                "    {\n"
+                "      id: 'add-company',\n"
+                "      onClick: () => {\n"
+                "        window.location.href = '/companies/new';\n"
+                "      },\n"
+                "    },\n"
+                "    {\n"
+                "      id: 'assign-test',\n"
+                "      onClick: () => {\n"
+                "        window.location.href = '/tests/assign';\n"
+                "      },\n"
+                "    },\n"
+                "  ];\n"
+                "  const data = actions || defaultActions;\n"
+                "  return <div>{data.map(a => <button key={a.id} />)}</div>;\n"
+                "}\n"
+                "export function CompanyDashboardView() {\n"
+                "  return <div><QuickActionsPanel /><InsightsPanel /></div>;\n"
+                "}\n",
+                encoding="utf-8",
+            )
+            (fe / "src" / "services" / "notification.service.ts").write_text(
+                "const NOTIF_KEY = 'app_notifications';\n"
+                "export const notificationService = {\n"
+                "  getAll: async () => localStorage.getItem(NOTIF_KEY),\n"
+                "};\n",
+                encoding="utf-8",
+            )
+            (fe / "src" / "components" / "UserProfile.tsx").write_text(
+                "export function UserProfile() {\n"
+                "  return (\n"
+                "    <div>\n"
+                "      <label>A</label><p>1</p><Separator />\n"
+                "      <label>B</label><p>2</p><Separator />\n"
+                "      <label>C</label><p>3</p><Separator />\n"
+                "      <label>D</label><p>4</p><Separator />\n"
+                "      <label>E</label><p>5</p><Separator />\n"
+                "    </div>\n"
+                "  );\n"
+                "}\n",
+                encoding="utf-8",
+            )
+            (be / "pom.xml").write_text("<project><artifactId>be</artifactId></project>", encoding="utf-8")
+            (be / "src" / "main" / "java" / "com" / "acme" / "DashboardAnalyticsServiceImpl.java").write_text(
+                "@Service\n"
+                "public class DashboardAnalyticsServiceImpl {\n"
+                "  public TrendAnalyticsDto getTrends(Long companyId, String period) {\n"
+                "    List<Integer> vals = List.of(0, 0);\n"
+                "    boolean hasEnoughData = vals.stream().anyMatch(v -> v > 0);\n"
+                "    return new TrendAnalyticsDto();\n"
+                "  }\n"
+                "}\n",
+                encoding="utf-8",
+            )
+
+            snap = fa_scan.run_scan(fe, peers=[be])
+            codes = {f["code"] for f in snap["facts"]}
+            self.assertIn("BROKEN_ROUTE", codes)
+            self.assertIn("UI_AUTHORIZATION_MISMATCH", codes)
+            self.assertIn("HARDCODED_UI_DATASET", codes)
+            self.assertIn("UNWIRED_ACTION_PROP", codes)
+            self.assertIn("LOCALSTORAGE_PHANTOM_PERSISTENCE", codes)
+            self.assertIn("UI_CRAFT_FLOOR_DEFICIT", codes)
+            self.assertIn("BUNDLE_BUDGET_RISK", codes)
+            self.assertIn("MISSING_PRD_SPEC", codes)
+            self.assertIn("IGNORED_SERVICE_PARAMETER", codes)
+            self.assertIn("SYNTHETIC_OR_GATED_ANALYTICS_PIPELINE", codes)
+
+    def test_g7_council_soul_and_seven_question_decision_traceability(self) -> None:
+        po = _make_hat_report(
+            "snr-product-owner",
+            "Senior Product Owner & Domain Strategist",
+            "PO",
+            health_score=76,
+            audits=[
+                {
+                    "id": "PO-01",
+                    "category": "PRODUCT",
+                    "severity": "HIGH",
+                    "location": "src/features/dashboard/QuickActionsPanel.tsx:106",
+                    "evidence": "QuickActionsPanel.tsx:106 renders add-company for COMPANY_AUTHORISED role.",
+                    "confidence": "verified",
+                    "decision": "REMOVE",
+                    "issue": "Unauthorized quick action shown to non-admin company user.",
+                    "fix_proposal": "Filter QuickActionsPanel items by user role and remove add-company for COMPANY_AUTHORISED.",
+                    "rejected_alternatives": "Keeping button disabled was rejected because COMPANY_AUTHORISED never creates tenants.",
+                    "expected_value": "Eliminates dead-end 404 clicks and role confusion on /main.",
+                    "risks": "Must preserve add-company visibility for ADMIN role.",
+                },
+                {
+                    "id": "PO-02",
+                    "category": "CORE_MODULE_GAP",
+                    "severity": "MEDIUM",
+                    "location": "src/pages/Analytics.tsx:40",
+                    "evidence": "Analytics.tsx:40 has candidate cohort export hook.",
+                    "confidence": "candidate",
+                    "decision": "DEFER",
+                    "issue": "Unclear whether multi-period CSV export is needed in current sprint.",
+                    "fix_proposal": "Validate tenant demand before adding export job.",
+                    "rejected_alternatives": "Immediate background worker rejected as over-engineering for current data volume.",
+                    "expected_value": "Avoids premature infrastructure cost.",
+                    "risks": "Enterprise tenants may request manual export.",
+                },
+            ],
+        )
+        arch = _make_hat_report(
+            "snr-software-architect",
+            "Senior Software Architect & Systems Engineer",
+            "ARCH",
+            health_score=72,
+            audits=[
+                {
+                    "id": "ARCH-01",
+                    "category": "ARCHITECTURE",
+                    "severity": "HIGH",
+                    "location": "src/services/notification.service.ts:37",
+                    "evidence": "notification.service.ts:37 reads NOTIFICATIONS_STORAGE_KEY from localStorage.",
+                    "confidence": "verified",
+                    "decision": "CONNECT",
+                    "blocked_by": ["QA-01"],
+                    "issue": "Notification matrix uses browser localStorage instead of backend persistence.",
+                    "fix_proposal": "Extend existing NotificationController and UserPreferenceRepository instead of creating a new microservice.",
+                    "rejected_alternatives": "Separate notification microservice rejected as over-engineering for current monolith.",
+                    "expected_value": "Multi-user tenant-isolated notification persistence across devices.",
+                    "risks": "Requires DB migration and RBAC check on preference endpoints.",
+                }
+            ],
+        )
+        qa = _make_hat_report(
+            "snr-qa-security-auditor",
+            "Senior QA, Security & 5-Layer TDD Auditor",
+            "QA",
+            health_score=68,
+            audits=[
+                {
+                    "id": "QA-01",
+                    "category": "SECURITY",
+                    "severity": "CRITICAL",
+                    "location": "src/services/notification.service.ts:37",
+                    "evidence": "Notification endpoints lack tenant ownership check.",
+                    "confidence": "verified",
+                    "decision": "FIX",
+                    "issue": "Missing tenant isolation on notification preference update.",
+                    "fix_proposal": "Enforce @PreAuthorize and companyId ownership check.",
+                    "rejected_alternatives": "Client-side role check rejected as bypassable.",
+                    "expected_value": "Prevents cross-tenant IDOR preference tampering.",
+                    "risks": "None if integration tests cover cross-tenant access.",
+                }
+            ],
+            constraints=["Tenant isolation must be enforced on all notification endpoints."],
+        )
+
+        merged = council_merger.merge([po, arch, qa])
+        self.assertIn("decision_traceability_log", merged)
+        self.assertIn("deferred_and_removed_decisions", merged)
+
+        trace_by_id = {entry["id"]: entry for entry in merged["decision_traceability_log"]}
+        self.assertIn("PO-01", trace_by_id)
+        self.assertIn("PO-02", trace_by_id)
+        self.assertIn("ARCH-01", trace_by_id)
+        self.assertIn("QA-01", trace_by_id)
+
+        # 7 questions check on ARCH-01 (which has blocked_by QA-01 and shares location with QA-01)
+        arch_trace = trace_by_id["ARCH-01"]
+        self.assertEqual(arch_trace["decision_certainty"], "CONDITIONAL")
+        self.assertIn("localStorage", arch_trace["problem_solved"])
+        self.assertIn("notification.service.ts:37", arch_trace["supporting_evidence"])
+        self.assertIn("snr-software-architect", arch_trace["supporting_agents"])
+        self.assertTrue(arch_trace["objecting_or_blocking_agents"])
+        self.assertIn("Separate notification microservice rejected", arch_trace["rejected_alternatives"])
+        self.assertIn("Multi-user tenant-isolated", arch_trace["expected_user_business_value"])
+        self.assertIn("Requires DB migration", arch_trace["technical_operational_risks"])
+
+        # PO-01 has verified confidence and no blockers -> FINAL
+        self.assertEqual(trace_by_id["PO-01"]["decision_certainty"], "FINAL")
+        # PO-02 has candidate confidence and DEFER decision -> RESEARCH_REQUIRED
+        self.assertEqual(trace_by_id["PO-02"]["decision_certainty"], "RESEARCH_REQUIRED")
+
+        # Deferred and removed decisions must preserve rationale without loss
+        def_rem_ids = {d["id"] for d in merged["deferred_and_removed_decisions"]}
+        self.assertIn("PO-01", def_rem_ids)
+        self.assertIn("PO-02", def_rem_ids)
+
+        md = council_merger.format_markdown(merged)
+        self.assertIn("Karar İzlenebilirliği", md)
+        self.assertIn("CONDITIONAL", md)
+        self.assertIn("RESEARCH_REQUIRED", md)
+
 
 if __name__ == "__main__":
     unittest.main()

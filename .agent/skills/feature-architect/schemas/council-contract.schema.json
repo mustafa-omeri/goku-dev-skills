@@ -132,6 +132,23 @@
           "fix_proposal": {
             "type": "string",
             "minLength": 1
+          },
+          "rejected_alternatives": {
+            "type": "string",
+            "description": "Why the existing implementation or alternative patterns (e.g. Modal vs Drawer, new microservice vs existing service) were insufficient or rejected."
+          },
+          "expected_value": {
+            "type": "string",
+            "description": "Expected user and business value delivered by resolving this finding."
+          },
+          "risks": {
+            "type": "string",
+            "description": "Technical, security, or operational risks associated with this decision."
+          },
+          "decision_certainty": {
+            "type": "string",
+            "enum": ["FINAL", "CONDITIONAL", "RESEARCH_REQUIRED"],
+            "description": "Whether the decision is final, conditional on blockers/trade-offs, or requires further research."
           }
         }
       }
@@ -188,6 +205,18 @@
             "type": "string",
             "minLength": 1,
             "description": "Canonical 5-Layer Vertical Slice: 1. DB/Migration -> 2. Backend/View/RPC -> 3. Client API -> 4. UI/UX + Zero-CLS Skeleton -> 5. Loop Closure (Admin/Management)."
+          },
+          "rejected_alternatives": {
+            "type": "string",
+            "description": "Why simpler or alternative approaches were rejected in favor of this feature."
+          },
+          "risks": {
+            "type": "string",
+            "description": "Technical, security, or operational risks associated with implementing this feature."
+          },
+          "decision_certainty": {
+            "type": "string",
+            "enum": ["FINAL", "CONDITIONAL", "RESEARCH_REQUIRED"]
           }
         }
       }

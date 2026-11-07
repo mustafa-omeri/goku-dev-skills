@@ -140,7 +140,15 @@ Feature: <doldur: Özellik Adı>
 python .agent/skills/musgoku/scripts/run_all_gates.py
 ```
 
-### Manual Verification (Kullanıcı Doğrulama Adımları)
-1. `<doldur: Adım 1 — Tarayıcıda veya konsolda ne yapılacak>`
-2. `<doldur: Adım 2 — Network/DB düzeyinde ne kontrol edilecek>`
-3. `<doldur: Adım 3 — Hangi Skeleton ekranı ve son durum gözlemlenecek>`
+### Manual Verification (Kullanıcı Doğrulama Adımları — FAA AC 121-24C Standardı)
+1. **[Adım 1 - UI/Konsol]:** `<doldur: Eylem>` -> **Beklenen Çıktı:** `<doldur: Görsel sonuç / kanıt>`
+2. **[Adım 2 - Veri/Ağ]:** `<doldur: Eylem>` -> **Beklenen Çıktı:** `<doldur: HTTP 200/201 veya DB kaydı>`
+3. **[Adım 3 - UX Durumu]:** `<doldur: Eylem>` -> **Beklenen Çıktı:** `<doldur: Skeleton animasyonu -> dolu durum>`
+
+---
+
+## 11. 🚨 Ditching & Emergency Exit (Plan Geri Dönüş ve Acil Durum Tablosu)
+
+| Belirti / Hata | Olası Neden | Anında Düzeltici Eylem |
+|---|---|---|
+| `<doldur: Olası regresyon / hata>` | `<doldur: Kök neden>` | `<doldur: Rollback veya cerrahi düzeltme komutu>` |

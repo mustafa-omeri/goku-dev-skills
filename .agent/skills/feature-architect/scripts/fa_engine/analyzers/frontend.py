@@ -67,13 +67,22 @@ TOAST_CALL_RE = re.compile(
 TODO_RE = re.compile(r"\b(?:TODO|FIXME)\b[:\s]*(.{0,80})")
 
 JSX_ROUTE_RE = re.compile(
-    r"<Route\b([^>]*?)\bpath\s*=\s*[\"']([^\"']+)[\"']([^>]*?)>"
+    r"<Route\b([\s\S]{0,160}?)\bpath\s*=\s*[\"']([^\"']+)[\"']([\s\S]{0,600}?)(?:/>|</Route>)",
+    re.MULTILINE,
 )
-ROUTE_ELEMENT_COMP_RE = re.compile(r"element\s*=\s*\{[^}]*?<([A-Z][A-Za-z0-9_]*)")
+ROUTE_ELEMENT_COMP_RE = re.compile(r"<([A-Z][A-Za-z0-9_]*)\b")
+ROUTE_WRAPPER_COMPS = {"RequireAuth", "ProtectedRoute", "PrivateRoute", "AuthGuard", "Suspense", "ErrorBoundary", "Navigate"}
 OBJ_ROUTE_RE = re.compile(r"\bpath\s*:\s*[\"'](/[^\"']*)[\"']")
 LINK_TO_RE = re.compile(r"<(?:Link|NavLink)\b[^>]*?\bto\s*=\s*[\"'](/[^\"'#?]*)[\"']")
 NAVIGATE_RE = re.compile(r"\b(?:navigate|router\.push)\s*\(\s*[\"'](/[^\"'#?]*)[\"']")
+WINDOW_LOC_NAV_RE = re.compile(
+    r"\b(?:window\.)?location(?:\.href\s*=\s*|\.(?:assign|replace)\s*\(\s*)[\"'`](/[^\"'`#?]+)"
+)
 NAV_ITEM_PATH_RE = re.compile(r"\b(?:to|href|path)\s*:\s*[\"'](/[^\"'#?]+)[\"']")
+NAV_ROLE_ITEM_RE = re.compile(
+    r"\{\s*path\s*:\s*[\"']([^\"']+)[\"'][^{}]*?\broles\s*:\s*\[([^\]]+)\]",
+    re.DOTALL,
+)
 
 TS_INTERFACE_RE = re.compile(
     r"\b(?:export\s+)?interface\s+([A-Z][A-Za-z0-9_]*)\s*(?:extends\s+[^{]+)?\{([^}]*)\}",
@@ -185,6 +194,55 @@ def _unwrap_generic_type(raw_type: str | None) -> str | None:
     return cleaned if re.match(r"^[A-Z][A-Za-z0-9_]*$", cleaned) else None
 
 
+def _find_rendered_hardcoded_arrays(text: str) -> list[tuple[str, int]]:
+    """Find `const <arr> = [ { ... }, { ... } ]` rendered via `<arr>.map(` or `<alias>.map(`."""
+    found: list[tuple[str, int]] = []
+    seen_names: set[str] = set()
+    for hm in HARDCODED_ARRAY_RE.finditer(text):
+        arr_name = hm.group(1)
+        if re.search(rf"\b{re.escape(arr_name)}\.map\s*\(", text):
+            hline = text[: hm.start()].count("\n") + 1
+            found.append((arr_name, hline))
+            seen_names.add(arr_name)
+
+    # Also detect multiline object arrays with nested braces (e.g. defaultActions in QuickActionsPanel)
+    decl_re = re.compile(r"\bconst\s+([a-z][A-Za-z0-9_]*)\s*(?::\s*[^=;\n]+)?=\s*\[", re.MULTILINE)
+    for dm in decl_re.finditer(text):
+        arr_name = dm.group(1)
+        if arr_name in seen_names:
+            continue
+        start_bracket = dm.end() - 1
+        depth = 0
+        end_bracket = -1
+        for i in range(start_bracket, min(len(text), start_bracket + 4500)):
+            ch = text[i]
+            if ch == "[":
+                depth += 1
+            elif ch == "]":
+                depth -= 1
+                if depth == 0:
+                    end_bracket = i
+                    break
+        if end_bracket == -1:
+            continue
+        arr_body = text[start_bracket + 1 : end_bracket]
+        if len(re.findall(r"\{\s*(?:id|label|title|key|name)\s*:", arr_body)) < 2:
+            continue
+        is_mapped = bool(re.search(rf"\b{re.escape(arr_name)}\.map\s*\(", text))
+        if not is_mapped:
+            alias_m = re.search(
+                rf"\bconst\s+([a-z][A-Za-z0-9_]*)\s*=\s*[A-Za-z0-9_?.]+\s*\|\|\s*{re.escape(arr_name)}\b",
+                text,
+            )
+            if alias_m and re.search(rf"\b{re.escape(alias_m.group(1))}\.map\s*\(", text):
+                is_mapped = True
+        if is_mapped:
+            hline = text[: dm.start()].count("\n") + 1
+            found.append((arr_name, hline))
+            seen_names.add(arr_name)
+    return found
+
+
 def _run_ts_bridge(root: Path, ts_lib: str, rel_files: list[str]) -> dict[str, Any] | None:
     bridge_script = Path(__file__).resolve().parents[2] / "ts_bridge" / "extract.mjs"
     if not bridge_script.is_file() or not rel_files:
@@ -285,7 +343,7 @@ class FrontendAnalyzer:
                 for fp in code_files
                 if fp.suffix.lower() in {".ts", ".tsx", ".js", ".jsx"}
             ]
-            ast_data = _run_ts_bridge(root, ctx.profile.ts_compiler_path, ts_files)
+            ast_data = _run_ts_bridge(root, ctx.profile.ts_compiler_path, ts_files[:25])
             if ast_data is not None:
                 derivation_mode = "ast"
         else:
@@ -312,6 +370,8 @@ class FrontendAnalyzer:
         components: dict[str, dict[str, Any]] = {}
         jsx_usages: list[dict[str, Any]] = []
         http_calls: list[dict[str, Any]] = []
+        route_role_map: dict[str, dict[str, Any]] = {}
+        action_items: list[dict[str, Any]] = []
         ui_identifiers: set[str] = set()
         ident_re = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
         hardcoded_hex_count = 0
@@ -386,22 +446,6 @@ class FrontendAnalyzer:
                             stub_pages.append(entry)
 
                 # Route & navigation link extraction
-                for m in JSX_ROUTE_RE.finditer(line):
-                    if "react-router" not in fe_stack:
-                        fe_stack.append("react-router")
-                    r_path = m.group(2).strip()
-                    full_attrs = m.group(1) + " " + m.group(3)
-                    comp_m = ROUTE_ELEMENT_COMP_RE.search(full_attrs)
-                    if r_path.startswith("/"):
-                        declared_raw.append(r_path)
-                        if comp_m:
-                            route_to_comp[r_path] = (comp_m.group(1), rel, idx)
-                    elif r_path and r_path != "*":
-                        clean_rel = r_path.strip("/")
-                        relative_children.append(clean_rel)
-                        if comp_m:
-                            route_to_comp[clean_rel] = (comp_m.group(1), rel, idx)
-
                 if not is_nav_file and any(
                     tok in text for tok in ("createBrowserRouter", "useRoutes", "createRouter")
                 ):
@@ -412,9 +456,83 @@ class FrontendAnalyzer:
                     links.append({"path": m.group(1), "file": rel, "line": idx, "excerpt": line.strip()[:160]})
                 for m in NAVIGATE_RE.finditer(line):
                     links.append({"path": m.group(1), "file": rel, "line": idx, "excerpt": line.strip()[:160]})
+                for m in WINDOW_LOC_NAV_RE.finditer(line):
+                    links.append({"path": m.group(1), "file": rel, "line": idx, "excerpt": line.strip()[:160]})
                 if is_nav_file:
                     for m in NAV_ITEM_PATH_RE.finditer(line):
                         links.append({"path": m.group(1), "file": rel, "line": idx, "excerpt": line.strip()[:160]})
+
+            for m in JSX_ROUTE_RE.finditer(text):
+                if "react-router" not in fe_stack:
+                    fe_stack.append("react-router")
+                r_path = m.group(2).strip()
+                r_line = text[: m.start()].count("\n") + 1
+                full_attrs = m.group(1) + " " + m.group(3)
+                cand_comps = [
+                    c for c in ROUTE_ELEMENT_COMP_RE.findall(full_attrs) if c not in ROUTE_WRAPPER_COMPS
+                ]
+                comp_name = cand_comps[0] if cand_comps else None
+                if r_path.startswith("/"):
+                    declared_raw.append(r_path)
+                    if comp_name:
+                        route_to_comp[r_path] = (comp_name, rel, r_line)
+                elif r_path and r_path != "*":
+                    clean_rel = r_path.strip("/")
+                    relative_children.append(clean_rel)
+                    if comp_name:
+                        route_to_comp[clean_rel] = (comp_name, rel, r_line)
+
+            for nm in NAV_ROLE_ITEM_RE.finditer(text):
+                nav_path = nm.group(1).strip().strip("/")
+                roles_found = [
+                    r for r in re.findall(r"[A-Z][A-Z0-9_]{2,}", nm.group(2)) if r != "ROLE"
+                ]
+                if nav_path and roles_found:
+                    nline = text[: nm.start()].count("\n") + 1
+                    route_role_map[nav_path] = {
+                        "path": nav_path,
+                        "roles": sorted(set(roles_found)),
+                        "file": rel,
+                        "line": nline,
+                    }
+
+            # LocalStorage phantom persistence in domain services (Notification Matrix, Settings, Preferences)
+            stem_low = Path(rel).stem.lower()
+            if (
+                ("service" in rel.lower() or "store" in rel.lower())
+                and not any(tok in stem_low for tok in ("auth", "token", "session", "api-client", "theme", "logger", "storage"))
+            ):
+                ls_m = re.search(r"\blocalStorage\.(?:getItem|setItem)\s*\(\s*([^,\)]+)", text)
+                if ls_m:
+                    key_expr = ls_m.group(1).strip()
+                    if not any(tk in key_expr.lower() for tk in ("token", "auth", "jwt", "theme", "lang", "i18n")):
+                        ls_line = text[: ls_m.start()].count("\n") + 1
+                        ls_excerpt = lines[ls_line - 1].strip()[:160] if ls_line - 1 < len(lines) else ls_m.group(0)
+                        facts.append(
+                            Fact.create(
+                                fact_id=f"FE-MOCK-{len(facts)+1:03d}",
+                                code="LOCALSTORAGE_PHANTOM_PERSISTENCE",
+                                category="ARCHITECTURE",
+                                fact_type="structural",
+                                severity="HIGH",
+                                summary=(
+                                    f"Domain service `{rel}:{ls_line}` persists state via browser `localStorage` "
+                                    f"(`{key_expr}`) instead of a multi-tenant backend endpoint/database."
+                                ),
+                                location=f"{rel}:{ls_line}",
+                                evidence=[
+                                    EvidenceRef(
+                                        kind="code",
+                                        level="L1",
+                                        derivation=derivation_mode,
+                                        ref=f"{rel}:{ls_line}",
+                                        line=ls_line,
+                                        excerpt=ls_excerpt,
+                                    )
+                                ],
+                                attrs={"storage_key_expr": key_expr},
+                            )
+                        )
 
             # Interfaces (TS types)
             for im in TS_INTERFACE_RE.finditer(text):
@@ -456,7 +574,12 @@ class FrontendAnalyzer:
                     pm = re.search(r":\s*([A-Z][A-Za-z0-9_]*Props\b|[A-Z][A-Za-z0-9_]*)", param_sig)
                     if pm:
                         prop_type = pm.group(1)
-                    bound_handlers = re.findall(r"onClick\s*=\s*\{\s*([A-Za-z0-9_]+)\s*\}", text)
+                    direct_handlers = re.findall(r"onClick\s*=\s*\{\s*([A-Za-z0-9_]+)\s*\}", text)
+                    arrow_handlers = re.findall(
+                        r"onClick\s*=\s*\{\s*(?:\([^)]*\)|[A-Za-z0-9_]+)\s*=>\s*(?:\{\s*)?([A-Za-z0-9_]+)(?:\?\.)?\s*\(",
+                        text,
+                    )
+                    bound_handlers = sorted(set(direct_handlers + arrow_handlers))
                     has_state = bool(re.search(r"\buseState\s*(?:<[^>]+>)?\s*\(", text))
                     has_save_handler = bool(
                         re.search(r"\b(?:handleSave|onSave|handleSubmit|onSubmit|save\w*)\b", text)
@@ -506,6 +629,23 @@ class FrontendAnalyzer:
                         )
                     )
 
+                    # Extract action items with navigation targets inside components (e.g. QuickActionsPanel)
+                    for act_m in re.finditer(
+                        r"\bid\s*:\s*[\"']([^\"']+)[\"'][\s\S]{0,320}?(?:window\.location(?:\.href)?\s*=\s*|navigate\s*\(\s*)[\"'](/[^\"']*)[\"']",
+                        text,
+                    ):
+                        act_line = text[: act_m.start()].count("\n") + 1
+                        action_items.append(
+                            {
+                                "id": act_m.group(1),
+                                "target": act_m.group(2),
+                                "component": cname,
+                                "file": rel,
+                                "line": act_line,
+                                "has_role_guard": bool(re.search(r"\broles?\b", act_m.group(0), re.IGNORECASE)),
+                            }
+                        )
+
                 # JSX element call sites (for unwired prop & graph edges)
                 for jm in re.finditer(r"<([A-Z][A-Za-z0-9_]*)\b([^>]*?)(/?)>", text, re.DOTALL):
                     target_comp = jm.group(1)
@@ -552,34 +692,93 @@ class FrontendAnalyzer:
                             )
                         )
 
-                # Hardcoded UI object arrays rendered via .map(...)
-                for hm in HARDCODED_ARRAY_RE.finditer(text):
-                    arr_name = hm.group(1)
-                    if re.search(rf"\b{re.escape(arr_name)}\.map\s*\(", text):
-                        hline = text[: hm.start()].count("\n") + 1
-                        excerpt_line = lines[hline - 1].strip()[:160] if hline - 1 < len(lines) else arr_name
-                        facts.append(
-                            Fact.create(
-                                fact_id=f"FE-DUMMY-{len(facts)+1:03d}",
-                                code="HARDCODED_UI_DATASET",
-                                category="PRODUCT",
-                                fact_type="structural",
-                                severity="MEDIUM",
-                                summary=f"Hardcoded UI dataset `{arr_name}` in `{rel}:{hline}` is rendered directly without a backend data source.",
-                                location=f"{rel}:{hline}",
-                                evidence=[
-                                    EvidenceRef(
-                                        kind="code",
-                                        level="L1",
-                                        derivation=derivation_mode,
-                                        ref=f"{rel}:{hline}",
-                                        line=hline,
-                                        excerpt=excerpt_line,
-                                    )
-                                ],
-                                attrs={"dataset": arr_name},
-                            )
+                # Hardcoded UI object arrays rendered via .map(...) (including nested & aliased arrays)
+                for arr_name, hline in _find_rendered_hardcoded_arrays(text):
+                    excerpt_line = lines[hline - 1].strip()[:160] if hline - 1 < len(lines) else arr_name
+                    facts.append(
+                        Fact.create(
+                            fact_id=f"FE-DUMMY-{len(facts)+1:03d}",
+                            code="HARDCODED_UI_DATASET",
+                            category="PRODUCT",
+                            fact_type="structural",
+                            severity="MEDIUM",
+                            summary=f"Hardcoded UI dataset `{arr_name}` in `{rel}:{hline}` is rendered directly without a backend data source.",
+                            location=f"{rel}:{hline}",
+                            evidence=[
+                                EvidenceRef(
+                                    kind="code",
+                                    level="L1",
+                                    derivation=derivation_mode,
+                                    ref=f"{rel}:{hline}",
+                                    line=hline,
+                                    excerpt=excerpt_line,
+                                )
+                            ],
+                            attrs={"dataset": arr_name},
                         )
+                    )
+
+                # UI Craft Floor Deficit check (repetitive <Separator /> + read-only <label>/<p> stacks)
+                sep_count = len(re.findall(r"<Separator\b", text))
+                readonly_label_p = len(re.findall(r"<label\b[^>]*>.*?</label>\s*<p\b", text, re.DOTALL))
+                if sep_count >= 5 and readonly_label_p >= 4:
+                    sep_m = re.search(r"<Separator\b", text)
+                    sline = (text[: sep_m.start()].count("\n") + 1) if sep_m else 1
+                    sexcerpt = lines[sline - 1].strip()[:160] if sline - 1 < len(lines) else "<Separator />"
+                    facts.append(
+                        Fact.create(
+                            fact_id=f"FE-CRAFT-{len(facts)+1:03d}",
+                            code="UI_CRAFT_FLOOR_DEFICIT",
+                            category="UI_UX",
+                            fact_type="structural",
+                            severity="MEDIUM",
+                            summary=(
+                                f"Component `{rel}:{sline}` exhibits repetitive read-only `<label>/<p>` stacks "
+                                f"({readonly_label_p} fields) separated by {sep_count} `<Separator>` dividers "
+                                f"instead of structured semantic cards/forms."
+                            ),
+                            location=f"{rel}:{sline}",
+                            evidence=[
+                                EvidenceRef(
+                                    kind="code",
+                                    level="L1",
+                                    derivation=derivation_mode,
+                                    ref=f"{rel}:{sline}",
+                                    line=sline,
+                                    excerpt=sexcerpt,
+                                )
+                            ],
+                            attrs={"separators": sep_count, "readonly_fields": readonly_label_p},
+                        )
+                    )
+
+                # Monolithic UI God-Component check (> 1200 lines)
+                if len(lines) > 1200:
+                    facts.append(
+                        Fact.create(
+                            fact_id=f"FE-GOD-{len(facts)+1:03d}",
+                            code="MONOLITHIC_UI_GOD_COMPONENT",
+                            category="ARCHITECTURE",
+                            fact_type="structural",
+                            severity="HIGH",
+                            summary=(
+                                f"UI module `{rel}:1` is a {len(lines)}-line monolithic God-component that couples "
+                                f"multiple domain workflows without modular sub-components or strategy boundaries."
+                            ),
+                            location=f"{rel}:1",
+                            evidence=[
+                                EvidenceRef(
+                                    kind="code",
+                                    level="L1",
+                                    derivation=derivation_mode,
+                                    ref=f"{rel}:1",
+                                    line=1,
+                                    excerpt=lines[0].strip()[:160] if lines else rel,
+                                )
+                            ],
+                            attrs={"line_count": len(lines)},
+                        )
+                    )
 
             # Hooks & HTTP client calls
             for hkm in HOOK_DEF_RE.finditer(text):
@@ -916,6 +1115,9 @@ class FrontendAnalyzer:
             "interfaces": interfaces,
             "components": components,
             "http_calls": http_calls,
+            "route_role_map": route_role_map,
+            "action_items": action_items,
+            "jsx_usages": jsx_usages,
             "ui_identifiers": ui_identifiers,
             "declared_routes": sorted(declared_set),
             "links": v1_links,
