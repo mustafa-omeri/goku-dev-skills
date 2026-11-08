@@ -38,7 +38,7 @@ const https = require('https');
 
 
 
-const VERSION = '1.31.0';
+const VERSION = '1.32.0';
 
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 
@@ -529,6 +529,12 @@ const SKILLS_MANIFEST = {
     desc: '45 editorial diagram types: architecture, architecture delta, sequence, ER, flowcharts as standalone HTML + inline SVG.',
     triggers: 'diyagram, mimari sema, sema ciz, akis diyagrami, diagram, architecture diagram, sequence diagram, er diagram, sankey, wardley',
   },
+
+  'spec-reconciler': {
+    category: 'Architecture / Fullstack',
+    desc: 'Cross-codebase scanner that reconciles live backend/frontend code with API docs and RFCs, highlights PRD discrepancies, and provides interactive planning.',
+    triggers: '/spec-reconcile, spec reconcile, [SPEC-RECONCILE], api dokumanlarini guncelle, rfc guncelle, sartname celiskisi, reconcile specs, sync api docs',
+  },
 };
 
 
@@ -567,7 +573,7 @@ const PROFILES = {
 
     name: 'Fullstack / All',
 
-    desc: 'All 44 skills, 20 rules, 55 component themes & 16 validation gates (~65 MB)',
+    desc: 'All 47 skills, 21 rules, 55 component themes & 16 validation gates (~65 MB)',
 
     skills: Object.keys(SKILLS_MANIFEST),
 

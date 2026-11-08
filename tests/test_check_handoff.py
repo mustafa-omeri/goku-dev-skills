@@ -138,6 +138,17 @@ def test_error_scenarios():
         errors, warnings = gate.validate_handoff(tmp_root)
         check("W1 tetikleniyor (§3 içinde ✅ BİTTİ satırı)", "W1" in codes(warnings))
 
+        # 5. W3: docs/plans/ altındaki onaylı planda yer alan görevler HANDOFF'tan buharlaşmış
+        plan_dir = tmp_root / "docs" / "plans"
+        plan_dir.mkdir(parents=True, exist_ok=True)
+        (plan_dir / "master_plan.md").write_text(
+            "# Master Plan\n- OCAI-FEAT-001: Radar\n- OCAI-FEAT-002: Nudge\n",
+            encoding="utf-8"
+        )
+        (tmp_root / "HANDOFF.md").write_text(VALID_HANDOFF, encoding="utf-8")
+        errors, warnings = gate.validate_handoff(tmp_root)
+        check("W3 tetikleniyor (Plandaki OCAI-FEAT-001/002 HANDOFF içinde yok)", "W3" in codes(warnings))
+
 
 def test_git_diff_e3_and_w2():
     print("=== TEST 4: Git çalışma ağacı E3 (kod değişti HANDOFF güncellenmedi) ve W2 ===")

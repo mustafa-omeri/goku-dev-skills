@@ -12,6 +12,7 @@ Denetlenen Hata ve Uyarı Kodları:
   E4 - HANDOFF.md üst bilgi/özet alanında doldurulmamış şablon yer tutucusu ([YYYY-MM-DD], [Ajan Adı] vb.).
   W1 - §3 Sıradaki İşler aktif görev tablosunda tamamlanmış (✅ BİTTİ / TAMAMLANDI) satır bırakılmış.
   W2 - Git çalışma ağacında arayüz (UI) bileşeni değiştiği halde docs/KULLANICI_TEST_REHBERI.md mevcut değil.
+  W3 - docs/plans/ altındaki onaylı planda yer alan görevler HANDOFF.md içinde bulunamadı (Task Eviction / Buharlaşma).
 """
 import argparse
 import re
@@ -71,6 +72,40 @@ NEXT_WORK_HEADING_RE = re.compile(
 )
 ANY_HEADING_RE = re.compile(r"^(#{2,3})\s+\S", re.MULTILINE)
 COMPLETED_ROW_RE = re.compile(r"^\|[^|]*\|[^|]*(?:✅\s*(?:BİTTİ|TAMAMLANDI)|\[x\]\s*BİTTİ)\b", re.IGNORECASE | re.MULTILINE)
+PLAN_TASK_ID_RE = re.compile(r"\b([A-Z0-9]{2,10}-(?:FEAT|TASK|BUG|US|PL|ARCH|PO|UX|QA|GRW)-[0-9]{2,4})\b")
+
+
+def _check_plan_eviction(root: Path, handoff_text: str) -> List[Tuple[str, str]]:
+    """docs/plans/ veya SPRINT_PLAN.md içindeki plan görevlerinin HANDOFF'tan buharlaşmasını (Task Eviction) denetler."""
+    warnings: List[Tuple[str, str]] = []
+    plan_dirs = [root / "docs" / "plans", root / ".agent" / "plans"]
+    plan_files: List[Path] = []
+
+    for pdir in plan_dirs:
+        if pdir.is_dir():
+            for pfile in pdir.rglob("*.md"):
+                if "archive" not in str(pfile).lower():
+                    plan_files.append(pfile)
+
+    for plan_file in plan_files:
+        try:
+            content = plan_file.read_text(encoding="utf-8", errors="replace")
+        except Exception:
+            continue
+
+        plan_ids = set(PLAN_TASK_ID_RE.findall(content))
+        # Yalnızca en az 2 deterministik görev ID'si tanımlanmış gerçek planları denetle
+        if len(plan_ids) >= 2:
+            present_in_handoff = [tid for tid in plan_ids if tid in handoff_text]
+            if not present_in_handoff:
+                sample_missing = ", ".join(sorted(plan_ids)[:3])
+                warnings.append((
+                    "W3",
+                    f"'{plan_file.relative_to(root)}' onaylı planındaki görevler ({sample_missing}...) "
+                    f"HANDOFF.md içinde bulunamadı (Task Eviction / Buharlaşma Riski). "
+                    f"Plandaki işler HANDOFF.md §3 canlı panosuna veya Gelecek Fazlar tablosuna mühürlenmelidir.",
+                ))
+    return warnings
 
 
 def is_in_scope(root: Path) -> Tuple[bool, str]:
@@ -230,6 +265,9 @@ def validate_handoff(root: Path, ignore_git_diff: bool = False) -> Tuple[List[Tu
                     f"Git çalışma ağacında UI bileşeni değişti ({changed_ui_files[0]}) "
                     f"ancak docs/KULLANICI_TEST_REHBERI.md mevcut değil.",
                 ))
+
+    # W3: Onaylı plan görevlerinin HANDOFF'tan buharlaşması kontrolü
+    warnings.extend(_check_plan_eviction(root, text))
 
     return errors, warnings
 

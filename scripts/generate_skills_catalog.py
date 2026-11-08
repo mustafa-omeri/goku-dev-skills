@@ -117,7 +117,7 @@ CATEGORIES = {
 
         "council", "seo-apply", "commitx", "gs-update",
 
-        "prelaunch", "prelaunch-update", "project-summary", "feature-architect"
+        "prelaunch", "prelaunch-update", "project-summary", "feature-architect", "spec-reconciler"
 
     ]
 

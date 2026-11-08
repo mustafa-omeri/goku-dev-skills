@@ -45,6 +45,21 @@ kapi:
      * ⛔ **Sprint Bitişi ≠ Ürün/Proje Bitişi:** "Mevcut sprint / görev bitti" ile "tüm proje tamamlandı" kesinlikle birbirine karıştırılamaz! Üzerinde çalışılan sprint veya özellik bittiğinde, PRD veya Yol Haritasındaki (Backlog) sıradaki sprint/özellik canlı panoya taşınır.
      * ⛔ **Biten İşlerin Sıradaki Bölümünü Kirletmesi Yasağı:** Tamamlanan işler `Sıradaki` bölümünde `✅ BİTTİ` olarak biriktirilmez; doğrudan `§1 Yapılanlar` veya `Geçmiş Sprintler Arşivi`ne aktarılır. `Sıradaki` tablosu yalnızca geleceğe ait açık işleri barındırır.
      * `Açık iş yok — proje tamamlandı.` ifadesi **yalnızca ve yalnızca** PRD ve yol haritasındaki tüm fazlar %100 bittiğinde yazılabilir.
+   - **Sözlü Hafıza Beyanı Yasağı (Anti-Memory Illusion):**
+     * ⛔ Ajanın kullanıcıya *"hafızamda"*, *"aklımda"*, *"merak etmeyin unutmam"* gibi soyut, asılsız sözlü güvenceler vermesi **AĞIR İHLALDIR**. LLM'lerin biyolojik hafızası yoktur; bağlam kaydığında veya oturum bölündüğünde tüm sohbet içi vaatler buharlaşır.
+     * ✅ Ajanın tek hafızası **diskteki dosyalardır**. Kullanıcı "unutmayacağını kanıtla" dediğinde, ajan tüm görevleri deterministik ID'lerle (`[DOM]-[TIP]-[NO]`) `HANDOFF.md` §3 Canlı Görev Panosu veya Gelecek Fazlar tablosuna mühürler ve kullanıcıya **dosya yolu ve satır aralığıyla** kanıt sunar (`file:///path/to/HANDOFF.md#L...`).
+   - **Sıfır-Buharlaşma ve İki Kademeli Pano Kuralı (Zero-Eviction Master Board & Interruption Resilience):**
+     * Planlama (`/plan`, `/feature-architect` vb.) sonrasında onaylanan tüm maddeler eksiksiz olarak `HANDOFF.md` §3 canlı panosuna veya hemen altındaki `📌 Gelecek Fazlar & Onaylı Master Plan Backlog` tablosuna kaydedilir.
+     * Araya acil kullanıcı istekleri, anlık hata düzeltmeleri (hotfix) veya yeni bulgular (`BUG`) girdiğinde:
+       1. `🎯 1. ⏭️ [Araya Giren Acil Görev]` en üst sıraya alınır.
+       2. Onaylı master planın kalan maddeleri **ASLA panodan silinemez, ezilemez veya buharlaştırılamaz**. Alt sıralara (`2. ⬜`, `3. ⬜`...) veya `📌 Gelecek Fazlar & Onaylı Master Plan Backlog` tablosuna ötelenir.
+   - **"Nerede Kaldık?" Derin Kurtarma Protokolü (Deep Recovery Protocol):**
+     * Kullanıcı *"nerede kaldık?"*, *"durum ne?"*, *"sıradaki işler ne?"* dediğinde ajan yalnızca `HANDOFF.md`'nin en altındaki son 1-2 satıra bakamaz (Sığ Okuma Tuzağı).
+     * Ajan şu sırayla derin tarama yapar:
+       1. `HANDOFF.md` §3 Canlı Görev Panosu ve hemen altındaki Gelecek Fazlar tablosu,
+       2. `docs/plans/` (veya `SPRINT_PLAN.md`) altındaki aktif onaylı master planlar,
+       3. `docs/KULLANICI_TEST_REHBERI.md` doğrulanmamış senaryoları.
+       Tüm açık maddeleri konsolide ederek kullanıcıya eksiksiz durum ve sıradaki adımı raporlar.
    - **Güncellik kanıtı kuralı:** Gerçekte ölçülmüş sayılar (test sayısı, 0 typecheck hatası, chunk kB boyutları) yazılır.
    - ⛔ **Katman Bütünlüğü & Sahte Bitti Yasağı:** Bir sprint veya özelliğin 'BİTTİ / TAMAMLANDI' olarak kaydedilebilmesi için Katman Denetimi Matrisinde (DB, View/RPC, İstemci, UI, Yönetim/Admin Formu) hiçbir '❌ Yok' veya '⚠️ Yarım' bulunmaması şarttır. Herhangi bir katmanı eksik veya TODO olan bir iş için 'BİTTİ' yazılamaz; durum açıkça 'YARIM (Eksik Katman: ...)' olarak belirtilmeli ve eksik katman §3 Sıradaki İşler tablosuna ilk sıradan kaydedilmelidir.
 3. Kullanıcıya **HANDOFF & KB RAPORU** bloğunu yanıtta açıkça göster.
@@ -79,6 +94,7 @@ python .agent/skills/musgoku/scripts/check_handoff.py
 | `E4` | Hata (exit 1) | `HANDOFF.md` başlık/özet alanında doldurulmamış şablon yer tutucusu (`[YYYY-MM-DD]`, `[Ajan Adı]` vb.) bırakıldı. |
 | `W1` | Uyarı | `§3 Sıradaki İşler` aktif görev panosunda tamamlanmış (`✅ BİTTİ` / `TAMAMLANDI`) satır temizlenmeden bırakıldı. |
 | `W2` | Uyarı | Git çalışma ağacında arayüz bileşeni (`.tsx`, `.jsx`, `.vue`, `.svelte`) değiştiği halde `docs/KULLANICI_TEST_REHBERI.md` mevcut değil. |
+| `W3` | Uyarı | `docs/plans/` altındaki onaylı planda yer alan görevler `HANDOFF.md` içinde bulunamadı (Task Eviction / Buharlaşma Riski). |
 
 ## Bu kuralın istisnası
 
