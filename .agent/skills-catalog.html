@@ -4234,6 +4234,11 @@
 
           </button>
 
+          <button class="btn-header-cmd" style="background:linear-gradient(135deg, rgba(59,130,246,0.18) 0%, rgba(139,92,246,0.18) 100%); border-color:var(--accent-primary); color:var(--text-primary); font-weight:600;" onclick="openQuickstartModal()" title="Bu skillset başka bir projede nasıl başlatılır? Sıralı playbook ve anayasal standartlar">
+            <span style="font-size:0.95rem;">🚀</span>
+            <span>Başka Projede Başlat (Playbook)</span>
+          </button>
+
         </div>
 
       </header>
@@ -4254,6 +4259,17 @@
             <span style="font-family:var(--font-mono); font-size:0.72rem; color:var(--status-info); background:var(--bg-surface-elevated); padding:2px 8px; border-radius:4px; border:1px solid var(--border-subtle);">check_aviation_docs: [OK]</span>
             <span style="font-family:var(--font-mono); font-size:0.72rem; color:var(--status-success); background:var(--bg-surface-elevated); padding:2px 8px; border-radius:4px; border:1px solid var(--border-subtle);">OLCULEBILIR</span>
           </div>
+        </div>
+
+        <!-- Universal Portability & Pre-Action Standard Guidance Strip -->
+        <div class="portability-guidance-strip" style="background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); border-left:4px solid var(--accent-primary); border-radius:var(--radius-sm); padding:0.6rem 0.95rem; margin-bottom:0.75rem; display:flex; align-items:center; justify-content:space-between; gap:0.75rem; font-size:0.8rem;">
+          <div style="display:flex; align-items:center; gap:0.6rem; color:var(--text-primary); flex-wrap:wrap;">
+            <span style="font-size:1.15rem; line-height:1;">🌐</span>
+            <span><strong>Evrensel Taşınabilirlik & Çoklu Proje Uyumluluğu:</strong> Bu skillset bağımsızdır; herhangi bir projeye 3 adımda kurulabilir. Koda dokunmadan önce <code>AGENTS.md §0.1</code> Pre-Action Standard Lookup matrisi tüm projelerde kuralları bağlar.</span>
+          </div>
+          <button onclick="openQuickstartModal()" style="background:var(--accent-primary); color:#fff; border:none; border-radius:var(--radius-sm); padding:4px 12px; font-size:0.75rem; font-weight:600; cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;">
+            <span>Rehberi Aç ➜</span>
+          </button>
         </div>
 
         <!-- Quick Slash Ribbon (Taşmayan Yerleşim - B.9 Adaptive Action Hub) -->
@@ -4531,6 +4547,129 @@
   <div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop" onclick="closeMobileDrawer()"></div>
 
 
+
+  <!-- 6. UNIVERSAL QUICKSTART & PORTABILITY MODAL -->
+  <div class="cmd-palette-backdrop" id="quickstartModalBackdrop" onclick="closeQuickstartModal()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:9998; backdrop-filter:blur(4px);"></div>
+  <div class="quickstart-modal" id="quickstartModal" role="dialog" aria-modal="true" aria-labelledby="quickstartModalTitle" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:min(900px, 94vw); max-height:88vh; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); box-shadow:0 24px 60px rgba(0,0,0,0.5); z-index:9999; flex-direction:column; overflow:hidden;">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:1rem 1.25rem; border-bottom:1px solid var(--border-subtle); background:var(--bg-surface-elevated);">
+      <div style="display:flex; align-items:center; gap:0.6rem;">
+        <span style="font-size:1.3rem;">🚀</span>
+        <h3 id="quickstartModalTitle" style="margin:0; font-size:1.05rem; font-weight:700; color:var(--text-primary);">Başka Projede Başlatma & Evrensel Standartlar Rehberi</h3>
+      </div>
+      <button onclick="closeQuickstartModal()" style="background:none; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer; padding:4px 8px; border-radius:4px;" title="Kapat (Esc)">✕</button>
+    </div>
+    <div style="padding:1.25rem; overflow-y:auto; font-size:0.85rem; line-height:1.55; color:var(--text-secondary); display:flex; flex-direction:column; gap:1.25rem;">
+      <div style="background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:1rem;">
+        <h4 style="margin:0 0 0.5rem 0; color:var(--text-primary); font-size:0.92rem; display:flex; align-items:center; gap:0.4rem;">
+          <span>🌐</span> 1. Evrensel Taşınabilirlik & Global Standart İlkesi
+        </h4>
+        <p style="margin:0 0 0.5rem 0;">Bu skillset (<code>goku-dev-skills</code>) tek bir projeye bağımlı <strong>değildir</strong>. Tek Gerçek Kaynak (Single Source of Truth) <code>skillSetWorks</code> deposudur. Yapılan tüm kural ve kapı geliştirmeleri doğrudan çekirdeğe işlenir ve ister <code>npx goku-dev-skills init</code> ile sıfırdan kurulan bir projede, ister mevcut bir kurumsal repoda aynı anayasal güçle çalışır.</p>
+        <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">💡 <em>delivery.py yalnızca yerel geliştirme köprüsüdür; npm CLI paketi üzerinden tüm projeler bağımsız olarak güncellenebilir.</em></p>
+      </div>
+
+      <div style="background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:1rem;">
+        <h4 style="margin:0 0 0.75rem 0; color:var(--text-primary); font-size:0.92rem; display:flex; align-items:center; gap:0.4rem;">
+          <span>📋</span> 2. Başka Bir Projede Sıfırdan Başlatma Playbook'u (FAA AC 121-24C)
+        </h4>
+        <div style="display:flex; flex-direction:column; gap:0.75rem;">
+          <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+            <span style="background:var(--accent-primary); color:#fff; font-weight:700; border-radius:50%; width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0;">1</span>
+            <div style="flex:1;">
+              <strong style="color:var(--text-primary);">Hedef Projede Kurulumu Çalıştırın:</strong>
+              <div style="background:#000; color:#34d399; font-family:var(--font-mono); font-size:0.78rem; padding:6px 10px; border-radius:4px; margin-top:4px; display:flex; justify-content:space-between; align-items:center;">
+                <code>npx goku-dev-skills init</code>
+                <button onclick="copyToClipboard('npx goku-dev-skills init', 'Komut kopyalandı!')" style="background:rgba(255,255,255,0.15); border:none; color:#fff; border-radius:3px; padding:2px 6px; font-size:0.7rem; cursor:pointer;">Kopyala</button>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+            <span style="background:var(--accent-primary); color:#fff; font-weight:700; border-radius:50%; width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0;">2</span>
+            <div style="flex:1;">
+              <strong style="color:var(--text-primary);">Proje Yaşam Belgelerini Açın (Şablonlardan):</strong>
+              <p style="margin:2px 0 4px 0; font-size:0.78rem;">Oturum sürekliliği ve doğrulama için <code>.agent/templates/</code> altından köke kopyalayın:</p>
+              <div style="background:#000; color:#34d399; font-family:var(--font-mono); font-size:0.74rem; padding:6px 10px; border-radius:4px; display:flex; justify-content:space-between; align-items:center;">
+                <span>cp .agent/templates/HANDOFF.template.md ./HANDOFF.md &amp;&amp; cp .agent/templates/PROJECT_BRIEF.template.md ./PROJECT_BRIEF.md</span>
+                <button onclick="copyToClipboard('cp .agent/templates/HANDOFF.template.md ./HANDOFF.md &amp;&amp; cp .agent/templates/PROJECT_BRIEF.template.md ./PROJECT_BRIEF.md', 'Komut kopyalandı!')" style="background:rgba(255,255,255,0.15); border:none; color:#fff; border-radius:3px; padding:2px 6px; font-size:0.7rem; cursor:pointer;">Kopyala</button>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+            <span style="background:var(--accent-primary); color:#fff; font-weight:700; border-radius:50%; width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0;">3</span>
+            <div style="flex:1;">
+              <strong style="color:var(--text-primary);">AI Ajanı Başlatma Direktifi (Altın Prompt):</strong>
+              <div style="background:#0f172a; border:1px solid rgba(59,130,246,0.3); color:#93c5fd; font-size:0.78rem; padding:8px 10px; border-radius:4px; margin-top:4px; display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                <span>AGENTS.md sözleşmesine ve .agent/rules/ standartlarına uyarak projeyi analiz et ve HANDOFF.md üzerinden süreci başlat.</span>
+                <button onclick="copyToClipboard('AGENTS.md sözleşmesine ve .agent/rules/ standartlarına uyarak projeyi analiz et ve HANDOFF.md üzerinden süreci başlat.', 'Prompt kopyalandı!')" style="background:var(--accent-primary); border:none; color:#fff; border-radius:3px; padding:3px 8px; font-size:0.7rem; cursor:pointer; flex-shrink:0;">Kopyala</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:1rem;">
+        <h4 style="margin:0 0 0.5rem 0; color:var(--text-primary); font-size:0.92rem; display:flex; align-items:center; gap:0.4rem;">
+          <span>⚖️</span> 3. Koda Geçmeden Önce Zorunlu Standart Sorgulama (Pre-Action Standard Lookup)
+        </h4>
+        <p style="margin:0 0 0.6rem 0; font-size:0.8rem;">Ajan koda dokunmadan önce şu soruyu sormak ve alttaki kural dosyasını diskten okumakla anayasal olarak yükümlüdür:</p>
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:0.76rem; text-align:left;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border-subtle); color:var(--text-primary);">
+                <th style="padding:6px 8px;">Yapılacak Kod Eylemi</th>
+                <th style="padding:6px 8px;">Zorunlu İncelenecek Kural</th>
+                <th style="padding:6px 8px;">Doğrulama Kapısı</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 8px; font-weight:600;">Veritabanı / Entity / Kolon / Şema</td>
+                <td style="padding:6px 8px; font-family:var(--font-mono); color:var(--accent-primary);">db-migration-enforcement.md</td>
+                <td style="padding:6px 8px;">check_db_migrations.py</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 8px; font-weight:600;">Arayüz / CSS / Bileşen / Tema</td>
+                <td style="padding:6px 8px; font-family:var(--font-mono); color:var(--accent-primary);">design-skills-enforcement.md</td>
+                <td style="padding:6px 8px;">check_design_slop.py</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 8px; font-weight:600;">Yeni Servis / Endpoint / API</td>
+                <td style="padding:6px 8px; font-family:var(--font-mono); color:var(--accent-primary);">api-documentation-enforcement.md</td>
+                <td style="padding:6px 8px;">check_api_docs.py</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 8px; font-weight:600;">Görünen Metin / Başlık / Buton</td>
+                <td style="padding:6px 8px; font-family:var(--font-mono); color:var(--accent-primary);">i18n-enforcement.md</td>
+                <td style="padding:6px 8px;">i18n_checker.py</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 8px; font-weight:600;">Hata / Bug Çözümü / &quot;Çalışmıyor&quot;</td>
+                <td style="padding:6px 8px; font-family:var(--font-mono); color:var(--accent-primary);">bug-diagnosis-enforcement.md</td>
+                <td style="padding:6px 8px;">Kırmızı Test Döngüsü</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 8px; font-weight:600;">Yeni Özellik / Sprint / Dilim</td>
+                <td style="padding:6px 8px; font-family:var(--font-mono); color:var(--accent-primary);">sprint-delivery-workflow.md</td>
+                <td style="padding:6px 8px;">check_sprint_board.py</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 8px; font-weight:600;">Oturum Devri / Plan Görevleri</td>
+                <td style="padding:6px 8px; font-family:var(--font-mono); color:var(--accent-primary);">handoff-session-continuity.md</td>
+                <td style="padding:6px 8px;">check_handoff.py (W3 Guard)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25); border-radius:var(--radius-md); padding:0.85rem; font-size:0.78rem; display:flex; align-items:center; gap:0.6rem;">
+        <span style="font-size:1.2rem;">⚠️</span>
+        <div>
+          <strong style="color:var(--text-primary);">Zorunlu Teknik Ön Koşul (Python 3):</strong>
+          <span style="color:var(--text-secondary);"> 12 ölçülebilir kapının (exit code != 0) mekanik doğrulama yapabilmesi için hedef sistemde Python 3 kurulu olmalıdır.</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Toast Notification Container -->
 
@@ -6551,6 +6690,42 @@
 
 
 
+    function openQuickstartModal() {
+
+      const backdrop = document.getElementById('quickstartModalBackdrop');
+
+      const modal = document.getElementById('quickstartModal');
+
+      if (backdrop && modal) {
+
+        backdrop.style.display = 'block';
+
+        modal.style.display = 'flex';
+
+      }
+
+    }
+
+
+
+    function closeQuickstartModal() {
+
+      const backdrop = document.getElementById('quickstartModalBackdrop');
+
+      const modal = document.getElementById('quickstartModal');
+
+      if (backdrop && modal) {
+
+        backdrop.style.display = 'none';
+
+        modal.style.display = 'none';
+
+      }
+
+    }
+
+
+
     function filterCommandPalette(query) {
 
       const q = (query || '').toLowerCase().trim();
@@ -6728,6 +6903,8 @@
       }
 
       if (e.key === 'Escape') {
+
+        closeQuickstartModal();
 
         const sheet = document.getElementById('bottomSheetHub');
 
