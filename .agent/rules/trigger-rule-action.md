@@ -9,6 +9,11 @@ sinif: SUREC
 Bu kural, `.agent\rules\` altındaki diğer kuralları ve `skills\musgoku\`
 referanslarını **devreye sokar**. Aşağıdakilerin tamamına uyulur.
 
+## 0. Eylem Öncesi Standart Sorgulama İlkesi (Pre-Action Standard Lookup)
+
+⛔ **Körlemesine Koda Dalma Yasağı (No Blind Code Modification):**
+Ajan kod yazmaya, düzenlemeye veya refactoring yapmaya başlamadan önce *"Bu işlemle ilgili bu projede tanımlanmış bir standart/kural var mı?"* sorusunu sormak ve yapacağı eylemin alanına göre aşağıdaki kuralları diskten okuyup uygulamakla **YÜKÜMLÜDÜR**. İlgili kural dosyası okunmadan koda başlanamaz.
+
 ## A. Oturum ve kayıt kuralları (her zaman)
 
 | Konu | Kural |

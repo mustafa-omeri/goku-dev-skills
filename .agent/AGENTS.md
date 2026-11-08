@@ -27,6 +27,25 @@
 **Okuma kanıtı:** koda geçmeden önce geçerli kararları başlıklarıyla özetle ya da
 *"bu iş için geçerli bir karar bulamadım"* de. Hatırladığını yazma, uydurma.
 
+### 0.1 Koda Geçmeden Önce Zorunlu Standart Sorgulama (Pre-Action Standard Lookup)
+
+⛔ **Körlemesine Koda Dalma Yasağı (No Blind Code Modification):**
+Ajan kod yazmaya, düzenlemeye veya refactoring yapmaya başlamadan önce *"Bu işlemle ilgili bu projede tanımlanmış bir standart/kural var mı?"* sorusunu sormak ve yapacağı eylemin alanına göre aşağıdaki kural dosyasını diskten okuyup uygulamakla **YÜKÜMLÜDÜR**:
+
+| Yapılacak Eylem / Değişiklik | Zorunlu İncelenecek Standart Dosyası | Temel Kural & Kapı |
+|---|---|---|
+| **Veritabanı / Entity / Kolon / Şema** | `.agent/rules/db-migration-enforcement.md` | Entity ile SQL migration paritesi şart (`check_db_migrations.py`) |
+| **Arayüz / CSS / Bileşen / Tema / Sayfa** | `.agent/rules/design-skills-enforcement.md` | Inline renk/px yasak, Zero-CLS Skeleton şart (`check_design_slop.py`) |
+| **Yeni Servis / Endpoint / API / Rota** | `.agent/rules/api-documentation-enforcement.md` | Canlı kod ile `docs/APIs/` senkronu şart (`check_api_docs.py`) |
+| **Kullanıcı Metni / Başlık / Buton / Form** | `.agent/rules/i18n-enforcement.md` | Hardcoded metin yasak, sözlük senkronu şart (`i18n_checker.py`) |
+| **Frontend / Paket / SPA / Bundle Bütçesi** | `.agent/rules/frontend-bundle-limits.md` | Chunk <=500kB, Entry gzip <=200kB (`check_bundle_limits.py`, `check_vite_spa.py`) |
+| **Hata / Bug Çözümü / "Çalışmıyor"** | `.agent/rules/bug-diagnosis-enforcement.md` | Koda dokunmadan önce hatayı kanıtlayan kırmızı döngü şart |
+| **Yeni Özellik / Sprint / Görev / Dilim** | `.agent/rules/sprint-delivery-workflow.md` | Given-When-Then Gherkin + TDD kırmızı test şart (`check_sprint_board.py`) |
+| **Sadeleştirme / Refactoring / Ölü Kod** | `.agent/rules/no-unused-code.md` | Ölü kod temizliği, Karpathy cerrahi sadelik (`tsc`, `mvn`, `check-unused.ps1`) |
+| **Kılavuz / Kurulum / Nasıl Yapılır Yanıtı** | `.agent/rules/aviation-documentation-standard.md` | Sıfır lakırdı, 1-2-3 Eylem->Çıktı, Acil Durum Tablosu (`check_aviation_docs.py`) |
+| **Oturum Devri / Görev / Sıradaki İşler** | `.agent/rules/handoff-session-continuity.md` | Sözlü hafıza beyanı yasak, plan buharlaşması yasak (`check_handoff.py` W3) |
+| **Commit / Push / Sürüm Yayını** | `.agent/rules/mandatory-git-release-workflow.md` | Peşin kullanıcı onayı olmadan commit/push yasak |
+
 **Öncelik:** proje kökündeki `AGENTS.md` → bu dosya → `DEV_BRIEF.md`.
 Çelişmede proje kökü kazanır. Hiçbirinde olmayan bilgiyi uydurma — sor.
 
@@ -152,6 +171,7 @@ ve [`.agent\rules\project-brief-maintenance.md`](rules/project-brief-maintenance
 - **Sıradaki İşler (Canlı Görev Panosu):** [Varsa numaralı liste (1. ⏭️ ..., 2. ⬜ ...). Yalnızca mevcut sprint bittiyse PRD/Yol Haritasına göre sıradaki hedefi belirtin (örn. "Mevcut sprint tamamlandı. PRD'ye göre sıradaki: Sprint X"). YALNIZCA tüm PRD ve ürün fazları %100 bittiğinde "Açık iş yok — proje tamamlandı" yazılabilir.]
 - **Kullanılan MCP:** [context7 / sequential-thinking — ne için kullanıldı veya "kullanılmadı"]
 - **Aktif skill'ler:** [Okunan skill adları]
+- **Uygulanan Standartlar (Rules):** [Bu oturumda koda dokunmadan önce incelenen kural dosyaları: ör. db-migration-enforcement.md, i18n-enforcement.md veya "Kapsam dışı"]
 ```
 
 > 💡 **Rapor Çıktı Tetikleme Politikası:** Bu blok varsayılan olarak yalnızca **görev bitiminde (commit öncesi)**
