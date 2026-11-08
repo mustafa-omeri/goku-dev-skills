@@ -87,7 +87,7 @@ Work from the digest, not from sketch coordinates. In order:
 
 ## Worked example
 
-[`assets/example-import-excalidraw.html`](../assets/example-import-excalidraw.html) redraws `scripts/fixtures/sample-whiteboard.excalidraw` (10 IR nodes, 6 edges, 2 frames) at `format=html`, `size=doc-inline`, `detail=balanced`, `audience=mixed`.
+`assets/example-import-excalidraw.html` redraws `scripts/fixtures/sample-whiteboard.excalidraw` (10 IR nodes, 6 edges, 2 frames) at `format=html`, `size=doc-inline`, `detail=balanced`, `audience=mixed`.
 
 | Source | Output | Reason |
 |---|---|---|

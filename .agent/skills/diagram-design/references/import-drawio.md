@@ -128,7 +128,7 @@ Fresh layout on the 4px grid, per the type reference and SKILL.md §6–§7. Exp
 
 ## Worked example
 
-[`assets/example-import-drawio.html`](../assets/example-import-drawio.html) is the output of this procedure run on `scripts/fixtures/sample-architecture.drawio` (12 nodes, 8 edges, 2 container groups) at `format=html`, `size=doc-inline`, `detail=balanced`, `audience=mixed`.
+`assets/example-import-drawio.html` is the output of this procedure run on `scripts/fixtures/sample-architecture.drawio` (12 nodes, 8 edges, 2 container groups) at `format=html`, `size=doc-inline`, `detail=balanced`, `audience=mixed`.
 
 What the run decided, and why:
 
