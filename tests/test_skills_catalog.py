@@ -98,6 +98,23 @@ def run_tests() -> bool:
         f"Çıkış: {res.stdout.strip()} {res.stderr.strip()}" if res.returncode != 0 else "Freshness onaylandı"
     )
 
+    # TEST 6: Slash Komutları ve Özel Metadata Bütünlüğü
+    print("\n=== TEST 6: Slash Komutları ve Metadata Bütünlüğü ===")
+    from scripts.generate_skills_catalog import CATEGORIES, CONFIG_METADATA, SLASH_COMMANDS
+    cmd_names = [c["command"] for c in SLASH_COMMANDS]
+    check("/spec-reconcile slash komutu mevcut", "/spec-reconcile" in cmd_names)
+    check("/deploy-plan slash komutu mevcut", "/deploy-plan" in cmd_names)
+
+    missing_config = [s for s in skill_dirs if s not in CONFIG_METADATA]
+    check("Tüm skill'lerin CONFIG_METADATA kaydı var (sıfır kaçak)", len(missing_config) == 0, f"Eksikler: {missing_config}")
+
+    ensemble_skills = CATEGORIES.get("Oturum Komutları (Ensemble)", [])
+    bound_slash_skills = set()
+    for c in SLASH_COMMANDS:
+        bound_slash_skills.update(c.get("skills", []))
+    missing_ensemble = [s for s in ensemble_skills if s not in bound_slash_skills]
+    check("Tüm oturum komutları (Ensemble) bir slash komutuna bağlı", len(missing_ensemble) == 0, f"Bağlanmamış: {missing_ensemble}")
+
     print("\n" + "=" * 60)
     if failures:
         print(f"SONUÇ: {len(failures)} KONTROL BAŞARISIZ: {failures}")

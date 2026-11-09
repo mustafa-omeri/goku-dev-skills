@@ -349,7 +349,7 @@ python .agent/skills/musgoku/scripts/check_sprint_board.py""",
         "name": "Güvenlik, Savunma & İstismar Kalkanı",
         "badge": "Güvenlik & Savunma",
         "badge_class": "badge-danger",
-        "skills": ["security-audit", "development-workflow", "prelaunch-audit"],
+        "skills": ["check-security", "security-audit", "development-workflow", "prelaunch-audit"],
         "goal": "OWASP Zafiyet Avcılığı & Public Form 6-Katman Savunması",
         "description": "OWASP zafiyet avcılığı, public form kalkanı (Context Binding, Honeypot, Turnstile, Rate-limit, Sanitization, Blind Insert RLS) ve secrets/env sızıntı denetimi yürütür.",
         "sample_prompt": "/check-security: Sistem genelinde yetki aşımı, public form abuse riskleri ve env sızıntılarını derinlemesine tara.",
@@ -382,7 +382,7 @@ node .agent/skills/security-audit/scripts/validate-coverage-ledger.cjs""",
         "name": "Sistematik Hata Teşhis & Kırmızı Döngü",
         "badge": "Hata Teşhisi",
         "badge_class": "badge-warning",
-        "skills": ["diagnosing-bugs", "musgoku", "karpathy-guidelines"],
+        "skills": ["fix-bug", "diagnosing-bugs", "musgoku", "karpathy-guidelines"],
         "goal": "Önce Kırmızı Geri Bildirim Döngüsü & Cerrahi Onarım",
         "description": "Uygulama koduna dokunmadan önce hatayı deterministik olarak kanıtlayan kırmızı test/kanıt döngüsü kurar, 3 hipotez üretip sınar, cerrahi onarım yapar ve Karpathy gereksiz kod temizliği işletir.",
         "sample_prompt": "/fix-bug: Çöken endpoint için önce kırmızı geri bildirim döngüsü kur, 3 hipotez üret ve cerrahi düzeltme yap.",
@@ -482,7 +482,7 @@ node .agent/skills/prelaunch-audit/scripts/axe-runner.mjs https://example.com"""
         "name": "Mevzuat & Platform Kuralları Güncelleyici",
         "badge": "Mevzuat Senkronu",
         "badge_class": "badge-warning",
-        "skills": ["prelaunch-audit"],
+        "skills": ["prelaunch-update", "prelaunch-audit"],
         "goal": "Dinamik Mevzuat, İdari Para Cezası ve Bot Kuralları Senkronu",
         "description": "KVKK yeniden değerleme oranı idari para cezaları, 7499 s. Kanun bildirim limitleri, Ticaret Bakanlığı 28/B kuralları ve Google Search / AI crawler değişikliklerini resmi kaynaklardan sorgulayıp referans dosyalarını cerrahi günceller.",
         "sample_prompt": "/prelaunch-update: Güncel KVKK ve GDPR idari para cezalarını resmi tebliğlerden sorgula ve dokümanları güncelle.",
@@ -513,7 +513,7 @@ python .agent/skills/prelaunch-audit/scripts/prelaunch_updater.py --generate-pro
         "name": "Uçtan Uca SEO & GEO (AI Search) Altyapısı",
         "badge": "SEO & Growth",
         "badge_class": "badge-accent",
-        "skills": ["seo-growth", "frontend-design"],
+        "skills": ["seo-apply", "seo-growth", "frontend-design"],
         "goal": "Teknik SEO, JSON-LD Schema.org & AI Crawler (/llms.txt) Kurulumu",
         "description": "Kod tabanına bizzat girer; semantik meta başlık (50-60 kr), açıklama (120-155 kr), canonical, OpenGraph, JSON-LD Schema.org, AI crawler robots.txt, sitemap.xml ve /llms.txt dosyalarını üretip seo_checker.py --strict ile doğrular.",
         "sample_prompt": "/seo-apply: Sitemiz için JSON-LD şemaları, OpenGraph etiketleri, robots.txt ve llms.txt dosyalarını kur ve doğrula.",
@@ -543,7 +543,7 @@ python .agent/skills/seo-growth/scripts/seo_checker.py --strict""",
         "name": "Peşin Yetkili Otonom Sürüm Yayını",
         "badge": "Sürüm & Git",
         "badge_class": "badge-success",
-        "skills": ["git-release-workflow"],
+        "skills": ["commitx", "git-release-workflow"],
         "goal": "Ara Onaysız Otomatik Kapı Doğrulaması, Commit, Semver Tag & Push",
         "description": "Kullanıcının peşin yetkisiyle kapsam-duyarlı doğrulama kapılarını çalıştırır; ara onay sormadan git add → git commit → semantik git tag (vX.Y.Z) → git push zincirini kesintisiz tamamlar.",
         "sample_prompt": "commitx: Değişiklikleri doğrula, semantik tag artır ve uzak depoya push et.",
@@ -669,12 +669,126 @@ python .agent/skills/feature-architect/scripts/council_merger.py --sample --form
             }
         ],
         "category": "Marka & Doküman"
+    },
+    {
+        "command": "/spec-reconcile",
+        "aliases": ["/spec-reconcile", "spec reconcile", "[SPEC-RECONCILE]", "api dokümanlarını güncelle", "rfc güncelle", "şartname çelişkisi", "reconcile specs", "sync api docs"],
+        "name": "Global Çapraz Kod & Şartname Eşitleme Motoru",
+        "badge": "API & Spec Drift",
+        "badge_class": "badge-accent",
+        "skills": ["spec-reconciler", "doc-coauthoring", "domain-modeling", "codebase-design"],
+        "goal": "Canlı Kod vs docs/APIs vs RFC vs PRD Çelişki Tespiti & İnteraktif Uzlaşma Planı",
+        "description": "Backend ve frontend kod tabanlarını çift taraflı tarayarak canlı kod ile RFC, PRD ve docs/APIs/ arasındaki sapmaları (Documentation Drift / Spec Drift / Contract Mismatch) ortaya çıkarır; geliştiriciye her çelişki için karar alanı açan interaktif uzlaşma planı (Artifact) sunar.",
+        "sample_prompt": "/spec-reconcile: Backend ve frontend arasındaki API sözleşmesi kopukluklarını ve RFC şartname çelişkilerini tara, uzlaşma planı çıkar.",
+        "protocol": "1. reconcile_scanner.py -> Backend/Frontend kod ve doküman çift taraflı taraması ➜ 2. 3-Yönlü Çelişki Tespiti -> Docs drift, contract mismatch ve spec contradiction analizi ➜ 3. İnteraktif Uzlaşma Planı -> Karar seçenekli plan artifact'i (request_feedback) ➜ 4. Proceed İcrası -> docs/APIs/ ve RFC revizyonu",
+        "usage_snippet": """# Sohbette Doğrudan Tetikleme:
+/spec-reconcile
+spec reconcile
+[SPEC-RECONCILE]
+
+# Deterministik CLI Tarama Motoru:
+python .agent/skills/spec-reconciler/scripts/reconcile_scanner.py
+python .agent/skills/spec-reconciler/scripts/reconcile_scanner.py --json
+python .agent/skills/spec-reconciler/scripts/reconcile_scanner.py --backend <be-path> --frontend <fe-path> --docs-api docs/APIs --rfcs docs/rfc --prd PRODUCT.md""",
+        "emergency": [
+            {
+                "symptom": "reconcile_scanner.py backend veya frontend rotalarını bulamadı",
+                "cause": "Framework (Spring Boot / Express / FastAPI / Next.js) rota anotasyonları standart dışı dizinde.",
+                "action": "--backend ve --frontend bayraklarıyla rota dizinlerini açıkça belirtin."
+            },
+            {
+                "symptom": "API dokümanı ile canlı kod arasında aşırı çelişki çıktı",
+                "cause": "Büyük refactoring sonrası docs/APIs/ güncellenmemiş (Documentation Drift).",
+                "action": "reconcile_scanner.py çıktısındaki Seçenek A (Koda Uydur) önerilerini onaylayarak dokümanları senkronize edin."
+            }
+        ],
+        "category": "Marka & Doküman"
+    },
+    {
+        "command": "/deploy-plan",
+        "aliases": ["/deploy-plan", "deploy plan", "[DEPLOY-PLAN]", "deployment planı", "vps kurulumu", "prod config hazırla", "rollback planı"],
+        "name": "Üretim Dağıtım & Altyapı Orkestratörü",
+        "badge": "DevOps & Dağıtım",
+        "badge_class": "badge-primary",
+        "skills": ["deployment-architect", "production-docker-architect", "prelaunch"],
+        "goal": "5 Katmanlı DEPLOYMENT_PLAN.md, Ters Proxy, Pre-deploy DB Hook & Rollback Playbook",
+        "description": "VPS, PaaS, Cloud Container ve hibrit mimariler (React + Spring Boot vb.) için Nginx ters proxy, SSL, .env.production, DB migration pre-deploy hook ve acil durum rollback playbook içeren 5 katmanlı DEPLOYMENT_PLAN.md üretir.",
+        "sample_prompt": "/deploy-plan: Spring Boot ve React mimarimiz için VPS üretim dağıtım planı, Nginx konfigürasyonu ve rollback playbook'u hazırla.",
+        "protocol": "1. Stack & Altyapı Analizi -> Yığın ve hedef ortam (VPS, PaaS, K8s) tespiti ➜ 2. 5 Katmanlı Dağıtım Planı -> DEPLOYMENT_PLAN.md üretimi ➜ 3. Güvenlik & Konfigürasyon -> .env.production.template ve Nginx/SSL ➜ 4. Rollback Playbook -> Kesinti anında acil geri alma prosedürü",
+        "usage_snippet": """# Sohbette Doğrudan Tetikleme:
+/deploy-plan
+deployment planı
+[DEPLOY-PLAN]""",
+        "emergency": [
+            {
+                "symptom": "Dağıtım sonrası veritabanı bağlantı hatası",
+                "cause": ".env.production ortam değişkenleri veya DB migration pre-deploy hook çalışmamış.",
+                "action": "DEPLOYMENT_PLAN.md §3 altındaki ortam değişkenlerini ve migration komutlarını kontrol edin."
+            },
+            {
+                "symptom": "Nginx 502 Bad Gateway dönüyor",
+                "cause": "Backend servisi henüz ayağa kalkmadı veya port eşleşmesi hatalı.",
+                "action": "systemctl status ve docker compose logs ile backend portunu doğrulayın."
+            }
+        ],
+        "category": "Teslimat & Kalite"
     }
 ]
 
 
 
 CONFIG_METADATA = {
+    "diagram-design": {
+        "status": "45 Görsel Tip & Vektör",
+        "badge_class": "badge-accent",
+        "file": "skills/diagram-design/ (assets + references + scripts)",
+        "features": [
+            "45 Editoryal Diyagram Tipi (Mimari, C4, Sequence, ER, Sankey, Wardley)",
+            "HTML & Standalone Inline SVG Çıktısı",
+            "Excalidraw, Draw.io ve Mermaid Çift Taraflı İçe/Dışa Aktarım",
+            "Tasarım Token ve Tema Uyumu",
+            "A11y ve Kontrast Doğrulama Betikleri"
+        ],
+        "detail": "Yazılım mimarisi, ER veri modelleri, akış şemaları ve teknik sunumlar için 45 farklı tipte editoryal kalitede SVG ve HTML diyagramlar üretir.",
+        "sample_prompt": "Sistemimiz için kullanıcı kimlik doğrulama akışını gösteren sequence diyagramı ve C4 mimari şeması çiz.",
+        "config_snippet": """# Diyagram Doğrulama ve SVG Dışa Aktarım:
+python .agent/skills/diagram-design/scripts/export_svg.py
+python .agent/skills/diagram-design/scripts/self_check.py"""
+    },
+    "spec-reconciler": {
+        "status": "API & Spec Drift",
+        "badge_class": "badge-accent",
+        "file": "reconcile_scanner.py + docs/APIs/ + docs/rfc/ + PRODUCT.md",
+        "features": [
+            "3-Yönlü Çelişki Tespiti (Docs Drift, Contract Mismatch, Spec Contradiction)",
+            "Çift Taraflı Kod Taraması (Backend & Frontend Eşzamanlı)",
+            "reconcile_scanner.py Deterministik CLI Motoru",
+            "İnteraktif Uzlaşma Planı (Artifact Plan with User Feedback)",
+            "docs/APIs/ & RFC As-Built Senkronizasyonu"
+        ],
+        "detail": "Backend ve frontend kod tabanlarını çapraz tarayarak canlı kod ile RFC, PRD ve docs/APIs/ dokümanları arasındaki sapmaları tespit eder ve kullanıcı kararıyla interaktif uzlaşma planı üretir.",
+        "sample_prompt": "/spec-reconcile: API dokümanları ile canlı kod arasındaki farkları tara ve uzlaşma planı hazırla.",
+        "config_snippet": """# Specification & API Reconciler CLI Motoru:
+python .agent/skills/spec-reconciler/scripts/reconcile_scanner.py
+python .agent/skills/spec-reconciler/scripts/reconcile_scanner.py --json
+python .agent/skills/spec-reconciler/scripts/reconcile_scanner.py --backend <be-path> --frontend <fe-path> --docs-api docs/APIs --rfcs docs/rfc --prd PRODUCT.md"""
+    },
+    "deployment-architect": {
+        "status": "DevOps & Dağıtım",
+        "badge_class": "badge-primary",
+        "file": "DEPLOYMENT_PLAN.md + .env.production.template",
+        "features": [
+            "5 Katmanlı DEPLOYMENT_PLAN.md",
+            "Nginx & SSL Ters Proxy Yapılandırması",
+            "Pre-deploy DB Migration Hook Garantisi",
+            "Acil Durum Rollback Playbook",
+            "Hibrit Mimari Desteği (React + Spring Boot / Next.js)"
+        ],
+        "detail": "VPS, PaaS ve Cloud Container dağıtımları için üretim altyapısını, ters proxy'yi, ortam değişkenlerini ve geri alma planlarını hazırlar.",
+        "sample_prompt": "/deploy-plan: Spring Boot ve React mimarimiz için VPS üretim dağıtım planı ve rollback rehberi hazırla.",
+        "config_snippet": """# Dağıtım Planı Üretimi:
+/deploy-plan"""
+    },
     "feature-architect": {
         "status": "Ürün & 6 Şapkalı Konsey",
         "badge_class": "badge-accent",
@@ -7175,6 +7289,16 @@ def generate_catalog_html(skills: list[dict]) -> str:
                 <td style="padding:6px 8px; font-weight:600;">Yeni Servis / Endpoint / API</td>
                 <td style="padding:6px 8px; font-family:var(--font-mono); color:var(--accent-primary);">api-documentation-enforcement.md</td>
                 <td style="padding:6px 8px;">check_api_docs.py</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 8px; font-weight:600;">Şartname / API / RFC Senkronu (Spec Drift)</td>
+                <td style="padding:6px 8px; font-family:var(--font-mono); color:var(--accent-primary);">spec-reconciler (SKILL.md)</td>
+                <td style="padding:6px 8px;">reconcile_scanner.py &amp; /spec-reconcile</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 8px; font-weight:600;">Üretim Dağıtım / VPS / Docker</td>
+                <td style="padding:6px 8px; font-family:var(--font-mono); color:var(--accent-primary);">deployment-architect (SKILL.md)</td>
+                <td style="padding:6px 8px;">/deploy-plan &amp; DEPLOYMENT_PLAN.md</td>
               </tr>
               <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
                 <td style="padding:6px 8px; font-weight:600;">Görünen Metin / Başlık / Buton</td>
