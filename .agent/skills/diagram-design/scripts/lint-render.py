@@ -592,8 +592,8 @@ SVG_CASES = [
     (
         "rounded-wrapper",
         '<rect x="10" y="10" width="100" height="40" fill="#000"/>',
-        "background:#eee",
-        '<div style="overflow:hidden;border-radius:12px;padding:40px;background:#222;width:280px">',
+        "background:var(--bg-canvas, #eee)",
+        '<div style="overflow:hidden;border-radius:12px;padding:40px;background:var(--bg-card, #222);width:280px">',
         False,
     ),
     # An authored inline transform must survive the scale pass untouched.
@@ -614,7 +614,7 @@ FIXTURE_PAGE = """
 
 # Enough filler to push the svg below a 1000px-tall viewport, so the paired
 # above/below-fold cases exercise scrolled measurement.
-BELOW_FOLD_FILLER = '<div style="height:1800px;background:#eee"></div>'
+BELOW_FOLD_FILLER = '<div style="height:1800px;background:var(--bg-canvas, #eee)"></div>'
 
 
 def fixture_html(markup, svg_style="", wrapper=None, filler=""):

@@ -349,7 +349,7 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
 
     # E3: Side Accent on Rounded Card
     for idx, line in enumerate(lines, start=1):
-        if SIDE_ACCENT_TW_RE.search(line):
+        if ("border-" in line or "border_" in line) and "rounded" in line and SIDE_ACCENT_TW_RE.search(line):
             errors.append({
                 "code": "E3",
                 "rule": "side-accent",
@@ -465,7 +465,7 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
 
     # E11: AI-slop background blur orb
     for idx, line in enumerate(lines, start=1):
-        if BLUR_ORB_TW_RE.search(line):
+        if "blur-" in line and "rounded-full" in line and ("absolute" in line or "fixed" in line) and BLUR_ORB_TW_RE.search(line):
             errors.append({
                 "code": "E11",
                 "rule": "blur-orb-slop",

@@ -38,6 +38,7 @@ TEST_SCRIPTS = [
     ("Test Clean URL Routing", HERE / "test_clean_url_routing.py"),
     ("Test Feature Architect Six-Hat Council", HERE / "test_feature_architect_council.py"),
     ("Test Feature Architect v2 Benchmark & Purity", HERE / "test_feature_architect_bench.py"),
+    ("Test Python Design Audit", HERE / "test_py_design_audit.py"),
 ]
 
 
