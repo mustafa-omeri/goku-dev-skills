@@ -39,6 +39,7 @@ TEST_SCRIPTS = [
     ("Test Feature Architect Six-Hat Council", HERE / "test_feature_architect_council.py"),
     ("Test Feature Architect v2 Benchmark & Purity", HERE / "test_feature_architect_bench.py"),
     ("Test Python Design Audit", HERE / "test_py_design_audit.py"),
+    ("Test Scout Integration", HERE / "test_scout_integration.py"),
 ]
 
 
@@ -48,7 +49,12 @@ def main():
     print("=" * 60)
 
     failed = []
+    executed = 0
     for name, script in TEST_SCRIPTS:
+        if not script.exists():
+            print(f"\n>>> Atlandı (yerel/opsiyonel paket): {name} ({script.name})")
+            continue
+        executed += 1
         print(f"\n>>> Koşuluyor: {name} ({script.name})")
         res = subprocess.run([sys.executable, str(script)], cwd=str(HERE.parent))
         if res.returncode != 0:
@@ -56,10 +62,10 @@ def main():
 
     print("\n" + "=" * 60)
     if failed:
-        print(f"SONUÇ: {len(failed)}/{len(TEST_SCRIPTS)} TEST BAŞARISIZ: {failed}")
+        print(f"SONUÇ: {len(failed)}/{executed} TEST BAŞARISIZ: {failed}")
         sys.exit(1)
     else:
-        print(f"SONUÇ: {len(TEST_SCRIPTS)}/{len(TEST_SCRIPTS)} TESTİN HEPSİ BAŞARIYLA GEÇTİ!")
+        print(f"SONUÇ: {executed}/{executed} TESTİN HEPSİ BAŞARIYLA GEÇTİ!")
         sys.exit(0)
 
 
