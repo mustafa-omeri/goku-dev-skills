@@ -28,6 +28,9 @@ E10 (mono-outside-code)     Kod/komut seçicileri (code/pre/kbd/samp) dışında
 E11 (blur-orb-slop)         Arka planda yapay zeka klişesi dekoratif neon parıltı topu (blur-[80px+])
 E12 (single-box-auth-slop)  Tam sayfa Login/Auth ekranında masaüstü Split-Hero Dual-Pane yerine dar tek-kutu (max-w-md / max-w-[440px]) kullanımı (§2.6 A.17)
 E13 (magic-link-tab-slop)   Auth sayfasında uydurma Magic Link veya çift katmanlı 'Şifre / Magic Link' alt seçici sekmeleri kullanımı (§2.6 A.17)
+E14 (rogue-dark-container-slop) Modal/dialog/kart başlığında açık kurumsal zemin yerine korsan koyu/neon gradyan kullanımı (§2.6 A.18)
+E15 (rainbow-palette-slop)  Tek bileşende 5+ farklı kromatik Tailwind renk ailesiyle gökkuşağı sirk rozeti/ikon karnavalı kullanımı (§2.6 A.19)
+E16 (semantic-token-drift)  Modal/kontrollerde semantik token yerine ham koyu neon sınıflar (bg-slate-950, border-slate-700) kullanımı (§2.6 A.20)
 W1 (missing-tabular-nums)   Tablo veya sayaç/istatistik rakamlarında tabular-nums eksikliği
 W2 (label-uppercase-spam)   Sayfada 3'ten fazla seçicide uppercase + letter-spacing etiket kullanımı
 W3 (horizontal-scroll-slop) Görev ve eylem alanlarında yapay yatay kaydırma
@@ -36,7 +39,7 @@ W5 (unlocked-modal-scroll)   Modal/dialog kaydırılabilir alanında overscroll-
 W6 (pitch-black-auth-slop)   Auth vitrininde (split-hero, sliding-hero, showcase) fotoğraf/görsel yerine düz siyah zemin kullanımı (§2.6 A.17)
 
 Çıkış Kodları:
-- E1-E13 varsa: exit 1
+- E1-E16 varsa: exit 1
 - Yalnız W1 varsa: exit 0 (varsayılan) / exit 1 (--strict bayrağıyla)
 - Frontend kodu yoksa: kapsam dışı exit 0
 
@@ -193,6 +196,29 @@ ALLOWED_SCROLL_SELECTORS = {
 SCROLL_SLOP_TW_RE = re.compile(
     r"""\b(?:overflow-x-(?:auto|scroll)\s+[^"'>`]*\bwhitespace-nowrap|whitespace-nowrap\s+[^"'>`]*\boverflow-x-(?:auto|scroll))\b"""
 )
+
+# E14: Rogue Dark Container / Modal Header Slop (§2.6 A.18)
+ROGUE_DARK_MODAL_RE = re.compile(
+    r"""<(?:DialogHeader|ModalHeader|DrawerHeader|SheetHeader)\b[^>]*\b(?:bg-gradient-to-[a-z]+\s+[^"'>`]*\b(?:from-(?:slate|zinc|neutral|gray)-9(?:00|50)|via-blue-950)\b|(?:from-(?:slate|zinc|neutral|gray)-9(?:00|50)|via-blue-950)\b\s+[^"'>`]*\bbg-gradient-to-[a-z]+|bg-(?:slate|zinc|neutral)-9(?:00|50))\b""",
+    re.IGNORECASE | re.DOTALL
+)
+
+# E15: Rainbow Palette Slop (Tek bileşende 5+ farklı kromatik Tailwind renk ailesi - §2.6 A.19)
+CHROMATIC_COLOR_FAMILIES = {
+    "blue", "indigo", "purple", "violet", "emerald", "teal", "cyan",
+    "amber", "orange", "rose", "pink", "lime", "fuchsia", "yellow"
+}
+CHROMATIC_TOKEN_RE = re.compile(
+    r"""\b(?:text|bg|border|ring)-(blue|indigo|purple|violet|emerald|teal|cyan|amber|orange|rose|pink|lime|fuchsia|yellow)-(?:400|500|600|700|800|900)\b""",
+    re.IGNORECASE
+)
+
+# E16: Semantic Token Drift / Dark Input in Modal (§2.6 A.20)
+DARK_INPUT_MODAL_RE = re.compile(
+    r"""<input\b[^>]*\b(?:bg-(?:slate|zinc|neutral)-950(?:/\d+)?\b[^>]*\bborder-(?:slate|zinc|neutral)-700(?:/\d+)?|border-(?:slate|zinc|neutral)-700(?:/\d+)?\b[^>]*\bbg-(?:slate|zinc|neutral)-950(?:/\d+)?)\b""",
+    re.IGNORECASE
+)
+
 
 
 def find_project_root() -> Path:
@@ -747,6 +773,64 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
                             "'overscroll-contain' (overscroll-behavior: contain) ekleyin ve body scroll lock uygulayın."
                         ),
                     })
+
+    # E14: Rogue Dark Container / Modal Header Slop (§2.6 A.18)
+    if path.suffix.lower() in (".tsx", ".jsx", ".html", ".vue", ".svelte", ".astro"):
+        m_dark = ROGUE_DARK_MODAL_RE.search(content)
+        if m_dark:
+            line_no = content[:m_dark.start()].count("\n") + 1
+            errors.append({
+                "code": "E14",
+                "rule": "rogue-dark-container-slop",
+                "file": str(path),
+                "line": line_no,
+                "message": (
+                    f"Modal/Dialog başlığında korsan koyu/neon gradyan zemin ('{m_dark.group(0)[:80]}...') tespit edildi (§2.6 A.18). "
+                    "Kurumsal açık zeminli arayüzlerde modallar ana kart yüzeyini miras almalıdır (bg-card / bg-white, border-border, kurumsal marka mavisi ikon kutusu). "
+                    "Koyu cyberpunk/SaaS gradyanları ve siyah neon kutular yasaktır."
+                ),
+            })
+
+    # E15: Rainbow Palette Slop (§2.6 A.19)
+    if path.suffix.lower() in (".tsx", ".jsx", ".html", ".vue", ".svelte", ".astro"):
+        is_palette_tool = any(k in path.as_posix().lower() for k in ("theme", "palette", "color-picker", "swatch", "tailwind"))
+        if not is_palette_tool:
+            found_families = set()
+            first_match_line = 1
+            for m in CHROMATIC_TOKEN_RE.finditer(content):
+                fam = m.group(1).lower()
+                found_families.add(fam)
+                if len(found_families) == 1:
+                    first_match_line = content[:m.start()].count("\n") + 1
+            if len(found_families) >= 5:
+                errors.append({
+                    "code": "E15",
+                    "rule": "rainbow-palette-slop",
+                    "file": str(path),
+                    "line": first_match_line,
+                    "message": (
+                        f"Bileşende {len(found_families)} farklı kromatik Tailwind renk ailesi ({', '.join(sorted(found_families))}) tespit edildi (§2.6 A.19). "
+                        "Kurumsal hiyerarşide tekil marka rengi (primary) ve en fazla 1-2 anlamsal durum rengi (başarı/hata) kullanılır. "
+                        "Kontrolsüz gökkuşağı sirk rozeti/ikon karnavalı yasaktır; renkleri nötr tonlara ve semantik tokenlara indirgeyin."
+                    ),
+                })
+
+    # E16: Semantic Token Drift / Dark Input in Modal (§2.6 A.20)
+    if path.suffix.lower() in (".tsx", ".jsx", ".html", ".vue", ".svelte", ".astro"):
+        m_input = DARK_INPUT_MODAL_RE.search(content)
+        if m_input:
+            line_no = content[:m_input.start()].count("\n") + 1
+            errors.append({
+                "code": "E16",
+                "rule": "semantic-token-drift",
+                "file": str(path),
+                "line": line_no,
+                "message": (
+                    f"Modal içinde semantik token yerine ham koyu neon sınıflar ('{m_input.group(0)[:60]}...') tespit edildi (§2.6 A.20). "
+                    "Input ve kontrollerde projenin semantik değişkenleri (bg-surface-inset / bg-muted, border-border, text-foreground) kullanılmalıdır."
+                ),
+            })
+
 
     seen_w = set()
     deduped_warnings = []

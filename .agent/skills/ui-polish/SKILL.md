@@ -141,10 +141,11 @@ Projelerde aksi belirtilmedikçe standart ve varsayılan toast bildirim motoru *
 2. `canvas-fonts/` altındaki 29 küratörlü yazı tipi ailesinden ve `typography.csv`'den Display + Body font çiftini seç. Kod blokları haricinde mono font kullanımını kesinlikle engelle.
 
 ### Faz 3: Token Mimarisi & 16 Kilitli Tema (`design-system` + `ui-polish`)
-1. `ui-polish/references/themes.css` içindeki 16 resmi kilitli temadan arketipe en uygun 1 birincil tema ve 2 alternatif aday belirle. (Brownfield projelerde projenin mevcut zemin tonu ve `DESIGN.md` token'ları kilitli temanın zeminini belirler; projenin yaşayan açık kanvası asla ezilemez).
-2. `design-system` 3 katmanlı token mimarisini (`primitive` -> `semantic` -> `component`) projeye bağla.
-3. Koddaki tüm sabit HEX/RGB ve generic Tailwind sınıflarını temizle; semantik CSS değişkenlerine eşle.
-4. Geliştirme anında canlı test için `skill-routing-matrix.md` içindeki Sıfır-Token Tema Seçici kancasını (`systemThemeSwitcherPill`) enjekte et.
+1. **DESIGN.md Mutlak Hiyerarşisi (Supreme Contract Rule):** Projede mevcut bir `DESIGN.md` varsa, `themes.css` kasetleri veya harici şablonlar bu sözleşmeyi ASLA EZEMEZ. Yalnızca DOM düzeni ve hareket mekaniği referans alınır; renkler, yüzey modu (Light/Dark), border ve tipografi %100 projenin `DESIGN.md` token'larından gelir. Açık kurumsal temalara korsan koyu modal başlığı (`E14`), gökkuşağı rozet karnavalı (`E15`) veya reddedilen jenerik SaaS mor/indigo renkleri (`E7`) dayatmak kesinlikle yasaktır.
+2. `ui-polish/references/themes.css` içindeki 16 resmi kilitli temadan arketipe en uygun 1 birincil tema ve 2 alternatif aday belirle. (Brownfield projelerde projenin mevcut zemin tonu ve `DESIGN.md` token'ları kilitli temanın zeminini belirler; projenin yaşayan açık kanvası asla ezilemez).
+3. `design-system` 3 katmanlı token mimarisini (`primitive` -> `semantic` -> `component`) projeye bağla.
+4. Koddaki tüm sabit HEX/RGB ve generic Tailwind sınıflarını temizle; semantik CSS değişkenlerine eşle.
+5. Geliştirme anında canlı test için `skill-routing-matrix.md` içindeki Sıfır-Token Tema Seçici kancasını (`systemThemeSwitcherPill`) enjekte et.
 
 ### Faz 4: Navigasyon Kabuğu & Zorunlu Sidebar (`frontend-design` + `ui-styling`)
 1. `component-themes/sidebars/` altındaki 8 hazır temayı incele; arketipe uygun sidebar'ı entegre et.

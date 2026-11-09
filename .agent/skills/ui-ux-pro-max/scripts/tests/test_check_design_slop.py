@@ -575,5 +575,72 @@ class TestCheckDesignSlop(unittest.TestCase):
         res = check_design_slop.run_checks(self.tmp_dir)
         self.assertFalse(any(e["code"] == "E13" for e in res["errors"]))
 
+    def test_catches_rogue_dark_modal_header_e14(self):
+        """Modal header içinde korsan karanlık gradyan (from-slate-900 via-blue-950) E14 yakalamalı."""
+        modal = self.tmp_dir / "src" / "components" / "MyModal.tsx"
+        modal.parent.mkdir(parents=True, exist_ok=True)
+        modal.write_text(
+            """
+            import React from 'react';
+            import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
+            export function MyModal() {
+                return (
+                    <DialogHeader className="p-6 bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white border-b border-slate-800">
+                        <DialogTitle>Modal Başlığı</DialogTitle>
+                    </DialogHeader>
+                );
+            }
+            """,
+            encoding="utf-8"
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertTrue(any(e["code"] == "E14" for e in res["errors"]))
+
+    def test_catches_rainbow_palette_slop_e15(self):
+        """Tek bir bileşende 5+ farklı kromatik Tailwind renk ailesi kullanılması E15 yakalamalı."""
+        comp = self.tmp_dir / "src" / "components" / "RainbowCard.tsx"
+        comp.parent.mkdir(parents=True, exist_ok=True)
+        comp.write_text(
+            """
+            import React from 'react';
+            export function RainbowCard() {
+                return (
+                    <div>
+                        <span className="text-blue-600">Mavi</span>
+                        <span className="text-indigo-600">İndigo</span>
+                        <span className="text-emerald-600">Yeşil</span>
+                        <span className="text-amber-600">Sarı</span>
+                        <span className="text-purple-600">Mor</span>
+                        <span className="text-rose-600">Kırmızı</span>
+                    </div>
+                );
+            }
+            """,
+            encoding="utf-8"
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertTrue(any(e["code"] == "E15" for e in res["errors"]))
+
+    def test_catches_semantic_token_drift_e16(self):
+        """Modal/dialog içinde semantik token yerine ham koyu slate-950/border-slate-700 inputu E16 yakalamalı."""
+        comp = self.tmp_dir / "src" / "components" / "DarkInputModal.tsx"
+        comp.parent.mkdir(parents=True, exist_ok=True)
+        comp.write_text(
+            """
+            import React from 'react';
+            export function DarkInputModal() {
+                return (
+                    <div className="modal-header">
+                        <input className="w-full bg-slate-950/60 border border-slate-700/80 rounded-lg text-white" />
+                    </div>
+                );
+            }
+            """,
+            encoding="utf-8"
+        )
+        res = check_design_slop.run_checks(self.tmp_dir)
+        self.assertTrue(any(e["code"] == "E16" for e in res["errors"]))
+
+
 if __name__ == "__main__":
     unittest.main()

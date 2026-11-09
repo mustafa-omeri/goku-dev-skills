@@ -20,6 +20,7 @@ E3 (template-placeholder-or-anchor)     Şablon yer tutucuları (<doldur, [Tasar
 E4 (wcag-token-contrast)                DESIGN.md içinde beyan edilen metin/zemin token çiftleri WCAG AA sınırının altında
 E5 (undeclared-font-or-color-drift)     Kodda DESIGN.md içinde beyan edilmemiş font ailesi kullanımı
 E6 (typography-ceiling-or-mono-leak)    Mono fontun izin verilen seçiciler (code/pre/kbd/samp + allowedSelectors) dışında kullanımı
+E7 (rejected-default-violation)         DESIGN.md 'Reddedilen Varsayılanlar' tablosunda yasaklanan bir kalıbın (mor/indigo SaaS vb.) kodda kullanımı
 W1 (missing-rejected-defaults)          mode: crafted/redesign iken "Reddedilen Varsayılanlar" tablosunun eksik olması
 W2 (missing-project-evidence)           "0. Proje Kanıtı" bölümünün eksik olması
 
@@ -571,6 +572,40 @@ def run_checks(
                                         f"DESIGN.md typography bölümünde beyan edilmemiş (Beyan edilenler: {sorted(declared_fonts)})."
                                     ),
                                 })
+
+    # E7: Check for rejected defaults violations in UI files
+    rej_match_all = re.search(r"""##\s+3\.\s+Reddedilen Varsayılanlar([\s\S]*?)(?:\n##\s+|\Z)""", body)
+    if rej_match_all:
+        rej_section_text = rej_match_all.group(1).lower()
+        rejected_patterns = []
+        if "mor" in rej_section_text or "indigo" in rej_section_text or "purple" in rej_section_text:
+            rejected_patterns.append((
+                re.compile(r"""\b(?:bg|text|border|ring)-(?:indigo|purple)-(?:500|600|700|800|900)\b""", re.IGNORECASE),
+                "Jenerik Mor/İndigo SaaS paleti"
+            ))
+
+        for ui_path in ui_files:
+            rel_file = os.path.relpath(ui_path, root).replace("\\", "/")
+            try:
+                ui_content = ui_path.read_text(encoding="utf-8", errors="replace")
+            except Exception:
+                continue
+            for pat, rej_label in rejected_patterns:
+                m_rej = pat.search(ui_content)
+                if m_rej:
+                    line_no = ui_content[: m_rej.start()].count("\n") + 1
+                    errors.append({
+                        "code": "E7",
+                        "rule": "rejected-default-violation",
+                        "file": rel_file,
+                        "line": line_no,
+                        "message": (
+                            f"DESIGN.md içinde açıkça reddedilen '{rej_label}' kuralı ihlal edildi ('{m_rej.group(0)}') "
+                            f"({rel_file}:{line_no}). DESIGN.md §3 Reddedilen Varsayılanlar tablosuna göre bu kalıp yasaktır; "
+                            "yerine seçilen kurumsal tokenları kullanın."
+                        ),
+                    })
+
 
     exit_code = 1 if errors or (strict and warnings) else 0
     return {
