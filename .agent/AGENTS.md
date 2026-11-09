@@ -37,6 +37,8 @@ Ajan kod yazmaya, düzenlemeye veya refactoring yapmaya başlamadan önce *"Bu i
 | **Veritabanı / Entity / Kolon / Şema** | `.agent/rules/db-migration-enforcement.md` | Entity ile SQL migration paritesi şart (`check_db_migrations.py`) |
 | **Arayüz / CSS / Bileşen / Tema / Sayfa** | `.agent/rules/design-skills-enforcement.md` | Inline renk/px yasak, Zero-CLS Skeleton şart (`check_design_slop.py`) |
 | **Yeni Servis / Endpoint / API / Rota** | `.agent/rules/api-documentation-enforcement.md` | Canlı kod ile `docs/APIs/` senkronu şart (`check_api_docs.py`) |
+| **Şartname / API / RFC Senkronu (Spec Drift)** | `.agent/skills/spec-reconciler/SKILL.md` | 3-Yönlü kod vs RFC vs PRD drift taraması (`reconcile_scanner.py`, `/spec-reconcile`) |
+| **Üretim Dağıtım / VPS / Docker / Altyapı** | `.agent/skills/deployment-architect/SKILL.md` | 5 katmanlı DEPLOYMENT_PLAN.md & ters proxy (`/deploy-plan`) |
 | **Kullanıcı Metni / Başlık / Buton / Form** | `.agent/rules/i18n-enforcement.md` | Hardcoded metin yasak, sözlük senkronu şart (`i18n_checker.py`) |
 | **Frontend / Paket / SPA / Bundle Bütçesi** | `.agent/rules/frontend-bundle-limits.md` | Chunk <=500kB, Entry gzip <=200kB (`check_bundle_limits.py`, `check_vite_spa.py`) |
 | **Hata / Bug Çözümü / "Çalışmıyor"** | `.agent/rules/bug-diagnosis-enforcement.md` | Koda dokunmadan önce hatayı kanıtlayan kırmızı döngü şart |
