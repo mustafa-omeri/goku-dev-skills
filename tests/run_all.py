@@ -40,6 +40,7 @@ TEST_SCRIPTS = [
     ("Test Feature Architect v2 Benchmark & Purity", HERE / "test_feature_architect_bench.py"),
     ("Test Python Design Audit", HERE / "test_py_design_audit.py"),
     ("Test Scout Integration", HERE / "test_scout_integration.py"),
+    ("Test Cognitive Counsel", HERE / "test_cognitive_counsel.py"),
 ]
 
 

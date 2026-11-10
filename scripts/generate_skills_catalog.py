@@ -751,6 +751,35 @@ deployment planı
             }
         ],
         "category": "Teslimat & Kalite"
+    },
+    {
+        "command": "/6HAT",
+        "aliases": ["/6HAT", "/PO", "/ARCH", "/UX", "/SEO", "/GRW", "/QA", "/TIGHT", "/DIG", "/PUSHBACK", "6 şapka analizi", "six hats"],
+        "name": "6 Şapka Bilişsel Danışmanlık & Anti-Sycophancy Süzgeci",
+        "badge": "Danışmanlık & 6 Şapka",
+        "badge_class": "badge-info",
+        "skills": ["feature-architect", "council", "karpathy-guidelines", "codebase-design"],
+        "goal": "6 Disiplinli Sentez (PO, ARCH, UX, SEO, GRW, QA) & Körleme Onaylama Karşıtı (Anti-Sycophancy) Sınama",
+        "description": "Problemleri 6 disiplinin süzgecinden geçirir; yaranmacılık karşıtı 'onaylama, sına' prensibiyle varsayımları sınar; arka planda REDTEAM, 80/20, KILLCRITIC, TRUTHMODE, LINDYMODE ve ELI5 filtrelerini işleterek dolgusuz, doğrudan üretime hazır kararlar üretir.",
+        "sample_prompt": "/6HAT @[docs/architecture.md]: Bu mimariyi 6 şapka merceğiyle tara ve üretim risklerini dök.",
+        "protocol": "1. Disiplin Filtresi -> İlgili şapkaların (/PO, /ARCH...) veya /6HAT ile tamamının tetiklenmesi ➜ 2. Görünmez Düşünme Süzgeci -> REDTEAM, 80/20, KILLCRITIC, LINDY analizi ➜ 3. Anti-Sycophancy Sınaması -> Kör noktaların ve zayıf tercihlerin kanıtla tespiti ➜ 4. Doğrudan Çözüm -> Eksiksiz çalışan teknik alternatif ve karar",
+        "usage_snippet": """# Sohbette Doğrudan Tetikleme:
+/6HAT (tüm 6 disiplin analizi)
+/PO | /ARCH | /UX | /SEO | /GRW | /QA (mikro odak)
+/PUSHBACK | /TIGHT | /DIG (eleştirel ve derin modlar)""",
+        "emergency": [
+            {
+                "symptom": "Kullanıcı önerisinin varsayılan olarak onaylanması (Sycophancy)",
+                "cause": "Ajanın Anti-Sycophancy kuralını atlayıp kullanıcıyı memnun etmeye çalışması.",
+                "action": "/PUSHBACK komutunu kullanarak fikrin kırılgan yönlerini ve alternatifini talep edin."
+            },
+            {
+                "symptom": "Analiz felci veya aşırı uzun yanıt üretimi",
+                "cause": "Tüm şapkaların aynı anda derinlemesine yazılması.",
+                "action": "/TIGHT komutuyla doğrudan çalışan koda geçin veya /PO, /ARCH gibi tek bir mikro-odak seçin."
+            }
+        ],
+        "category": "Planlama & Mimari"
     }
 ]
 
@@ -2531,7 +2560,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
             "border_var": "var(--accent-primary-border)",
 
-            "commands": ["/council", "/plan", "/feature-architect"]
+            "commands": ["/council", "/plan", "/feature-architect", "/6HAT"]
 
         },
 

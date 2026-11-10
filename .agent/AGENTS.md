@@ -45,6 +45,7 @@ Ajan kod yazmaya, düzenlemeye veya refactoring yapmaya başlamadan önce *"Bu i
 | **Yeni Özellik / Sprint / Görev / Dilim** | `.agent/rules/sprint-delivery-workflow.md` | Given-When-Then Gherkin + TDD kırmızı test şart (`check_sprint_board.py`) |
 | **Sadeleştirme / Refactoring / Ölü Kod** | `.agent/rules/no-unused-code.md` | Ölü kod temizliği, Karpathy cerrahi sadelik (`tsc`, `mvn`, `check-unused.ps1`) |
 | **Kılavuz / Kurulum / Nasıl Yapılır Yanıtı** | `.agent/rules/aviation-documentation-standard.md` | Sıfır lakırdı, 1-2-3 Eylem->Çıktı, Acil Durum Tablosu (`check_aviation_docs.py`) |
+| **Danışmanlık / Fikir Sınama / 6 Şapka** | `.agent/rules/cognitive-counsel-framework.md` | Anti-Sycophancy, görünmez düşünme (REDTEAM, 80/20, LINDY), mikro-odak (`/PO`, `/ARCH`, `/QA`...) |
 | **Oturum Devri / Görev / Sıradaki İşler** | `.agent/rules/handoff-session-continuity.md` | Sözlü hafıza beyanı yasak, plan buharlaşması yasak (`check_handoff.py` W3) |
 | **Commit / Push / Sürüm Yayını** | `.agent/rules/mandatory-git-release-workflow.md` | Peşin kullanıcı onayı olmadan commit/push yasak |
 
@@ -246,6 +247,7 @@ Ek kapı (tek kural dosyasına bağlı değildir):
 | `no-unauthorized-commit.md` | SUREC |
 | `trigger-rule-action.md` | SUREC |
 | `always-read-skills.md` | TUTUM |
+| `cognitive-counsel-framework.md` | TUTUM |
 | `knowledge-base-management.md` | TUTUM |
 | `mcp-usage-enforcement.md` | TUTUM |
 | `no-silent-wait.md` | TUTUM |
