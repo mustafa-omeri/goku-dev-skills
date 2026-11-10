@@ -38,7 +38,7 @@ const https = require('https');
 
 
 
-const VERSION = '1.35.6';
+const VERSION = '1.36.0';
 
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 
@@ -535,6 +535,12 @@ const SKILLS_MANIFEST = {
     desc: 'Cross-codebase scanner that reconciles live backend/frontend code with API docs and RFCs, highlights PRD discrepancies, and provides interactive planning.',
     triggers: '/spec-reconcile, spec reconcile, [SPEC-RECONCILE], api dokumanlarini guncelle, rfc guncelle, sartname celiskisi, reconcile specs, sync api docs',
   },
+
+  'tr-app-compliance': {
+    category: 'Delivery / Compliance',
+    desc: 'Audit Turkish legal regulations (KVKK, ETK, 5651, TKHK, FSEK) for web/mobile apps and SaaS platforms.',
+    triggers: '/tr-compliance, [TR-COMPLIANCE], türkiye mevzuatı, kvkk denetimi, yer sağlayıcı, 5651 log, turkish compliance',
+  },
 };
 
 
@@ -573,7 +579,7 @@ const PROFILES = {
 
     name: 'Fullstack / All',
 
-    desc: 'All 47 skills, 21 rules, 55 component themes & 16 validation gates (~65 MB)',
+    desc: 'All 48 skills, 22 rules, 55 component themes & 16 validation gates (~65 MB)',
 
     skills: Object.keys(SKILLS_MANIFEST),
 
@@ -670,6 +676,7 @@ const PROFILES = {
       'project-summary',
       'feature-architect',
       'diagram-design',
+      'tr-app-compliance',
 
     ],
 

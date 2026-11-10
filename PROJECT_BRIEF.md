@@ -28,7 +28,7 @@ related_docs:
 
 ## 1. Teknoloji Yığını & Altyapı
 - **Proje Adı / Slug:** skillSetWorks (`skillSetWorks`)
-- **Paket / Sürüm:** `goku-dev-skills` v1.35.6 (`package.json`)
+- **Paket / Sürüm:** `goku-dev-skills` v1.36.0 (`package.json`)
 - **Birincil Dil:** Python 3.11 / Node.js 18+ / Markdown
 - **Frameworkler & Kütüphaneler:** Python `unittest`, `pytest`, `pytest-cov`, `argparse`, Node.js CLI runtime
 - **Veritabanı / Altyapı:** Yok (Uygulama kodu içermez; kural, skill ve dağıtım motorudur)
@@ -40,7 +40,7 @@ related_docs:
 | Dizin / Modül | Sorumluluk & Kapsam | Kritik Notlar |
 |---|---|---|
 | `.agent/` | Tüm projelerin tek gerçek kaynak (single source of truth) kural ve skill ağacı | Dağıtım kaynağıdır |
-| `.agent/skills/` | Ajan beceri paketleri (musgoku, feature-architect, project-summary, ui-ux-pro-max, tdd, council vb.) | 47 skill |
+| `.agent/skills/` | Ajan beceri paketleri (musgoku, feature-architect, project-summary, ui-ux-pro-max, tdd, council, tr-app-compliance vb.) | 48 skill |
 | `.agent/rules/` | Ajan kuralları ve anayasal sözleşmeler (sinif: OLCULEBILIR/TUTUM/SUREC) | 22 kural (12 ölçülebilir, 10 kapısız) |
 | `.agent/templates/` | Projelerde açılacak living markdown ve HTML şablonları | Kök şablonları (PROJECT_SUMMARY ve KULLANICI_REHBERI.html dahil) |
 | `bin/` | `goku-dev-skills` npm CLI paket yürütücüsü (`cli.js`) | CLI arabirimi |

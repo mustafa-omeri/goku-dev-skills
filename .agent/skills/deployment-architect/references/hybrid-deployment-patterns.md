@@ -38,11 +38,18 @@ Bu modelde React statik varlıkları ve Spring Boot REST API'si yer alır. İki 
   - `/*` -> React statik derleme klasörü (`/var/www/dist`)
   - `/api/*` -> Spring Boot backend portu (`http://127.0.0.1:8080`)
 
-**Nginx Yapılandırması:**
+**Nginx Yapılandırması (Cloudflare Uyumlu):**
 ```nginx
 server {
     listen 443 ssl http2;
     server_name example.com;
+
+    # 5651 Sayılı Kanun Uyumlu Gerçek IP Loglama
+    set_real_ip_from 173.245.48.0/20;
+    set_real_ip_from 103.21.244.0/22;
+    # ... (diğer Cloudflare IP blokları)
+    real_ip_header CF-Connecting-IP;
+    real_ip_recursive on;
 
     # Frontend SPA
     root /var/www/html/dist;
@@ -56,7 +63,7 @@ server {
     location /api/ {
         proxy_pass http://127.0.0.1:8080/api/;
         proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
+        # X-Real-IP yerine CF-Connecting-IP zaten loglanıyor
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
@@ -80,3 +87,4 @@ server {
   1. `DATABASE_URL` bağlantı dizesinde mutlaka `?sslmode=require` parametresi bulunmalıdır.
   2. Bağlantı havuzu (Connection Pooling - örn. PgBouncer veya Supabase port 6543) kullanılmalıdır.
   3. Güvenlik duvarında VPS'in sabit çıkış IP'si (Egress IP) veritabanı sağlayıcısının IP Allowlist'ine eklenmelidir.
+

@@ -91,8 +91,15 @@ Derleyiciler bu uyarıların bir kısmını üretmez; "derlendi" demek yeterli d
 | TypeScript | `npx tsc --noEmit` | 0 hata |
 | TypeScript (build gerçeği) | projenin production build komutu | Exit 0 |
 | TypeScript (kullanılmayan kod) | `tsconfig`'te `noUnusedLocals` ve `noUnusedParameters` **açık** olmalı | `tsconfig.json` kontrolü |
-| Java | `mvn test-compile` | BUILD SUCCESS |
+| Java (derleme & tipler) | `mvn clean test-compile` (⛔ clean'siz çalıştırma; hedef önbelleği derleme hatalarını maskeler) | BUILD SUCCESS |
 | Java (kullanılmayan kod/susturma) | `pwsh -NoProfile -File .agent/skills/musgoku/scripts/check-unused.ps1` | `[OK]` |
+
+> ⚠️ **Maven Incremental Compilation Tuzağı (Target Cache Masking):**
+> `mvn compile` veya `mvn test-compile` komutunu `clean` olmadan çalıştırmak, `target/` altındaki
+> eski `.class` dosyaları nedeniyle yeni derleme hatalarını maskeleyebilir (`Nothing to compile - all classes are up to date`).
+> Her doğrulamada mutlaka `mvn clean test-compile` çalıştırılmalıdır.
+> Ayrıca standart `javac` derleyicisi kullanılmayan import, değişken ve private alanları raporlamaz;
+> bu nedenle `check-unused.ps1` (Eclipse JDT / ECJ) denetimi koşulmadan hiçbir iş tamamlandı sayılamaz.
 
 `check-unused.ps1` çıktısı:
 

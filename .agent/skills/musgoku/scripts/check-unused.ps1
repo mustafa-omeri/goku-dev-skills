@@ -98,7 +98,7 @@ $NoticePattern  = 'unchecked|raw type'
 function Invoke-Ecj([string[]]$Sources, [string]$LogFile) {
     & $javaExe "-javaagent:$lombokJar=ECJ" -jar $ecjJar `
         -21 -encoding UTF-8 -proceedOnError -d none `
-        -warn:unusedImport,unusedLocal,warningToken,unchecked `
+        -warn:unusedImport,unusedLocal,unusedPrivate,warningToken,unchecked `
         -cp "$lombokJar;$cp" @Sources 2>&1 | Out-File $LogFile -Encoding utf8
     $log = @(Get-Content $LogFile)
     $findings = @()
@@ -108,7 +108,11 @@ function Invoke-Ecj([string[]]$Sources, [string]$LogFile) {
             $file = $Matches[1].Replace("$root\", ""); $line = $Matches[2]
             $window = $log[($i + 1)..([Math]::Min($i + 4, $log.Count - 1))]
             $msg = ($window | Where-Object { $_ -match $FindingPattern } | Select-Object -First 1)
-            if ($msg) { $findings += "${file}:${line}  $($msg.Trim())"; continue }
+            if ($msg) {
+                # Lombok @Slf4j henüz log çağrılmamış sınıflarda sentetik 'log' alanı için sahte bulgu üretmesin
+                if ($msg -match 'The value of the field .+\.log is not used') { continue }
+                $findings += "${file}:${line}  $($msg.Trim())"; continue
+            }
             $note = ($window | Where-Object { $_ -match $NoticePattern } | Select-Object -First 1)
             if ($note) { $notices += "${file}:${line}  $($note.Trim())" }
         }

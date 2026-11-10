@@ -1,6 +1,6 @@
 # Hukuk, Gizlilik ve Çerez Uyumu Rehberi
 
-Son veri doğrulaması: 26 Ekim 2026. Bu rehber hukuki danışmanlık niteliği taşımaz; üretilen tüm metinler taslaktır ve yayına çıkmadan önce işletmenin hukuk müşaviri veya avukatı tarafından onaylanmalıdır.
+Son veri doğrulaması: 10 Kasım 2026. Bu rehber hukuki danışmanlık niteliği taşımaz; üretilen tüm metinler taslaktır ve yayına çıkmadan önce işletmenin hukuk müşaviri veya avukatı tarafından onaylanmalıdır.
 
 ---
 
@@ -26,14 +26,27 @@ Yasal metinler sitenin gerçek teknik davranışını yansıtmalıdır. Metin ya
 - **Veri Sorumlusu:** Tam ticari unvan, tebligat adresi, MERSİS/VKN, KEP adresi veya kayıtlı e-posta, telefon. Bilinmeyen alanlar `[ŞİRKET ÜNVANI]`, `[MERSİS NO]` gibi yer tutucu olarak bırakılır.
 - **İşleme Amaçları ve Hukuki Sebepleri:** KVKK m.5/6 kapsamındaki hukuki gerekçeler (sözleşmenin ifası, kanuni yükümlülük, meşru menfaat veya açık rıza).
 - **Aktarılan Taraflar ve Yurt Dışı Aktarımı:**
-  - 12 Mart 2024 tarihli 7499 sayılı Kanun değişikliği sonrasında (1 Eylül 2024'ten itibaren yürürlükte), yurt dışı aktarımlarında açık rıza tek başına genel dayanak olmaktan çıkmıştır.
+  - 12 Mart 2024 tarihli 7499 sayılı Kanun değişikliği sonrasında (1 Eylül 2024'ten itibaren yürürlüğe girdi), yurt dışı aktarımlarında açık rıza tek başına genel dayanak olmaktan çıkmıştır.
   - Temel mekanizma KVKK Kurulu tarafından yayımlanan **Standart Sözleşme** modelidir. Sözleşme imzalanmasından itibaren **5 iş günü içinde** Kurum'a bildirilmelidir.
-  - Bildirim yükümlülüğünün ihlali halinde öngörülen idari para cezası aralığı: **90.308 TL - 1.806.377 TL** (Yeniden değerleme oranına göre güncellenir). Bu bildirim doğrudan işletmenin/hukukçunun sorumluluğundadır (`NEEDS-HUMAN`).
+  - Bildirim yükümlülüğünün ihlali halinde öngörülen idari para cezası aralığı: **90.308 TL - 1.806.377 TL** (2026 yılı yeniden değerleme oranına göre güncellenir). Bu bildirim doğrudan işletmenin/hukukçunun sorumluluğundadır (`NEEDS-HUMAN`).
 - **İlgili Kişi Hakları (m.11):** Veriye erişim, düzeltme, silme taleplerinin iletilebileceği başvuru kanalları.
 
 ---
 
-## 3. Çerez Politikası ve Consent Mode v2
+## 3. Türkiye Dijital Mevzuat Uyumu (6 Temel Kural)
+
+`tr-app-compliance` yeteneği ile tam senkronize uyum kuralları:
+
+1. **Ödeme (TKHK):** Yenileme şartları "Satın Al" butonunun hemen üzerinde görünür olmalı.
+2. **Ticari İleti (ETK):** Pazarlama e-postalarında Unsubscribe, MERSİS, adres zorunlu.
+3. **Telif (FSEK):** Uyar-Kaldır operasyonel kanal (copyright@) bildirim formu şart.
+4. **Yer Sağlayıcı (5651):** BTK bildirimi ve trafik logu (zaman damgalı) zorunlu.
+5. **Aydınlatma (KVKK m.10):** Açık rızadan bağımsız, önceden işaretlenmemiş kutucuklu aydınlatma.
+6. **Yurt Dışı Aktarım (KVKK m.9/12):** Font ve CDN'ler yerel (self-hosted).
+
+---
+
+## 4. Çerez Politikası ve Consent Mode v2
 
 KVKK Çerez Rehberi ve Avrupa GDPR/ePrivacy standartlarına göre:
 
@@ -48,9 +61,10 @@ KVKK Çerez Rehberi ve Avrupa GDPR/ePrivacy standartlarına göre:
 
 ---
 
-## 4. Kullanım Şartları ve Tüketici Mevzuatı (6502 & 6563)
+## 5. Kullanım Şartları ve Tüketici Mevzuatı (6502 & 6563)
 
 1. **Tüketici Hakları:**
    6502 sayılı Tüketicinin Korunması Hakkında Kanun uyarınca tüketici aleyhine tek taraflı haksız şartlar ve yetkili mahkeme kısıtlamaları geçersizdir.
 2. **Ticari Elektronik İleti Onayı:**
    6563 sayılı Elektronik Ticaretin Düzenlenmesi Hakkında Kanun kapsamında pazarlama e-postası ve SMS gönderimi için önceden İYS (İleti Yönetim Sistemi) uyumlu açık onay alınmalıdır. Formlardaki ticari ileti onay kutucukları **önceden işaretlenmemiş (opt-in)** olmalıdır.
+

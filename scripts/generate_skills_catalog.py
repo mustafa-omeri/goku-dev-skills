@@ -101,7 +101,7 @@ CATEGORIES = {
 
         "diagnosing-bugs", "code-review", "my-idea", "security-audit",
 
-        "prelaunch-audit"
+        "prelaunch-audit", "tr-app-compliance"
 
     ],
 
@@ -1213,6 +1213,31 @@ python .agent/skills/prelaunch-audit/scripts/prelaunch_checker.py --dir .
 python .agent/skills/prelaunch-audit/scripts/prelaunch_updater.py --check
 
 node .agent/skills/prelaunch-audit/scripts/consent-check.mjs https://example.com"""
+
+    },
+
+    "tr-app-compliance": {
+
+        "status": "Yasal Uyum Denetçisi",
+
+        "badge_class": "badge-warning",
+
+        "file": "compliance_checker.py + 2 Referans Dokümanı",
+
+        "features": [
+            "KVKK Açık Rıza & Yurt Dışı Aktarım (m.9/12)",
+            "ETK Ticari Elektronik İleti & Ret Linki",
+            "5651 Trafik Logu & Yer Sağlayıcı BTK Bildirimi",
+            "TKHK Abonelik & Mesafeli Satış Şartları",
+            "FSEK 3 Günlük Uyar-Kaldır İhbar Kanalı"
+        ],
+
+        "detail": "Türkiye pazarındaki web/mobil uygulamalar için KVKK, ETK, 5651, TKHK ve FSEK mevzuatlarına uyumluluğu kod ve sunucu düzeyinde denetler.",
+
+        "sample_prompt": "/tr-compliance: Projedeki KVKK, ETK ve 5651 yer sağlayıcı log uyumluluğunu tara.",
+
+        "config_snippet": """# Türkiye Mevzuat Uyumluluk Taraması:
+python .agent/skills/tr-app-compliance/scripts/compliance_checker.py --dir ."""
 
     },
 
