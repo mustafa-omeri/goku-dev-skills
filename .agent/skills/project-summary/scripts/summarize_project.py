@@ -3,7 +3,7 @@
 """Proje Özeti ve Konsolidasyon Motoru (summarize_project.py).
 
 Bu script; projelerin kısa (short) veya kapsamlı (long) özetini çıkarır,
-PRD ve referans dokümanlarını tek bir belgede konsolide eder.
+PRD, RFC ve referans dokümanlarını tek bir belgede konsolide eder.
 
 Kurallar:
 1. Çıktı dosyası her zaman /docs dizini altında yer alır:
@@ -12,6 +12,7 @@ Kurallar:
 3. Dosya zaten varsa versiyonlama damgası (tarih, saat, kullanıcı) vurulur,
    önceki sürüm docs/archive/ altına yedeklenir ve revizyon geçmişi korunur.
 4. Üretilen doküman PROJECT_BRIEF.md içindeki related_docs listesine zorunlu senkronize edilir.
+5. Dokümanlarda projenin amacını açıklayan 'description' alanı zorunlu olarak yer alır.
 """
 
 from __future__ import annotations
@@ -71,7 +72,6 @@ def get_project_slug(root: Path) -> str:
             data = json.loads(pkg_path.read_text(encoding="utf-8", errors="replace"))
             name = data.get("name", "")
             if name:
-                # scope temizliği: @scope/name -> name
                 if "/" in name:
                     name = name.split("/")[-1]
                 return clean_slug(name)
@@ -139,23 +139,128 @@ def validate_output_directory(output_path: Path, root: Path) -> None:
 
 
 def find_all_prds(root: Path) -> list[Path]:
-    """Projedeki tüm PRD ve şartname dokümanlarını tespit eder."""
+    """Projedeki tüm PRD ve şartname dokümanlarını dinamik ve esnek biçimde tespit eder."""
     prds: list[Path] = []
-    docs_dir = root / "docs"
-    if docs_dir.is_dir():
-        for p in docs_dir.rglob("*.md"):
-            # archive ve backup dizinlerini atla
-            rel_parts = p.relative_to(docs_dir).parts
-            if any(part.lower() in ("archive", "backup", ".git") for part in rel_parts):
-                continue
-            name_lower = p.name.lower()
-            if "prd" in name_lower or "spec" in name_lower or "sartname" in name_lower:
-                prds.append(p)
-    # Kökte PRD.md kontrolü
-    for candidate in [root / "PRD.md", root / "prd.md"]:
+    seen: set[str] = set()
+
+    # Taranacak olası dokümantasyon klasörleri
+    candidate_subdirs = ["docs", "RFCs", "rfcs", "specs", "documentation", "prd"]
+    for subdir_name in candidate_subdirs:
+        s_dir = root / subdir_name
+        if s_dir.is_dir():
+            for p in s_dir.rglob("*.md"):
+                rel_parts = [part.lower() for part in p.parts]
+                if any(skip in rel_parts for skip in ("archive", "backup", ".git", "node_modules", "target", "build", "dist")):
+                    continue
+                name_lower = p.name.lower()
+                if any(k in name_lower for k in ("prd", "spec", "sartname", "gereksinim")):
+                    p_res = p.resolve()
+                    if str(p_res) not in seen:
+                        seen.add(str(p_res))
+                        prds.append(p)
+
+    # Kökteki doğrudan PRD/şartname adayları
+    for candidate_name in ["PRD.md", "prd.md", "SPEC.md", "spec.md", "SARTNAME.md"]:
+        candidate = root / candidate_name
         if candidate.is_file():
-            prds.append(candidate)
-    return sorted(list(set(prds)))
+            p_res = candidate.resolve()
+            if str(p_res) not in seen:
+                seen.add(str(p_res))
+                prds.append(candidate)
+
+    return sorted(prds)
+
+
+def find_all_rfcs(root: Path) -> list[Path]:
+    """Projedeki tüm RFC (Request for Comments) mimari dokümanlarını tespit eder."""
+    rfcs: list[Path] = []
+    seen: set[str] = set()
+
+    candidate_subdirs = ["RFCs", "rfcs", "RFC", "docs/rfc", "docs/RFCs", "docs/rfcs", "specs/rfc", "specs"]
+    for subdir_name in candidate_subdirs:
+        s_dir = root / subdir_name
+        if s_dir.is_dir():
+            for p in s_dir.rglob("*.md"):
+                rel_parts = [part.lower() for part in p.parts]
+                if any(skip in rel_parts for skip in ("archive", "backup", ".git", "node_modules", "target", "build", "dist")):
+                    continue
+                name_lower = p.name.lower()
+                # Eğer açıkça PRD veya şartname ise RFC olarak ekleme
+                if any(k in name_lower for k in ("prd", "sartname")):
+                    continue
+                p_res = p.resolve()
+                if str(p_res) not in seen:
+                    seen.add(str(p_res))
+                    rfcs.append(p)
+
+    # Kök dizindeki *rfc*.md dosyaları
+    for p in root.glob("*.md"):
+        if "rfc" in p.name.lower() and "prd" not in p.name.lower():
+            p_res = p.resolve()
+            if str(p_res) not in seen:
+                seen.add(str(p_res))
+                rfcs.append(p)
+
+    return sorted(rfcs)
+
+
+def get_project_description(root: Path, refs: dict[str, Any], slug: str) -> str:
+    """Projenin amacını ve işlevini anlatan açıklamayı hiyerarşik kaynaklardan çıkarır."""
+    # 1. PROJECT_BRIEF.md frontmatter description: veya # Description
+    brief_file = refs.get("brief")
+    if brief_file and brief_file.is_file():
+        try:
+            b_text = brief_file.read_text(encoding="utf-8", errors="replace")
+            m_desc = re.search(r"^description:\s*([^\r\n]+)", b_text, re.MULTILINE)
+            if m_desc:
+                val = m_desc.group(1).strip().strip("\"'")
+                if val and not val.startswith("["):
+                    return val
+            m_sec = re.search(r"##\s*(?:Proje Tanımı|Description|Amaç)[^\n]*\n+([^\n#]+)", b_text)
+            if m_sec:
+                val = m_sec.group(1).strip()
+                if len(val) > 15:
+                    return val
+        except Exception:
+            pass
+
+    # 2. PRODUCT.md içindeki Vizyon / Amaç
+    prod_file = refs.get("product")
+    if prod_file and prod_file.is_file():
+        try:
+            p_text = prod_file.read_text(encoding="utf-8", errors="replace")
+            m_prod = re.search(r"##\s*(?:Ürün Amacı|Vizyon|Vision|Amaç)[^\n]*\n+([^\n#]+)", p_text)
+            if m_prod:
+                val = m_prod.group(1).strip()
+                if len(val) > 15:
+                    return val
+        except Exception:
+            pass
+
+    # 3. package.json description
+    pkg_file = root / "package.json"
+    if pkg_file.is_file():
+        try:
+            data = json.loads(pkg_file.read_text(encoding="utf-8", errors="replace"))
+            val = data.get("description", "").strip()
+            if val:
+                return val
+        except Exception:
+            pass
+
+    # 4. README.md ilk paragraf
+    readme_file = refs.get("readme")
+    if readme_file and readme_file.is_file():
+        try:
+            r_text = readme_file.read_text(encoding="utf-8", errors="replace")
+            paragraphs = [p.strip() for p in r_text.split("\n\n") if p.strip() and not p.strip().startswith("#")]
+            if paragraphs:
+                return paragraphs[0].replace("\n", " ")[:200]
+        except Exception:
+            pass
+
+    # Varsayılan açıklama
+    return f"{slug} projesi; modern yazılım mimarisi, güvenilirlik ve kullanıcı deneyimi standartlarına uygun olarak tasarlanmış kurumsal bir çözümdür."
 
 
 def collect_reference_docs(root: Path) -> dict[str, Any]:
@@ -183,6 +288,9 @@ def collect_reference_docs(root: Path) -> dict[str, Any]:
         adrs = sorted([p for p in adr_dir.glob("*.md") if p.is_file()])
     refs["adrs"] = adrs
 
+    # RFC dokümanları
+    refs["rfcs"] = find_all_rfcs(root)
+
     # Manifests
     refs["has_package_json"] = (root / "package.json").is_file()
     refs["has_pom_xml"] = (root / "pom.xml").is_file()
@@ -197,7 +305,6 @@ def extract_existing_version(content: str) -> tuple[str, list[dict[str, str]]]:
         version = f"v{m_ver.group(1)}"
 
     history: list[dict[str, str]] = []
-    # Tablo satırlarını ayrıştır
     table_match = re.search(r"## 📜 Revizyon Geçmişi[^\n]*\n\n\|[^\n]+\|\n\|[-|\s]+\|\n([\s\S]*?)(?=\n---|\n##|\Z)", content)
     if table_match:
         for line in table_match.group(1).strip().split("\n"):
@@ -235,9 +342,8 @@ def sync_project_brief_related_docs(root: Path, summary_rel_path: str) -> bool:
     normalized_path = summary_rel_path.replace("\\", "/")
 
     if normalized_path in content:
-        return True  # Zaten ekli
+        return True
 
-    # related_docs: listesini bul
     m = re.search(r"(related_docs:\s*\n)((?:\s*-\s*[^\r\n]+\r?\n)*)", content)
     if m:
         prefix = m.group(1)
@@ -248,7 +354,6 @@ def sync_project_brief_related_docs(root: Path, summary_rel_path: str) -> bool:
         brief_path.write_text(new_content, encoding="utf-8")
         return True
     else:
-        # Frontmatter sonuna related_docs ekle
         fm_end = content.find("\n---", 3)
         if fm_end != -1:
             injection = f"related_docs:\n  - \"{normalized_path}\"\n"
@@ -272,7 +377,6 @@ def build_short_summary(
     date_str = now.strftime("%Y-%m-%d")
     time_str = now.strftime("%H:%M:%S")
 
-    # Dil metinleri
     is_tr = (lang == "tr")
     t_title = f"{slug} Proje Yönetici Özeti (SHORT)" if is_tr else f"{slug} Project Executive Summary (SHORT)"
     t_stamp = f"> 📌 **Versiyonlama Damgası:** {version} · **Tarih:** {date_str} · **Saat:** {time_str} · **Güncelleyen:** {user} · **Mod:** SHORT"
@@ -282,12 +386,15 @@ def build_short_summary(
     product_content = refs.get("product", Path("")).read_text(encoding="utf-8", errors="replace") if refs.get("product") else ""
     handoff_content = refs.get("handoff", Path("")).read_text(encoding="utf-8", errors="replace") if refs.get("handoff") else ""
 
+    description = get_project_description(root, refs, slug)
+
     # Frontmatter
     md = f"""---
 title: "{t_title}"
 project_slug: "{slug}"
 mode: "short"
 version: "{version}"
+description: "{description}"
 last_updated: "{date_str} {time_str}"
 updated_by: "{user}"
 language: "{lang}"
@@ -300,6 +407,9 @@ sources_ingested:
 # {slug} — Proje Yönetici Özeti (SHORT)
 
 {t_stamp}
+
+> 🎯 **Proje Amacı (Description):**  
+> {description}
 
 ---
 
@@ -316,19 +426,14 @@ sources_ingested:
 ---
 
 ## 1. Yönetici Özeti & Ürün Amacı
+- **Proje Tanımı & Amacı:** {description}
+- **Proje Slug / Kod Adı:** `{slug}`
+- **Ana İletişim / Çalışma Dili:** `{lang.upper()}`
+
 """
-    # Product veya Brief'ten amaç çek
-    purpose = "Bu proje, kurumsal veya son kullanıcı ihtiyaçlarını çözmek üzere tasarlanmış modern bir yazılım çözümüdür."
-    m_purpose = re.search(r"##\s*(?:Ürün Amacı|Purpose|Amaç)[^\n]*\n+([^\n#]+)", product_content + "\n" + brief_content)
-    if m_purpose:
-        purpose = m_purpose.group(1).strip()
-    md += f"- **Temel Amaç:** {purpose}\n"
-    md += f"- **Proje Slug / Kod Adı:** `{slug}`\n"
-    md += f"- **Ana İletişim / Çalışma Dili:** `{lang.upper()}`\n\n"
 
     md += """## 2. Çekirdek Teknoloji Yığını & Mimari
 """
-    # Brief'ten stack ayıkla
     stack_lines = []
     m_stack = re.search(r"##\s*1\.\s*Teknoloji Yığını[^\n]*\n([\s\S]*?)(?=\n##|\Z)", brief_content)
     if m_stack:
@@ -342,7 +447,6 @@ sources_ingested:
 
     md += """## 3. Canlı Kilometre Taşı & Yaşayan Durum
 """
-    # Handoff'tan durum ayıkla
     m_status = re.search(r"##\s*1\.\s*Bu Oturumda Yapılanlar[^\n]*\n([\s\S]*?)(?=\n##|\Z)", handoff_content)
     if m_status:
         md += m_status.group(1).strip()[:800] + "\n\n"
@@ -364,6 +468,7 @@ def build_long_summary(
     now: datetime.datetime,
     user: str,
     prds: list[Path],
+    rfcs: list[Path],
     refs: dict[str, Any],
     history: list[dict[str, str]],
 ) -> str:
@@ -375,14 +480,17 @@ def build_long_summary(
     t_title = f"{slug} Kapsamlı Proje Konsolidasyon Dokümanı (LONG)" if is_tr else f"{slug} Comprehensive Project Summary & Consolidation (LONG)"
     t_stamp = f"> 📌 **Versiyonlama Damgası:** {version} · **Tarih:** {date_str} · **Saat:** {time_str} · **Güncelleyen:** {user} · **Mod:** LONG"
 
-    # Frontmatter kaynak listesi
-    prd_rel_paths = [p.relative_to(root).as_posix() for p in prds]
+    description = get_project_description(root, refs, slug)
+
+    prd_rel_paths = [p.relative_to(root).as_posix() if p.is_relative_to(root) else p.name for p in prds]
+    rfc_rel_paths = [r.relative_to(root).as_posix() if r.is_relative_to(root) else r.name for r in rfcs]
 
     md = f"""---
 title: "{t_title}"
 project_slug: "{slug}"
 mode: "long"
 version: "{version}"
+description: "{description}"
 last_updated: "{date_str} {time_str}"
 updated_by: "{user}"
 language: "{lang}"
@@ -394,6 +502,11 @@ sources_ingested:
             md += f"    - \"{prd_path}\"\n"
     else:
         md += "    - \"(Bağımsız PRD bulunamadı; gereksinimler yaşayan dokümanlardan sentezlendi)\"\n"
+
+    if rfc_rel_paths:
+        md += "  rfcs:\n"
+        for rfc_path in rfc_rel_paths:
+            md += f"    - \"{rfc_path}\"\n"
 
     md += f"""  architecture: "PROJECT_BRIEF.md"
   product: "PRODUCT.md"
@@ -408,8 +521,11 @@ sources_ingested:
 
 {t_stamp}
 
+> 🎯 **Proje Amacı (Description):**  
+> {description}
+
 > [!NOTE]
-> Bu doküman; projede bulunan tüm PRD dokümanlarını, mimari brief'i, ürün vizyonunu, terimler sözlüğünü, veritabanı şemasını, tasarım standartlarını ve yaşayan durumu **tek bir kaynakta konsolide etmek** üzere otomatik olarak sentezlenmiştir.
+> Bu doküman; projede bulunan tüm PRD ve RFC dokümanlarını, mimari brief'i, ürün vizyonunu, terimler sözlüğünü, veritabanı şemasını, tasarım standartlarını ve yaşayan durumu **tek bir kaynakta konsolide etmek** üzere otomatik olarak sentezlenmiştir.
 
 ---
 
@@ -421,13 +537,15 @@ sources_ingested:
     for h in history:
         md += f"| {h['version']} | {h['date']} | {h['time']} | {h['author']} | {h['mode']} | {h['summary']} |\n"
 
-    summary_note = f"Tüm PRD ({len(prds)} adet) ve referans dokümanları tek dokümanda konsolide edildi."
+    summary_note = f"Tüm PRD ({len(prds)} adet), RFC ({len(rfcs)} adet) ve referans dokümanları tek dokümanda konsolide edildi."
     md += f"| {version} | {date_str} | {time_str} | {user} | LONG | {summary_note} |\n\n---\n\n"
 
     # 1. Ürün Vizyonu
     product_file = refs.get("product")
     product_text = product_file.read_text(encoding="utf-8", errors="replace") if product_file else ""
-    md += """## 1. Ürün Vizyonu, Hedef Kitle & Kısıtlar (PRODUCT.md & PRD Sentezi)
+    md += f"""## 1. Ürün Vizyonu, Hedef Kitle & Kısıtlar (PRODUCT.md & PRD Sentezi)
+- **Temel Açıklama & Amaç:** {description}
+
 """
     if product_text:
         md += product_text[:1200].strip() + "\n\n"
@@ -478,14 +596,13 @@ sources_ingested:
     else:
         md += "*Tasarım sözleşmesi bulunamadı veya proje arayüzsüz/arka plan servisidir.*\n\n"
 
-    # 6. Fonksiyonel & Teknik Şartname Konsolidasyonu (ZORUNLU PRD SENTEZİ)
-    md += """## 6. Fonksiyonel & Teknik Şartname Konsolidasyonu (PRD Dokümanları Sentezi)
-
-> 🔍 **İncelenen PRD Dokümanları:**
+    # 6. Fonksiyonel & Teknik Şartname Konsolidasyonu (ZORUNLU PRD & RFC SENTEZİ)
+    md += """## 6. Fonksiyonel & Teknik Şartname Konsolidasyonu (PRD & RFC Sentezi)
 """
     if prds:
+        md += f"> 🔍 **İncelenen PRD Dokümanları ({len(prds)} adet):**\n"
         for prd_path in prds:
-            rel = prd_path.relative_to(root).as_posix()
+            rel = prd_path.relative_to(root).as_posix() if prd_path.is_relative_to(root) else prd_path.name
             md += f"- 📄 [`{rel}`]({rel})\n"
         md += "\n### 6.1 Konsolide Gereksinimler & Kabul Kriterleri (Requirements Matrix)\n\n"
         md += "| Gereksinim / Özellik | Kaynak PRD | Tür | Tanım | Kabul Kriteri |\n"
@@ -493,10 +610,9 @@ sources_ingested:
 
         req_count = 0
         for prd_path in prds:
-            rel = prd_path.relative_to(root).as_posix()
+            rel = prd_path.relative_to(root).as_posix() if prd_path.is_relative_to(root) else prd_path.name
             try:
                 p_text = prd_path.read_text(encoding="utf-8", errors="replace")
-                # Basit başlık ve madde taraması
                 items = re.findall(r"(?:###|####|\*|-)\s*(?:FR-\d+|US-\d+|Gereksinim|[A-Z][a-zA-Z0-9\s_-]+)[:\-]?\s*([^\n]+)", p_text)
                 for item in items[:5]:
                     req_count += 1
@@ -510,6 +626,14 @@ sources_ingested:
     else:
         md += "- *Bu projede bağımsız bir `*prd*.md` dosyası tespit edilemedi.*\n"
         md += "- *Gereksinimler yaşayan dokümanlardan (`PRODUCT.md`, `PROJECT_BRIEF.md`) ve kaynak koddan sentezlenmiştir.*\n\n"
+
+    # 6.2 İncelenen RFC Dokümanları
+    if rfcs:
+        md += f"### 6.2 İncelenen RFC Dokümanları ({len(rfcs)} adet)\n\n"
+        for rfc_path in rfcs:
+            r_rel = rfc_path.relative_to(root).as_posix() if rfc_path.is_relative_to(root) else rfc_path.name
+            md += f"- 📑 [`{r_rel}`]({r_rel})\n"
+        md += "\n"
 
     # 7. Yaşayan Durum
     handoff_file = refs.get("handoff")
@@ -591,12 +715,13 @@ def run_summary(
     # 4. Dokümanları Tara
     prds = find_all_prds(project_root)
     refs = collect_reference_docs(project_root)
+    rfcs = refs.get("rfcs", [])
 
     # 5. İçeriği İnşa Et
     if mode == "short":
         content = build_short_summary(slug, project_root, lang, version, now, user, refs, history)
     else:
-        content = build_long_summary(slug, project_root, lang, version, now, user, prds, refs, history)
+        content = build_long_summary(slug, project_root, lang, version, now, user, prds, rfcs, refs, history)
 
     # 6. Dosyayı Yaz
     target_file.parent.mkdir(parents=True, exist_ok=True)

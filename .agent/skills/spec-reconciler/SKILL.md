@@ -66,8 +66,20 @@ Her çelişki için:
 - **Eşitleme Seçenekleri:** `[Seçenek A: Koda Uydur]` vs `[Seçenek B: Şartnameye Uydur]`
 - **💬 Kullanıcı Kararı / Comment Alanı**
 
-### Aşama 4: Otonom İcra ve Dağıtım (Settlement Upon Approval)
-Kullanıcı kararlarını girip plana onay verdiğinde (`proceed`):
+---
+
+### 🛑 ZORUNLU ONAY KAPISI (STRICT APPROVAL GATE - DURMA KURALI)
+> [!CRITICAL]
+> **Kullanıcı Kararı & Onayı Olmadan İcra YASAKTIR:**
+> Ajan Aşama 3'te Uzlaşma Planı artifact'ını (`reconciliation_plan.md`) oluşturduktan veya Markdown raporunu sunduktan sonra **KESİNLİKLE VE İSTİSNASIZ OLARAK DURUR (`STOP CALLING TOOLS`)**.
+> - Raporu hazırladığı turda **HİÇBİR** doküman (`docs/APIs/`, `RFCs/`, `PRODUCT.md`) ve **HİÇBİR** kod dosyasında tek bir satır dahi değişiklik (develop / refactor / update) **YAPILAMAZ**.
+> - Ajan "bunları geliştirdim / icra ettim" şeklinde kendi kendine karar vererek peşin icraya geçemez.
+> - Yalnızca kullanıcı planı inceleyip tercihlerini belirttikten sonra açık onay verdiğinde (`proceed`, `onaylıyorum`, `A seçeneklerini uygula` vb.) Aşama 4'e geçilir.
+
+---
+
+### Aşama 4: Otonom İcra ve Dağıtım (Settlement Upon Explicit Approval Only)
+Kullanıcı kararlarını girip plana açık onay verdiğinde (`proceed` / `onay`):
 1. **API Dokümanları:** `docs/APIs/` altındaki ilgili modül dosyaları güncel parametre, şema ve response yapısıyla cerrahi güncellenir.
 2. **RFC Belgeleri:** İlgili RFC'lerin altına `## Uygulama Gerçekliği & Revizyon Notu (As-Built)` bölümü eklenir.
 3. **PRD / Şartname:** Alınan kararlara göre senkronize edilir.
