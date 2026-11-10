@@ -12,9 +12,13 @@ sinif: SUREC
 2. **Semantik etiketleme.** En son tag okunur ve bir sonraki semantik sürüme
    artırılır (`vX.Y.Z` → `vX.Y.Z+1`). Analiz kök nedeni belgeliyorsa `+1` yerine
    gerçek artış (minor/major) yapılır.
-3. **Önce onay.** Değişiklikler ve önerilen mesaj kullanıcıya sunulur; açık onay
+3. **Önce onay ve zorunlu teklif.** Değişiklikler ve önerilen mesaj kullanıcıya sunulur; açık onay
    alınmadan commit ve tag adımlarına geçilmez
    (bkz. `no-unauthorized-commit.md`).
+   ⛔ **Commit Teklifini Atlama Yasağı:** Ajan, yapılan iş veya defect çözümü bittiğinde
+   çalışma ağacında değişiklik varsa (`git status --short`), commit konusunu atlayamaz;
+   mutlaka önerilen mesaj, semantik tag ve test adımlarını sunarak kullanıcıya
+   "Commit/Push işlemini başlatayım mı?" teklifini götürmek zorundadır.
 4. **Uzak depo senkronu.** Commit sonrası hem aktif dal (`git push origin HEAD`)
    hem yeni tag'ler (`git push --tags`) gönderilir.
 5. **Kesintisizlik.** Onay sonrası tüm pipeline tek seferde yürütülür; ara

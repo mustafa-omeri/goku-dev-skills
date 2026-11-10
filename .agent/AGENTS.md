@@ -155,6 +155,9 @@ ve [`.agent\rules\project-brief-maintenance.md`](rules/project-brief-maintenance
    - **Devir Raporunda Tekillik:** Devir raporu bloğunda sıradaki işler tek bir maddede (`- **Sıradaki İşler (Canlı Görev Panosu):** 1. ⏭️ ..., 2. ⬜ ...`) sunulur; `HANDOFF.md` altında mükerrer `* Sıradaki İş:` açılmaz.
 10. Kullanıcıya şeffaf rapor ver — aşağıdaki blok **zorunludur**.
 11. Commit istenmedikçe `git commit` / `push` / `tag` **yapma**.
+12. ⛔ **Zorunlu Commit Teklifi ve Defect Sonrası Pano Dönüşü (Anti-Omission & Zero-Amnesia):**
+    - **Defect Sonrası Sıradaki İşe Dönüş:** Bir hata/defect giderildiğinde ajan pasif kalamaz ve kullanıcının *"sırada ne var?"* diye sormasını bekleyemez. `HANDOFF.md` §3 Canlı Görev Panosundaki sıradaki 1 numaralı açık işi (`🎯 1. ⏭️ [ID - İş Tanımı]`) raporun sonunda doğrudan hatırlatır.
+    - **Zorunlu Commit Teklifi:** Çalışma ağacında doğrulanmış değişiklikler varsa (`git status --short` temiz değilse), commit aşamasını atlamak veya sormaktan kaçınmak yasaktır. Ajan mutlaka önerilen commit mesajını, yeni semantik tag'i ve kullanıcı test adımlarını sunarak kullanıcıya *"Commit/Push işlemini başlatayım mı?"* onay sorusunu yöneltir.
 
 ```markdown
 ### 📝 OTURUM DEVİR & BİLGİ TABANI GÜNCELLEMESİ (HANDOFF & KB RAPORU)

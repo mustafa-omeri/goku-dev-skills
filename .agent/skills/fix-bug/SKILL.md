@@ -34,6 +34,9 @@ Bu yetenek, sisteme yeni hatalar ve regresyonlar sokmadan kök nedeni bilimsel y
 6. **Aşama 6 — Kalıcı Hafıza ve Tuzak Kaydı:**
    - Hatanın kök nedenini (`Problem / Root Cause / Solution / Files Changed`) `<repo-kök>/knowledge-base.md` dosyasına ekle.
    - Tekrarlanma riski olan proje tuzaklarını `<repo-kök>/HANDOFF.md` (§0 Tuzaklar) tablosuna işle.
+7. **Aşama 7 — Sıradaki İşe Dönüş ve Zorunlu Commit Teklifi (Zero-Amnesia Protocol):**
+   - ⛔ **Pasif Kalma Yasağı:** Araya giren defect çözüldüğünde ajanın duraksayıp kullanıcının *"sırada ne var?"* diye sormasını beklemesi yasaktır. `HANDOFF.md` §3 Canlı Görev Panosundaki sıradaki açık iş (`🎯 1. ⏭️ [ID - İş]`) doğrudan hatırlatılır.
+   - 🛡️ **Zorunlu Commit Teklifi:** Çalışma ağacında değişiklik varsa (`git status --short`), commit mesajı, yeni semantik tag ve kullanıcı test adımları sunularak commit onayı istenir.
 
 ---
 
@@ -47,4 +50,6 @@ Bu yetenek, sisteme yeni hatalar ve regresyonlar sokmadan kök nedeni bilimsel y
 - **Cerrahi Çözüm & Değişen Dosyalar:** [Yapılan minimal değişiklik]
 - **Yeşil Döngü & Regresyon Kanıtı (Sonra):** `[Test/Komut]` → `PASS` · `run_all_gates.py` → `[OK]`
 - **Bilgi Tabanı Kaydı:** `knowledge-base.md` ve `HANDOFF.md` güncellendi.
+- **Sıradaki İş (Canlı Pano):** [Araya giren defect çözüldü; onaylı plana göre sıradaki iş: 🎯 1. ⏭️ ...]
+- **Commit Durumu & Teklifi:** [Önerilen commit mesajı, tag ve kullanıcı test adımı ile onay talebi]
 ```

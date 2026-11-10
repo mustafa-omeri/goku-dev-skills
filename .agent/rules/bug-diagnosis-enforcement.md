@@ -61,3 +61,23 @@ Tek bir fikre kilitlenmeyin. Test etmeden önce 3 ila 5 adet sıralı hipotez li
 - [ ] Tüm `[DEBUG-...]` logları koddan tamamen silindi (`grep` ile sıfır eşleşme).
 - [ ] Geçici test harness/script'leri temizlendi.
 - [ ] Doğru çıkan kök neden ve çözüm, devir raporunda açıklandı.
+
+---
+
+## 3. Defect Sonrası Kesintisiz İş Akışı ve Sıradaki İşe Dönüş (Post-Defect Continuation)
+
+⛔ **Defect Sonrası Bağlam Kaybı ve Pasif Kalma Yasağı (Anti-Defect Amnesia):**
+Ajan bir hata/defect bildirimini çözdükten sonra süreci *"hata çözüldü"* diyerek askıda bırakamaz ve kullanıcının *"sırada ne var?"* diye sormasını bekleyemez. Her defect çözümü sonrasında:
+
+1. **Canlı Panoyu ve Sıradaki İşi Hatırlat (Back to Master Board):**
+   `HANDOFF.md` §3 Canlı Görev Panosu ve (varsa) `SPRINT_PLAN.md` kontrol edilir. Araya giren defect tamamlandığında, asıl geliştirme planındaki sıradaki 1 numaralı açık iş (`🎯 1. ⏭️ [ID - İş Tanımı]`) yanıtta açıkça beyan edilir:
+   > *"Araya giren defect başarıyla çözüldü ve doğrulandı. Onaylı master plana göre sıradaki işimiz: `[DOM]-[TIP]-[NO]` - [İş Tanımı]."*
+2. **Zorunlu Commit Teklifi (Mandatory Commit Prompting):**
+   Çalışma ağacında çözülen defect sebebiyle değişiklik oluştuğunda (`git status --short` temiz değilse), ajan commit adımını atlayamaz veya sessiz kalamaz. Mutlaka `no-unauthorized-commit.md` uyarınca:
+   - Değişen dosya listesini,
+   - Önerilen commit mesajını (`fix(...)`),
+   - Önerilen yeni semantik tag'i,
+   - Kullanıcı test adımlarını
+   sunarak kullanıcıdan **açık commit onayı istemekle yükümlüdür**.
+3. **Kalıcı Hafıza Senkronu:**
+   Çözülen hata `knowledge-base.md` dosyasına ve `HANDOFF.md` (§0 Tuzaklar ve §1 Yapılanlar) tablosuna cerrahi olarak işlenir.

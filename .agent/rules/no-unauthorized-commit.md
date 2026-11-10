@@ -21,6 +21,23 @@ sinif: SUREC
    "devam et", "bak", "bir de şunu düzelt" onay **sayılmaz**.
 4. Onay yoksa yalnızca değişiklikleri hazırla ve onay bekle.
 
+## 1.0 Zorunlu Commit Teklifi (Mandatory Commit Prompting)
+
+⛔ **Commit/Push Teklifini Atlama veya Sessiz Kalma Yasağı (Anti-Omission Rule):**
+"Onaysız commit yapma" kuralı, ajanın commit aşamasını tamamen unutması, yok sayması veya kullanıcıya sormaktan kaçınması anlamına **GELMEZ**.
+
+1. **Her Tamamlanan Görev / Defect / Refactoring Sonrası:**
+   Çalışma ağacında doğrulanmış değişiklikler varsa (`git status --short` temiz değilse), ajan görevi veya defect onarımını bitirip sessizliğe gömülemez.
+2. **Zorunlu Teklif Sunumu:**
+   Ajan kullanıcıya her defasında açıkça:
+   - Değişen dosyaları,
+   - Önerilen konvansiyonel commit mesajını (`feat(...)`, `fix(...)` vb.),
+   - Yeni semantik tag önerisini (`vX.Y.Z`),
+   - Manuel doğrulama test adımlarını
+   sunarak:
+   > *"Yapılan değişiklikler test edildi ve doğrulandı. Yukarıdaki commit mesajı ve sürüm etiketiyle commit/push işlemini başlatmamı onaylıyor musunuz?"*
+   sorusunu sormakla **YÜKÜMLÜDÜR**. Kullanıcıdan açık onay gelmeden komut çalıştırılamaz; ancak bu soru sorulmadan iş tamamlandı sayılamaz.
+
 ## 1.1 Doğrudan Kesintisiz Yayınlama İstisnası (`commitx`, `commitle`)
 
 Kullanıcı mesajında açık bir eylem olarak **`commitx`** veya **`commitle`** yazdığında; bu talep **peşin ve açık tam yetki (Express Pre-Approval)** kabul edilir:

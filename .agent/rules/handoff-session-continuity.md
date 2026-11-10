@@ -53,6 +53,11 @@ kapi:
      * Araya acil kullanıcı istekleri, anlık hata düzeltmeleri (hotfix) veya yeni bulgular (`BUG`) girdiğinde:
        1. `🎯 1. ⏭️ [Araya Giren Acil Görev]` en üst sıraya alınır.
        2. Onaylı master planın kalan maddeleri **ASLA panodan silinemez, ezilemez veya buharlaştırılamaz**. Alt sıralara (`2. ⬜`, `3. ⬜`...) veya `📌 Gelecek Fazlar & Onaylı Master Plan Backlog` tablosuna ötelenir.
+   - **Defect/Hotfix Sonrası Sıradaki İşe Otomatik Dönüş ve Commit Teklifi (Zero-Amnesia Protocol):**
+     * Araya giren bir hata, defect veya kullanıcı revizyonu tamamlandığında; ajanın pasif kalarak duraksaması ve kullanıcının *"sırada ne var?"* diye sormasını beklemesi yasaktır!
+     * Çıktı raporunun ve yanıtın en altında doğrudan:
+       1. **Sıradaki İş:** Onaylı master planda sırada bekleyen 1 numaralı açık iş (`🎯 1. ⏭️ [ID - İş Tanımı]`) açıkça hatırlatılır.
+       2. **Commit Teklifi:** Çalışma ağacında değişiklik varsa (`git status --short`), commit mesajı, semantik tag ve test adımları sunularak commit onayı istenir.
    - **"Nerede Kaldık?" Derin Kurtarma Protokolü (Deep Recovery Protocol):**
      * Kullanıcı *"nerede kaldık?"*, *"durum ne?"*, *"sıradaki işler ne?"* dediğinde ajan yalnızca `HANDOFF.md`'nin en altındaki son 1-2 satıra bakamaz (Sığ Okuma Tuzağı).
      * Ajan şu sırayla derin tarama yapar:
