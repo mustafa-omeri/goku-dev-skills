@@ -49,6 +49,7 @@ Kod inceleme (`code-review`) ve güvenlik denetimi (`check-security`) yapan alt 
 - `knowledge-base.md` (Kalıcı Kararlar ve Bilinen Hatalar)
 - `PROJECT_BRIEF.md` (Mimari Omurga)
 - `docs/adr/` (Mimari Karar Kayıtları)
+- **Kod İçi `shortcut:` Sözleşmesi (`transferred_ponytail.md`):** Kodda yer alan `// shortcut: <tavan>, <yükseltme tetikleyicisi>` yorumları. Mevcut beklenen yük bu tavanı aşmadığı sürece bu satırlar "smell/hata" sayılmaz; Rejection Log tablosuna eklenir. Ancak yükseltme tetikleyicisi yazılmamış kısayollar (`no-trigger`) rot riski olarak bayraklanır.
 
 ### Rejection Log İşletimi:
 Eğer bulunan bir "kod kokusu" veya "şartname sapması", yukarıdaki karar belgelerinde açıkça gerekçelendirilmiş bir kararın sonucuysa:

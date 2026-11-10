@@ -63,8 +63,14 @@ Projedeki kurallara (`AGENTS.md`, `.agent/rules/`, `CONTRIBUTING.md`) ek olarak,
 ### 5. Sonuçları Birleştirin (Aggregate) & Rejection Log
 Bulguları `## Standartlar` ve `## Şartname` başlıkları altında yan yana sunun. İki eksenin bulgularını asla birbirine karıştırmayın veya tek bir puanlama yapmayın.
 
-- **Rejection Log (Bilinçli Tercih Kontrolü):** `HANDOFF.md`, `knowledge-base.md` ve `PROJECT_BRIEF.md` içinde belgelenmiş bilinçli mimari ödünler (tradeoffs) "hata" olarak sunulmaz; `## Bilinçli Tercihler (Rejection Log)` tablosuna taşınır (Ayrıntı: `references/stop-conditions-and-rejections.md`).
+- **Nöbetçi Geliştirici Standartları (Ponytail Review Disiplini):**
+  * **Diff-Dışı Çağrıcılar (Untouched Callers):** Fonksiyon imzası veya davranışı değiştiğinde dokunulmamış tüm çağıran dosyalar (`git grep`) incelenir.
+  * **Beklenen Yük (Expected Load) Varsayımı:** Raporun başında varsayılan yük belirtilir; ölçek/race-condition sorunları buna göre tartılır.
+  * **4-Parçalı Somut Bulgu Zorunluluğu:** Soyut tavsiye ("consider...") yasaktır. Her bulgu: 1) `What this is` (ne yapıyor), 2) `Problem` (somut hata durumu), 3) `Fix` (küçük çalışan onarım), 4) `If we skip it` (atlanırsa canlıda ne olur) formatında yazılır.
+  * **İşe Göre Bölme:** Fonksiyonlar keyfi satır sayısına göre değil, sadece bağımsız işlere göre (`by job`) bölünür.
+- **Rejection Log (Bilinçli Tercih Kontrolü):** `HANDOFF.md`, `knowledge-base.md` ve `PROJECT_BRIEF.md` içinde belgelenmiş bilinçli mimari ödünler ve tavanı aşılmamış `shortcut: <tavan>, <tetikleyici>` yorumları "hata" olarak sunulmaz; `## Bilinçli Tercihler (Rejection Log)` tablosuna taşınır (Ayrıntı: `references/stop-conditions-and-rejections.md`). Yükseltme tetikleyicisi yazılmamış olanlar ise `no-trigger` çürüme riski olarak bayraklanır.
 - **STOP Koşulları:** Kod incelemesi sonrası refactoring veya onarım adımlarında gerçeklik beklentiyle uyuşmuyorsa (`Reality Mismatch`), alt ajan durur ve onay ister.
 - **Standartlar vs Şartname İhtilaflarında Konsey Hakemliği (Council Deliberation):** Bir eksenin "standart dışı / smell" dediği ancak şartnamenin zorunlu kıldığı çelişkili durumlarda (örn. geriye dönük uyumluluk köprüleri, mecburi parametre yığınları), `council` / `karpathy-guidelines` (§5 Council Deliberation) kör hakemliği işletilerek bilinçli trade-off kararı üretilir ve `knowledge-base.md` / `docs/adr/` kaydına bağlanır.
+- **Yanıt Sonu Şeffaflık İmzası:** Rapor sonunda 1-2 satırlık `Kontrol Edilmeyen / Kapsam Dışı:` ve `Kullanıcının Bilmesi Gereken Risk:` notu düşülür.
 
 Raporu şu özetle bitirin: Her iki eksendeki toplam bulgu sayısı ve her eksenin kendi içindeki en kritik sorunu.

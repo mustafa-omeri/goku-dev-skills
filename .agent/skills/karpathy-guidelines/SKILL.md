@@ -37,6 +37,8 @@ Before implementing:
 - If you write 200 lines and it could be 50, rewrite it.
 
 Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+- **6-Basamaklı Yeniden Kullanım Merdiveni (The 6-Rung Reuse Ladder):** Kod yazmadan önce sırasıyla: 1) Var olması şart mı? -> 2) Kod tabanında zaten var mı? -> 3) Standart kütüphane / yerel platform mu? -> 4) Kurulu bağımlılık mı? -> 5) Kolay anlaşılan tek satır mı? -> 6) Minimum çalışan kod + 1 kanıt testi. (Bkz: `references/transferred_ponytail.md`).
+- **Bilinçli Kısayol Sözleşmesi (`shortcut:`):** Bilinçli basitleştirmeler `// shortcut: <tavan>, <yükseltme tetikleyicisi>` ile işaretlenir; tetikleyicisiz bırakılamaz.
 
 ---
 
