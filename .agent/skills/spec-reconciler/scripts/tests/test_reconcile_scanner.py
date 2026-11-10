@@ -13,7 +13,9 @@ if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 from reconcile_scanner import (
+    DriftFinding,
     ReconcileScanner,
+    archive_reconciliation_plan,
     discover_prd_files,
     discover_rfc_files,
 )
@@ -127,6 +129,36 @@ public class UserController {
         report = scanner.generate_markdown_report()
         self.assertIn("APPROVAL GATE", report)
         self.assertIn("AdminReports.tsx", report)
+
+    def test_archive_reconciliation_plan_with_datetime_stamp(self):
+        temp_plan = self.root / "temp_reconciliation_plan.md"
+        plan_content = "# Test Reconciliation Plan\nContent here"
+        temp_plan.write_text(plan_content, encoding="utf-8")
+
+        archived = archive_reconciliation_plan(temp_plan, self.root, slug="ocai")
+        self.assertTrue(archived.exists())
+        self.assertEqual(archived.parent, self.root / "docs" / "plans")
+        self.assertTrue(archived.name.startswith("reconciliation_plan_ocai_"))
+        self.assertTrue(archived.name.endswith(".md"))
+        self.assertEqual(archived.read_text(encoding="utf-8"), plan_content)
+        # Original temp file outside docs/plans should be unlinked
+        self.assertFalse(temp_plan.exists())
+
+    def test_markdown_report_contains_four_post_approval_rules(self):
+        scanner = ReconcileScanner(project_root=self.root)
+        scanner.findings.append(
+            DriftFinding(
+                type="DOCS_DRIFT",
+                title="Test Endpoint Drift",
+                severity="WARNING",
+                details="Endpoint not documented in docs/APIs",
+            )
+        )
+        report = scanner.generate_markdown_report()
+        self.assertIn("Plan Arşivleme (`docs/plans/`)", report)
+        self.assertIn("Doküman-Önce Eşitleme (Docs-Only Sync)", report)
+        self.assertIn("Plan Referanslı Görevler (Traceable HANDOFF)", report)
+        self.assertIn("Öncelikli Protokol Kalkanı", report)
 
 
 if __name__ == "__main__":

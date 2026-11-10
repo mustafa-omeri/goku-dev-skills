@@ -42,7 +42,9 @@
 
 ---
 
-## 3. Onay Sonrası İcra Adımları (Next Steps Upon Approval)
-1. Kullanıcı yorumları ve kararları doğrultusunda dokümanlar güncellenir.
-2. İlgili RFC'lerin sonuna `## Uygulama Gerçekliği & Revizyon Notu (As-Built)` eklenir.
-3. Varsa kod refactoring görevleri `HANDOFF.md` §3 canlı panosuna işlenir.
+## 3. Onay Sonrası Deterministik İcra Protokolü (Post-Approval 4 Golden Rules)
+Kullanıcı bu uzlaşma planını onayladığında (`proceed`, `onay`, `geliştir`, `devam et`), aşağıdaki 4 adım sırasıyla yürütülür:
+1. **Plan Dosyasını Arşivleme:** Bu plan dokümanı `docs/plans/reconciliation_plan_<slug>_<YYYYMMDD_HHMMSS>.md` olarak `docs/plans/` altına taşınır ve kalıcılaştırılır.
+2. **Doküman-Önce Eşitleme (Docs-Only Sync Gate):** Kod geliştirilmez; yalnızca `docs/APIs/`, `RFCs/` (sonuna `## Uygulama Gerçekliği & Revizyon Notu (As-Built)` eklenerek) ve `PRODUCT.md` dokümanları eşitlenir.
+3. **HANDOFF.md Canlı Panosuna Plan Referanslı Maddeleme:** Kod değişiklikleri `HANDOFF.md` §3 canlı panosuna, 1. maddedeki plan dosyası açıkça referans verilerek (`docs/plans/...`) mühürlenir.
+4. **Öncelikli Protokol Kalkanı:** Kullanıcı aksini belirtmedikçe ("kodu şimdi yaz" demedikçe), "geliştir" komutu gelse dahi önce 1, 2 ve 3. maddeler icra edilir; ardından kullanıcıya en uygun sıradaki iş önerilir.

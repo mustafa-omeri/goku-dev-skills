@@ -78,9 +78,29 @@ Her çelişki için:
 
 ---
 
-### Aşama 4: Otonom İcra ve Dağıtım (Settlement Upon Explicit Approval Only)
-Kullanıcı kararlarını girip plana açık onay verdiğinde (`proceed` / `onay`):
-1. **API Dokümanları:** `docs/APIs/` altındaki ilgili modül dosyaları güncel parametre, şema ve response yapısıyla cerrahi güncellenir.
-2. **RFC Belgeleri:** İlgili RFC'lerin altına `## Uygulama Gerçekliği & Revizyon Notu (As-Built)` bölümü eklenir.
-3. **PRD / Şartname:** Alınan kararlara göre senkronize edilir.
-4. **Kod Düzeltme İhtiyacı Varsa:** İlgili işler `HANDOFF.md` §3 canlı panosuna ve `KANBAN.md`'ye aktarılır.
+### Aşama 4: Otonom İcra ve Dağıtım (Plan Onayı Sonrası 4 Altın Kural)
+Kullanıcı planı onayladığında veya *"onay"*, *"proceed"*, *"geliştir"*, *"devam et"* dediğinde yapı **otonom olarak aşağıdaki 4 aksiyonu sırasıyla alır**:
+
+1. **`<plan>.md` Dosyasını Arşivleme ve Tarih-Saat Damgasıyla Taşıma:**
+   - Üretilen uzlaşma planı (ör. artifact veya geçici konumdaki `<plan>.md`), proje kökündeki `docs/plans/` dizini altına taşınır/kopyalanır.
+   - Dosya adı tarih-saat damgası ile adlandırılır:
+     Format: `docs/plans/reconciliation_plan_<slug>_<YYYYMMDD_HHMMSS>.md` (veya `docs/plans/reconciliation_plan_<YYYYMMDD_HHMMSS>.md`).
+     *(İpucu: `python .agent/skills/spec-reconciler/scripts/reconcile_scanner.py --archive-plan <plan-path> --slug <slug>` komutuyla otomatik taşınabilir).*
+
+2. **Yalnızca Dokümanların Eşitlenmesi ve Kod Dokunulmazlığı (Docs-Only Sync Gate):**
+   - Bu adımda **KESİNLİKLE KODA DOKUNULMAZ / KOD GELİŞTİRMESİ YAPILMAZ**.
+   - Yalnızca ve yalnızca dokümanlar güncellenir:
+     * `docs/APIs/` altındaki API dokümanları güncel parametre, şema ve response yapısıyla eşitlenir.
+     * İlgili RFC dokümanlarının sonuna `## Uygulama Gerçekliği & Revizyon Notu (As-Built)` bölümü eklenir.
+     * PRD (`PRODUCT.md` / `*-prd.md`) dokümanları kullanıcı tercihlerine göre senkronize edilir.
+   - Kod değişiklikleri ise doğrudan koda yazılmak yerine `HANDOFF.md` §3 Canlı Görev Panosuna (ve `KANBAN.md` backlog'una) aktarılır.
+
+3. **HANDOFF.md Canlı Panosuna Plan Referanslı Maddeleme (Traceable Plan Backlog):**
+   - `HANDOFF.md` §3 Canlı Görev Panosu (veya `SPRINT_PLAN.md` / `KANBAN.md`) altına yazılacak her kod geliştirme görevi, 1. maddede `docs/plans/` altına taşınan plan dosyasına açık referans (`file:///.../docs/plans/<plan_file>.md#L...` veya `[docs/plans/<plan_file>.md]`) verilerek işaretlenir.
+   - Örnek format: `🎯 1. ⏭️ [RFC-001] (docs/plans/reconciliation_plan_ocai_20261110_165000.md): /api/v1/auth/login endpoint parametre uyumu`.
+   - Böylece onaylanan plan ile kod geliştirme fazı %100 izlenebilir (traceable) kalır.
+
+4. **Öncelikli Protokol Kalkanı & Sıradaki İş Önerisi (Anti-Prompt-Drift & Next Work Suggestion):**
+   - Kullanıcı aksini açıkça ve özellikle belirtmedikçe ("kodu şimdi yaz, dokümanları sonra yap" gibi açık muafiyet vermedikçe), ilk 3 madde **mutlak ve daima geçerlidir**.
+   - Kullanıcıdan *"geliştir"*, *"devam et"*, *"kodu tamamla"*, *"uygula"* gibi tetikleyiciler gelse bile ajan doğrudan koda dalmaz; **önce 1, 2 ve 3. maddeleri icra eder**.
+   - Dokümanlar eşitlenip kod görevleri plan referansıyla `HANDOFF.md` panosuna mühürlendikten sonra, kullanıcıya en uygun sıradaki iş (`HANDOFF.md` §3 canlı panosundaki 1 numaralı görev) önerilir ve kullanıcıdan o görevin kodlamasını başlatmak için teyit istenir.

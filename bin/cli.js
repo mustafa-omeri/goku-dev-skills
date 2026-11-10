@@ -38,7 +38,7 @@ const https = require('https');
 
 
 
-const VERSION = '1.35.5';
+const VERSION = '1.35.6';
 
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 

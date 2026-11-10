@@ -10,6 +10,7 @@ contract mismatches, orphaned frontend links/stubs, and spec contradictions.
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import os
 import re
@@ -658,12 +659,55 @@ class ReconcileScanner:
             ])
 
         lines.extend([
-            "### 🛑 ONAY KAPISI (APPROVAL GATE)",
+            "### 🛑 ONAY KAPISI VE OTONOM İCRA PROTOKOLÜ (APPROVAL GATE & POST-APPROVAL SETTLEMENT)",
             "> Bu rapor bir Uzlaşma Planı taslağıdır. Kullanıcı açık onay vermeden (`proceed` / `onay`)",
             "> kod tabanında veya dokümanlarda tek taraflı değişiklik yapılamaz.",
+            "",
+            "#### 📌 Plan Onaylandığında Otomatik Yürütülecek 4 Altın Kural:",
+            "1. **Plan Arşivleme (`docs/plans/`):** `<plan>.md` dosyası tarih-saat damgası ile `docs/plans/reconciliation_plan_<slug>_<YYYYMMDD_HHMMSS>.md` olarak taşınır ve kalıcılaştırılır.",
+            "2. **Doküman-Önce Eşitleme (Docs-Only Sync):** Bu aşamada kod geliştirilmez; yalnızca `docs/APIs/`, `RFCs/` ve `PRODUCT.md` dokümanları onaylanan plana göre eşitlenir.",
+            "3. **Plan Referanslı Görevler (Traceable HANDOFF):** Kodda yapılması gereken değişiklikler `HANDOFF.md` §3 canlı görev panosuna, taşınan plan dosyası açıkça referans verilerek (`docs/plans/...`) işlenir.",
+            "4. **Öncelikli Protokol Kalkanı:** Kullanıcı aksini belirtmedikçe ('geliştir', 'devam et' gibi komutlar gelse dahi) önce 1, 2 ve 3. maddeler icra edilir; ardından kullanıcıya en uygun sıradaki iş önerilir.",
         ])
 
         return "\n".join(lines)
+
+
+def archive_reconciliation_plan(
+    plan_path: Path | str,
+    project_root: Path | str,
+    slug: Optional[str] = None,
+) -> Path:
+    """Archives and renames a reconciliation plan into docs/plans/ with a datetime timestamp.
+
+    Format: docs/plans/reconciliation_plan_{slug}_{timestamp}.md or
+            docs/plans/reconciliation_plan_{timestamp}.md
+    """
+    src_p = Path(plan_path).resolve()
+    if not src_p.exists():
+        raise FileNotFoundError(f"Plan file not found: {src_p}")
+
+    root_p = Path(project_root).resolve()
+    plans_dir = root_p / "docs" / "plans"
+    plans_dir.mkdir(parents=True, exist_ok=True)
+
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    clean_slug = f"_{slug.strip().lower()}" if slug and slug.strip() else ""
+    clean_slug = re.sub(r"[^a-zA-Z0-9_\-]", "_", clean_slug)
+    dest_name = f"reconciliation_plan{clean_slug}_{timestamp}.md"
+    dest_p = plans_dir / dest_name
+
+    content = src_p.read_text(encoding="utf-8")
+    dest_p.write_text(content, encoding="utf-8")
+
+    # If src_p is located in a temp/artifact directory outside docs/plans, remove old source
+    if src_p != dest_p and "docs/plans" not in str(src_p).replace("\\", "/"):
+        try:
+            src_p.unlink()
+        except OSError:
+            pass
+
+    return dest_p
 
 
 def main() -> int:
@@ -676,11 +720,18 @@ def main() -> int:
     parser.add_argument("--rfcs", type=str, default=None, help="Path to RFCs directory")
     parser.add_argument("--prd", type=str, default=None, help="Path to PRD / Product requirements doc")
     parser.add_argument("--output-plan", type=str, help="Path to write the reconciliation markdown plan")
+    parser.add_argument("--archive-plan", type=str, help="Path to plan markdown file to archive into docs/plans/ with datetime stamp")
+    parser.add_argument("--slug", type=str, default=None, help="Optional project slug for archived plan name")
     parser.add_argument("--json", action="store_true", help="Output results as JSON")
 
     args = parser.parse_args()
 
     curr_root = Path.cwd().resolve()
+
+    if args.archive_plan:
+        archived_path = archive_reconciliation_plan(args.archive_plan, curr_root, args.slug)
+        print(f"[ARCHIVED] Plan successfully moved to: {archived_path}")
+        return 0
     be_path = Path(args.backend).resolve() if args.backend else None
     fe_path = Path(args.frontend).resolve() if args.frontend else None
     docs_api_path = Path(args.docs_api).resolve() if args.docs_api and Path(args.docs_api).exists() else None

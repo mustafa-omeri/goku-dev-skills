@@ -691,15 +691,15 @@ python .agent/skills/feature-architect/scripts/council_merger.py --sample --form
     },
     {
         "command": "/spec-reconcile",
-        "aliases": ["/spec-reconcile", "spec reconcile", "[SPEC-RECONCILE]", "api dokümanlarını güncelle", "rfc güncelle", "şartname çelişkisi", "reconcile specs", "sync api docs"],
+        "aliases": ["/spec-reconcile", "/spec-reconsiler", "spec reconcile", "spec reconciler", "[SPEC-RECONCILE]", "api dokümanlarını güncelle", "rfc güncelle", "şartname çelişkisi", "reconcile specs", "sync api docs"],
         "name": "Global Çapraz Kod & Şartname Eşitleme Motoru",
         "badge": "API & Spec Drift",
         "badge_class": "badge-accent",
         "skills": ["spec-reconciler", "doc-coauthoring", "domain-modeling", "codebase-design"],
         "goal": "Canlı Kod vs docs/APIs vs RFC vs PRD Çelişki Tespiti & İnteraktif Uzlaşma Planı",
-        "description": "Backend ve frontend kod tabanlarını çift taraflı tarayarak canlı kod ile RFC, PRD ve docs/APIs/ arasındaki sapmaları (Documentation Drift / Spec Drift / Contract Mismatch) ortaya çıkarır; geliştiriciye her çelişki için karar alanı açan interaktif uzlaşma planı (Artifact) sunar.",
+        "description": "Backend ve frontend kod tabanlarını çift taraflı tarayarak canlı kod ile RFC, PRD ve docs/APIs/ arasındaki sapmaları (Documentation Drift / Spec Drift / Contract Mismatch) ortaya çıkarır; geliştiriciye her çelişki için karar alanı açan interaktif uzlaşma planı (Artifact) sunar. Onay geldiğinde planı docs/plans altına tarih damgasıyla taşır, yalnızca dokümanları eşitler ve kod işlerini HANDOFF canlı panosuna plana referansla aktarır.",
         "sample_prompt": "/spec-reconcile: Backend ve frontend arasındaki API sözleşmesi kopukluklarını ve RFC şartname çelişkilerini tara, uzlaşma planı çıkar.",
-        "protocol": "1. reconcile_scanner.py -> Backend/Frontend kod ve doküman çift taraflı taraması ➜ 2. 3-Yönlü Çelişki Tespiti -> Docs drift, contract mismatch ve spec contradiction analizi ➜ 3. İnteraktif Uzlaşma Planı -> Karar seçenekli plan artifact'i (request_feedback) ➜ 4. Proceed İcrası -> docs/APIs/ ve RFC revizyonu",
+        "protocol": "1. reconcile_scanner.py -> Kod ve doküman çift taraflı taraması ➜ 2. 3-Yönlü Çelişki Tespiti -> Docs drift, contract mismatch ve spec contradiction analizi ➜ 3. İnteraktif Uzlaşma Planı -> Karar seçenekli plan artifact'i + Strict Approval Gate ➜ 4. Onayda Otonom İcra -> Planı docs/plans/'a taşı, yalnızca dokümanları eşitle, kod işlerini plana referansla HANDOFF.md canlı panosuna mühürle ve sıradaki işi öner.",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
 /spec-reconcile
 spec reconcile
