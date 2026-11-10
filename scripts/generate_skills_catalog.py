@@ -350,16 +350,20 @@ python .agent/skills/musgoku/scripts/check_sprint_board.py""",
         "badge": "Güvenlik & Savunma",
         "badge_class": "badge-danger",
         "skills": ["check-security", "security-audit", "development-workflow", "prelaunch-audit"],
-        "goal": "OWASP Zafiyet Avcılığı & Public Form 6-Katman Savunması",
-        "description": "OWASP zafiyet avcılığı, public form kalkanı (Context Binding, Honeypot, Turnstile, Rate-limit, Sanitization, Blind Insert RLS) ve secrets/env sızıntı denetimi yürütür.",
-        "sample_prompt": "/check-security: Sistem genelinde yetki aşımı, public form abuse riskleri ve env sızıntılarını derinlemesine tara.",
-        "protocol": "1. Zafiyet & Yetki Aşımı Taraması -> OWASP Top 10 ve boundary ihlali analizi ➜ 2. Public Form Savunması -> 6-katmanlı (Turnstile, Rate-limit, RLS) koruma ➜ 3. Secrets / Env Sızıntı Denetimi -> Açıkta kalan API anahtarı kontrolü ➜ 4. Bulgular Defteri Doğrulaması -> Sıfır yüksek risk kanıtı",
+        "goal": "6 Güvenlik Sütunu & 20 Maddelik OWASP Güvenliği (S1-S20)",
+        "description": "6 Çekirdek Güvenlik Sütunu (DB RLS Kilidi, Sunucu Anahtarları, Özel Storage Bucket'ları, Rate Limiting & Harcama Tavanı, Yasal Sayfalar & A11y, AI Saldırı Dalgaları) ve 20 maddelik mekanik güvenlik kontrol listesini (S1-S20 / security_checker.py) işletir.",
+        "sample_prompt": "/check-security: 6 çekirdek güvenlik sütununu ve 20 maddelik mekanik güvenlik kontrol listesini derinlemesine tara.",
+        "protocol": "1. 20 Maddelik Mekanik Güvenlik Taraması -> security_checker.py ile secrets, env, CORS, XSS, DB, hash denetimi ➜ 2. 6 Çekirdek Güvenlik Sütunu Doğrulaması -> DB RLS, Storage Bucket, Rate Limit & Spend Cap, A11y ➜ 3. Public Form Savunması -> 6-katmanlı (Turnstile, Rate-limit, RLS) koruma ➜ 4. Kırmızı Takım Zafiyet Avcılığı (security-audit) -> Çok ajanlı avcılık dalgaları ve kanıt karnesi",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
 /check-security
-/check-security public formları ve RLS politikalarını denetle
+/check-security 6 güvenlik sütununu ve 20 maddelik kontrol listesini tara
 
-# Bulgular ve Kapsam Defteri Doğrulayıcıları:
+# 20 Maddelik Mekanik Güvenlik Denetimi (Yerel & Canlı URL):
 ⚠️ CRITICAL: Canlı üretim ortamında ASLA gizli anahtarları (SECRET_KEY, DB credentials) git repoya commitlemeyin veya public API yanıtlarında açık etmeyin.
+python .agent/skills/prelaunch-audit/scripts/security_checker.py --dir .
+python .agent/skills/prelaunch-audit/scripts/security_checker.py --dir . --url https://app.example.com
+
+# Çok Ajanlı Zafiyet Avcılığı & Kapsam Defteri:
 node .agent/skills/security-audit/scripts/validate-findings.cjs
 node .agent/skills/security-audit/scripts/validate-coverage-ledger.cjs""",
         "emergency": [
@@ -372,6 +376,21 @@ node .agent/skills/security-audit/scripts/validate-coverage-ledger.cjs""",
                 "symptom": "Public formda bot istismarı ve spam riski var",
                 "cause": "Turnstile veya CAPTCHA doğrulaması backend tarafında onaylanmıyor, rate-limit eksik.",
                 "action": "Backend controller katmanına IP tabanlı rate-limiting ve token doğrulama filtresi ekleyin."
+            },
+            {
+                "symptom": "Veritabanı tablolarında RLS kapalı veya sızıntı var (Lovable / Supabase riski)",
+                "cause": "Migration dosyasında 'ALTER TABLE ... ENABLE ROW LEVEL SECURITY' unutulmuş veya SELECT politikası açık bırakılmış.",
+                "action": "Tabloya derhal RLS açın ve anonim kullanıcılar için Strict Blind Insert (FOR INSERT WITH CHECK (true), FOR SELECT USING (false)) uygulayın."
+            },
+            {
+                "symptom": "Dosya depolama (Storage Bucket) açıkta veya veri sızdırıyor (Tea app riski)",
+                "cause": "S3 veya Supabase Storage bucket'ı public olarak oluşturulmuş, nesne bazlı RLS uygulanmamış.",
+                "action": "Bucket'ı private yapın ve dosya erişimini imzalı URL (signed URL / presigned URL) veya auth token arkasına alın."
+            },
+            {
+                "symptom": "Aşırı API istekleri veya AI anahtarı bütçe patlaması (Spend Spike)",
+                "cause": "Uç noktada rate limiting yok veya LLM API sağlayıcısında hard spend cap tanımlanmamış.",
+                "action": "Controller katmanına IP/oturum tabanlı rate limiter ekleyin; sağlayıcı panelinden (OpenAI/Anthropic/Gemini) aylık sert harcama limiti (Hard Cap) koyun."
             }
         ],
         "category": "Teslimat & Kalite"
@@ -1139,8 +1158,8 @@ python .agent/skills/design/scripts/cip/render-html.py --help"""
         "file": "PRELAUNCH-REPORT.md + 5 Doğrulama Betiği",
 
         "features": [
-
             "20 Maddelik Çekirdek Denetim",
+            "20 Maddelik Uygulama Güvenliği Çekirdeği (S1-S20)",
 
             "KVKK m.10 & 7499 s. Kanun Yurt Dışı Aktarımı",
 
@@ -1893,23 +1912,29 @@ python .agent/skills/musgoku/scripts/check_sprint_board.py"""
     },
 
     "check-security": {
-
         "status": "Güvenlik Orkestratörü",
-
         "badge_class": "badge-danger",
-
         "file": "security-audit + Public Form Kalkanı",
+        "features": [
+            "6 Çekirdek Güvenlik Sütunu (RLS, Storage, Spend Cap, Red-Team)",
+            "20 Maddelik Uygulama Güvenliği (S1-S20 security_checker.py)",
+            "Public Form 6-Katman Kalkanı (Turnstile, Rate-limit, Blind Insert)",
+            "Yetki Aşımı & Kiracı İzolasyonu (RLS / IDOR / BOLA)",
+            "Secret & Env Sızıntı Taraması (VITE_/NEXT_PUBLIC_ Blockers)",
+            "Güvenlik Başlıkları & CORS Canlı Testi (HSTS, CSP, X-Frame)"
+        ],
+        "detail": "OWASP güvenlik denetimi, 6 Çekirdek Güvenlik Sütunu (DB RLS, Server Keys, Private Storage Bucket, Rate Limit & AI Spend Cap, Yasal Sayfalar & A11y, AI Red-Team) ve 20 Maddelik Uygulama Güvenliği Kontrol Listesini (S1-S20: API Keys, Env, Admin Routes, Auth, RBAC, Form Sanitization, XSS, Rate Limit, API, CORS, Headers, Debug Mode, CVE Deps, Unused Pkgs, Exposed Files, Secure DB, Argon2id/bcrypt Hashing, Git Leaks, Full Audit, Zero-Mistake) doğrulayan orkestratör.",
+        "sample_prompt": "/check-security: 6 çekirdek güvenlik sütununu ve 20 maddelik mekanik güvenlik kontrol listesini derinlemesine tara.",
+        "config_snippet": """# 1. 20 Maddelik Hızlı Uygulama Güvenliği Taraması (S1-S20):
+python .agent/skills/prelaunch-audit/scripts/security_checker.py --dir .
 
-        "features": ["OWASP Zafiyet Taraması", "Public Form 6-Katman Kalkanı", "Yetki Aşımı (RLS/IDOR)", "Secret & Env Sızıntı Kontrolü"],
+# Canlı URL Güvenlik Başlıkları ve Reflected CORS Denetimi:
+python .agent/skills/prelaunch-audit/scripts/security_checker.py --dir . --url https://app.example.com
 
-        "detail": "OWASP güvenlik denetimi, public form istismar koruması (Turnstile, Rate-limit, Blind Insert RLS) ve gizli anahtar sızıntılarını doğrulayan orkestratör.",
-
-        "sample_prompt": "/check-security: Sistem genelinde yetki aşımı, public form abuse riskleri ve env sızıntılarını derinlemesine tara.",
-
-        "config_snippet": """# Güvenlik Denetimi Tetikleme:
-
-/check-security"""
-
+# 2. Tam Güvenlik Denetimi & Çok Ajanlı Zafiyet Avcılığı:
+/check-security
+node .agent/skills/security-audit/scripts/validate-findings.cjs""",
+        "cli_cmd": "python .agent/skills/prelaunch-audit/scripts/security_checker.py --dir ."
     },
 
     "council": {
@@ -2271,12 +2296,9 @@ def parse_skill_md(skill_path: Path) -> dict:
 
 
     # CLI komutu tespiti
-
     scripts_dir = skill_path.parent / "scripts"
-
-    cli_cmd = ""
-
-    if scripts_dir.is_dir():
+    cli_cmd = cfg.get("cli_cmd", "")
+    if not cli_cmd and scripts_dir.is_dir():
 
         py_files = sorted(scripts_dir.glob("*.py"))
 
@@ -2295,6 +2317,17 @@ def parse_skill_md(skill_path: Path) -> dict:
     if "features" in cfg:
 
         search_keywords.extend(cfg["features"])
+
+    if name == "check-security":
+        search_keywords.extend([
+            "6 çekirdek güvenlik sütunu", "rls", "row level security", "database lock",
+            "server keys", "storage bucket", "cap requests spend", "ai key rate limit",
+            "privacy", "terms", "a11y", "20 items to tell claude so your app doesn't get hacked",
+            "hide api keys", "check env", "protect admin routes", "proper auth", "check user access",
+            "sanitize forms", "xss", "cors", "security headers", "debug mode", "update dependencies",
+            "unused packages", "exposed files", "secure database", "hash passwords", "argon2id",
+            "bcrypt", "leaked secrets", "security_checker.py"
+        ])
 
     if name == "mock-asset-provider":
 
