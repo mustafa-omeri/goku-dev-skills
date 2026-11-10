@@ -6,10 +6,15 @@
 
 ### 1.1 Repository
 
-- Veri erişimi Spring Data arayüzleriyle
-- Gerekirse `@Query` ile özel sorgu
-- İlişki ve cascade tanımları bilinçli seçilir
-- Entity'de iş mantığı bulunmaz
+- Veri erişimi Spring Data arayüzleriyle sağlanır.
+- ⛔ **Gereksiz `@Repository` Anotasyonu Yasağı (Unnecessary @Repository):**
+  * Spring Data JPA arayüzlerinde (`JpaRepository`, `CrudRepository`, `PagingAndSortingRepository` vb. extend eden interface'lerde) `@Repository` anotasyonu **KULLANILMAZ**.
+  * Spring Boot (`@EnableJpaRepositories`) bu arayüzleri otomatik tespit eder, dinamik proxy (`SimpleJpaRepository`) oluşturur, IoC konteynerine kaydeder ve `JpaRepositoryFactoryBean` ile persistence exception translation (`DataAccessException`) sağlar.
+  * Bu arayüzlere `@Repository` koymak fuzulidir; SonarQube (`java:S6857`), SonarLint ve IntelliJ'de `Unnecessary @Repository` uyarısı/smell'i üretir.
+  * `@Repository` anotasyonu **yalnızca** `EntityManager` veya `JdbcTemplate` ile doğrudan çalışan somut DAO / Custom Impl sınıflarında (`*CustomImpl`) veya Spring Data dışı somut sınıflarda kullanılır.
+- Gerekirse `@Query` ile özel sorgu yazılır.
+- İlişki ve cascade tanımları bilinçli seçilir.
+- Entity'de iş mantığı bulunmaz.
 
 ### 1.2 DTO
 

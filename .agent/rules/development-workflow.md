@@ -8,14 +8,17 @@ sinif: SUREC
 
 ---
 
-## Adım 0 — Oturum Köprüsü
+## Adım 0 — Oturum Köprüsü (⚡ MCP-First)
 
-- Kod yazmadan, düzeltme yapmadan veya test koşmadan önce repo kökündeki
-  `HANDOFF.md` dosyasını oku.
+- ⭐ **Birincil / Zorunlu (Second Brain MCP):** Kod yazmadan, düzeltme yapmadan veya test koşmadan önce `.mcp.json`'da tanımlı `second-brain-vault` MCP sunucusunu çağır:
+  1. `bootstrap(project="<slug>", depth="brief")` — proje bağlamı, geliştirici profili, kural ve kanıtlı dersler.
+  2. `get_project_state(slug="<slug>")` — aktif durum, nerede kaldık, kilitli kararlar.
+  3. Mimari kural ve kilitli kararlar için `ask(question="...")` veya `get_decision(slug="...")`.
+- ⚠️ **Yedek / Fallback (Yalnızca MCP Erişilemezse):** Yerel dosya okuma fallback'tir; **yalnızca `second-brain-vault` erişilemez olduğunda** repo kökündeki `HANDOFF.md` dosyasını oku. Ajan sessiz düşüş yapamaz, MCP hatasını belirtmelidir. MCP çalıştığında yerel dosyalar baştan sona ham okunmaz (token tasarrufu: ~15.000 → ~1.500).
 - Projenin iş kavramları ve ortak dili için varsa `GLOSSARY.md` dosyasını oku.
 - Dosya yoksa veya boşsa kendin yaz.
 - ⛔ **Mükerrer Görev Dosyası Yasağı (Anti-Task-File Proliferation):** `TASK.md`, `ACTIVE_TASK.md`, `TODO.md` gibi ad-hoc takip dosyaları AÇILMAZ. Kullanıcı talep etse dahi, tek kaynağın `HANDOFF.md` (§3 Sıradaki İşler & Aktif Görev) olduğu nazikçe ve güvenle beyan edilir.
-- Ayrıntı: [handoff-session-continuity.md](./handoff-session-continuity.md)
+- Ayrıntı: [handoff-session-continuity.md](./handoff-session-continuity.md) · [mcp-usage-enforcement.md](./mcp-usage-enforcement.md)
 
 ---
 
@@ -28,15 +31,17 @@ Backend için ayrıntılı matris `references\` altındaki dosyaların içindedi
 
 ---
 
-## Adım 2 — Best practice doğrulaması (MCP)
+## Adım 2 — Best practice ve hafıza doğrulaması (MCP)
 
 | Durum | MCP |
 |---|---|
+| Oturum başlangıcı, nerede kaldık, aktif durum | `second-brain-vault` → `bootstrap` + `get_project_state` |
+| Mimari kural, bağlayıcı karar, profil sorgusu | `second-brain-vault` → `ask` / `get_decision` / `get_profile` |
 | Kütüphane API'si değişmiş olabilir | `context7` → `resolve-library-id` → `query-docs` |
 | Karmaşık mimari karar, güvenlik sınırı | `sequential-thinking` |
 | 2+ alternatifli mimari karar, kütüphane seçimi, teknoloji ikilemleri | `council` / `karpathy-guidelines` (3 Aşamalı Kör Hakemlik & Borda Skoru) |
 | UI testi / ekran incelemesi | tarayıcı/ekran aracı (proje yapısına göre) |
-| Dosya arama / proje keşfi | dosya sistemi aracı |
+| Dosya arama / proje keşfi (yedek) | dosya sistemi aracı |
 
 Tetikleyici tablosu ve sınırlar: [mcp-usage-enforcement.md](./mcp-usage-enforcement.md)
 

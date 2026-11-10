@@ -8,21 +8,25 @@
 
 ## 0. Okuma Sırası (atlanmaz)
 
+> ⚡ **MCP-FIRST KURALI (Standart Anayasa — `mcp-oncelikli-okuma`):**
+> 1. **Birincil Bilgi Edinme (Second Brain MCP):** Proje bağlamı, nerede kalındığı, bağlı kararlar, kanıtlı dersler ve kullanıcı profili için **önce `second-brain-vault` MCP sunucusu** kullanılır (`bootstrap(project="<slug>", depth="brief")`, `get_project_state(slug="<slug>")`, `ask`).
+> 2. **Yedek Okuma (Fallback — Yalnızca MCP Erişilemezse):** Yerel `HANDOFF.md` dosyasını okumak yedektir; **yalnızca `second-brain-vault` yanıt vermezse** okunur. Ajan sessiz düşüş yapamaz, çıktısında *"second-brain-vault MCP erişilemediği için yerel HANDOFF.md okundu"* beyanını vermek zorundadır.
+> 3. **Yazar Ama Okumaz:** Ajan repodaki `knowledge-base.md` dosyasına kalıcı kararları ve `HANDOFF.md` canlı panosuna durumu yazar; ancak bu dosyaları dosya sisteminden baştan sona ham olarak okumaz (token tasarrufu: ~15.000 → ~1.500).
+
 | # | Ne | Nerede |
 |---|-----|--------|
-| 1 | Oturum devri — nerede kaldık, sıradaki iş, düşülen tuzaklar | `<repo-kök>\HANDOFF.md` |
-| 2 | Geliştirici profili ve kanıtlı ders kütüphanesi | `DEV_BRIEF.md` (varsa), yoksa vault `profile\` + `projects\_STANDARTLAR\decisions\` |
-| 3 | Canlı proje mimarisi, teknoloji yığını ve bağlayıcı kararlar | `<repo-kök>\PROJECT_BRIEF.md` (varsa) |
-| 4 | Ürün gerçeği ve kısıtlar (varsa) | `<repo-kök>\PRODUCT.md` |
-| 5 | İş alanı terimleri ve ortak dil sözlüğü (varsa) | `<repo-kök>\GLOSSARY.md` |
-| 6 | Tasarım dili ve token sözleşmesi (UI/UX işlerinde) | `<repo-kök>\DESIGN.md` |
+| 0 | ⭐ Oturum Başlangıcı, Geliştirici Tercihleri ve Proje Durumu | `second-brain-vault` MCP (`bootstrap` + `get_project_state`) |
+| 1 | Yedek Oturum Devri (YALNIZCA MCP erişilemezse / hata verirse) | `<repo-kök>\HANDOFF.md` (nedenini açıkça belirt) |
+| 2 | Canlı proje mimarisi, teknoloji yığını ve bağlayıcı kararlar | `<repo-kök>\PROJECT_BRIEF.md` (varsa) |
+| 3 | Ürün gerçeği ve kısıtlar (varsa) | `<repo-kök>\PRODUCT.md` |
+| 4 | İş alanı terimleri ve ortak dil sözlüğü (varsa) | `<repo-kök>\GLOSSARY.md` |
+| 5 | Tasarım dili ve token sözleşmesi (UI/UX işlerinde) | `<repo-kök>\DESIGN.md` |
 | Projenin kısa/uzun kapsamlı konsolide özeti | docs/<SLUG>_PROJECT_SUMMARY_SHORT.md veya docs/<SLUG>_PROJECT_SUMMARY_LONG.md |
 | Özelliklerin adım adım yapılışını ve kullanımını anlatan HTML rehberi | docs/kullanici-rehberi.html (veya docs/user-guide.html) |
 | Kullanıcının bizzat gözüyle doğrulayacağı manuel test senaryoları | docs/KULLANICI_TEST_REHBERI.md |
 | Mimari geliştirme ve uygulama planı (/plan) | <artifact-dir>/<plan_name>.md (şablon: templates/PLAN.template.md) |
-| 7 | Vault kararları (salt okunur) | `<vault>\CLAUDE.md`, `<vault>\profile\`, `<vault>\projects\_STANDARTLAR\decisions\` |
-| 8 | Proje kararları | `<vault>\projects\<proje-slug>\` |
-| 9 | Bu dizindeki kurallar | `.agent\rules\` (bkz. `trigger-rule-action.md`) |
+| 6 | Mimari & Karar Sorguları | `second-brain-vault` MCP (`get_decision`, `ask`, `search`) · Fallback: `<vault>\projects\_STANDARTLAR\decisions\` |
+| 7 | Bu dizindeki kurallar | `.agent\rules\` (bkz. `trigger-rule-action.md`) |
 
 **Okuma kanıtı:** koda geçmeden önce geçerli kararları başlıklarıyla özetle ya da
 *"bu iş için geçerli bir karar bulamadım"* de. Hatırladığını yazma, uydurma.

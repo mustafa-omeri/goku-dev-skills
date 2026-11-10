@@ -20,15 +20,16 @@ kapi:
 
 ## Zorunlu akış
 
-1. **İlk iş:** repo kökündeki `HANDOFF.md`'yi ve canlı mimari haritasını (`PROJECT_BRIEF.md`) oku.
-   - Kalan işlerin sırası, kanıtlanmış tuzaklar ve ortam bilgisi `HANDOFF.md`'de; projenin dili, kütüphaneleri ve bağlayıcı kararları `PROJECT_BRIEF.md`'de yer alır.
-2. ⛔ **Okunmadan** kod yazma, düzeltme yapma, test koşma, migration üretme.
-3. ⛔ Dosya **yoksa veya boşsa** (yalnız başlık/şablon) → süreci **kendin devir al**:
+1. **İlk iş (MCP-First):** `second-brain-vault` MCP üzerinden `bootstrap(project="<slug>", depth="brief")` ve `get_project_state(slug="<slug>")` çağırarak nerede kalındığını, geliştirici tercihlerini ve bağlı kararları al.
+2. 🛡️ **Yedek Okuma (Fallback — Yalnızca MCP Erişilemezse):** Yalnızca `second-brain-vault` MCP'sine ulaşılamıyorsa veya hata dönerse repo kökündeki `HANDOFF.md` dosyasını oku. Ajan sessiz düşüş yapamaz; çıktısında *"second-brain-vault MCP erişilemediği için yerel HANDOFF.md okundu"* beyanını vermek zorundadır.
+3. ⛔ `knowledge-base.md` dosyasını baştan sona dosya olarak okuma; soru varsa `ask` veya `search` ile MCP'ye sor (token tasarrufu).
+4. ⛔ Proje durumu ve kurallar **alınmadan** kod yazma, düzeltme yapma, test koşma, migration üretme.
+5. ⛔ Yerel dosya **yoksa veya boşsa** (yalnız başlık/şablon) → süreci **kendin devir al**:
    `git log`, `git status`, mevcut testler ve gerçek koddan durumu çıkar, sonra
    eksiksiz bir `HANDOFF.md` **yaz**. "Dosya yok, devam edemiyorum" deme —
    bu kuralın kendisi o dosyayı yeniden yaratmanı emreder.
-4. ✅ **Her iş bittiğinde** ve **oturum kapanırken** `HANDOFF.md`'yi ve gerekiyorsa (stack/DB/karar değişimi) `PROJECT_BRIEF.md`'yi güncelle.
-5. ⛔ `git commit` / `push` / `tag` yapma; kullanıcı açıkça istemedikçe
+6. ✅ **Her iş bittiğinde** ve **oturum kapanırken** `HANDOFF.md`'yi ve gerekiyorsa (stack/DB/karar değişimi) `PROJECT_BRIEF.md`'yi güncelle.
+7. ⛔ `git commit` / `push` / `tag` yapma; kullanıcı açıkça istemedikçe
    değişiklikler working tree'de bırakılır.
 
 ## Güncelleme ve Raporlama Sırası

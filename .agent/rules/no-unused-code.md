@@ -77,6 +77,18 @@ IDE uyarısı: `Unnecessary @SuppressWarnings("unchecked")`
 - Şüpheli bir uyarıyı **kendi inancınla temizleme.** Listele, kullanıcıya sor,
   kararı `knowledge-base.md`'ye yaz.
 
+### 4.3 Gereksiz Spring Anotasyonları (Unnecessary @Repository, Redundant @Autowired)
+
+IDE / SonarQube uyarısı: `Unnecessary @Repository` (Sonar `java:S6857`), `Unnecessary @Autowired`
+
+- **Spring Data Arayüzlerinde `@Repository` Yasağı:**
+  * Spring Data JPA arayüzlerinde (`JpaRepository`, `CrudRepository`, `PagingAndSortingRepository` vb. extend eden interface'lerde) `@Repository` anotasyonu **asla kullanılmaz / bırakılmaz**.
+  * Spring Boot bu arayüzleri otomatik olarak component scan ile proxy bean olarak kaydeder ve `DataAccessException` istisna çevrimini otomatik sağlar.
+  * `@Repository` anotasyonu yalnızca `EntityManager` veya `JdbcTemplate` kullanan somut custom DAO sınıflarında (`*CustomImpl`) veya Spring Data dışı sınıflarda kullanılır.
+  * Uyarının görüldüğü Spring Data arayüzlerinde `@Repository` ve kullanılmayan `import org.springframework.stereotype.Repository;` derhal kaldırılır.
+- **Tek Constructor'lı Bileşenlerde `@Autowired` Yasağı:**
+  * Spring 4.3+'tan itibaren tek constructor'ı olan Spring bileşenlerinde `@Autowired` gerekmez; alan injection (`@Autowired private Service s;`) yerine Lombok `@RequiredArgsConstructor` veya açık constructor injection kullanılır.
+
 > Bu bölüm projeler arası ortaktır. Projeye özgü bir istisna gerekirse
 > en alttaki `## Proje Bazlı Ek Kurallar` altına yazılır.
 

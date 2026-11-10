@@ -1,13 +1,36 @@
 ---
 name: MCP Usage Enforcement
-description: context7 ve sequential-thinking MCP sunucularının ne zaman zorunlu devreye gireceğini tanımlayan tetikleyici tablosu.
+description: second-brain-vault, context7 ve sequential-thinking MCP sunucularının ne zaman zorunlu devreye gireceğini tanımlayan tetikleyici tablosu.
 sinif: TUTUM
 ---
 
-# ⭐ Zorunlu: Best Practice Desteği (context7 + sequential-thinking)
+# ⭐ Zorunlu: Best Practice ve Hafıza Desteği (second-brain-vault + context7 + sequential-thinking)
 
 > Bu kural, "kural hatırlatıldı ama uygulanmadı" yaşanan oturumlar için yazıldı.
 > Bu yüzden "kullan" değil, **"ne zaman tetiklenir"** şeklinde tanımlıdır.
+
+---
+
+## `second-brain-vault` — oturum başlangıcı, geliştirici tercihleri ve mimari kararlar
+
+**İki adım:** `bootstrap` (`depth="brief"`, `project="<slug>"`) → `get_project_state` (`slug="<slug>"`).
+
+### Zorunlu tetikleyiciler
+
+| Tetikleyici | Somut örnek |
+|---|---|
+| ⭐ Yeni oturum açılışı / Göreve başlangıç | Ajan doğrudan yerel `HANDOFF.md` veya `knowledge-base.md` dosyasını açmaz. Önce `bootstrap` ile kiminle çalıştığı, yasaklar, tercihler ve kanıtlı dersleri (`DEV_BRIEF §3`) alır; ardından `get_project_state` ile projenin nerede kaldığını, bağlı kararlarını ve son hareketlerini çeker. |
+| ⭐ "Nerede kaldık?", "Durum nedir?", "Sırada ne var?" | `get_project_state(slug="<slug>")` çağrısı zorunludur. |
+| ⭐ Mimari karar / Kalıcı kural sorgusu | `get_decision(slug="...")` veya `ask(question="...")` / `search(query="...")` ile soru yöneltilir. |
+
+### ⛔ Kullanma & Yasaklar
+
+- ⛔ `knowledge-base.md` veya `HANDOFF.md` dosyasını baştan sona dosya olarak okumak yasaktır (token tasarrufu: ~15.000 → ~1.500).
+- ⛔ Dosyalar yalnızca oturum sonunda kalıcı kararları yazmak (`knowledge-base.md` append) veya durumu kaydetmek (`HANDOFF.md`) içindir; okunmaz, MCP üzerinden sorgulanır.
+
+### 🛡️ Yedek (Fallback — Yalnızca MCP Erişilemezse)
+
+Yalnızca `second-brain-vault` MCP sunucusu erişilemez olduğunda veya hata verdiğinde yerel `HANDOFF.md` okunur. Ajan sessiz düşüş yapamaz, çıktısında *"second-brain-vault MCP erişilemediği için yerel HANDOFF.md okundu"* beyanını vermek zorundadır.
 
 ---
 
@@ -54,6 +77,7 @@ Tek satır düzeltme · dosya okuma · araç çıktısı yorumlama. Gürültüd�
 
 Kod yazmadan önce kendine sor:
 
+0. Yeni oturum mu / Göreve başlangıç / Durum sorgusu mu → `second-brain-vault` (`bootstrap` + `get_project_state`) **şart**
 1. Yeni paket mi ekliyorum → `context7` **şart**
 2. API ismi / parametresi mi yazıyorum → şüpheliyim, `context7`'e sor
 3. İki yaklaşım arasında mı seçim yapıyorum → `sequential-thinking` **şart**

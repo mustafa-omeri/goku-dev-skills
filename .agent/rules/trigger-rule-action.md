@@ -40,11 +40,11 @@ Ajan kod yazmaya, düzenlemeye veya refactoring yapmaya başlamadan önce *"Bu i
 | Onaysız commit yasağı | [no-unauthorized-commit.md](./no-unauthorized-commit.md) |
 | Release workflow zorunluluğu | [mandatory-git-release-workflow.md](./mandatory-git-release-workflow.md) |
 
-## D. Best practice doğrulaması (MUST)
+## D. Best practice ve hafıza doğrulaması (MUST)
 
 | Konu | Kural |
 |---|---|
-| context7 + sequential-thinking tetikleyicileri | [mcp-usage-enforcement.md](./mcp-usage-enforcement.md) |
+| second-brain-vault + context7 + sequential-thinking tetikleyicileri | [mcp-usage-enforcement.md](./mcp-usage-enforcement.md) |
 
 ## E. Frontend kuralları (yalnız frontend projesinde)
 
