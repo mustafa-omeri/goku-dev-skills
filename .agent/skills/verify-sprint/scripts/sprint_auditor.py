@@ -110,6 +110,8 @@ def audit_sprint(root: Path) -> Dict[str, Any]:
 
     guide_path = root / "docs" / "KULLANICI_TEST_REHBERI.md"
     if not guide_path.is_file():
+        guide_path = root / "DOCs" / "KULLANICI_TEST_REHBERI.md"
+    if not guide_path.is_file():
         guide_path = root / "KULLANICI_TEST_REHBERI.md"
     if not guide_path.is_file():
         findings.append({
@@ -117,6 +119,52 @@ def audit_sprint(root: Path) -> Dict[str, Any]:
             "title": "KULLANICI_TEST_REHBERI.md",
             "issues": [{"type": "MISSING_TEST_GUIDE", "msg": "KULLANICI_TEST_REHBERI.md veya docs/KULLANICI_TEST_REHBERI.md bulunamadı."}],
         })
+
+    # İnteraktif Özellik HTML Rehberi Denetimi (docs/kullanici-rehberi.html)
+    is_meta_tooling = (root / ".agent" / "skills-catalog.html").is_file() and not (root / "src").is_dir()
+    html_guide = None
+    for cand in [
+        root / "docs" / "kullanici-rehberi.html",
+        root / "DOCs" / "kullanici-rehberi.html",
+        root / "docs" / "user-guide.html",
+        root / "DOCs" / "user-guide.html",
+    ]:
+        if cand.is_file():
+            html_guide = cand
+            break
+
+    if not html_guide and not is_meta_tooling:
+        findings.append({
+            "card_id": "HTML_GUIDE",
+            "title": "docs/kullanici-rehberi.html",
+            "issues": [{
+                "type": "MISSING_HTML_GUIDE",
+                "msg": "docs/kullanici-rehberi.html bulunamadı! Her sprint teslimatında interaktif özellik HTML rehberi güncellenmelidir (şablon: .agent/templates/KULLANICI_REHBERI.template.html)."
+            }],
+        })
+    elif html_guide:
+        try:
+            h_text = html_guide.read_text(encoding="utf-8")
+            if "app-sidebar" not in h_text or "features-container" not in h_text:
+                findings.append({
+                    "card_id": "HTML_GUIDE",
+                    "title": str(html_guide.name),
+                    "issues": [{
+                        "type": "LEGACY_HTML_GUIDE",
+                        "msg": "kullanici-rehberi.html güncel Obsidian Command Deck mimarisinde değil (app-sidebar veya features-container eksik). .agent/templates/KULLANICI_REHBERI.template.html yapısına migrate edilmelidir."
+                    }],
+                })
+            if "{{PROJE_ADI}}" in h_text or "supabase/migrations/20261101_dashboard.sql" in h_text:
+                findings.append({
+                    "card_id": "HTML_GUIDE",
+                    "title": str(html_guide.name),
+                    "issues": [{
+                        "type": "PLACEHOLDER_IN_GUIDE",
+                        "msg": "kullanici-rehberi.html içinde şablon kalıntısı tespit edildi ({{PROJE_ADI}} veya örnek supabase migration)."
+                    }],
+                })
+        except Exception:
+            pass
 
     for card_id, title, fields, line in done_cards:
         issues = []

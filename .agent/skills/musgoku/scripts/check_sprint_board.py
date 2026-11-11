@@ -226,10 +226,31 @@ def check(root: Path, wip_limit: int = 3):
     if not guide_path.is_file():
         guide_path = root / "docs" / "KULLANICI_TEST_REHBERI.md"
     if not guide_path.is_file():
+        guide_path = root / "DOCs" / "KULLANICI_TEST_REHBERI.md"
+    if not guide_path.is_file():
         errors.append(("E1", "KULLANICI_TEST_REHBERI.md",
                        "dosya yok (sprint planı açılmışsa kullanıcı test rehberi de olmalı: "
                        "proje kökü veya docs/KULLANICI_TEST_REHBERI.md, "
                        "şablon: .agent/templates/KULLANICI_TEST_REHBERI.template.md)"))
+
+    # --- İnteraktif Özellik HTML Rehberi denetimi (docs/kullanici-rehberi.html)
+    try:
+        from check_user_guide import audit_user_guide
+        guide_errs, guide_warns, _ = audit_user_guide(root)
+        errors.extend(guide_errs)
+        warnings.extend(guide_warns)
+    except Exception as _e:
+        # Bağımsız çalışma fallback'i
+        html_guide_found = any(
+            (root / d / f).is_file()
+            for d in ("docs", "DOCs", "")
+            for f in ("kullanici-rehberi.html", "user-guide.html")
+        )
+        if not html_guide_found:
+            errors.append(("E1", "docs/kullanici-rehberi.html",
+                           "dosya yok (sprint çıktısı için interaktif özellik HTML rehberi zorunludur: "
+                           "docs/kullanici-rehberi.html veya docs/user-guide.html, "
+                           "şablon: .agent/templates/KULLANICI_REHBERI.template.html)"))
 
     # --- E2 sprint plani bicimi
     sprint_text = ""

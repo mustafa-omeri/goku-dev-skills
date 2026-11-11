@@ -82,8 +82,19 @@ def good_card(card_id="S1-01", column="Yapıldı", spec="specs/S1-01.feature",
 """
 
 
+TEMPLATE_PATH = Path(".agent/templates/KULLANICI_REHBERI.template.html")
+_CACHED_HTML_GUIDE = ""
+if TEMPLATE_PATH.is_file():
+    _CACHED_HTML_GUIDE = (
+        TEMPLATE_PATH.read_text(encoding="utf-8")
+        .replace("{{PROJE_ADI}}", "Test Projesi")
+        .replace("supabase/migrations/20261101_dashboard.sql", "db/001.sql")
+        .replace("Edge Function: compute-kpi", "GET /metrics")
+    )
+
+
 def make_project(tmp: Path, cards: dict, sprint=GOOD_SPRINT, release=None,
-                 write_sprint=True, write_board=True, write_guide=True):
+                 write_sprint=True, write_board=True, write_guide=True, write_html_guide=True):
     (tmp / "specs").mkdir(parents=True, exist_ok=True)
     (tmp / "specs" / "S1-01.feature").write_text(GOOD_FEATURE, encoding="utf-8")
     if write_sprint:
@@ -94,6 +105,9 @@ def make_project(tmp: Path, cards: dict, sprint=GOOD_SPRINT, release=None,
         (tmp / "KANBAN.md").write_text(body, encoding="utf-8")
     if write_guide:
         (tmp / "KULLANICI_TEST_REHBERI.md").write_text("# KULLANICI_TEST_REHBERI.md\n", encoding="utf-8")
+    if write_html_guide:
+        (tmp / "docs").mkdir(parents=True, exist_ok=True)
+        (tmp / "docs" / "kullanici-rehberi.html").write_text(_CACHED_HTML_GUIDE, encoding="utf-8")
     if release is not None:
         (tmp / "RELEASE_PLAN.md").write_text(release, encoding="utf-8")
     return tmp

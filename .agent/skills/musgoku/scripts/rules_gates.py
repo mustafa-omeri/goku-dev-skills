@@ -300,6 +300,8 @@ def main(argv=None) -> int:
     parser.add_argument("--strict", action="store_true", help="uyarilari da hata say")
     parser.add_argument("--emit-table", action="store_true",
                         help="AGENTS.md icin uretilmis tabloyu yaz")
+    parser.add_argument("--prefix", type=str, default="rules/",
+                        help="Tablo link öneki (varsayılan: rules/, workflow için: ./)")
     parser.add_argument("--emit-attitude", action="store_true",
                         help="kapisiz kural listesini yaz")
     parser.add_argument("--no-table-check", action="store_true",
@@ -322,7 +324,7 @@ def main(argv=None) -> int:
         return 2
 
     if args.emit_table:
-        print(render_table(rules, "rules/"))
+        print(render_table(rules, args.prefix))
         return 0
     if args.emit_attitude:
         print(render_attitude_list(rules))

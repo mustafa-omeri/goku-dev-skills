@@ -179,6 +179,7 @@ front matter `sinif:` / `kapi:` alanları.
 | Proje Mimarisi / Canlı Brief | `python .agent/skills/musgoku/scripts/check_project_brief.py` | [`project-brief-maintenance.md`](./project-brief-maintenance.md) |
 | Skill sözleşmesi / tetikleyici sözlüğü | `cd .agent/skills/ui-ux-pro-max/scripts/tests && python -m unittest test_skill_contracts` | [`skill-trigger-routing.md`](./skill-trigger-routing.md) |
 | Sprint / kanban / MVP | `python .agent/skills/musgoku/scripts/check_sprint_board.py` | [`sprint-delivery-workflow.md`](./sprint-delivery-workflow.md) |
+| Dokümantasyon / İnteraktif Özellik HTML Rehberi | `python .agent/skills/musgoku/scripts/check_user_guide.py` | [`sprint-delivery-workflow.md`](./sprint-delivery-workflow.md) |
 | Frontend / Vite SPA | `python .agent/skills/musgoku/scripts/check_vite_spa.py` | [`vite-spa-enforcement.md`](./vite-spa-enforcement.md) |
 <!-- GATE-TABLE:END -->
 
@@ -247,6 +248,9 @@ Yukarıdaki ölçülebilir kapı komutları (`npm run build`, `pnpm test`, `npx 
 ## Adım 4.2 — İnteraktif Özellik ve Kullanım HTML Rehberi (docs/kullanici-rehberi.html)
 
 1. **Kalıcı ve Detaylı Özellik Dokümantasyonu:** Her gerekli ve anlamlı geliştirme sonrasında, geliştirilen veya revize edilen tüm özelliklerin mimari yapılışını ve adım adım kullanımını anlatan `docs/kullanici-rehberi.html` (veya İngilizce projelerde `docs/user-guide.html`) dosyası güncellenir (yoksa `.agent/templates/KULLANICI_REHBERI.template.html` şablonundan oluşturulur).
+   ⛔ **Şablon Sapması ve Miras Yapıda Kilitlenme Yasağı (Anti-Drift & Auto-Migration Rule):** Dosya diskte zaten mevcut olsa dahi, eğer dosyanın ana mimari iskeleti (Obsidian Command Deck, 3-tier tokenlar, app-layout dock, collapsible sidebar, master-detail çekmece) güncel `.agent/templates/KULLANICI_REHBERI.template.html` şablonuna uymuyorsa, ajan eski yapı üzerine yeni kart ekleyemez. Dosyanın ana iskeleti güncel şablon mimarisine migrate edilir ve mevcut tüm özellik kartları yeni 3 sekmeli (`🏗️ 5 Katman`, `🚀 Playbook`, `📱 Skeleton & Durumlar`) kart yapısına dönüştürülür.
+   ⛔ **Şablon Kalıntısı Yasağı (Anti-Placeholder Leak):** Şablondaki örnek sahte veriler (`supabase/migrations/...`, `compute-kpi`, `{{PROJE_ADI}}` vb.) teslim edilen rehberde ASLA bırakılamaz. Projenin gerçek DB, backend ve frontend bileşenleri yazılmalıdır.
+   🛡️ **Zorunlu Kapı Doğrulaması:** `python .agent/skills/musgoku/scripts/check_user_guide.py` kapısı çalıştırılmadan ve yeşil alınmadan iş tamamlandı sayılamaz.
 2. **Her Özellikte 4 Zorunlu Bölüm:**
    - **1. Ne İşe Yarar / Amaç:** İş değeri, hangi problemi çözdüğü ve kullanıcının ne kazandığı.
    - **2. Nasıl Yapıldı? (5 Katmanlı Dikey Dilim):**

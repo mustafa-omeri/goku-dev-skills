@@ -37,6 +37,7 @@ FAST_PYTHON_GATES = [
     ("Sprint & Kanban Panosu", ".agent/skills/musgoku/scripts/check_sprint_board.py", []),
     ("Sprint Kabul & 5 Katman (sprint_auditor)", ".agent/skills/verify-sprint/scripts/sprint_auditor.py", []),
     ("Dokümantasyon & Yanıt Standardı (FAA AC 121-24C)", ".agent/skills/musgoku/scripts/check_aviation_docs.py", []),
+    ("İnteraktif Özellik HTML Rehberi", ".agent/skills/musgoku/scripts/check_user_guide.py", []),
     ("Vite SPA İzolasyonu", ".agent/skills/musgoku/scripts/check_vite_spa.py", []),
 ]
 

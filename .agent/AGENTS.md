@@ -44,6 +44,7 @@ Ajan kod yazmaya, düzenlemeye veya refactoring yapmaya başlamadan önce *"Bu i
 | **Şartname / API / RFC Senkronu (Spec Drift)** | `.agent/skills/spec-reconciler/SKILL.md` | 3-Yönlü drift taraması (`/spec-reconcile`); Strict Approval Gate + Onayda Planı `docs/plans/`'a taşıma & yalnız doküman eşitleme şart |
 | **Üretim Dağıtım / VPS / Docker / Altyapı** | `.agent/skills/deployment-architect/SKILL.md` | 5 katmanlı DEPLOYMENT_PLAN.md & ters proxy (`/deploy-plan`) |
 | **Kullanıcı Metni / Başlık / Buton / Form** | `.agent/rules/i18n-enforcement.md` | Hardcoded metin yasak, sözlük senkronu şart (`i18n_checker.py`) |
+| **Dokümantasyon / Özellik HTML Rehberi** | `.agent/rules/development-workflow.md` | Command Deck paritesi ve placeholder yasağı şart (`check_user_guide.py`) |
 | **Frontend / Paket / SPA / Bundle Bütçesi** | `.agent/rules/frontend-bundle-limits.md` | Chunk <=500kB, Entry gzip <=200kB (`check_bundle_limits.py`, `check_vite_spa.py`) |
 | **Hata / Bug Çözümü / "Çalışmıyor"** | `.agent/rules/bug-diagnosis-enforcement.md` | Koda dokunmadan önce hatayı kanıtlayan kırmızı döngü şart |
 | **Yeni Özellik / Sprint / Görev / Dilim** | `.agent/rules/sprint-delivery-workflow.md` | Given-When-Then Gherkin + TDD kırmızı test şart (`check_sprint_board.py`) |
@@ -114,6 +115,9 @@ ve [`.agent\rules\project-brief-maintenance.md`](rules/project-brief-maintenance
    💡 **İstisna (Minor Rötüş & Dahili Değişiklikler):** Mevcut kullanıcı akışını, ekran bileşenlerini veya kabul senaryolarını değiştirmeyen minor rötüşlar (CSS boşluk/renk ince ayarı, dahili refactoring, tip düzeltmesi, typo) için rehbere gereksiz satır ekleme/dosya işlemi yapılmaz; raporda *"Güncelleme gerekmedi (Minor rötüş / mevcut senaryolar geçerli)"* beyan edilir.
 3. 📖 **İnteraktif Özellik ve Kullanım HTML Rehberi (`docs/kullanici-rehberi.html`):**
    Projelerde her gerekli/anlamlı geliştirme sonrasında, tüm özelliklerin tek tek nasıl yapıldığını ve nasıl kullanıldığını detaylıca anlatan interaktif HTML rehberini oluştur veya güncelle (yoksa `.agent/templates/KULLANICI_REHBERI.template.html` şablonundan oluştur; İngilizce projeler için `docs/user-guide.html`).
+   ⛔ **Şablon Sapması ve Miras Yapıda Kilitlenme Yasağı (Anti-Drift & Auto-Migration):** Dosya diskte zaten mevcut olsa dahi, eğer dosyanın ana mimari iskeleti (Obsidian Command Deck, 3-tier tokenlar, app-layout dock, collapsible sidebar, master-detail çekmece) güncel `.agent/templates/KULLANICI_REHBERI.template.html` şablonuna uymuyorsa, ajan eski yapı üzerine yeni kart ekleyemez. Dosyanın ana iskeleti güncel şablon mimarisine migrate edilir ve mevcut tüm özellik kartları yeni 3 sekmeli (`🏗️ 5 Katman`, `🚀 Playbook`, `📱 Skeleton & Durumlar`) kart yapısına dönüştürülür.
+   ⛔ **Şablon Kalıntısı Yasağı (Anti-Placeholder Leak):** Şablondaki örnek sahte veriler (`supabase/migrations/...`, `compute-kpi`, `{{PROJE_ADI}}` vb.) teslim edilen rehberde ASLA bırakılamaz. Projenin gerçek DB, backend ve frontend bileşenleri yazılmalıdır.
+   🛡️ **Ölçülebilir Kapı Şartı:** `python .agent/skills/musgoku/scripts/check_user_guide.py` kapısı çalıştırılmadan ve yeşil alınmadan iş tamamlandı sayılamaz.
    Her özellik kartı 4 zorunlu bölümü içermelidir:
    - 🎯 **Amaç & Katma Değer:** Ne işe yarar, hangi problemi çözer?
    - 🏗️ **Nasıl Yapıldı? (5 Katmanlı Dilim Mimarisi):** DB/Entity, Backend API/Endpoint/RPC, İstemci Entegrasyonu, UI Bileşenleri & State, Skeleton Screens UI.
@@ -231,6 +235,7 @@ kanıtlayamazsın — sadece beyan edersin.** Bu ayrım gizli değildir.
 | Proje Mimarisi / Canlı Brief | `python .agent/skills/musgoku/scripts/check_project_brief.py` | [`project-brief-maintenance.md`](rules/project-brief-maintenance.md) |
 | Skill sözleşmesi / tetikleyici sözlüğü | `cd .agent/skills/ui-ux-pro-max/scripts/tests && python -m unittest test_skill_contracts` | [`skill-trigger-routing.md`](rules/skill-trigger-routing.md) |
 | Sprint / kanban / MVP | `python .agent/skills/musgoku/scripts/check_sprint_board.py` | [`sprint-delivery-workflow.md`](rules/sprint-delivery-workflow.md) |
+| Dokümantasyon / İnteraktif Özellik HTML Rehberi | `python .agent/skills/musgoku/scripts/check_user_guide.py` | [`sprint-delivery-workflow.md`](rules/sprint-delivery-workflow.md) |
 | Frontend / Vite SPA | `python .agent/skills/musgoku/scripts/check_vite_spa.py` | [`vite-spa-enforcement.md`](rules/vite-spa-enforcement.md) |
 <!-- GATE-TABLE:END -->
 

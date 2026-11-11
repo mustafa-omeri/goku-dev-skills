@@ -5,6 +5,8 @@ sinif: OLCULEBILIR
 kapi:
   - yigin: "Sprint / kanban / MVP"
     komut: "python .agent/skills/musgoku/scripts/check_sprint_board.py"
+  - yigin: "Dokümantasyon / İnteraktif Özellik HTML Rehberi"
+    komut: "python .agent/skills/musgoku/scripts/check_user_guide.py"
 ---
 
 # ⛔ KESİN KURAL: Sprint → Gherkin → Kanban → Release
