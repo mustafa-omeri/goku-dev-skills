@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = ROOT / ".agent" / "skills" / "musgoku" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
+import archive_plan  # noqa: E402
 import check_handoff as gate  # noqa: E402
 import run_all_gates as runner  # noqa: E402
 
@@ -184,6 +185,46 @@ def test_git_diff_e3_and_w2():
         check("HANDOFF.md ve rehber güncellenince E3/W2 kalkıyor", "E3" not in codes(errors2) and "W2" not in codes(warnings2))
 
 
+def test_archive_plan_and_broad_w3():
+    print("=== TEST 6: archive_plan.py ve genişletilmiş W3 plan izlenebilirliği ===")
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_root = Path(tmp_dir)
+        (tmp_root / "package.json").write_text("{}", encoding="utf-8")
+
+        # 1. archive_plan: artifact dosyasını silmeden docs/plans/ altına tarih-saat damgalı kopyalar
+        src_dir = tmp_root / "brain_artifact"
+        src_dir.mkdir(parents=True)
+        src_plan = src_dir / "implementation_plan.md"
+        src_plan.write_text("# OCAI PG Plan\n- OCAI-MIG-001\n- OCAI-DB-002\n", encoding="utf-8")
+
+        dest = archive_plan.archive_plan(src_plan, tmp_root, slug="ocai-pg", move=False)
+        check("archive_plan docs/plans/ altına plan_ocai-pg_*.md oluşturdu",
+              dest.is_file() and dest.parent == (tmp_root / "docs" / "plans") and dest.name.startswith("plan_ocai-pg_"))
+        check("archive_plan varsayılan olarak kaynak artifact dosyasını korudu (move=False)", src_plan.is_file())
+
+        # 2. W3: OCAI-MIG-001 ve OCAI-DB-002 HANDOFF içinde yoksa W3 tetiklenir
+        (tmp_root / "HANDOFF.md").write_text(VALID_HANDOFF, encoding="utf-8")
+        _, warnings = gate.validate_handoff(tmp_root)
+        check("W3 tetikleniyor (OCAI-MIG-001/OCAI-DB-002 HANDOFF içinde yok)", "W3" in codes(warnings))
+
+        # 3. HANDOFF içine ID'ler veya plan dosya adı referansı eklenince W3 kalkar
+        (tmp_root / "HANDOFF.md").write_text(
+            VALID_HANDOFF + f"\n- OCAI-MIG-001 ({dest.name})\n",
+            encoding="utf-8",
+        )
+        _, warnings_after = gate.validate_handoff(tmp_root)
+        check("W3 kalkıyor (ID ve plan referansı HANDOFF içinde mevcut)", "W3" not in codes(warnings_after))
+
+        # 4. ID'siz plan dosyası bile (plan_*.md) HANDOFF'ta referanssızsa W3 uyarısı verir
+        dest.unlink()
+        (tmp_root / "docs" / "plans" / "plan_no_ids_20261116_120000.md").write_text(
+            "# Basit Plan\n- Adim 1\n", encoding="utf-8"
+        )
+        (tmp_root / "HANDOFF.md").write_text(VALID_HANDOFF, encoding="utf-8")
+        _, warnings_no_id = gate.validate_handoff(tmp_root)
+        check("W3 tetikleniyor (ID'siz plan_no_ids_*.md HANDOFF'ta referans verilmemiş)", "W3" in codes(warnings_no_id))
+
+
 def test_run_all_gates():
     print("=== TEST 5: run_all_gates.py kapsam-duyarlı orkestratör testi ===")
     summary = runner.run_gates(ROOT, include_slow=False)
@@ -199,6 +240,7 @@ def main():
     test_scope()
     test_error_scenarios()
     test_git_diff_e3_and_w2()
+    test_archive_plan_and_broad_w3()
     test_run_all_gates()
 
     print("\n" + "=" * 60)

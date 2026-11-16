@@ -72,11 +72,13 @@ NEXT_WORK_HEADING_RE = re.compile(
 )
 ANY_HEADING_RE = re.compile(r"^(#{2,3})\s+\S", re.MULTILINE)
 COMPLETED_ROW_RE = re.compile(r"^\|[^|]*\|[^|]*(?:✅\s*(?:BİTTİ|TAMAMLANDI)|\[x\]\s*BİTTİ)\b", re.IGNORECASE | re.MULTILINE)
-PLAN_TASK_ID_RE = re.compile(r"\b([A-Z0-9]{2,10}-(?:FEAT|TASK|BUG|US|PL|ARCH|PO|UX|QA|GRW)-[0-9]{2,4})\b")
+PLAN_TASK_ID_RE = re.compile(
+    r"\b([A-Z0-9]{2,10}-(?:FEAT|TASK|BUG|US|PL|ARCH|PO|UX|QA|GRW|MIG|DB|INFRA|SEC|AUTH|DOCS|OPT|DEL|CI|HYG|REP|DASH|RBAC|FE|BE)-[0-9]{2,4})\b"
+)
 
 
 def _check_plan_eviction(root: Path, handoff_text: str) -> List[Tuple[str, str]]:
-    """docs/plans/ veya SPRINT_PLAN.md içindeki plan görevlerinin HANDOFF'tan buharlaşmasını (Task Eviction) denetler."""
+    """docs/plans/ veya .agent/plans/ içindeki plan görevlerinin HANDOFF'tan buharlaşmasını (Task Eviction) denetler."""
     warnings: List[Tuple[str, str]] = []
     plan_dirs = [root / "docs" / "plans", root / ".agent" / "plans"]
     plan_files: List[Path] = []
@@ -94,17 +96,25 @@ def _check_plan_eviction(root: Path, handoff_text: str) -> List[Tuple[str, str]]
             continue
 
         plan_ids = set(PLAN_TASK_ID_RE.findall(content))
-        # Yalnızca en az 2 deterministik görev ID'si tanımlanmış gerçek planları denetle
+        rel_plan = str(plan_file.relative_to(root)).replace("\\", "/")
+        has_filename_ref = plan_file.name in handoff_text
+
         if len(plan_ids) >= 2:
             present_in_handoff = [tid for tid in plan_ids if tid in handoff_text]
             if not present_in_handoff:
                 sample_missing = ", ".join(sorted(plan_ids)[:3])
                 warnings.append((
                     "W3",
-                    f"'{plan_file.relative_to(root)}' onaylı planındaki görevler ({sample_missing}...) "
+                    f"'{rel_plan}' onaylı planındaki görevler ({sample_missing}...) "
                     f"HANDOFF.md içinde bulunamadı (Task Eviction / Buharlaşma Riski). "
                     f"Plandaki işler HANDOFF.md §3 canlı panosuna veya Gelecek Fazlar tablosuna mühürlenmelidir.",
                 ))
+        elif plan_file.name.startswith("plan_") and not has_filename_ref:
+            warnings.append((
+                "W3",
+                f"'{rel_plan}' onaylı planı HANDOFF.md içinde referans verilmemiş "
+                f"(Plan Traceability Eksik). HANDOFF.md §3 panosuna plan referansı ve görevler işlenmelidir.",
+            ))
     return warnings
 
 

@@ -102,11 +102,13 @@ Boş bırakmak yerine kapının seni uyarmasını tercih et.
 
 ### 2.1.1 Çoklu Araç Plan Modu (/plan — Antigravity IDE, Antigravity CLI, Claude Code, OpenCode, Genel CLI) ve KANBAN / TDD Köprüsü
 Antigravity IDE, Antigravity CLI (`agy`), Claude Code (`claude`), OpenCode (`opencode`) veya genel terminal CLI ortamlarında `/plan` komutu veya planlama talebi çalıştırıldığında:
-1. Üretilecek olan plan (`<artifact-dir>/<plan_name>.md` veya `.agent/plans/<plan_name>.md`), doğrudan [.agent/templates/PLAN.template.md](../templates/PLAN.template.md) şablonunu kullanır; TDD dikiş noktalarını (`seam`), 5 katmanlı dikey dilimi, **Tema ve Bileşen İskeleti Sözleşmesini** (16 Kilitli Tema, 55+ Bileşen, 18 Dashboard, Zero-CLS Skeleton), 2+ alternatifli mimari ikilemlerde Council Deliberation (Option A vs Option B) körlemesini ve ilgili KANBAN kartını açıkça belirtir.
-2. ⛔ **Proceed İcra Kilidi (Phase Lock):** Kullanıcı Antigravity IDE'de "Proceed" butonuna bastığında veya CLI/terminal ortamlarında `"proceed"`, `"onay"`, `"uygula"` yazdığında:
-   - İlgili kart `KANBAN.md` üzerinde `Yapılıyor`'a çekilir (WIP limiti maksimum 3 denetlenir).
-   - TDD Kırmızı Test yazılıp terminalde **KIRMIZI (FAIL)** olduğu kanıtlanmadan üretim koduna dokunulamaz!
-   - Test yeşile döndükten ve 5 katman (DB, API, UI, Tema/Bileşen İskeleti, Zero-CLS Skeleton Screen) tamamlandıktan sonra kart `Yapıldı`'ya taşınır.
+1. Üretilecek olan taslak plan (`<artifact-dir>/<plan_name>.md` veya `.agent/plans/<plan_name>.md`), doğrudan [.agent/templates/PLAN.template.md](../templates/PLAN.template.md) şablonunu kullanır; deterministik `[DOM]-[TIP]-[NO]` görev kimliklerini, TDD dikiş noktalarını (`seam`), 5 katmanlı dikey dilimi, **Tema ve Bileşen İskeleti Sözleşmesini** (16 Kilitli Tema, 55+ Bileşen, 18 Dashboard, Zero-CLS Skeleton), 2+ alternatifli mimari ikilemlerde Council Deliberation (Option A vs Option B) körlemesini ve ilgili KANBAN kartını açıkça belirtir.
+2. ⛔ **Proceed İcra Kilidi (Faz 0 Mühürleme + Phase Lock):** Kullanıcı Antigravity IDE'de "Proceed" butonuna bastığında veya CLI/terminal ortamlarında `"proceed"`, `"onay"`, `"uygula"` yazdığında ajan koda dokunmadan önce **Faz 0**'ı icra eder:
+   - **Faz 0.1 (Plan Arşivleme `docs/plans/`):** Plan dosyası `python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug>` ile `docs/plans/plan_<slug>_<YYYYMMDD_HHMMSS>.md` olarak arşivlenir.
+   - **Faz 0.2 (`HANDOFF.md` §3 Mühürleme):** Plandaki görevler `[DOM]-[TIP]-[NO]` kimlikleri ve `docs/plans/plan_<slug>_...` dosya referansıyla `HANDOFF.md` §3 canlı panosuna (WIP maks 3 aktif, kalanlar Gelecek Fazlar / Backlog tablosuna) yazılır.
+   - **Faz 0.3 (Sprint & KANBAN Açılışı / Güncellemesi):** Çok adımlı veya mimari planlarda `SPRINT_PLAN.md`, `KANBAN.md` ve `RELEASE_PLAN.md` yoksa `.agent/templates/` altından oluşturulur; varsa güncellenir ve aktif kart `KANBAN.md` üzerinde `Yapılıyor`'a çekilir (WIP limiti maksimum 3 denetlenir).
+   - **Faz 1+ (TDD Kırmızı → Yeşil):** TDD Kırmızı Test yazılıp terminalde **KIRMIZI (FAIL)** olduğu kanıtlanmadan üretim koduna dokunulamaz!
+   - Test yeşile döndükten ve 5 katman (DB, API, UI, Tema/Bileşen İskeleti, Zero-CLS Skeleton Screen) tamamlandıktan sonra kart `Yapıldı`'ya taşınır ve `HANDOFF.md` güncellenir.
 
 ### 2.2 Kullanıcı İnceleme (Review), Değişiklik ve Açık Onay Kapısı
 

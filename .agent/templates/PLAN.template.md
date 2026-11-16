@@ -50,10 +50,10 @@ Feature: <doldur: Özellik Adı>
 
 ---
 
-## 5. 📋 Sprint & KANBAN Durumu
-| Kart ID | Mevcut Sütun | Hedef Sütun (Proceed Sonrası) | WIP Limiti Kontrolü |
+## 5. 📋 Sprint, HANDOFF & KANBAN Durumu (Deterministik Görev Kimlikleri)
+| Görev ID (`[DOM]-[TIP]-[NO]`) | Mevcut Durum | Hedef Durum (Proceed Sonrası) | Kapsam / KANBAN Kartı |
 |---|---|---|---|
-| `<doldur: ID>` | `Bekliyor` | `Yapılıyor` | Maksimum 3 aktif kart kuralı geçerli |
+| `<doldur: örn. PRJ-TASK-001>` | `Bekliyor` | `Yapılıyor` (`HANDOFF.md` §3 + `KANBAN.md`) | `<doldur: S1-01 / WIP maks 3>` |
 
 ---
 
@@ -85,7 +85,12 @@ Feature: <doldur: Özellik Adı>
 ---
 
 ## 8. 🧪 TDD Kırmızı-Yeşil Dikiş Noktaları (Seams) ve Sıralı İcra Fazları
-> ⛔ **PROCEED İCRA KURALI (MANDATORY — Çoklu Araç Uyumlu):** Kullanıcı Antigravity IDE'de "Proceed" butonuna bastığında veya Antigravity CLI (`agy`), Claude Code (`claude`), OpenCode (`opencode`) ve genel terminalde `"proceed"`, `"onay"`, `"uygula"` yazdığında ajan doğrudan üretim koduna GEÇEMEZ. Sırasıyla aşağıdaki fazları icra etmek zorundadır:
+> ⛔ **PROCEED İCRA KURALI (MANDATORY — Çoklu Araç Uyumlu):** Kullanıcı Antigravity IDE'de "Proceed" butonuna bastığında veya Antigravity CLI (`agy`), Claude Code (`claude`), OpenCode (`opencode`) ve genel terminalde `"proceed"`, `"onay"`, `"uygula"` yazdığında ajan doğrudan üretim koduna GEÇEMEZ. Sırasıyla aşağıdaki **Faz 0** ve **Faz 1..4** adımlarını icra etmek zorundadır:
+
+### 📌 Faz 0: Onay Sonrası Mühürleme (`docs/plans/`, `HANDOFF.md` §3 & Sprint Açılışı — Koda Dokunmadan Önce Zorunlu)
+1. **Planı `docs/plans/` Altına Arşivle:** `python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug>` komutuyla onaylı planı `docs/plans/plan_<slug>_<YYYYMMDD_HHMMSS>.md` olarak kopyala.
+2. **`HANDOFF.md` §3 Canlı Panosuna İşle:** Bölüm 5'teki tüm `[DOM]-[TIP]-[NO]` görevlerini ve arşivlenen `docs/plans/...` dosya referansını `HANDOFF.md` §3 canlı görev panosuna (WIP maks 3 aktif, kalanlar Gelecek Fazlar/Backlog tablosuna) yaz.
+3. **Sprint & KANBAN Aç/Güncelle:** Çok adımlı veya mimari planlarda proje kökünde `SPRINT_PLAN.md`, `KANBAN.md` ve `RELEASE_PLAN.md` yoksa `.agent/templates/` şablonlarından oluştur; varsa kartları aç ve aktif kartı `Yapılıyor`'a al.
 
 ### 🔴 Faz 1: Dikiş Noktası & Kırmızı Test (Red Loop)
 - **Test Dosyası:** `<doldur: örn. tests/.../feature.test.ts veya *Test.java>`
