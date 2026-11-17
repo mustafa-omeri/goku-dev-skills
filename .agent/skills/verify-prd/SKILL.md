@@ -7,6 +7,8 @@ description: Tüm proje ve PRD genelinde retrospektif kabul denetimi ve sahte bi
 
 Bu yetenek, projenin geçmişten bugüne `SPRINT_PLAN.md`, `KANBAN.md` veya `HANDOFF.md` içinde "BİTTİ / TAMAMLANDI" olarak kaydedilmiş **tüm özelliklerini baştan sona** tarar. Amaç; otomasyon testlerinin yeşil olmasına aldanarak gözden kaçan **Sahte Bitti (Phantom Done)** durumlarını, unutulmuş mock veri kalıntılarını ve doküman-kod sapmalarını (Spec Drift) ortaya çıkarmaktır.
 
+> 💡 **Sınır Notu:** Henüz geliştirilmemiş, dışarıdan verilen yeni/taslak bir PRD'yi 6 Şapkalı Konsey ve Borda oylamasıyla değerlendirmek için [`review-prd`](../review-prd/SKILL.md) (`/review-prd`) kullanılır.
+
 ---
 
 ## Ne Zaman Kullanılır?

@@ -38,7 +38,7 @@ const https = require('https');
 
 
 
-const VERSION = '1.37.0';
+const VERSION = '1.38.0';
 
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 
@@ -541,6 +541,12 @@ const SKILLS_MANIFEST = {
     desc: 'Audit Turkish legal regulations (KVKK, ETK, 5651, TKHK, FSEK) for web/mobile apps and SaaS platforms.',
     triggers: '/tr-compliance, [TR-COMPLIANCE], türkiye mevzuatı, kvkk denetimi, yer sağlayıcı, 5651 log, turkish compliance',
   },
+
+  'review-prd': {
+    category: 'Architecture / Fullstack',
+    desc: 'Evaluate external/new PRDs against live codebase, 6-hat council, Borda arbitration, and 5-layer feasibility before /plan.',
+    triggers: '/review-prd, [REVIEW-PRD], prd incele, prd değerlendir, review prd, evaluate prd',
+  },
 };
 
 
@@ -677,6 +683,7 @@ const PROFILES = {
       'feature-architect',
       'diagram-design',
       'tr-app-compliance',
+      'review-prd',
 
     ],
 
@@ -803,6 +810,7 @@ const PROFILES = {
       'gs-update',
       'project-summary',
       'feature-architect',
+      'review-prd',
 
     ],
 

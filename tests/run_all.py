@@ -42,6 +42,7 @@ TEST_SCRIPTS = [
     ("Test Scout Integration", HERE / "test_scout_integration.py"),
     ("Test Cognitive Counsel", HERE / "test_cognitive_counsel.py"),
     ("Test Sync Sibling Handoff", HERE / "test_sync_sibling_handoff.py"),
+    ("Test Review PRD", HERE / "test_review_prd.py"),
 ]
 
 

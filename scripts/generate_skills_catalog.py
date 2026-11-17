@@ -113,7 +113,7 @@ CATEGORIES = {
 
     "Oturum Komutları (Ensemble)": [
 
-        "ui-polish", "verify-prd", "verify-last", "verify-sprint", "fix-bug", "check-security",
+        "ui-polish", "verify-prd", "review-prd", "verify-last", "verify-sprint", "fix-bug", "check-security",
 
         "council", "seo-apply", "commitx", "gs-update",
 
@@ -309,6 +309,36 @@ python .agent/skills/musgoku/scripts/check_sprint_board.py""",
             }
         ],
         "category": "Teslimat & Kalite"
+    },
+    {
+        "command": "/review-prd",
+        "aliases": ["/review-prd", "[REVIEW-PRD]", "prd incele", "prd degerlendir"],
+        "name": "Geliştirme Öncesi: 3 Aşamalı PRD & Konsey Değerlendirme Motoru",
+        "badge": "Konsey & Fizibilite",
+        "badge_class": "badge-primary",
+        "skills": ["review-prd", "council", "feature-architect", "doc-coauthoring"],
+        "goal": "Dış/Yeni PRD + Mevcut Kod Tabanı + 6 Şapka + Borda Oylaması -> Tek Konsolide Rapor",
+        "description": "Elinizdeki yeni veya taslak PRD dokümanını mevcut proje kod tabanı, kardeş repo etkisi, 6 Şapkalı Konsey (PO..QA + Anti-Sycophancy), Council Borda oylaması ve 5 Katmanlı fizibilite süzgecinden geçirerek GO/CONDITIONAL GO/REWORK hükmüyle tek raporda değerlendirir ve onay sonrası /plan akışına bağlar.",
+        "sample_prompt": "/review-prd: docs/yeni-ozellik-prd.md dosyasını bu projeye göre 6 Şapka ve Council ile detaylı değerlendir.",
+        "protocol": "1. Kod & Bağlam Çarpıştırması (prd_review_helper.py + fa_scan.py) + 6 Şapka & /PUSHBACK -> Mevcut kod hazırlığı ve açıklar ➜ 2. Mimari İkilem Konseyi (/council + Borda) -> Option A vs Option B ➜ 3. 5 Katmanlı Fizibilite & Tek Rapor -> docs/plans/prd_review_*.md arşivi + Strict Approval Gate -> Onayda /plan",
+        "usage_snippet": """# 1. PRD Değerlendirme Komutu (Dosya veya Sohbet Metni):
+/review-prd docs/yeni-ozellik-prd.md
+
+# 2. Deterministik Bağlam Analizi (CLI):
+python .agent/skills/review-prd/scripts/prd_review_helper.py --root . --prd docs/yeni-ozellik-prd.md --json""",
+        "emergency": [
+            {
+                "symptom": "Değerlendirme sırasında ajan doğrudan koda başladı",
+                "cause": "Strict Approval Gate (onay kapısı) atlandı.",
+                "action": "Üretim kodunu geri alın; yalnızca docs/plans/prd_review_*.md raporunu üretip kullanıcı onayını bekleyin."
+            },
+            {
+                "symptom": "PRD'de Gherkin ve ölçülebilir SLA eksik çıktı",
+                "cause": "Taslak PRD belirsiz ifadeler içeriyor.",
+                "action": "Hükmü CONDITIONAL GO olarak işaretleyip rapordaki önerilen Gherkin senaryolarını PRD'ye ekleyin."
+            }
+        ],
+        "category": "Kod & Mimari"
     },
     {
         "command": "/verify-prd",
@@ -1927,6 +1957,26 @@ python .agent/skills/musgoku/scripts/check_sprint_board.py"""
 
     },
 
+    "review-prd": {
+
+        "status": "PRD Konsey Orkestratörü",
+
+        "badge_class": "badge-primary",
+
+        "file": "PRD + fa_scan.py + council_ranker.py",
+
+        "features": ["Kod Gerçekliği Çarpıştırması", "6 Şapka & Anti-Sycophancy", "Council Borda Oylaması", "Tek Konsolide Rapor & /plan Köprüsü"],
+
+        "detail": "Dış/yeni bir PRD dokümanını mevcut proje kod tabanı, 6 Şapkalı Konsey, Borda hakemliği, 5 katman fizibilite ve kardeş uygulama etkisiyle tek raporda değerlendirip onay sonrası /plan sürecine bağlar.",
+
+        "sample_prompt": "/review-prd: docs/yeni-ozellik-prd.md dosyasını projeye göre 6 şapka ve council ile değerlendir.",
+
+        "config_snippet": """# PRD Bağlam & Analiz Paketi:
+
+python .agent/skills/review-prd/scripts/prd_review_helper.py --root . --prd <prd-dosyasi> --json"""
+
+    },
+
     "verify-prd": {
 
         "status": "Makro Doğrulama",
@@ -2211,6 +2261,7 @@ SAMPLE_PROMPTS = {
 
     "verify-sprint": "/verify-sprint: Aktif sprint hedeflerini, kart kabul kriterlerini (Gherkin) ve 5 katman dikey dilim bütünlüğünü denetle.",
 
+    "review-prd": "/review-prd: Elimdeki PRD'yi bu projeye göre 6 şapka, council Borda ve 5 katman fizibiliteyle tek raporda değerlendir.",
     "verify-prd": "/verify-prd: Son tamamlanan özelliğin kabul kriterlerini, 5 katman dikey dilim bütünlüğünü ve regression risklerini bağımsız denetle.",
 
     "check-security": "/check-security: Sistem genelinde yetki aşımı, public form abuse riskleri ve env sızıntılarını derinlemesine tara.",
@@ -2587,7 +2638,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
             "border_var": "var(--accent-primary-border)",
 
-            "commands": ["/council", "/plan", "/feature-architect", "/6HAT"]
+            "commands": ["/council", "/plan", "/review-prd", "/feature-architect", "/6HAT"]
 
         },
 
@@ -7407,9 +7458,14 @@ def generate_catalog_html(skills: list[dict]) -> str:
                 <td style="padding:6px 8px;">check_sprint_board.py</td>
               </tr>
               <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                <td style="padding:6px 8px; font-weight:600;">Oturum Devri / Plan Görevleri</td>
+                <td style="padding:6px 8px; font-weight:600;">Dış / Yeni PRD Değerlendirme</td>
+                <td style="padding:6px 8px; font-family:var(--font-mono); color:var(--accent-primary);">review-prd (SKILL.md)</td>
+                <td style="padding:6px 8px;">prd_review_helper.py &amp; /review-prd</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 8px; font-weight:600;">Oturum Devri / Kardeş Repo Planı</td>
                 <td style="padding:6px 8px; font-family:var(--font-mono); color:var(--accent-primary);">handoff-session-continuity.md</td>
-                <td style="padding:6px 8px;">check_handoff.py (W3 Guard)</td>
+                <td style="padding:6px 8px;">check_handoff.py (W3) &amp; sync_sibling_handoff.py</td>
               </tr>
             </tbody>
           </table>
