@@ -55,6 +55,14 @@ Feature: <doldur: Özellik Adı>
 |---|---|---|---|
 | `<doldur: örn. PRJ-TASK-001>` | `Bekliyor` | `Yapılıyor` (`HANDOFF.md` §3 + `KANBAN.md`) | `<doldur: S1-01 / WIP maks 3>` |
 
+### 5.1 🔗 Kardeş Uygulama (Cross-Repo) Etkisi & Yürütme Sahipliği
+> ⛔ Kardeş uygulamada geliştirme gerekmiyorsa yalnızca `'Tek Repo / Kardeş Uygulama Etkisi Yok'` yazın.
+> Gerekiyorsa: Faz 0'da `sync_sibling_handoff.py` ile kardeş `HANDOFF.md`'ye `<kaynak-proje> projesindeki <plan-yolu> plan dosyası referansına göre` işlenir ve kardeş koda dokunmadan önce aşağıdaki sahiplik sorusu kullanıcıya sorulur.
+
+- **Etkilenen Kardeş Uygulama & Yol:** `<doldur: örn. ../backend-repo veya 'Tek Repo / Kardeş Uygulama Etkisi Yok'>`
+- **Kardeş `HANDOFF.md`'ye Yazılacak Görevler & Sözleşme Özeti:** `<doldur: Görev ID, başlık ve API/DTO/şema kontrat özeti>`
+- **Yürütme Sahipliği Sorusu (Proceed Sonrası Zorunlu):** *"Kardeş uygulamadaki geliştirmeyi ben mi yapayım, yoksa kardeş uygulamadaki AI Agent ile mi devam etmek istersiniz?"* (`[Seçenek 1: Mevcut Ajan / Seçenek 2: Kardeş AI Agent]`)
+
 ---
 
 ## 6. 🏗️ 5 Katmanlı Dikey Dilim Mimarisi (Full-Stack Vertical Slice)

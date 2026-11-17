@@ -95,12 +95,13 @@ Kullanıcı planı onayladığında veya *"onay"*, *"proceed"*, *"geliştir"*, *
      * PRD (`PRODUCT.md` / `*-prd.md`) dokümanları kullanıcı tercihlerine göre senkronize edilir.
    - Kod değişiklikleri ise doğrudan koda yazılmak yerine `HANDOFF.md` §3 Canlı Görev Panosuna (ve `KANBAN.md` backlog'una) aktarılır.
 
-3. **HANDOFF.md Canlı Panosuna Plan Referanslı Maddeleme (Traceable Plan Backlog):**
+3. **HANDOFF.md Canlı Panosuna Plan Referanslı Maddeleme (Traceable Plan Backlog & Kardeş Uygulama Devri):**
    - `HANDOFF.md` §3 Canlı Görev Panosu (veya `SPRINT_PLAN.md` / `KANBAN.md`) altına yazılacak her kod geliştirme görevi, 1. maddede `docs/plans/` altına taşınan plan dosyasına açık referans (`file:///.../docs/plans/<plan_file>.md#L...` veya `[docs/plans/<plan_file>.md]`) verilerek işaretlenir.
    - Örnek format: `🎯 1. ⏭️ [RFC-001] (docs/plans/reconciliation_plan_ocai_20261110_165000.md): /api/v1/auth/login endpoint parametre uyumu`.
    - Böylece onaylanan plan ile kod geliştirme fazı %100 izlenebilir (traceable) kalır.
+   - **Kardeş Uygulama (`--backend` / `--frontend` ayrık repo) Etkisi:** Eğer kod değişikliği kardeş uygulamayı (peer repo) kapsıyorsa, `python .agent/skills/musgoku/scripts/sync_sibling_handoff.py` ile kardeş uygulamanın `HANDOFF.md` dosyasına `<kaynak-proje> projesindeki <plan-yolu> plan dosyası referansına göre` bilgileri de mühürlenir.
 
-4. **Öncelikli Protokol Kalkanı & Sıradaki İş Önerisi (Anti-Prompt-Drift & Next Work Suggestion):**
+4. **Öncelikli Protokol Kalkanı, Sıradaki İş & AI Agent Sahiplik Sorusu (Anti-Prompt-Drift & Execution Ownership Gate):**
    - Kullanıcı aksini açıkça ve özellikle belirtmedikçe ("kodu şimdi yaz, dokümanları sonra yap" gibi açık muafiyet vermedikçe), ilk 3 madde **mutlak ve daima geçerlidir**.
    - Kullanıcıdan *"geliştir"*, *"devam et"*, *"kodu tamamla"*, *"uygula"* gibi tetikleyiciler gelse bile ajan doğrudan koda dalmaz; **önce 1, 2 ve 3. maddeleri icra eder**.
-   - Dokümanlar eşitlenip kod görevleri plan referansıyla `HANDOFF.md` panosuna mühürlendikten sonra, kullanıcıya en uygun sıradaki iş (`HANDOFF.md` §3 canlı panosundaki 1 numaralı görev) önerilir ve kullanıcıdan o görevin kodlamasını başlatmak için teyit istenir.
+   - Dokümanlar eşitlenip kod görevleri plan referansıyla `HANDOFF.md` panosuna mühürlendikten sonra, kullanıcıya en uygun sıradaki iş (`HANDOFF.md` §3 canlı panosundaki 1 numaralı görev) önerilir ve **kardeş uygulamada geliştirme yapılacaksa** mutlaka *"Kardeş uygulamadaki geliştirmeyi ben mi yapayım, yoksa kardeş uygulamadaki AI Agent ile mi devam etmek istersiniz?"* sorusu yöneltilir.

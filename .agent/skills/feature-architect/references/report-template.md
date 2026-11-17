@@ -151,4 +151,5 @@ Uygulamaya ve TDD kırmızı-yeşil döngüsüne geçmem için lütfen aşağıd
 2. **Kademe Seçimi:** Hangi çözüm seviyesini uygulayalım? *(Seçenek 1: MVP / Seçenek 2: Best-Practice / Seçenek 3: PRD Vizyoner)*
 3. **Tema, Bileşen ve Dashboard Seçimi:** Önerilen hangi kilitli tema (`#01..#16`), bileşen şablonları (`get_component.py`) ve dashboard mimarisini (`dashboard-theme-XX`) baz alalım?
 4. **Veri & API Yaklaşımı:** Backend eksiği (`[Yeni API/DB Gerekli 🔴]`) olan maddelerde **Full-Stack (5 Katman: DB + Backend + API + UI + Döngü Kapanışı)** olarak mı örelim, yoksa tipli servis dikiş noktasıyla **`Mock-UI (YARIM — Eksik Katman HANDOFF'a kaydedilir)`** olarak mı hazırlayalım?
+5. **Kardeş Uygulama Yürütme Sahipliği (Yalnız kardeş uygulamada geliştirme varsa):** Onay sonrası kardeş uygulamanın `HANDOFF.md` dosyasına `<kaynak-proje> projesindeki <plan-yolu> plan dosyası referansına göre` görevler yazılacaktır. Kardeş uygulamadaki geliştirmeyi ben mi yapayım, yoksa kardeş uygulamadaki AI Agent ile mi devam etmek istersiniz?
 ```

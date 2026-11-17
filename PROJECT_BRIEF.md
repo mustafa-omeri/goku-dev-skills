@@ -4,7 +4,7 @@ type: project-brief
 project: skillSetWorks
 status: active
 created: 2026-10-27
-updated: 2026-11-16
+updated: 2026-11-17
 primary_language: Python 3.11 / Node.js / Markdown
 frameworks: ["pytest", "unittest", "node-cli"]
 database: ["Yok / Kural ve Dağıtım Deposu"]
@@ -28,11 +28,11 @@ related_docs:
 
 ## 1. Teknoloji Yığını & Altyapı
 - **Proje Adı / Slug:** skillSetWorks (`skillSetWorks`)
-- **Paket / Sürüm:** `goku-dev-skills` v1.36.2 (`package.json`)
+- **Paket / Sürüm:** `goku-dev-skills` v1.37.0 (`package.json`)
 - **Birincil Dil:** Python 3.11 / Node.js 18+ / Markdown
 - **Frameworkler & Kütüphaneler:** Python `unittest`, `pytest`, `pytest-cov`, `argparse`, Node.js CLI runtime
 - **Veritabanı / Altyapı:** Yok (Uygulama kodu içermez; kural, skill ve dağıtım motorudur)
-- **Build / Yönetim Araçları:** `delivery.py` (Projelere dağıtım aracı), `rules_gates.py` (Kural denetleyicisi), `run_all_gates.py` (Birleşik kapı koşturucu), `check_handoff.py` (Oturum devri kapısı), `archive_plan.py` (`/plan` onay sonrası `docs/plans/` arşivleyici), `fa_scan.py` / `kg_query.py` / `review_units.py` / `fa_engine` (`discovery`, `graph`, `snapshot`, `intelligence`, `runtime`, `evolution`, `cache`) / `gap_scanner.py` / `engine_advisor.py` / `council_merger.py` (Feature Architect v2.1 deterministik tam-yığın mimari zeka, kanonik bilgi grafiği, V1-V10 kanıt yönetişimli Defect-First Council v3, L3 runtime doğrulayıcı ve artımlı önbellek motoru), `bin/cli.js` (CLI paketi)
+- **Build / Yönetim Araçları:** `delivery.py` (Projelere dağıtım aracı), `rules_gates.py` (Kural denetleyicisi), `run_all_gates.py` (Birleşik kapı koşturucu), `check_handoff.py` (Oturum devri kapısı), `archive_plan.py` (`/plan` onay sonrası `docs/plans/` arşivleyici), `sync_sibling_handoff.py` (Kardeş uygulama `HANDOFF.md` cross-repo devir motoru), `fa_scan.py` / `kg_query.py` / `review_units.py` / `fa_engine` (`discovery`, `graph`, `snapshot`, `intelligence`, `runtime`, `evolution`, `cache`) / `gap_scanner.py` / `engine_advisor.py` / `council_merger.py` (Feature Architect v2.1 deterministik tam-yığın mimari zeka, kanonik bilgi grafiği, V1-V10 kanıt yönetişimli Defect-First Council v3, L3 runtime doğrulayıcı ve artımlı önbellek motoru), `bin/cli.js` (CLI paketi)
 
 ---
 
@@ -44,7 +44,7 @@ related_docs:
 | `.agent/rules/` | Ajan kuralları ve anayasal sözleşmeler (sinif: OLCULEBILIR/TUTUM/SUREC) | 22 kural (12 ölçülebilir, 10 kapısız) |
 | `.agent/templates/` | Projelerde açılacak living markdown ve HTML şablonları | Kök şablonları (PROJECT_SUMMARY ve KULLANICI_REHBERI.html dahil) |
 | `bin/` | `goku-dev-skills` npm CLI paket yürütücüsü (`cli.js`) | CLI arabirimi |
-| `tests/` | Depo bütünlüğü, drift, sızıntı, altın benchmark ve kural kapısı regresyon testleri | 27 test paketi (`feature-architect-bench/` 14 sentetik senaryo dahil) |
+| `tests/` | Depo bütünlüğü, drift, sızıntı, altın benchmark ve kural kapısı regresyon testleri | 28 test paketi (`feature-architect-bench/` 14 sentetik senaryo dahil) |
 | `scripts/` | Skill kataloğu ve yardımcı üretim betikleri | Otomasyon araçları |
 
 ---
@@ -70,4 +70,4 @@ related_docs:
 
 ## 5. Yaşatma & Operasyonel Döngü
 - **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `test_skills_catalog.py`, `test_project_summary.py`, `test_feature_architect.py`, `test_feature_architect_council.py`, `test_feature_architect_bench.py`, `test_council_workflow_integration.py`, `test_theme_skeleton_integration.py`, `test_prelaunch_security.py`, `test_clean_url_routing.py`, `test_cognitive_counsel.py`
-- **Son Başarılı Doğrulama:** 2026-11-10 · 27/27 test paketi PASS · Birleşik kapılar PASS (10 geçti, 0 başarısız) · Dağıtım 4/4 tam paritede (0 sorunlu)
+- **Son Başarılı Doğrulama:** 2026-11-17 · 28/28 test paketi PASS · Birleşik kapılar PASS (11 geçti, 0 başarısız) · Dağıtım 4/4 tam paritede (0 sorunlu)

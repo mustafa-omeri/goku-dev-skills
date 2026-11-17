@@ -178,7 +178,7 @@ Bulgularını [`references/report-template.md`](./references/report-template.md)
 ## 6. Onay Sonrası Deterministik İcra Akışı (`--mode=complete` / `full`)
 
 Kullanıcı seçimini ve onayını verdiğinde doğrudan üretim koduna geçilemez; sırasıyla aşağıdaki fazlar icra edilir:
-1. **Görev Kaydı:** Seçilen modülleri ve yeni özellikleri hedef projenin `HANDOFF.md` §3 Canlı Görev Panosuna (ve varsa `KANBAN.md`'ye) kaydet.
+1. **Görev Kaydı & Kardeş Uygulama Devri:** Seçilen modülleri ve yeni özellikleri hedef projenin `HANDOFF.md` §3 Canlı Görev Panosuna (ve varsa `KANBAN.md`'ye) kaydet. Eğer `--peer` / keşfedilen kardeş uygulamada da geliştirme çıkıyorsa, kardeş koda dokunmadan önce `python .agent/skills/musgoku/scripts/sync_sibling_handoff.py` ile kardeş reponun `HANDOFF.md` dosyasına `<kaynak-proje> projesindeki <plan-yolu> plan dosyası referansına göre` bilgileri yaz ve kullanıcıya *"Geliştirmeyi ben mi yapayım, yoksa kardeş uygulamadaki AI Agent ile mi devam etmek istersiniz?"* sorusunu yönelt.
 2. **Faz 1 — TDD Kırmızı Test Kanıtı (`tdd`):** Önceden belirlenen dikiş noktasında (`seam`) testi yaz, terminalde çalıştır ve **KIRMIZI (FAIL)** olduğunu kanıtla.
 3. **Faz 2 — Minimal Yeşil Kod (`tdd`):** Yalnızca testi yeşile çevirecek kadar üretim kodu yaz, testin **YEŞİL (PASS)** olduğunu kanıtla.
 4. **Faz 3 — Kanonik 5 Katmanlı Dikey Dilim & `/ui-polish` İcrası (`musgoku` & `ui-polish`):** Full-Stack seçildiyse `1. DB/Migration -> 2. Backend/View/RPC -> 3. İstemci API -> 4. Arayüz/UX -> 5. Döngü Kapanışı` sırasıyla inşa et; seçilen tema/dashboard iskeletini ve Zero-CLS kasetlerini uygula, `check_design_slop.py` kapısını sıfır hatayla geçir.

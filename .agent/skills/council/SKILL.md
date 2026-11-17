@@ -59,6 +59,7 @@ Council (Kör Hakemlik) mekanizması izole bir araç değil; SDLC yaşam döngü
 1. **Planlama & Tasarım (`/plan`, Adım 2.1):**
    - 2 veya daha fazla geçerli mimari, veri modeli veya kütüphane yaklaşımı içeren işlerde `PLAN.template.md` içindeki `## 2. 🏛️ Council Deliberation` tablosunu zorunlu olarak işletir (`Option A vs Option B` Borda analizi).
    - Birleşik Planlama Ekosistemi zincirini kurar: Fikir (`my-idea`) → Şartname (`doc-coauthoring`) → Açık Keşfi (`feature-architect` / `gap_scanner.py`) → Konsey Hakemliği (`council`) → Görev Tahtası (`KANBAN.md`) → TDD Dikiş Noktası & 5 Katmanlı Dilim (`development-workflow.md` Adım 2.2).
+   - Konsey kararı kardeş uygulamayı (sibling repo) etkiliyorsa, onay sonrasında `sync_sibling_handoff.py` ile kardeş `HANDOFF.md`'ye `<kaynak-proje> projesindeki <plan-yolu> plan dosyası referansına göre` işlenir ve kardeş kodlamaya geçmeden önce kullanıcıya mevcut ajan vs kardeş AI Agent tercihi sorulur.
 2. **Teknoloji & Kütüphane Seçimi (`/council`):**
    - Yeni kütüphane veya paket seçiminde (Zustand vs Context, Tailwind v4 vs v3, Auth protokolü vb.) bağımsız hakemlik yapar ve `docs/adr/` kaydı açar.
 3. **Yüksek Riskli Refactoring (Blast Radius > 3):**

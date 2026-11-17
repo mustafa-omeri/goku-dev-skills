@@ -71,3 +71,5 @@ python .agent/skills/deployment-architect/scripts/deployment_generator.py --targ
 - [Hibrit Dağıtım Kalıpları (React + Spring Boot vb.)](references/hybrid-deployment-patterns.md)
 - [Geri Alma ve Acil Durum Kurtarma Protokolü (Rollback)](references/rollback-and-disaster-recovery.md)
 - [VPS Üretim Sertleştirme ve Güvenlik Rehberi](references/vps-hardening-playbook.md)
+
+> **Kardeş Uygulama (Cross-Repo) Dağıtım Kuralı:** Hibrit dağıtım planı kardeş uygulamada (ör. ayrı backend/frontend reposu) değişiklik gerektiriyorsa; `sync_sibling_handoff.py` ile kardeş reponun `HANDOFF.md` dosyasına `<kaynak-proje> projesindeki <plan-yolu> plan dosyası referansına göre` işlenir ve kardeş repoya dokunmadan önce kullanıcıya *"Geliştirmeyi ben mi yapayım, yoksa kardeş uygulamadaki AI Agent ile mi devam etmek istersiniz?"* sorulur.
