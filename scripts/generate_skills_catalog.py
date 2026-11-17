@@ -213,24 +213,24 @@ python .agent/skills/musgoku/scripts/check_theme_contrast.py --strict""",
     },
     {
         "command": "/plan",
-        "aliases": ["/plan", "/seal-plan", "plan modu", "planı mühürle", "backlog'a al", "[PLAN]", "proceed", "plan hazirla"],
-        "name": "Antigravity Plan Modu, /seal-plan & Proceed İcra Protokolü",
+        "aliases": ["/plan", "plan modu", "[PLAN]", "proceed", "plan hazirla"],
+        "name": "Antigravity Plan Modu & Mimari TDD Protokolü",
         "badge": "Mimari & TDD",
         "badge_class": "badge-primary",
         "skills": ["musgoku", "tdd", "doc-coauthoring", "development-workflow"],
-        "goal": "TDD Dikiş Noktası, 5 Katmanlı Dilim, /seal-plan (Kodlamadan Sıraya Al) & Önce Kırmızı Test",
-        "description": "Antigravity IDE/CLI, Claude Code ve OpenCode'da standart PLAN.template.md şablonunda mimari plan üretir. /seal-plan ile kodlamadan yalnızca Faz 0 (docs/plans/ arşivi + HANDOFF.md §3 ⬜ Bekliyor + KANBAN.md + varsa kardeş HANDOFF.md) mühürlenir ve sonradan tetiklenmek üzere durulur. Proceed onayıyla ise Faz 0 + TDD kırmızı test (FAIL) + minimal yeşil kod yürütülür.",
+        "goal": "TDD Dikiş Noktası, 5 Katmanlı Dilim & Önce Kırmızı Test",
+        "description": "Antigravity IDE/CLI, Claude Code ve OpenCode'da standart PLAN.template.md şablonunda mimari plan üretir. [DOM]-[TIP]-[NO] kimlikleri, TDD dikiş noktaları, 5 katmanlı dikey dilim mimarisi, riskler ve kardeş repo etkileşimlerini kurgular. Kullanıcıya 2 modlu onay seçeneği sunar: /seal-plan ile doğrudan sıraya alıp durma veya Proceed ile hemen koda başlama.",
         "sample_prompt": "/plan: Yeni kullanıcı profil sayfası için TDD dikiş noktası ve 5 katmanlı dilim içeren mimari plan hazırla.",
-        "protocol": "1. PLAN.template.md Üretimi -> [DOM]-[TIP]-[NO] kimlikleri ve 5 katmanlı dilim ➜ 2. Mod Seçimi -> /seal-plan (Yalnız Faz 0: archive_plan.py --seal-handoff ile docs/plans/ + HANDOFF.md ⬜ Bekliyor, kodlama yapma) VEYA Proceed ➜ 3. Kırmızı Test Yazımı -> Terminalde FAIL kanıtı ➜ 4. Yeşil Kod & 5 Katman İcrası",
+        "protocol": "1. PLAN.template.md Üretimi -> [DOM]-[TIP]-[NO] kimlikleri ve 5 katmanlı dilim ➜ 2. Kullanıcı Onay Kapısı -> /seal-plan (Backlog'a Al & Dur) VEYA Proceed (Onayla & Başla) ➜ 3. Kırmızı Test Yazımı (Proceed durumunda) -> Terminalde FAIL kanıtı ➜ 4. Yeşil Kod & 5 Katman İcrası",
         "usage_snippet": """# 1. Plan Modu Tetikleme:
 /plan [Özellik Açıklaması]
 
-# 2A. Yalnızca Mühürle & Backlog'a Al (/seal-plan — Kodlama Yapma):
-python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug> --seal-handoff --sprint-label "Sprint 21"
+# 2. Örnek Plan Üretimi:
+/plan PostgreSQL 17 uyumlu Sprint 21 uygulama planı (OCAI-FEAT-022, OCAI-FEAT-023)
 
-# 2B. Onayla & Hemen Geliştir (Proceed):
-python .agent/skills/musgoku/scripts/sync_sibling_handoff.py --sibling-root <kardeş-yol> --plan docs/plans/<plan>.md --task-id <ID> --task-title "<Başlık>"
-# Adım 2.1: Test yazımı ve terminalde FAIL kanıtı -> Adım 2.2: Minimal geçiş kodu""",
+# 3. Plan Onayında İki Yol:
+# Yol A (/seal-plan): Hiç kod yazmadan planı mühürle, HANDOFF.md Gelecek Fazlar'a ⬜ Bekliyor olarak al ve dur.
+# Yol B (Proceed): Planı onayla, Faz 0 arşivlemesini yap ve doğrudan TDD kırmızı test ile geliştirmeye başla.""",
         "emergency": [
             {
                 "symptom": "Test ilk çalıştırmada yeşil çıktı (False Positive)",
@@ -244,6 +244,49 @@ python .agent/skills/musgoku/scripts/sync_sibling_handoff.py --sibling-root <kar
             }
         ],
         "category": "Kod & Mimari"
+    },
+    {
+        "command": "/seal-plan",
+        "aliases": ["/seal-plan", "seal-plan", "planı mühürle", "plani muhurle", "backlog'a al", "backloga al", "yalnızca mühürle", "siraya al", "sıraya al", "[SEAL-PLAN]"],
+        "name": "2-Modlu Plan Onay Kapısı: Kodlamadan Mühürle & Backlog'a Al",
+        "badge": "Plan & Backlog",
+        "badge_class": "badge-accent",
+        "skills": ["musgoku", "handoff-session-continuity", "development-workflow", "sprint-delivery-workflow"],
+        "goal": "Kodlamadan Dur, docs/plans/ Arşivle, HANDOFF.md Gelecek Fazlar'a '⬜ Bekliyor' Olarak Mühürle",
+        "description": "Hazırlanan mimari plan onaylandığında ancak geliştirmenin HEMEN BAŞLATILMASI İSTENMEDİĞİNDE (ör. araya başka acil sprint/özellik girecekse veya plan ilerisi için sıraya alınıyorsa) kullanılır. Hiçbir uygulama kodu, migration veya entity değiştirmeden planı docs/plans/plan_<slug>_<timestamp>.md altına taşır, tüm task ID'lerini HANDOFF.md §3 Gelecek Fazlar panosuna '⬜ Bekliyor' olarak işler (W3 kapısı 0 hata), KANBAN.md backlog'unu günceller, varsa kardeş repo HANDOFF.md'sine çapraz referans ekler ve geliştirme yapmadan temiz durur.",
+        "sample_prompt": "/seal-plan: Hazırlanan Sprint 21 planını kodlama yapmadan mühürle, docs/plans altına arşivle ve HANDOFF.md'de sıradaki işlerde bekliyor olarak kaydet.",
+        "protocol": "1. Mod A Tespiti -> /seal-plan veya 'planı mühürle' komutu ➜ 2. Cerrahi Faz 0 İcrası -> archive_plan.py --seal-handoff --sprint-label '<Label>' ➜ 3. HANDOFF & KANBAN Senkronu -> docs/plans arşivi + Gelecek Fazlar'a ⬜ Bekliyor olarak ekleme (0 W3 uyarısı) ➜ 4. Kardeş Repo Senkronu (Varsa) -> sync_sibling_handoff.py ➜ 5. Temiz Durma -> Çalışma ağacına kod/migration dokunmadan devir raporu verme",
+        "usage_snippet": """# 1. Sohbette Doğrudan Tetikleme (Plan Artifact Sonrası):
+/seal-plan
+/seal-plan planı mühürle ve sıraya al
+planı mühürle
+
+# 2. Deterministik CLI Motoru (archive_plan.py --seal-handoff):
+python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug> --seal-handoff --sprint-label "Sprint 21"
+
+# 3. Kardeş Repo Senkronu (Opsiyonel / İki Taraflı Planlarda):
+python .agent/skills/musgoku/scripts/sync_sibling_handoff.py --sibling-root ../kardes-repo --plan docs/plans/<plan>.md --task-id OCAI-FEAT-022 --task-title "Admin Özel Sektör"
+
+# 4. Doğrulama Kapısı (W3 Sıfır Uyarı):
+python .agent/skills/musgoku/scripts/check_handoff.py --strict""",
+        "emergency": [
+            {
+                "symptom": "/seal-plan dedikten sonra ajan kod yazmaya başladı",
+                "cause": "Mod A (Mühürle & Dur) yerine yanlışlıkla Mod B (Proceed) kuralına girildi.",
+                "action": "Kodu derhal geri alın (git checkout); yalnızca archive_plan.py --seal-handoff çalıştırıp durun."
+            },
+            {
+                "symptom": "check_handoff.py W3 uyarısı verdi (Arşivlenmiş plan HANDOFF'ta bulunamadı)",
+                "cause": "archive_plan.py çalıştırılırken --seal-handoff bayrağı verilmedi.",
+                "action": "archive_plan.py --plan <yol> --slug <slug> --seal-handoff çalıştırarak planı HANDOFF.md tablosuna bağlayın."
+            },
+            {
+                "symptom": "Kardeş repo HANDOFF.md güncellenmedi",
+                "cause": "Plan dosyasında kardeş repo etkisi tanımlanmasına rağmen sync_sibling_handoff.py atlandı.",
+                "action": "python .agent/skills/musgoku/scripts/sync_sibling_handoff.py çalıştırarak kardeş projenin HANDOFF.md dosyasına plan referansını mühürleyin."
+            }
+        ],
+        "category": "Planlama & Mimari"
     },
     {
         "command": "/verify-last",
