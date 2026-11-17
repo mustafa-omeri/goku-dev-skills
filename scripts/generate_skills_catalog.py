@@ -213,24 +213,24 @@ python .agent/skills/musgoku/scripts/check_theme_contrast.py --strict""",
     },
     {
         "command": "/plan",
-        "aliases": ["/plan", "plan modu", "[PLAN]", "proceed", "plan hazirla"],
-        "name": "Antigravity Plan Modu & Proceed İcra Protokolü",
+        "aliases": ["/plan", "/seal-plan", "plan modu", "planı mühürle", "backlog'a al", "[PLAN]", "proceed", "plan hazirla"],
+        "name": "Antigravity Plan Modu, /seal-plan & Proceed İcra Protokolü",
         "badge": "Mimari & TDD",
         "badge_class": "badge-primary",
         "skills": ["musgoku", "tdd", "doc-coauthoring", "development-workflow"],
-        "goal": "TDD Dikiş Noktası, 5 Katmanlı Dilim, KANBAN Kartı & Önce Kırmızı Test",
-        "description": "Antigravity IDE/CLI, Claude Code ve OpenCode'da standart PLAN.template.md şablonunda mimari plan üretir. Onay (Proceed) geldiğinde koda dokunmadan önce Faz 0 ile planı docs/plans/ altına arşivler, HANDOFF.md §3 panosuna ve SPRINT_PLAN.md/KANBAN.md'ye işler; kardeş uygulamada geliştirme çıkarsa kardeş HANDOFF.md'yi mühürleyip mevcut ajan vs kardeş AI Agent tercihini sorar ve dikiş noktasında önce kırmızı test (FAIL) kanıtlayıp minimal yeşil kod icra eder.",
+        "goal": "TDD Dikiş Noktası, 5 Katmanlı Dilim, /seal-plan (Kodlamadan Sıraya Al) & Önce Kırmızı Test",
+        "description": "Antigravity IDE/CLI, Claude Code ve OpenCode'da standart PLAN.template.md şablonunda mimari plan üretir. /seal-plan ile kodlamadan yalnızca Faz 0 (docs/plans/ arşivi + HANDOFF.md §3 ⬜ Bekliyor + KANBAN.md + varsa kardeş HANDOFF.md) mühürlenir ve sonradan tetiklenmek üzere durulur. Proceed onayıyla ise Faz 0 + TDD kırmızı test (FAIL) + minimal yeşil kod yürütülür.",
         "sample_prompt": "/plan: Yeni kullanıcı profil sayfası için TDD dikiş noktası ve 5 katmanlı dilim içeren mimari plan hazırla.",
-        "protocol": "1. PLAN.template.md Üretimi -> [DOM]-[TIP]-[NO] kimlikleri, dikiş noktası ve 5 katmanlı dilim ➜ 2. Faz 0 (Onay Sonrası Mühürleme) -> archive_plan.py + HANDOFF.md §3 + (varsa) sync_sibling_handoff.py ile kardeş HANDOFF.md & AI Agent sahiplik sorusu ➜ 3. Kırmızı Test Yazımı -> Terminalde kırmızı (FAIL) kanıtı ➜ 4. Yeşil Kod & 5 Katman İcrası -> Minimal geçiş ve katman bütünlüğü",
+        "protocol": "1. PLAN.template.md Üretimi -> [DOM]-[TIP]-[NO] kimlikleri ve 5 katmanlı dilim ➜ 2. Mod Seçimi -> /seal-plan (Yalnız Faz 0: archive_plan.py --seal-handoff ile docs/plans/ + HANDOFF.md ⬜ Bekliyor, kodlama yapma) VEYA Proceed ➜ 3. Kırmızı Test Yazımı -> Terminalde FAIL kanıtı ➜ 4. Yeşil Kod & 5 Katman İcrası",
         "usage_snippet": """# 1. Plan Modu Tetikleme:
 /plan [Özellik Açıklaması]
 
-# 2. Onay Sonrası Mühürleme & İcra Protokolü (Faz 0 -> Red Loop):
-⚠️ CRITICAL: Plan onayı ('Proceed') verilince kod yazmadan önce planı docs/plans/ altına arşivleyin ve HANDOFF.md §3 + (kardeş uygulama varsa) kardeş HANDOFF.md'yi güncelleyin.
-python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug>
+# 2A. Yalnızca Mühürle & Backlog'a Al (/seal-plan — Kodlama Yapma):
+python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug> --seal-handoff --sprint-label "Sprint 21"
+
+# 2B. Onayla & Hemen Geliştir (Proceed):
 python .agent/skills/musgoku/scripts/sync_sibling_handoff.py --sibling-root <kardeş-yol> --plan docs/plans/<plan>.md --task-id <ID> --task-title "<Başlık>"
-# Adım 2.1: Test yazımı ve terminalde FAIL kanıtı
-# Adım 2.2: Minimal geçiş kodu ve 5 katmanlı dikey dilim""",
+# Adım 2.1: Test yazımı ve terminalde FAIL kanıtı -> Adım 2.2: Minimal geçiş kodu""",
         "emergency": [
             {
                 "symptom": "Test ilk çalıştırmada yeşil çıktı (False Positive)",

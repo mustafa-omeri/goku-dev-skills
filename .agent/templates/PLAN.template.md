@@ -44,6 +44,10 @@ Feature: <doldur: Özellik Adı>
 ## 3. User Review Required (Kullanıcı İncelemesi & Kritik Kararlar)
 > [!IMPORTANT]
 > <doldur: Kullanıcının onaylaması gereken mimari kararlar, breaking change'ler veya UX tercihleri.>
+>
+> **2-Modlu Onay Seçenekleri (Planı Nasıl İlerletelim?):**
+> - **Seçenek A — Mühürle & Sıraya Al (`/seal-plan` / `"planı mühürle, kodlama yapma"`):** Planı `docs/plans/` altına arşivler, `HANDOFF.md` §3 Gelecek Fazlar (`⬜ Bekliyor`), `KANBAN.md` `Bekliyor` ve (varsa) kardeş `HANDOFF.md` dosyasına dağıtır; **kod yazmadan durur** (araya başka sprint/iş alabilirsiniz, istediğinizde tetiklersiniz).
+> - **Seçenek B — Onayla & Hemen Başla (`Proceed` / `"onayla ve başla"`):** Faz 0 mühürlemesini yapıp hemen Faz 1 (TDD Kırmızı Test) ile geliştirmeye başlar.
 
 ## 4. Open Questions (Açık Sorular)
 <doldur: Varsa kullanıcıya sorulacak netleştirme soruları; yoksa 'Açık soru bulunmamaktadır.'>

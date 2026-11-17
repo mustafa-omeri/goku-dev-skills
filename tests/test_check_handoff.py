@@ -224,6 +224,30 @@ def test_archive_plan_and_broad_w3():
         _, warnings_no_id = gate.validate_handoff(tmp_root)
         check("W3 tetikleniyor (ID'siz plan_no_ids_*.md HANDOFF'ta referans verilmemiş)", "W3" in codes(warnings_no_id))
 
+        # 5. archive_plan --seal-handoff: Gelecek Fazlar / Sıradaki İşler panosuna ⬜ Bekliyor mühürler (idempotent + W3=0)
+        (tmp_root / "docs" / "plans" / "plan_no_ids_20261116_120000.md").unlink()
+        (tmp_root / "HANDOFF.md").write_text(VALID_HANDOFF, encoding="utf-8")
+        sealed_dest = archive_plan.archive_plan(
+            src_plan,
+            tmp_root,
+            slug="ocai-pg-s99",
+            move=False,
+            seal_handoff=True,
+            sprint_label="Sprint 99",
+        )
+        # İkinci çağrı mükerrer satır eklememeli (idempotent)
+        archive_plan.seal_plan_to_handoff(sealed_dest, tmp_root, sprint_label="Sprint 99")
+        sealed_handoff = (tmp_root / "HANDOFF.md").read_text(encoding="utf-8")
+        check("seal_handoff Sprint 99 etiketini yazdı", "Sprint 99" in sealed_handoff)
+        check("seal_handoff görev ID'lerini ve Bekliyor durumunu yazdı",
+              "OCAI-MIG-001" in sealed_handoff and "OCAI-DB-002" in sealed_handoff and "⬜ Bekliyor" in sealed_handoff)
+        check("seal_handoff idempotent (OCAI-MIG-001 satırı tekrarlanmadı)",
+              sealed_handoff.count("| OCAI-MIG-001 |") == 1)
+        s_errs, s_warns = gate.validate_handoff(tmp_root, ignore_git_diff=True)
+        check("seal_handoff sonrası check_handoff 0 hata / 0 W3 uyarısı",
+              not s_errs and "W3" not in codes(s_warns),
+              f"errors={s_errs}, warnings={s_warns}")
+
 
 def test_run_all_gates():
     print("=== TEST 5: run_all_gates.py kapsam-duyarlı orkestratör testi ===")

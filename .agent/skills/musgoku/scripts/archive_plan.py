@@ -14,7 +14,7 @@ import datetime
 import re
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 for _stream in (sys.stdout, sys.stderr):
     try:
@@ -22,10 +22,115 @@ for _stream in (sys.stdout, sys.stderr):
     except (AttributeError, ValueError):
         pass
 
+THIS_DIR = Path(__file__).resolve().parent
+if str(THIS_DIR) not in sys.path:
+    sys.path.insert(0, str(THIS_DIR))
+
+import check_handoff  # noqa: E402
+
 
 def _sanitize_token(value: str) -> str:
     cleaned = re.sub(r"[^a-zA-Z0-9_\-]+", "_", value.strip().lower())
     return cleaned.strip("_-")
+
+
+def _extract_task_ids(plan_text: str) -> List[str]:
+    seen = set()
+    ordered: List[str] = []
+    for tid in check_handoff.PLAN_TASK_ID_RE.findall(plan_text):
+        if tid not in seen:
+            seen.add(tid)
+            ordered.append(tid)
+    return ordered
+
+
+def seal_plan_to_handoff(
+    archived_plan_path: Path | str,
+    project_root: Path | str,
+    sprint_label: str = "Planlı Backlog",
+) -> Path:
+    """Arşivlenen plandaki görevleri HANDOFF.md §3 Gelecek Fazlar panosuna ⬜ Bekliyor olarak idempotent mühürler."""
+    root_p = Path(project_root).resolve()
+    plan_p = Path(archived_plan_path).resolve()
+    handoff_p = root_p / "HANDOFF.md"
+
+    if not plan_p.is_file():
+        raise FileNotFoundError(f"Plan dosyası bulunamadı: {plan_p}")
+    if not handoff_p.is_file():
+        raise FileNotFoundError(f"HANDOFF.md bulunamadı: {handoff_p}")
+
+    try:
+        plan_rel = str(plan_p.relative_to(root_p)).replace("\\", "/")
+    except ValueError:
+        plan_rel = str(plan_p).replace("\\", "/")
+
+    plan_text = plan_p.read_text(encoding="utf-8", errors="replace")
+    handoff_text = handoff_p.read_text(encoding="utf-8", errors="replace")
+    safe_sprint = sprint_label.replace("|", "/").strip() or "Planlı Backlog"
+
+    task_ids = _extract_task_ids(plan_text)
+    rows_to_add: List[str] = []
+    if task_ids:
+        for tid in task_ids:
+            if not re.search(rf"^\|\s*{re.escape(tid)}\s*\|", handoff_text, re.MULTILINE):
+                rows_to_add.append(
+                    f"| {tid} | Plan mühürlendi — tetikleme bekliyor ({plan_rel}) | {safe_sprint} | Planlı | `{plan_rel}` | ⬜ Bekliyor |"
+                )
+    elif plan_p.name not in handoff_text:
+        rows_to_add.append(
+            f"| PLAN-REF | Plan mühürlendi — tetikleme bekliyor ({plan_rel}) | {safe_sprint} | Planlı | `{plan_rel}` | ⬜ Bekliyor |"
+        )
+
+    if not rows_to_add:
+        return handoff_p
+
+    lines = handoff_text.splitlines()
+    future_idx = None
+    for idx, ln in enumerate(lines):
+        if re.match(r"^#{3,4}\s+(?:📌\s*)?Gelecek\s+Fazlar", ln.strip(), re.IGNORECASE):
+            future_idx = idx
+            break
+
+    if future_idx is not None:
+        last_row_idx = None
+        for idx in range(future_idx + 1, len(lines)):
+            stripped = lines[idx].strip()
+            if re.match(r"^#{2,4}\s+", stripped):
+                break
+            if stripped.startswith("|"):
+                last_row_idx = idx
+        insert_pos = (last_row_idx + 1) if last_row_idx is not None else (future_idx + 1)
+        if last_row_idx is None:
+            rows_to_add = [
+                "| Gereksinim ID | Açıklama | Hedef Faz | Hedef Sürüm | PRD / Kaynak Ref | Durum |",
+                "|---|---|---|---|---|---|",
+            ] + rows_to_add
+        for offset, row in enumerate(rows_to_add):
+            lines.insert(insert_pos + offset, row)
+        handoff_p.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        return handoff_p
+
+    # Gelecek Fazlar başlığı yoksa §3 sonuna (veya ## 4. / ### Sağlık durumu öncesine) ekle
+    section_block = [
+        "",
+        "#### 📌 Gelecek Fazlar & Parking Lot Yol Haritası (Product Roadmap Backlog)",
+        "| Gereksinim ID | Açıklama | Hedef Faz | Hedef Sürüm | PRD / Kaynak Ref | Durum |",
+        "|---|---|---|---|---|---|",
+    ] + rows_to_add
+
+    anchor_idx = None
+    for idx, ln in enumerate(lines):
+        if re.match(r"^(?:###\s+Sağlık\s+durumu|##\s+4\.)", ln.strip(), re.IGNORECASE):
+            anchor_idx = idx
+            break
+
+    if anchor_idx is not None:
+        for offset, block_ln in enumerate(section_block + [""]):
+            lines.insert(anchor_idx + offset, block_ln)
+        handoff_p.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    else:
+        handoff_p.write_text(handoff_text.rstrip() + "\n" + "\n".join(section_block) + "\n", encoding="utf-8")
+    return handoff_p
 
 
 def archive_plan(
@@ -34,11 +139,14 @@ def archive_plan(
     slug: Optional[str] = None,
     prefix: str = "plan",
     move: bool = False,
+    seal_handoff: bool = False,
+    sprint_label: str = "Planlı Backlog",
 ) -> Path:
     """Onaylanan plan dosyasını <project_root>/docs/plans/<prefix>_<slug>_<YYYYMMDD_HHMMSS>.md olarak arşivler.
 
     Varsayılan olarak (move=False) kaynak dosyayı korur; böylece Antigravity IDE/CLI
     `<artifact-dir>` içindeki artifact bağlantısı bozulmaz.
+    seal_handoff=True verildiğinde görevleri HANDOFF.md Gelecek Fazlar panosuna ⬜ Bekliyor olarak mühürler.
     """
     src_p = Path(plan_path).resolve()
     if not src_p.is_file():
@@ -64,6 +172,9 @@ def archive_plan(
         except OSError:
             pass
 
+    if seal_handoff:
+        seal_plan_to_handoff(dest_p, root_p, sprint_label=sprint_label)
+
     return dest_p
 
 
@@ -80,6 +191,16 @@ def main() -> int:
         action="store_true",
         help="Kopyalamadan sonra kaynak dosyayı sil (artifact-dir için önerilmez)",
     )
+    parser.add_argument(
+        "--seal-handoff",
+        action="store_true",
+        help="Planı arşivledikten sonra HANDOFF.md Gelecek Fazlar panosuna ⬜ Bekliyor olarak mühürle",
+    )
+    parser.add_argument(
+        "--sprint-label",
+        default="Planlı Backlog",
+        help="--seal-handoff ile yazılacak hedef faz/sprint etiketi (örn. 'Sprint 21')",
+    )
     args = parser.parse_args()
 
     root_p = Path(args.root).resolve()
@@ -90,6 +211,8 @@ def main() -> int:
             slug=args.slug,
             prefix=args.prefix,
             move=args.move,
+            seal_handoff=args.seal_handoff,
+            sprint_label=args.sprint_label,
         )
     except FileNotFoundError as exc:
         print(f"[ERR] {exc}", file=sys.stderr)
@@ -100,6 +223,8 @@ def main() -> int:
     except ValueError:
         rel = dest_p
     print(f"[ARCHIVED] {str(rel).replace(chr(92), '/')}")
+    if args.seal_handoff:
+        print(f"[SEALED] HANDOFF.md -> '{args.sprint_label}' (⬜ Bekliyor)")
     return 0
 
 
