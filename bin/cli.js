@@ -38,7 +38,7 @@ const https = require('https');
 
 
 
-const VERSION = '1.39.1';
+const VERSION = '1.40.0';
 
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 
@@ -547,6 +547,11 @@ const SKILLS_MANIFEST = {
     desc: 'Evaluate external/new PRDs against live codebase, 6-hat council, Borda arbitration, and 5-layer feasibility before /plan.',
     triggers: '/review-prd, [REVIEW-PRD], prd incele, prd değerlendir, review prd, evaluate prd',
   },
+  'test-spec-generator': {
+    category: 'Delivery / Compliance',
+    desc: 'Scan full codebase, peer repos, and docs to generate a single-file Gherkin + Acceptance Criteria specification for automated testing tools.',
+    triggers: '/test-spec, [TEST-SPEC], test spec, gherkin testleri çıkar, kabul kriterleri üret, generate test spec, gherkin acceptance tests',
+  },
 };
 
 
@@ -684,6 +689,7 @@ const PROFILES = {
       'diagram-design',
       'tr-app-compliance',
       'review-prd',
+      'test-spec-generator',
 
     ],
 
@@ -811,6 +817,7 @@ const PROFILES = {
       'project-summary',
       'feature-architect',
       'review-prd',
+      'test-spec-generator',
 
     ],
 

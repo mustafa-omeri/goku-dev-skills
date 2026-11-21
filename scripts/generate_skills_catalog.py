@@ -117,7 +117,7 @@ CATEGORIES = {
 
         "council", "seo-apply", "commitx", "gs-update",
 
-        "prelaunch", "prelaunch-update", "project-summary", "feature-architect", "spec-reconciler"
+        "prelaunch", "prelaunch-update", "project-summary", "feature-architect", "spec-reconciler", "test-spec-generator"
 
     ]
 
@@ -382,6 +382,39 @@ python .agent/skills/review-prd/scripts/prd_review_helper.py --root . --prd docs
             }
         ],
         "category": "Kod & Mimari"
+    },
+    {
+        "command": "/test-spec",
+        "aliases": ["/test-spec", "[TEST-SPEC]", "test spec", "gherkin testleri çıkar", "kabul kriterleri üret"],
+        "name": "Proje Geneli Tek Dosya Gherkin & Acceptance Criteria Üreticisi",
+        "badge": "Test & Gherkin",
+        "badge_class": "badge-info",
+        "skills": ["test-spec-generator", "feature-architect", "tdd"],
+        "goal": "Kod + Kardeş Repo + Dokümanlar -> Tek Dosya AC & Gherkin Test Spesifikasyonu",
+        "description": "Projedeki tüm frontend rotalarını, backend API uç noktalarını, DB modellerini, RBAC rollerini ve PRD/API dokümanlarını tarayarak ölçülebilir Acceptance Criteria (AC-XXX) ve Gherkin (Given-When-Then) senaryolarını TestSprite ve otomatik test araçları için tek dosyada (docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md) üretir.",
+        "sample_prompt": "/test-spec: Tüm projeyi inceleyip TestSprite ve otomatik test araçları için tek bir dosyada Gherkin senaryoları ve Acceptance Criteria çıkar.",
+        "protocol": "1. Kod & Doküman Envanteri (test_spec_scanner.py + fa_scan.py) -> Rotalar, API, DB, RBAC ve gereksinimler ➜ 2. Derin İş Kuralı Analizi -> Validasyon, yetki ve 4 UX durumu ➜ 3. Tek Dosya Üretimi -> docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md ➜ 4. Kapsama Kapısı (check_test_spec.py) & Opsiyonel --export-feature",
+        "usage_snippet": """# 1. Envanter Taraması:
+python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --root . --json --out docs/testing/test-inventory.json
+
+# 2. Kapsama ve Gherkin Kapısı:
+python .agent/skills/test-spec-generator/scripts/check_test_spec.py --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --inventory docs/testing/test-inventory.json
+
+# 3. Saf .feature Dışa Aktarımı:
+python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --export-feature docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --out specs/<SLUG>_ALL.feature""",
+        "emergency": [
+            {
+                "symptom": "E6_UNCOVERED_SURFACE kapı hatası",
+                "cause": "Kodda tespit edilen aktif bir rota veya HTTP endpoint spesifikasyonda yer almıyor.",
+                "action": "Eksik rota/endpoint için izlenebilirlik matrisine ve modül Gherkin bloğuna senaryo ekleyin."
+            },
+            {
+                "symptom": "E7_MISSING_RBAC_SCENARIOS hatası",
+                "cause": "Projede roller tanımlı ancak Gherkin bloklarında @rbac/@security/403 senaryosu yok.",
+                "action": "Yetkisiz erişim (403 Forbidden) kontrolü için @security @rbac @negative senaryosu ekleyin."
+            }
+        ],
+        "category": "Teslimat & Kalite"
     },
     {
         "command": "/verify-prd",
@@ -2020,6 +2053,27 @@ python .agent/skills/review-prd/scripts/prd_review_helper.py --root . --prd <prd
 
     },
 
+    "test-spec-generator": {
+
+        "status": "Gherkin & AC Üreticisi",
+
+        "badge_class": "badge-info",
+
+        "file": "docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md",
+
+        "features": ["Kod + Kardeş Repo + Doküman Tarama", "AC-XXX Kabul Kriterleri", "Given-When-Then Gherkin", "check_test_spec.py Kapsama Kapısı & --export-feature"],
+
+        "detail": "Tüm projeyi (rotalar, API endpoint'leri, roller, DB modelleri, PRD/API dokümanları) tarayıp TestSprite ve otomatik test araçlarına doğrudan verilebilecek tek bir Gherkin + Acceptance Criteria dosyası üretir.",
+
+        "sample_prompt": "/test-spec: Tüm projeden TestSprite ve otomatik test araçları için tek dosyada Gherkin senaryoları ve Acceptance Criteria çıkar.",
+
+        "config_snippet": """# Envanter ve Kapsama Kapısı:
+
+python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --root . --json --out docs/testing/test-inventory.json
+python .agent/skills/test-spec-generator/scripts/check_test_spec.py --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --inventory docs/testing/test-inventory.json"""
+
+    },
+
     "verify-prd": {
 
         "status": "Makro Doğrulama",
@@ -2305,6 +2359,7 @@ SAMPLE_PROMPTS = {
     "verify-sprint": "/verify-sprint: Aktif sprint hedeflerini, kart kabul kriterlerini (Gherkin) ve 5 katman dikey dilim bütünlüğünü denetle.",
 
     "review-prd": "/review-prd: Elimdeki PRD'yi bu projeye göre 6 şapka, council Borda ve 5 katman fizibiliteyle tek raporda değerlendir.",
+    "test-spec-generator": "/test-spec: Tüm projeyi (kod + doküman) inceleyip tek bir dosyada Gherkin senaryoları ve Acceptance Criteria çıkar.",
     "verify-prd": "/verify-prd: Son tamamlanan özelliğin kabul kriterlerini, 5 katman dikey dilim bütünlüğünü ve regression risklerini bağımsız denetle.",
 
     "check-security": "/check-security: Sistem genelinde yetki aşımı, public form abuse riskleri ve env sızıntılarını derinlemesine tara.",

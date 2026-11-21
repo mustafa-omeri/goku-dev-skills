@@ -22,6 +22,7 @@
 | 4 | İş alanı terimleri ve ortak dil sözlüğü (varsa) | `<repo-kök>\GLOSSARY.md` |
 | 5 | Tasarım dili ve token sözleşmesi (UI/UX işlerinde) | `<repo-kök>\DESIGN.md` |
 | Projenin kısa/uzun kapsamlı konsolide özeti | docs/<SLUG>_PROJECT_SUMMARY_SHORT.md veya docs/<SLUG>_PROJECT_SUMMARY_LONG.md |
+| Proje geneli tek dosya Gherkin & Acceptance Criteria spesifikasyonu | docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md (ve --export-feature ile specs/<SLUG>_ALL.feature) |
 | Özelliklerin adım adım yapılışını ve kullanımını anlatan HTML rehberi | docs/kullanici-rehberi.html (veya docs/user-guide.html) |
 | Kullanıcının bizzat gözüyle doğrulayacağı manuel test senaryoları | docs/KULLANICI_TEST_REHBERI.md |
 | Mimari geliştirme ve uygulama planı (/plan) | Taslak: `<artifact-dir>/<plan_name>.md` (veya `.agent/plans/`) · Onay sonrası kalıcı arşiv: `docs/plans/plan_<slug>_<timestamp>.md` (şablon: `templates/PLAN.template.md`) |
@@ -48,6 +49,7 @@ Ajan kod yazmaya, düzenlemeye veya refactoring yapmaya başlamadan önce *"Bu i
 | **Frontend / Paket / SPA / Bundle Bütçesi** | `.agent/rules/frontend-bundle-limits.md` | Chunk <=500kB, Entry gzip <=200kB (`check_bundle_limits.py`, `check_vite_spa.py`) |
 | **Hata / Bug Çözümü / "Çalışmıyor"** | `.agent/rules/bug-diagnosis-enforcement.md` | Koda dokunmadan önce hatayı kanıtlayan kırmızı döngü şart |
 | **Yeni Özellik / Sprint / Görev / Dilim** | `.agent/rules/sprint-delivery-workflow.md` | Given-When-Then Gherkin + TDD kırmızı test şart (`check_sprint_board.py`) |
+| **Proje Geneli Tek Dosya Test & Gherkin AC** | `.agent/skills/test-spec-generator/SKILL.md` | `test_spec_scanner.py` tam tarama + `check_test_spec.py` kapsama kapısı (`/test-spec`) |
 | **Sadeleştirme / Refactoring / Ölü Kod** | `.agent/rules/no-unused-code.md` | Ölü kod temizliği, Karpathy cerrahi sadelik (`tsc`, `mvn`, `check-unused.ps1`) |
 | **Kılavuz / Kurulum / Nasıl Yapılır Yanıtı** | `.agent/rules/aviation-documentation-standard.md` | Sıfır lakırdı, 1-2-3 Eylem->Çıktı, Acil Durum Tablosu (`check_aviation_docs.py`) |
 | **Danışmanlık / Fikir Sınama / 6 Şapka** | `.agent/rules/cognitive-counsel-framework.md` | Anti-Sycophancy, görünmez düşünme (REDTEAM, 80/20, LINDY), mikro-odak (`/PO`, `/ARCH`, `/QA`...) |
@@ -73,6 +75,7 @@ Ajan kod yazmaya, düzenlemeye veya refactoring yapmaya başlamadan önce *"Bu i
 | Mimari karar kaydı (ADR) | `docs/adr/` |
 | Tasarım dili, token'lar ve kurallar | `<repo-kök>\DESIGN.md` |
 | Projenin kısa/uzun kapsamlı konsolide özeti | docs/<SLUG>_PROJECT_SUMMARY_SHORT.md veya docs/<SLUG>_PROJECT_SUMMARY_LONG.md |
+| Proje geneli tek dosya Gherkin & Acceptance Criteria spesifikasyonu | docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md (ve --export-feature ile specs/<SLUG>_ALL.feature) |
 | Özelliklerin adım adım yapılışını ve kullanımını anlatan HTML rehberi | docs/kullanici-rehberi.html (veya docs/user-guide.html) |
 | Kullanıcının bizzat gözüyle doğrulayacağı manuel test senaryoları | docs/KULLANICI_TEST_REHBERI.md |
 | Mimari geliştirme ve uygulama planı (/plan) | Taslak: `<artifact-dir>/<plan_name>.md` (veya `.agent/plans/`) · Onay sonrası kalıcı arşiv: `docs/plans/plan_<slug>_<timestamp>.md` (şablon: `templates/PLAN.template.md`) |
