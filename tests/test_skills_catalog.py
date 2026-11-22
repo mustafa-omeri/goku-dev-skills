@@ -100,10 +100,11 @@ def run_tests() -> bool:
 
     # TEST 6: Slash Komutları ve Özel Metadata Bütünlüğü
     print("\n=== TEST 6: Slash Komutları ve Metadata Bütünlüğü ===")
-    from scripts.generate_skills_catalog import CATEGORIES, CONFIG_METADATA, SLASH_COMMANDS
+    from scripts.generate_skills_catalog import CATEGORIES, CONFIG_METADATA, DOMAINS_MAP, SLASH_COMMANDS
     cmd_names = [c["command"] for c in SLASH_COMMANDS]
     check("/spec-reconcile slash komutu mevcut", "/spec-reconcile" in cmd_names)
     check("/deploy-plan slash komutu mevcut", "/deploy-plan" in cmd_names)
+    check("/test-spec slash komutu mevcut", "/test-spec" in cmd_names)
 
     missing_config = [s for s in skill_dirs if s not in CONFIG_METADATA]
     check("Tüm skill'lerin CONFIG_METADATA kaydı var (sıfır kaçak)", len(missing_config) == 0, f"Eksikler: {missing_config}")
@@ -114,6 +115,28 @@ def run_tests() -> bool:
         bound_slash_skills.update(c.get("skills", []))
     missing_ensemble = [s for s in ensemble_skills if s not in bound_slash_skills]
     check("Tüm oturum komutları (Ensemble) bir slash komutuna bağlı", len(missing_ensemble) == 0, f"Bağlanmamış: {missing_ensemble}")
+
+    # TEST 7: DOMAINS_MAP & UI Render Kapsama Kapısı (Kök Neden Kalkanı)
+    print("\n=== TEST 7: DOMAINS_MAP & UI Render Bütünlüğü ===")
+    domain_cmds = set()
+    for dom in DOMAINS_MAP:
+        domain_cmds.update(dom.get("commands", []))
+    missing_in_domains = [c for c in cmd_names if c not in domain_cmds]
+    unknown_in_domains = [c for c in sorted(domain_cmds) if c not in set(cmd_names)]
+    check(
+        "Tüm slash komutları DOMAINS_MAP hub panellerinde yer alıyor (0 yetim komut)",
+        len(missing_in_domains) == 0,
+        f"Hub'da eksikler: {missing_in_domains}",
+    )
+    check(
+        "DOMAINS_MAP içindeki tüm komutlar SLASH_COMMANDS'ta tanımlı",
+        len(unknown_in_domains) == 0,
+        f"Tanımsızlar: {unknown_in_domains}",
+    )
+    check(
+        "openDrawer skill detay alanı (s.config_detail) katalog HTML'inde render ediliyor",
+        "s.config_detail" in catalog_content,
+    )
 
     print("\n" + "=" * 60)
     if failures:

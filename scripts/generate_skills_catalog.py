@@ -897,6 +897,49 @@ deployment planı
 ]
 
 
+DOMAINS_MAP = [
+    {
+        "id": "plan",
+        "title": "Planlama & Mimari",
+        "color_var": "var(--accent-primary)",
+        "subtle_var": "var(--accent-primary-subtle)",
+        "border_var": "var(--accent-primary-border)",
+        "commands": ["/council", "/plan", "/seal-plan", "/review-prd", "/feature-architect", "/project-summary", "/6HAT"]
+    },
+    {
+        "id": "debug",
+        "title": "Hata Teşhis & Güvenlik",
+        "color_var": "var(--status-danger)",
+        "subtle_var": "var(--status-danger-subtle)",
+        "border_var": "var(--status-danger-border)",
+        "commands": ["/fix-bug", "/check-security"]
+    },
+    {
+        "id": "design",
+        "title": "Tasarım & Zanaat",
+        "color_var": "var(--status-warning)",
+        "subtle_var": "var(--status-warning-subtle)",
+        "border_var": "var(--status-warning-border)",
+        "commands": ["/ui-polish", "/ui-toast", "/seo-apply"]
+    },
+    {
+        "id": "release",
+        "title": "Yayın & Sürüm",
+        "color_var": "var(--status-success)",
+        "subtle_var": "var(--status-success-subtle)",
+        "border_var": "var(--status-success-border)",
+        "commands": ["/commitx", "/deploy-plan", "/prelaunch", "/prelaunch-update", "/goku-skills-update"]
+    },
+    {
+        "id": "accept",
+        "title": "Kabul & Doğrulama",
+        "color_var": "var(--status-info)",
+        "subtle_var": "var(--status-info-subtle)",
+        "border_var": "var(--status-info-border)",
+        "commands": ["/verify-last", "/verify-sprint", "/verify-prd", "/spec-reconcile", "/test-spec"]
+    }
+]
+
 
 CONFIG_METADATA = {
     "diagram-design": {
@@ -2066,16 +2109,26 @@ python .agent/skills/review-prd/scripts/prd_review_helper.py --root . --prd <prd
 
         "file": "ACCEPTANCE_TEST_SPEC.md + test-spec-state.json",
 
-        "features": ["Major/Minor Çift-Hash Takip", "PASS Referans Defteri", "Cerrahi Modül Yama & Delta Export", "Risk, Performans & Idempotency Kapısı"],
+        "cli_cmd": "python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py plan --root . --state docs/testing/test-spec-state.json --json",
+
+        "features": ["Kademeli Major/Minor Çift-Hash Takip (UNCHANGED/MINOR=KEEP, MAJOR=UPDATE)", "PASS Referans Defteri (test-spec-state.json + STALE/FLAKY)", "Cerrahi Modül Yaması (patch-module) & Delta Export (--export-delta)", "Risk (@p0..@p3), Performans (@perf/@pagination/@idempotency) & Sınır Değer Kapısı"],
 
         "detail": "Kod ve dokümanları artımlı tarayarak değişmeyen/Minor modülleri atlar, Major değişen modülleri cerrahi günceller, PASS referanslarını (commit + contract_hash) mühürler ve TestSprite/CI için delta çıktısı üretir.",
 
         "sample_prompt": "/test-spec: Projedeki değişiklikleri artımlı analiz et; önceki PASS testlerini koruyarak yalnız Major değişen modüllerin Gherkin ve AC testlerini güncelle.",
 
-        "config_snippet": """# Artımlı Plan, State Senkronu, Kapı ve Delta Export:
-
+        "config_snippet": """# 1. Artımlı Değişiklik Planı (Major vs Minor):
 python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py plan --root . --state docs/testing/test-spec-state.json --json
+
+# 2. Cerrahi Modül Yaması & State Senkronu:
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py patch-module --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --module <mod> --content-file <modul.md>
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py sync --root . --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json
+
+# 3. Kapsama & State Kapısı (E1..E10, W1..W2):
 python .agent/skills/test-spec-generator/scripts/check_test_spec.py --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --inventory docs/testing/test-inventory.json --state docs/testing/test-spec-state.json
+
+# 4. PASS Kaydı & Delta Export (Yalnız NEW + STALE + FAIL + FLAKY):
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py record --state docs/testing/test-spec-state.json --import-testsprite testsprite_tests/report.md --runner testsprite
 python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-delta --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --out-feature specs/<SLUG>_DELTA.feature"""
 
     },
@@ -2723,94 +2776,6 @@ def generate_catalog_html(skills: list[dict]) -> str:
         for cmd in SLASH_COMMANDS
 
     )
-
-
-
-    
-
-    DOMAINS_MAP = [
-
-        {
-
-            "id": "plan",
-
-            "title": "Planlama & Mimari",
-
-            "color_var": "var(--accent-primary)",
-
-            "subtle_var": "var(--accent-primary-subtle)",
-
-            "border_var": "var(--accent-primary-border)",
-
-            "commands": ["/council", "/plan", "/review-prd", "/feature-architect", "/6HAT"]
-
-        },
-
-        {
-
-            "id": "debug",
-
-            "title": "Hata Teşhis & Güvenlik",
-
-            "color_var": "var(--status-danger)",
-
-            "subtle_var": "var(--status-danger-subtle)",
-
-            "border_var": "var(--status-danger-border)",
-
-            "commands": ["/fix-bug", "/check-security"]
-
-        },
-
-        {
-
-            "id": "design",
-
-            "title": "Tasarım & Zanaat",
-
-            "color_var": "var(--status-warning)",
-
-            "subtle_var": "var(--status-warning-subtle)",
-
-            "border_var": "var(--status-warning-border)",
-
-            "commands": ["/ui-polish", "/ui-toast", "/seo-apply"]
-
-        },
-
-        {
-
-            "id": "release",
-
-            "title": "Yayın & Sürüm",
-
-            "color_var": "var(--status-success)",
-
-            "subtle_var": "var(--status-success-subtle)",
-
-            "border_var": "var(--status-success-border)",
-
-            "commands": ["/commitx", "/prelaunch", "/prelaunch-update", "/goku-skills-update"]
-
-        },
-
-        {
-
-            "id": "accept",
-
-            "title": "Kabul & Doğrulama",
-
-            "color_var": "var(--status-info)",
-
-            "subtle_var": "var(--status-info-subtle)",
-
-            "border_var": "var(--status-info-border)",
-
-            "commands": ["/verify-last", "/verify-sprint", "/verify-prd"]
-
-        }
-
-    ]
 
 
 
@@ -7567,6 +7532,11 @@ def generate_catalog_html(skills: list[dict]) -> str:
                 <td style="padding:6px 8px;">prd_review_helper.py &amp; /review-prd</td>
               </tr>
               <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 8px; font-weight:600;">Proje Geneli Artımlı Gherkin &amp; AC Testleri</td>
+                <td style="padding:6px 8px; font-family:var(--font-mono); color:var(--accent-primary);">test-spec-generator (SKILL.md)</td>
+                <td style="padding:6px 8px;">test_spec_tracker.py, check_test_spec.py &amp; /test-spec</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
                 <td style="padding:6px 8px; font-weight:600;">Oturum Devri / Kardeş Repo Planı</td>
                 <td style="padding:6px 8px; font-family:var(--font-mono); color:var(--accent-primary);">handoff-session-continuity.md</td>
                 <td style="padding:6px 8px;">check_handoff.py (W3) &amp; sync_sibling_handoff.py</td>
@@ -8042,6 +8012,8 @@ def generate_catalog_html(skills: list[dict]) -> str:
           <div class="drawer-box">
 
             <p class="drawer-box-text">${{escapeHtml(s.purpose)}}</p>
+
+            ${{s.config_detail && s.config_detail !== s.purpose ? `<p class="drawer-box-text" style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid var(--border-subtle);color:var(--text-secondary);">${{escapeHtml(s.config_detail)}}</p>` : ''}}
 
           </div>
 

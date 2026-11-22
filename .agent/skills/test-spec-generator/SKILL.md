@@ -1,7 +1,7 @@
 ---
 name: test-spec-generator
 description: >-
-  Tüm projeyi (kod, kardeş repo ve dokümanlar) tarayarak Gherkin senaryoları ve Acceptance Criteria maddelerini tek bir spesifikasyon dosyasında üreten ve kapsama kapısıyla doğrulayan orkestratör. Tetikleyiciler: "/test-spec", "test spec", "gherkin testleri çıkar", "kabul kriterleri üret", "generate test spec", "gherkin acceptance tests". Tetiklenmez: mevcut sprint denetimi verify-sprint'e, PRD retrospektif denetimi verify-prd'ye aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
+  Tüm projeyi (kod, kardeş repo, dokümanlar) artımlı tarayıp tek dosyada Gherkin ve Acceptance Criteria üreten, Major/Minor ayrımıyla PASS referanslarını (test-spec-state.json) koruyan ve delta export sunan orkestratör. Tetikleyiciler: "/test-spec", "test spec", "gherkin testleri çıkar", "kabul kriterleri üret", "generate test spec", "gherkin acceptance tests". Tetiklenmez: sprint denetimi verify-sprint'e, PRD denetimi verify-prd'ye aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
 ---
 
 # Test Spec Generator v2 (`/test-spec`)
