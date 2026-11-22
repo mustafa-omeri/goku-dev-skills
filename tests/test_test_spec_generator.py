@@ -22,6 +22,7 @@ sys.path.insert(0, str(SCRIPTS_DIR))
 
 import test_spec_scanner as scanner  # noqa: E402
 import check_test_spec as checker  # noqa: E402
+import test_spec_tracker as tracker  # noqa: E402
 
 
 def _create_sample_fullstack_project(proj: Path) -> None:
@@ -267,6 +268,255 @@ class TestSpecGeneratorTests(unittest.TestCase):
             ]
             res_chk = subprocess.run(chk_cmd, capture_output=True, text=True)
             self.assertEqual(res_chk.returncode, 0, res_chk.stdout + res_chk.stderr)
+
+    # --- v2 Artımlı Takip, PASS Referans Defteri, Cerrahi Yama & Delta Export Testleri ---
+
+    def _bootstrap_v2_project(self, proj: Path):
+        _create_sample_fullstack_project(proj)
+        spec_path = proj / "docs" / "testing" / "ACMEPORTAL_ACCEPTANCE_TEST_SPEC.md"
+        spec_path.parent.mkdir(parents=True, exist_ok=True)
+        anchored_spec = (
+            VALID_TEST_SPEC.replace(
+                "### Modül 1: Auth",
+                "<!-- TEST-SPEC:MODULE:login:BEGIN -->\n### Modül 1: Auth",
+            )
+            .replace(
+                "### Modül 2: Projects",
+                "<!-- TEST-SPEC:MODULE:login:END -->\n\n<!-- TEST-SPEC:MODULE:projects:BEGIN -->\n### Modül 2: Projects",
+            )
+            .replace(
+                "## 3. Çapraz Sistem",
+                "<!-- TEST-SPEC:MODULE:projects:END -->\n\n## 3. Çapraz Sistem",
+            )
+        )
+        spec_path.write_text(anchored_spec, encoding="utf-8")
+        state_path = proj / "docs" / "testing" / "test-spec-state.json"
+        inv = scanner.build_test_inventory(proj)
+        tracker.sync_state_from_spec(spec_path, state_path, inv)
+        return spec_path, state_path, inv
+
+    def test_v2_unchanged_fast_path_noop_and_minor_css_change_preserves_pass(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            proj = Path(tmp) / "acmePortal"
+            proj.mkdir()
+            spec_path, state_path, _ = self._bootstrap_v2_project(proj)
+
+            tracker.record_execution_results(
+                state_path,
+                {"SC-AUTH-01": "PASS", "SC-AUTH-02": "PASS", "SC-PROJ-01": "PASS", "SC-PROJ-02": "PASS"},
+                runner="testsprite",
+                commit="abc1234",
+                evidence_ref="testsprite_tests/report.md",
+            )
+
+            # 1. Hiç değişiklik yokken -> NO_OP
+            plan_noop = tracker.plan_incremental_update(proj, state_path)
+            self.assertEqual(plan_noop["mode"], "NO_OP")
+            self.assertFalse(plan_noop["has_changes"])
+
+            # 2. Yalnızca yorum / CSS ekle (Minor değişiklik) -> PASS korunur, yeniden üretim yok
+            app_tsx = proj / "src" / "App.tsx"
+            app_tsx.write_text(
+                app_tsx.read_text(encoding="utf-8") + "\n// sadece kozmetik yorum ve className tweak\n",
+                encoding="utf-8",
+            )
+            plan_minor = tracker.plan_incremental_update(proj, state_path)
+            self.assertEqual(plan_minor["mode"], "INCREMENTAL")
+            self.assertNotIn("MAJOR", [m["classification"] for m in plan_minor["modules"].values()])
+
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            self.assertEqual(state["scenarios"]["SC-AUTH-01"]["status"], "PASS")
+            self.assertEqual(state["scenarios"]["SC-AUTH-01"]["pass_ref"]["runner"], "testsprite")
+
+    def test_v2_major_contract_change_marks_only_affected_module_and_transitions_pass_to_stale(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            proj = Path(tmp) / "acmePortal"
+            proj.mkdir()
+            _, state_path, _ = self._bootstrap_v2_project(proj)
+
+            tracker.record_execution_results(
+                state_path,
+                {"SC-AUTH-01": "PASS", "SC-PROJ-01": "PASS", "SC-PROJ-02": "PASS"},
+                runner="playwright",
+                commit="111aaaa",
+                evidence_ref="pw-report.json",
+            )
+
+            # ProjectController'a yeni endpoint + rol değişimi (MAJOR)
+            ctrl = proj / "backend" / "src" / "main" / "java" / "com" / "acme" / "ProjectController.java"
+            ctrl.write_text(
+                ctrl.read_text(encoding="utf-8").replace(
+                    "public String create() { return \"ok\"; }",
+                    "public String create() { return \"ok\"; }\n\n    @PreAuthorize(\"hasRole('SUPERADMIN')\")\n    @DeleteMapping(\"/{id}\")\n    public void remove() {}\n",
+                ),
+                encoding="utf-8",
+            )
+
+            plan = tracker.plan_incremental_update(proj, state_path)
+            self.assertEqual(plan["mode"], "INCREMENTAL")
+            self.assertTrue(plan["has_changes"])
+            self.assertEqual(plan["modules"]["projects"]["classification"], "MAJOR")
+            self.assertNotEqual(plan["modules"].get("login", {}).get("classification"), "MAJOR")
+
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            self.assertEqual(state["scenarios"]["SC-AUTH-01"]["status"], "PASS")
+            self.assertEqual(state["scenarios"]["SC-PROJ-01"]["status"], "STALE")
+            self.assertEqual(state["scenarios"]["SC-PROJ-01"]["last_pass_ref"]["runner"], "playwright")
+            self.assertEqual(state["scenarios"]["SC-PROJ-01"]["last_pass_ref"]["verified_commit"], "111aaaa")
+
+    def test_v2_record_results_adapters_and_flaky_detection(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            proj = Path(tmp) / "acmePortal"
+            proj.mkdir()
+            _, state_path, _ = self._bootstrap_v2_project(proj)
+
+            # JUnit XML adaptörü
+            junit_xml = proj / "junit.xml"
+            junit_xml.write_text(
+                '<testsuite><testcase name="SC-AUTH-01 Geçerli giriş" /><testcase name="SC-AUTH-02 Hatalı parola"><failure message="401 expected" /></testcase></testsuite>',
+                encoding="utf-8",
+            )
+            junit_res = tracker.parse_junit_xml(junit_xml)
+            self.assertEqual(junit_res, {"SC-AUTH-01": "PASS", "SC-AUTH-02": "FAIL"})
+
+            # Playwright JSON adaptörü
+            pw_json = proj / "pw.json"
+            pw_json.write_text(
+                json.dumps({"suites": [{"specs": [{"title": "SC-PROJ-01 create", "ok": True}, {"title": "SC-PROJ-02 rbac", "ok": False}]}]}),
+                encoding="utf-8",
+            )
+            self.assertEqual(tracker.parse_playwright_json(pw_json), {"SC-PROJ-01": "PASS", "SC-PROJ-02": "FAIL"})
+
+            # Cucumber JSON adaptörü
+            cuc_json = proj / "cucumber.json"
+            cuc_json.write_text(
+                json.dumps([{"elements": [{"name": "SC-AUTH-01 login", "steps": [{"result": {"status": "passed"}}]}]}]),
+                encoding="utf-8",
+            )
+            self.assertEqual(tracker.parse_cucumber_json(cuc_json), {"SC-AUTH-01": "PASS"})
+
+            # TestSprite rapor adaptörü
+            ts_md = proj / "testsprite-report.md"
+            ts_md.write_text("- SC-AUTH-01: PASS\n- SC-AUTH-02: FAIL\n", encoding="utf-8")
+            self.assertEqual(tracker.parse_testsprite_report(ts_md), {"SC-AUTH-01": "PASS", "SC-AUTH-02": "FAIL"})
+
+            # Flaky tespiti: PASS -> FAIL -> PASS salınımı
+            tracker.record_execution_results(state_path, {"SC-AUTH-01": "PASS"}, runner="ci")
+            tracker.record_execution_results(state_path, {"SC-AUTH-01": "FAIL"}, runner="ci")
+            tracker.record_execution_results(state_path, {"SC-AUTH-01": "PASS"}, runner="ci")
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            self.assertEqual(state["scenarios"]["SC-AUTH-01"]["status"], "FLAKY")
+
+    def test_v2_surgical_patch_module_preserves_untouched_modules_and_monotonic_seq(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            proj = Path(tmp) / "acmePortal"
+            proj.mkdir()
+            spec_path, state_path, _ = self._bootstrap_v2_project(proj)
+
+            before = spec_path.read_text(encoding="utf-8")
+            auth_marker_block = before.split("<!-- TEST-SPEC:MODULE:login:BEGIN -->")[1].split("<!-- TEST-SPEC:MODULE:login:END -->")[0]
+
+            new_projects_md = (
+                "### Modül 2: Projects (`US-002`, `/projects`, `/api/v1/projects`)\n"
+                "- **AC-PROJ-01:** Güncel proje silme ve oluşturma kuralı.\n\n"
+                "```gherkin\n"
+                "Feature: Proje Yönetimi (/projects)\n\n"
+                "  @e2e @api\n"
+                "  Scenario: SC-PROJ-01 Yönetici proje listeler ve yeni proje oluşturur\n"
+                "    Given Kullanıcı ADMIN rolüyle oturum açmıştır\n"
+                "    When GET /api/v1/projects ve POST /api/v1/projects çalışır\n"
+                "    Then Sunucu 201 döner\n\n"
+                "  @security @rbac @negative\n"
+                "  Scenario: SC-PROJ-02 Yetkisiz kullanıcı proje oluşturamaz\n"
+                "    Given Kullanıcı ADMIN rolüne sahip değildir\n"
+                "    When POST /api/v1/projects istek gönderir\n"
+                "    Then Sunucu 403 döner\n\n"
+                "  @api @perf\n"
+                "  Scenario: SC-PROJ-03 Proje silme idempotency kontrolü\n"
+                "    Given Proje kaydı mevcuttur\n"
+                "    When DELETE /api/v1/projects/1 iki kez çağrılır\n"
+                "    Then İlk çağrı 204 ikinci çağrı 404 döner\n"
+                "```"
+            )
+            tracker.patch_module_section(spec_path, "projects", new_projects_md)
+            after = spec_path.read_text(encoding="utf-8")
+            auth_after = after.split("<!-- TEST-SPEC:MODULE:login:BEGIN -->")[1].split("<!-- TEST-SPEC:MODULE:login:END -->")[0]
+            self.assertEqual(auth_marker_block, auth_after)
+            self.assertIn("SC-PROJ-03", after)
+
+            inv = scanner.build_test_inventory(proj)
+            state = tracker.sync_state_from_spec(spec_path, state_path, inv)
+            self.assertGreaterEqual(state["next_seq"]["PROJ"], 4)
+
+    def test_v2_export_delta_excludes_valid_pass_and_supports_include_smoke(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            proj = Path(tmp) / "acmePortal"
+            proj.mkdir()
+            spec_path, state_path, _ = self._bootstrap_v2_project(proj)
+
+            tracker.record_execution_results(
+                state_path,
+                {"SC-AUTH-01": "PASS", "SC-AUTH-02": "PASS", "SC-PROJ-01": "FAIL"},
+                runner="testsprite",
+            )
+            # SC-PROJ-02 henüz NEW, SC-PROJ-01 FAIL, SC-AUTH-01/02 PASS (SC-AUTH-01 @smoke)
+            delta_md = proj / "docs" / "testing" / "DELTA.md"
+            delta_feat = proj / "specs" / "DELTA.feature"
+
+            res = tracker.export_delta_spec(
+                spec_path,
+                state_path,
+                out_md=delta_md,
+                out_feature=delta_feat,
+                include_smoke=False,
+            )
+            self.assertEqual(set(res["included_scenarios"]), {"SC-PROJ-01", "SC-PROJ-02"})
+            feat_txt = delta_feat.read_text(encoding="utf-8")
+            self.assertNotIn("SC-AUTH-01", feat_txt)
+            self.assertNotIn("SC-AUTH-02", feat_txt)
+            self.assertIn("SC-PROJ-01", feat_txt)
+            self.assertIn("SC-PROJ-02", feat_txt)
+
+            res_smoke = tracker.export_delta_spec(
+                spec_path,
+                state_path,
+                out_feature=delta_feat,
+                include_smoke=True,
+            )
+            self.assertIn("SC-AUTH-01", res_smoke["included_scenarios"])
+            self.assertNotIn("SC-AUTH-02", res_smoke["included_scenarios"])
+
+    def test_v2_checker_detects_state_drift_stale_pass_claim_and_duplicate_ids(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            proj = Path(tmp) / "acmePortal"
+            proj.mkdir()
+            spec_path, state_path, inv = self._bootstrap_v2_project(proj)
+
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            # Zorla STALE kontrat sapması yarat ama status'u PASS bırak (E9) + spec'ten senaryo çıkar (E8) + mükerrer ID ekle (E10)
+            state["scenarios"]["SC-AUTH-01"]["status"] = "PASS"
+            state["scenarios"]["SC-AUTH-01"]["pass_ref"] = {
+                "runner": "testsprite",
+                "verified_contract_hash": "sha256:old_hash",
+            }
+            state["scenarios"]["SC-AUTH-01"]["contract_hash"] = "sha256:new_hash"
+            state["scenarios"]["SC-GHOST-99"] = {"module": "auth", "status": "NEW"}
+            state_path.write_text(json.dumps(state, indent=2), encoding="utf-8")
+
+            dup_spec = spec_path.read_text(encoding="utf-8").replace(
+                "Scenario: SC-AUTH-02 Hatalı parola ile giriş reddedilir",
+                "Scenario: SC-AUTH-01 Hatalı parola ile giriş reddedilir",
+            )
+            spec_path.write_text(dup_spec, encoding="utf-8")
+
+            res = checker.validate_test_spec(spec_path, inventory=inv, state=state)
+            self.assertEqual(res["status"], "FAIL")
+            codes = {e["code"] for e in res["errors"]}
+            self.assertIn("E8_STATE_DRIFT", codes)
+            self.assertIn("E9_STALE_PASS_CLAIM", codes)
+            self.assertIn("E10_DUPLICATE_SCENARIO_ID", codes)
+            warn_codes = {w["code"] for w in res["warnings"]}
+            self.assertIn("W2_MISSING_PERF_OR_IDEMPOTENCY", warn_codes)
 
 
 if __name__ == "__main__":

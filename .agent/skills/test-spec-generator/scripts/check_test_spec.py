@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Tek Dosya Acceptance Criteria & Gherkin Test Spesifikasyonu Doğrulama Kapısı (check_test_spec.py).
+"""Tek Dosya Acceptance Criteria & Gherkin Test Spesifikasyonu Doğrulama Kapısı (check_test_spec.py v2).
 
 Üretilen `docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md` dosyasının yapısal bütünlüğünü,
-Gherkin sözdizimini, placeholder temizliğini, RBAC güvenlik kapsamasını ve envanterdeki
-tüm aktif rota / API uç noktalarını kapsayıp kapsamadığını deterministik olarak denetler.
+Gherkin sözdizimini, placeholder temizliğini, RBAC güvenlik kapsamasını, envanterdeki
+tüm aktif rota / API uç noktalarını kapsayıp kapsamadığını ve v2 state defteriyle
+(`test-spec-state.json`) senkronunu deterministik olarak denetler.
 """
 from __future__ import annotations
 
@@ -39,12 +40,14 @@ PLACEHOLDER_PATTERNS = (
 GHERKIN_FENCE_RE = re.compile(r"```gherkin\s*\r?\n(.*?)```", re.DOTALL | re.IGNORECASE)
 FEATURE_RE = re.compile(r"^\s*Feature\s*:\s*\S", re.IGNORECASE | re.MULTILINE)
 SCENARIO_SPLIT_RE = re.compile(r"(?=^\s*Scenario(?: Outline)?\s*:)", re.IGNORECASE | re.MULTILINE)
+SCENARIO_ID_RE = re.compile(r"\b(SC-[A-Z0-9]+-\d+)\b")
 GIVEN_RE = re.compile(r"^\s*Given\s+\S", re.IGNORECASE | re.MULTILINE)
 WHEN_RE = re.compile(r"^\s*When\s+\S", re.IGNORECASE | re.MULTILINE)
 THEN_RE = re.compile(r"^\s*Then\s+\S", re.IGNORECASE | re.MULTILINE)
 AC_ID_RE = re.compile(r"\bAC-[A-Z0-9]+(?:-[A-Z0-9]+)*\b")
 RBAC_MARKER_RE = re.compile(r"@(?:rbac|security|authz)\b|\b403\b", re.IGNORECASE)
 NEGATIVE_MARKER_RE = re.compile(r"@(?:negative|validation|edge-case)\b|Scenario Outline:", re.IGNORECASE)
+PERF_MARKER_RE = re.compile(r"@(?:perf|sla|pagination|idempotency|concurrency)\b", re.IGNORECASE)
 
 DEFAULT_IGNORE_PREFIXES = (
     "/actuator",
@@ -83,9 +86,10 @@ def validate_test_spec(
     spec_path: Path | str,
     *,
     inventory: dict[str, Any] | None = None,
+    state: dict[str, Any] | None = None,
     ignore_routes: list[str] | None = None,
 ) -> dict[str, Any]:
-    """Tek dosya test spesifikasyonunu yapı, Gherkin ve kapsama açısından doğrular."""
+    """Tek dosya test spesifikasyonunu yapı, Gherkin, kapsama ve state uyumu açısından doğrular."""
     spec_p = Path(spec_path).resolve()
     errors: list[dict[str, str]] = []
     warnings: list[dict[str, str]] = []
@@ -120,11 +124,13 @@ def validate_test_spec(
             f"Şablon yer tutucu / tamamlanmamış ifade bulundu: {', '.join(sorted(set(leaks))[:5])}",
         )
 
-    # E4: Gherkin blokları ve Given/When/Then geçerliliği
+    # E4 & E10: Gherkin blokları, Given/When/Then geçerliliği ve mükerrer SC-ID kontrolü
     blocks = [m.group(1) for m in GHERKIN_FENCE_RE.finditer(text)]
     total_features = 0
     total_scenarios = 0
     broken_scenarios: list[str] = []
+    seen_sc_ids: set[str] = set()
+    dup_sc_ids: set[str] = set()
 
     for idx, blk in enumerate(blocks, start=1):
         if not FEATURE_RE.search(blk):
@@ -140,6 +146,12 @@ def validate_test_spec(
         for sc in blk_scenarios:
             total_scenarios += 1
             title = sc.splitlines()[0].strip()
+            idm = SCENARIO_ID_RE.search(title)
+            if idm:
+                sid = idm.group(1)
+                if sid in seen_sc_ids:
+                    dup_sc_ids.add(sid)
+                seen_sc_ids.add(sid)
             has_given = bool(GIVEN_RE.search(sc)) or has_background
             has_when = bool(WHEN_RE.search(sc))
             has_then = bool(THEN_RE.search(sc))
@@ -150,6 +162,13 @@ def validate_test_spec(
         detail = "; ".join(broken_scenarios[:5]) if broken_scenarios else "Hiç ```gherkin bloğu bulunamadı."
         _add_issue(errors, "E4_INVALID_GHERKIN", f"Geçersiz veya eksik Gherkin yapısı: {detail}")
 
+    if dup_sc_ids:
+        _add_issue(
+            errors,
+            "E10_DUPLICATE_SCENARIO_ID",
+            f"Mükerrer senaryo kimlikleri tespit edildi: {', '.join(sorted(dup_sc_ids))}",
+        )
+
     # E5: Acceptance Criteria ID varlığı
     ac_ids = sorted(set(AC_ID_RE.findall(text)))
     if not ac_ids:
@@ -159,9 +178,10 @@ def validate_test_spec(
             "Ölçülebilir Kabul Kriteri kimliği (AC-MOD-01 vb.) bulunamadı.",
         )
 
-    # E6 & E7: Envanter tabanlı kapsama ve RBAC doğrulaması
+    # E6, E7, W2: Envanter tabanlı kapsama, RBAC ve performans/idempotency doğrulaması
     uncovered_routes: list[str] = []
     uncovered_endpoints: list[str] = []
+    blocks_text = "\n".join(blocks)
     if inventory is not None:
         for route in inventory.get("routes", []):
             r_str = str(route).strip()
@@ -193,12 +213,50 @@ def validate_test_spec(
             )
 
         roles = [r for r in inventory.get("roles", []) if r]
-        blocks_text = "\n".join(blocks)
         if roles and not RBAC_MARKER_RE.search(blocks_text):
             _add_issue(
                 errors,
                 "E7_MISSING_RBAC_SCENARIOS",
                 f"Projede roller ({', '.join(roles)}) tespit edildi ancak Gherkin bloklarında @rbac/@security/403 senaryosu yok.",
+            )
+
+        has_mutations_or_lists = any(
+            str(ep.get("method", "GET")).upper() in {"POST", "PUT", "PATCH", "GET"}
+            for ep in inventory.get("endpoints", [])
+        )
+        if has_mutations_or_lists and not PERF_MARKER_RE.search(blocks_text):
+            _add_issue(
+                warnings,
+                "W2_MISSING_PERF_OR_IDEMPOTENCY",
+                "Endpoint envanterinde liste/mutasyon uçları var ancak @perf/@sla/@pagination/@idempotency/@concurrency senaryosu görülmedi.",
+            )
+
+    # E8 & E9: State defteri uyumu ve bayat PASS iddiası kontrolü
+    if state is not None:
+        state_scenarios = state.get("scenarios", {})
+        active_state_ids = {
+            sid for sid, sc in state_scenarios.items() if sc.get("status") != "DEPRECATED"
+        }
+        missing_in_spec = sorted(active_state_ids - seen_sc_ids)
+        missing_in_state = sorted(seen_sc_ids - set(state_scenarios.keys()))
+        if missing_in_spec or missing_in_state:
+            _add_issue(
+                errors,
+                "E8_STATE_DRIFT",
+                f"Spec ve test-spec-state.json uyuşmuyor (spec eksikleri: {missing_in_spec[:5]}, state eksikleri: {missing_in_state[:5]}).",
+            )
+
+        stale_pass_claims: list[str] = []
+        for sid, sc in state_scenarios.items():
+            if sc.get("status") == "PASS":
+                pref = sc.get("pass_ref") or {}
+                if pref.get("verified_contract_hash") != sc.get("contract_hash"):
+                    stale_pass_claims.append(sid)
+        if stale_pass_claims:
+            _add_issue(
+                errors,
+                "E9_STALE_PASS_CLAIM",
+                f"Kontratı değiştiği halde hâlâ PASS işaretli bayat senaryolar: {', '.join(sorted(stale_pass_claims))}",
             )
 
     if not NEGATIVE_MARKER_RE.search(text):
@@ -224,10 +282,11 @@ def validate_test_spec(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Tek dosya ACCEPTANCE_TEST_SPEC.md kapsama ve Gherkin kapısı."
+        description="Tek dosya ACCEPTANCE_TEST_SPEC.md kapsama, Gherkin ve state kapısı."
     )
     parser.add_argument("--spec", required=True, help="Doğrulanacak test spesifikasyonu (.md) yolu")
     parser.add_argument("--inventory", default="", help="test_spec_scanner.py tarafından üretilen JSON dosyası")
+    parser.add_argument("--state", default="", help="test-spec-state.json defteri yolu")
     parser.add_argument("--root", default="", help="Envanter dosyası yoksa projeyi anında tara")
     parser.add_argument("--ignore-route", action="append", default=[], help="Hariç tutulacak rota/prefix")
     parser.add_argument("--json", action="store_true", help="JSON çıktısı ver")
@@ -246,7 +305,15 @@ def main(argv: list[str] | None = None) -> int:
 
         inv = test_spec_scanner.build_test_inventory(args.root)
 
-    res = validate_test_spec(args.spec, inventory=inv, ignore_routes=args.ignore_route)
+    st: dict[str, Any] | None = None
+    if args.state:
+        st_p = Path(args.state)
+        if not st_p.is_file():
+            print(f"[FAIL] State dosyası bulunamadı: {st_p}", file=sys.stderr)
+            return 2
+        st = json.loads(_read_text(st_p))
+
+    res = validate_test_spec(args.spec, inventory=inv, state=st, ignore_routes=args.ignore_route)
     if args.json:
         print(json.dumps(res, ensure_ascii=False, indent=2))
     else:

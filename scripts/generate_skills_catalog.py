@@ -386,22 +386,27 @@ python .agent/skills/review-prd/scripts/prd_review_helper.py --root . --prd docs
     {
         "command": "/test-spec",
         "aliases": ["/test-spec", "[TEST-SPEC]", "test spec", "gherkin testleri çıkar", "kabul kriterleri üret"],
-        "name": "Proje Geneli Tek Dosya Gherkin & Acceptance Criteria Üreticisi",
-        "badge": "Test & Gherkin",
+        "name": "Proje Geneli Artımlı Gherkin, Acceptance Criteria & PASS Referans Motoru",
+        "badge": "Test & Gherkin v2",
         "badge_class": "badge-info",
         "skills": ["test-spec-generator", "feature-architect", "tdd"],
-        "goal": "Kod + Kardeş Repo + Dokümanlar -> Tek Dosya AC & Gherkin Test Spesifikasyonu",
-        "description": "Projedeki tüm frontend rotalarını, backend API uç noktalarını, DB modellerini, RBAC rollerini ve PRD/API dokümanlarını tarayarak ölçülebilir Acceptance Criteria (AC-XXX) ve Gherkin (Given-When-Then) senaryolarını TestSprite ve otomatik test araçları için tek dosyada (docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md) üretir.",
-        "sample_prompt": "/test-spec: Tüm projeyi inceleyip TestSprite ve otomatik test araçları için tek bir dosyada Gherkin senaryoları ve Acceptance Criteria çıkar.",
-        "protocol": "1. Kod & Doküman Envanteri (test_spec_scanner.py + fa_scan.py) -> Rotalar, API, DB, RBAC ve gereksinimler ➜ 2. Derin İş Kuralı Analizi -> Validasyon, yetki ve 4 UX durumu ➜ 3. Tek Dosya Üretimi -> docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md ➜ 4. Kapsama Kapısı (check_test_spec.py) & Opsiyonel --export-feature",
-        "usage_snippet": """# 1. Envanter Taraması:
-python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --root . --json --out docs/testing/test-inventory.json
+        "goal": "Artımlı Major/Minor Takip + PASS Referans Defteri + Delta Export -> Tek Dosya AC & Gherkin",
+        "description": "Kod, kardeş repo ve dokümanları tarayarak ACCEPTANCE_TEST_SPEC.md ve test-spec-state.json defterini üretir. Sonraki koşumlarda değişmeyen ve Minor (CSS/yorum) dosyaları atlar; yalnız Major kontrat değişimlerinde ilgili modülü cerrahi günceller, eski PASS kanıtını STALE olarak korur ve TestSprite/CI için --export-delta çıkarır.",
+        "sample_prompt": "/test-spec: Projedeki değişiklikleri artımlı analiz et; önceki PASS senaryolarını koruyarak yalnız Major değişen modüllerin Gherkin ve AC testlerini güncelle.",
+        "protocol": "1. Artımlı Plan (test_spec_tracker.py plan) -> UNCHANGED/MINOR/MAJOR ayrımı & STALE işaretleme ➜ 2. Yalnız MAJOR Modüllerde Derin Analiz -> Risk, Performans (@perf/@idempotency) & Sınır Değer ➜ 3. Cerrahi Yama & State Senkronu (patch-module + sync) ➜ 4. Kapı & Delta Export (check_test_spec.py --state & export-delta)",
+        "usage_snippet": """# 1. Artımlı Değişiklik Planı (Fast-Path SHA-256 + Major/Minor):
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py plan --root . --state docs/testing/test-spec-state.json --json
 
-# 2. Kapsama ve Gherkin Kapısı:
-python .agent/skills/test-spec-generator/scripts/check_test_spec.py --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --inventory docs/testing/test-inventory.json
+# 2. Cerrahi Modül Yaması & State Senkronu:
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py patch-module --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --module <mod> --content-file <modul.md>
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py sync --root . --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json
 
-# 3. Saf .feature Dışa Aktarımı:
-python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --export-feature docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --out specs/<SLUG>_ALL.feature""",
+# 3. Kapsama & State Kapısı:
+python .agent/skills/test-spec-generator/scripts/check_test_spec.py --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --inventory docs/testing/test-inventory.json --state docs/testing/test-spec-state.json
+
+# 4. PASS Kaydı & Delta Export (Yalnız NEW + STALE + FAIL):
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py record --state docs/testing/test-spec-state.json --import-testsprite testsprite_tests/report.md --runner testsprite
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-delta --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --out-md docs/testing/<SLUG>_DELTA_TEST_SPEC.md --out-feature specs/<SLUG>_DELTA.feature""",
         "emergency": [
             {
                 "symptom": "E6_UNCOVERED_SURFACE kapı hatası",
@@ -409,9 +414,9 @@ python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --export-f
                 "action": "Eksik rota/endpoint için izlenebilirlik matrisine ve modül Gherkin bloğuna senaryo ekleyin."
             },
             {
-                "symptom": "E7_MISSING_RBAC_SCENARIOS hatası",
-                "cause": "Projede roller tanımlı ancak Gherkin bloklarında @rbac/@security/403 senaryosu yok.",
-                "action": "Yetkisiz erişim (403 Forbidden) kontrolü için @security @rbac @negative senaryosu ekleyin."
+                "symptom": "E8_STATE_DRIFT veya E9_STALE_PASS_CLAIM hatası",
+                "cause": "Spec dosyası güncellendikten sonra state defteri senkronlanmamış veya kontratı değişen senaryo hâlâ PASS görünüyor.",
+                "action": "test_spec_tracker.py sync çalıştırın ve STALE senaryoları delta koşumuyla yeniden doğrulayın."
             }
         ],
         "category": "Teslimat & Kalite"
@@ -2055,22 +2060,23 @@ python .agent/skills/review-prd/scripts/prd_review_helper.py --root . --prd <prd
 
     "test-spec-generator": {
 
-        "status": "Gherkin & AC Üreticisi",
+        "status": "Artımlı Gherkin & PASS Defteri",
 
         "badge_class": "badge-info",
 
-        "file": "docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md",
+        "file": "ACCEPTANCE_TEST_SPEC.md + test-spec-state.json",
 
-        "features": ["Kod + Kardeş Repo + Doküman Tarama", "AC-XXX Kabul Kriterleri", "Given-When-Then Gherkin", "check_test_spec.py Kapsama Kapısı & --export-feature"],
+        "features": ["Major/Minor Çift-Hash Takip", "PASS Referans Defteri", "Cerrahi Modül Yama & Delta Export", "Risk, Performans & Idempotency Kapısı"],
 
-        "detail": "Tüm projeyi (rotalar, API endpoint'leri, roller, DB modelleri, PRD/API dokümanları) tarayıp TestSprite ve otomatik test araçlarına doğrudan verilebilecek tek bir Gherkin + Acceptance Criteria dosyası üretir.",
+        "detail": "Kod ve dokümanları artımlı tarayarak değişmeyen/Minor modülleri atlar, Major değişen modülleri cerrahi günceller, PASS referanslarını (commit + contract_hash) mühürler ve TestSprite/CI için delta çıktısı üretir.",
 
-        "sample_prompt": "/test-spec: Tüm projeden TestSprite ve otomatik test araçları için tek dosyada Gherkin senaryoları ve Acceptance Criteria çıkar.",
+        "sample_prompt": "/test-spec: Projedeki değişiklikleri artımlı analiz et; önceki PASS testlerini koruyarak yalnız Major değişen modüllerin Gherkin ve AC testlerini güncelle.",
 
-        "config_snippet": """# Envanter ve Kapsama Kapısı:
+        "config_snippet": """# Artımlı Plan, State Senkronu, Kapı ve Delta Export:
 
-python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --root . --json --out docs/testing/test-inventory.json
-python .agent/skills/test-spec-generator/scripts/check_test_spec.py --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --inventory docs/testing/test-inventory.json"""
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py plan --root . --state docs/testing/test-spec-state.json --json
+python .agent/skills/test-spec-generator/scripts/check_test_spec.py --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --inventory docs/testing/test-inventory.json --state docs/testing/test-spec-state.json
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-delta --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --out-feature specs/<SLUG>_DELTA.feature"""
 
     },
 

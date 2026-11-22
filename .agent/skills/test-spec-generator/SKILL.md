@@ -4,11 +4,11 @@ description: >-
   Tüm projeyi (kod, kardeş repo ve dokümanlar) tarayarak Gherkin senaryoları ve Acceptance Criteria maddelerini tek bir spesifikasyon dosyasında üreten ve kapsama kapısıyla doğrulayan orkestratör. Tetikleyiciler: "/test-spec", "test spec", "gherkin testleri çıkar", "kabul kriterleri üret", "generate test spec", "gherkin acceptance tests". Tetiklenmez: mevcut sprint denetimi verify-sprint'e, PRD retrospektif denetimi verify-prd'ye aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
 ---
 
-# Test Spec Generator (`/test-spec`)
+# Test Spec Generator v2 (`/test-spec`)
 
-Bu yetenek; projenin **tüm kaynak kodunu** (rotalar, formlar, backend API uç noktaları, veritabanı modelleri, RBAC yetkileri, kardeş repo) ve **tüm dokümanlarını** (`PRODUCT.md`, `PROJECT_BRIEF.md`, `docs/*prd*`, `docs/APIs/`, `DB_MIGRATIONS.md`, `specs/*.feature`, `HANDOFF.md`) uçtan uca tarayarak **ölçülebilir Acceptance Criteria (`AC-XXX`)** ve **Gherkin (`Feature` / `Background` / `Scenario` / `Scenario Outline` / `Given-When-Then`)** senaryolarını **tek bir dosyada** (`docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md`) üretir.
+Bu yetenek; projenin **tüm kaynak kodunu** (rotalar, formlar, backend API uç noktaları, veritabanı modelleri, RBAC yetkileri, kardeş repo) ve **tüm dokümanlarını** (`PRODUCT.md`, `PROJECT_BRIEF.md`, `docs/*prd*`, `docs/APIs/`, `DB_MIGRATIONS.md`, `specs/*.feature`, `HANDOFF.md`) tarayarak **ölçülebilir Acceptance Criteria (`AC-XXX`)** ve **Gherkin (`Feature` / `Background` / `Scenario` / `Scenario Outline` / `Given-When-Then`)** senaryolarını **tek bir dosyada** (`docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md`) üretir.
 
-Üretilen tek dosya; **TestSprite**, Playwright, Cucumber, Cypress veya yapay zeka tabanlı otomatik test araçlarına doğrudan girdi olarak verilecek şekilde yapılandırılmıştır.
+v2 ile birlikte yetenek **kademeli / artımlı (incremental)** çalışır: daha önce üretilmiş ve `PASS` almış senaryoları gereksiz yere baştan üretmez; `raw_hash` vs `contract_hash` ayrımıyla yalnızca **Major** değişikliklerde ilgili modülü cerrahi olarak günceller, eski `PASS` referanslarını `STALE` durumuna çekerek korur ve **TestSprite / Playwright / Cucumber** için hedefli delta dışa aktarımı (`export-delta`) sunar.
 
 > ⛔ **Sınır Ayrımı:**
 > - Mevcut sprint kartlarının kabul denetimi: [`verify-sprint`](../verify-sprint/SKILL.md)
@@ -20,66 +20,72 @@ Bu yetenek; projenin **tüm kaynak kodunu** (rotalar, formlar, backend API uç n
 ## Ne Zaman Kullanılır?
 
 - Kullanıcı `"/test-spec"`, *"tüm projeyi inceleyip Gherkin testleri ve acceptance criteria çıkar"*, *"TestSprite veya otomatik test araçları için tek bir test dosyası hazırla"* dediğinde.
-- Yeni veya olgunlaşmış bir projede tüm modülleri kapsayan tek kaynak doğruluklu (`Single Source of Truth`) kabul testi spesifikasyonu gerektiğinde.
+- Mevcut spesifikasyonda kod/doküman değişikliği sonrası yalnızca etkilenen testlerin güncellenmesi ve önceki `PASS` referanslarının korunması gerektiğinde.
 
 ---
 
-## 5 Aşamalı Tek-Dosya Test Spesifikasyonu Protokolü
+## Kademeli (Incremental-First) 5 Aşamalı Protokol
 
-### Aşama 1: Deterministik Kod, Kardeş Repo ve Doküman Envanteri Çıkarımı
-Tek bir rota, API ucu, rol veya gereksinim maddesi dahi gözden kaçmasın diye önce deterministik tarayıcı çalıştırılır:
+### Aşama 1: Değişiklik Planı ve Envanter Çıkarımı (`plan` vs Bootstrap)
+Her çalıştırmada önce artımlı takip motoru koşturulur:
 
 ```powershell
+# Mevcut test-spec-state.json varsa Major vs Minor fark analizi (Fast-path SHA-256 + KG impact):
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py plan --root . --state docs/testing/test-spec-state.json --json
+
+# Tam envanter çıktısı gerekirse (ilk kurulum / --peer / --focus):
 python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --root . --json --out docs/testing/test-inventory.json
 ```
-*(Ayrı backend/frontend deposu varsa `--peer <kardeş-repo-yolu>` veya dar kapsam isteniyorsa `--focus auth,orders` eklenir).*
+*(Ayrı backend/frontend deposu varsa `--peer <kardeş-repo-yolu>`, zorla modül güncellemek için `--force-module <mod>` eklenir).*
 
-Tarayıcı `feature-architect` (`fa_scan`) motorunu kullanarak şunları çıkarır:
-- Aktif frontend rotaları (`routes`) ve varsa kırık/stub sayfalar (`gaps`)
-- Backend HTTP uç noktaları (`endpoints` + `allowed_roles`) ve veri modelleri (`data_models`)
-- Sistemdeki roller (`roles`)
-- `PRODUCT.md`, `docs/*prd*`, `docs/APIs/`, `RFCs/`, `DB_MIGRATIONS.md` içindeki gereksinim kimlikleri (`FR-`, `US-`, `NFR-`, `REQ-`)
-- Halihazırda `specs/*.feature` altında bulunan mevcut senaryolar
+**Sınıflandırma Kuralları (Sıfır Gereksiz Yeniden Üretim):**
+- **`NO_OP` / `UNCHANGED` (`SKIP`):** Dosyaların `raw_hash` değeri değişmediyse tarama atlanır; mevcut senaryolar ve `PASS` referansları aynen korunur.
+- **`MINOR` (`KEEP`):** Yalnızca CSS/stil, yorum satırı, whitespace, log veya iç yardımcı düzenlemesi (`raw_hash !=`, ama `contract_hash ==`) varsa senaryolar **yeniden üretilmez**, `PASS` durumu korunur.
+- **`MAJOR` (`ADD` / `UPDATE` / `DEPRECATE`):** Yeni rota/endpoint/rol/gereksinim eklendiyse, DTO/validasyon/rol kontratı veya KG `impact()` bağımlılığı değiştiyse yalnız etkilenen modül güncellenir. Önceki `PASS` senaryosu `STALE` işaretlenir (`last_pass_ref` kanıtı korunur).
 
-### Aşama 2: Derin Kaynak Kod Okuması & İş Kuralı Analizi
-Envanterdeki her modül (`modules`) için ilgili route, sayfa bileşeni, form/validasyon şeması (Zod, Bean Validation), controller/servis ve API dokümanı okunarak şu gerçekler netleştirilir:
-1. **Girdi & Validasyon Kuralları:** Zorunlu alanlar, karakter limitleri, tip/format kuralları, hata mesajları.
-2. **Yetki & Güvenlik Sınırları (RBAC / Auth):** Hangi rolün neyi görüp neyi çağırabildiği, yetkisiz durumda beklenen `401`/`403` davranışı.
-3. **Veri Kalıcılığı & Yan Etkiler:** Başarılı işlem sonrasında dönen HTTP kodu (`200`/`201`/`204`), veritabanı/UI yansıması (refresh gerekmeden güncelleme).
-4. **4 UX Durumu:** `Skeleton Loading`, `Empty State`, `Error + Retry`, `Success` ve mobil kırılım.
+### Aşama 2: Derin Kaynak Kod Okuması & Best Practices Test Tasarımı
+Yalnızca **`BOOTSTRAP`** veya **`MAJOR`** işaretlenen modüller için ilgili kaynak kod ve dokümanlar derinlemesine okunur; senaryolar şu mühendislik standartlarıyla tasarlanır:
+1. **Risk-Tabanlı Öncelik Katmanlama:** Her senaryoya risk etiketi verilir: `@p0-critical` (Auth, RBAC, ödeme, `DELETE`), `@p1-high` (ana CRUD/E2E), `@p2-medium` (liste/filtre/ayarlar), `@p3-low` (yardımcı görünümler).
+2. **Performans, Optimizasyon & Eşzamanlılık (`@perf`, `@sla`, `@pagination`, `@idempotency`, `@concurrency`):**
+   - Liste uç noktaları için p95 gecikme hedefi, sayfalama (`limit/pageSize`) üst sınırı ve N+1 regresyon koruması.
+   - Mutasyon (`POST`/`PUT`) işlemlerinde çift gönderim **idempotency** ve eşzamanlı düzenleme (`409 Conflict`) senaryoları.
+   - Frontend state mutasyonlarında **refresh gerektirmeden UI yansıma** ve **Zero-CLS Skeleton** yükleme durumu.
+3. **Sistematik Sınır Değer & Denklik Bölümlendirmesi:** `Scenario Outline` + `Examples` ile min/max uzunluk, boş/null, yetkisiz rol (`401`/`403`), XSS/SQLi ve **Türkçe UTF-8 karakter (`çğıöşüİ`)** girdileri test edilir.
+4. **Anti-Flakiness & İzolasyon:** Senaryolar birbirinin bıraktığı veriye bağımlı olamaz; her `Scenario` bağımsız `Background`/benzersiz veri üretir, sabit uyku süresi yerine deterministik API/DOM durumu bekler.
 
-> ⛔ **Totolojik ve Belirsiz Kriter Yasağı:** *"Kullanıcı dostu görünür"*, *"hızlı çalışır"* gibi ölçülemez ifadeler veya sahte geçer testler yazılmaz. Her Acceptance Criteria somut değer, durum kodu ve gözlenebilir çıktı içermelidir.
+> ⛔ **Totolojik ve Belirsiz Kriter Yasağı:** *"Kullanıcı dostu görünür"*, *"hızlı çalışır"* gibi ölçülemez ifadeler yazılmaz. Her Acceptance Criteria somut değer, durum kodu ve gözlenebilir çıktı içermelidir.
 
-### Aşama 3: Tek Dosya (`ACCEPTANCE_TEST_SPEC.md`) Sentezi
-Ajan, [references/test-spec-template.md](references/test-spec-template.md) ve `.agent/templates/ACCEPTANCE_TEST_SPEC.template.md` yapısına birebir uyarak **tek bir dosya** üretir:
-- **Hedef Konum:** `docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md` (İngilizce projelerde aynı yapı `primary_language` dilinde yazılır).
-- **6 Zorunlu Bölüm:**
-  1. `## 0. Test Ortamı, Mimari & Auth Sözleşmesi` (Test araçlarının ihtiyaç duyduğu stack, port/base URL, test kullanıcı rolleri, auth akışı)
-  2. `## 1. Uçtan Uca Kapsam ve İzlenebilirlik Matrisi` (`Modül | Kaynak | Route / Endpoint | AC ID | Scenario ID | Etiketler`)
-  3. `## 2. Modül Bazlı Acceptance Criteria & Gherkin Senaryoları` (`AC-<MOD>-01..N` + ```` ```gherkin ```` blokları: `@smoke`, `@happy-path`, `@negative`, `@validation`, `@rbac`, `@api`, `@ui`)
-  4. `## 3. Çapraz Sistem & E2E Senaryoları` (Çok modüllü yaşam döngüsü akışları)
-  5. `## 4. Kapsam Dışı, Varsayımlar & Kod-Doküman Çelişkileri` (Stub/eksik katmanlar varsa `@wip`/`@blocked` olarak açıkça işaretlenir)
-  6. `## 5. Otomasyon Çalıştırma Komutları & Dışa Aktarım`
-
-### Aşama 4: Deterministik Kapsama ve Sözdizimi Kapısı (`check_test_spec.py`)
-Üretilen dosya kaydedildikten sonra mutlaka mekanik kapı çalıştırılır:
+### Aşama 3: Tek Dosya Yazımı veya Cerrahi Modül Yamalama (`patch-module` + `sync`)
+- **İlk Kurulum (`BOOTSTRAP`):** [references/test-spec-template.md](references/test-spec-template.md) ve `.agent/templates/ACCEPTANCE_TEST_SPEC.template.md` şablonuna birebir uyularak `docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md` üretilir.
+- **Artımlı Güncelleme (`INCREMENTAL`):** Dokunulmayan modüllere ASLA dokunulmaz! Her modül `<!-- TEST-SPEC:MODULE:<mod>:BEGIN --> ... <!-- TEST-SPEC:MODULE:<mod>:END -->` çapaları içinde yaşar; yalnızca `MAJOR` modülün içeriği cerrahi olarak yamalanır ve `next_seq` sayacı monotonik korunur:
 
 ```powershell
-python .agent/skills/test-spec-generator/scripts/check_test_spec.py --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --inventory docs/testing/test-inventory.json
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py patch-module --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --module <mod> --content-file <yeni_modul_md>
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py sync --root . --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json
 ```
 
-Kapı şunları doğrular:
-- `E1..E2`: Dosya boş değil ve 6 zorunlu bölüm mevcut
-- `E3`: `<doldur>`, `TODO`, `TBD` gibi şablon kalıntısı yok
-- `E4`: Tüm ```` ```gherkin ```` bloklarında geçerli `Feature:`, `Scenario:`/`Scenario Outline:` ve `Given/When/Then` adımları var
-- `E5`: Benzersiz `AC-...` kabul kriteri kimlikleri tanımlı
-- `E6`: Envanterdeki aktif rotalar ve HTTP endpoint'lerinin (`METHOD /path`) tamamı kapsamda
-- `E7`: Projede RBAC rolleri varsa Gherkin bloklarında `@rbac` / `@security` / `403` senaryoları mevcut
+### Aşama 4: Deterministik Kapsama, Sözdizimi ve State Kapısı (`check_test_spec.py`)
+```powershell
+python .agent/skills/test-spec-generator/scripts/check_test_spec.py --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --inventory docs/testing/test-inventory.json --state docs/testing/test-spec-state.json
+```
+Denetlenen kurallar:
+- `E1..E7`: Zorunlu 6 bölüm, zero-placeholder, geçerli Gherkin (`Feature`/`Scenario`/`Given-When-Then`), `AC-` ID, aktif rota + `METHOD /path` kapsaması, RBAC senaryosu.
+- `E8_STATE_DRIFT`: Spec dosyası ile `test-spec-state.json` tam senkron olmalı.
+- `E9_STALE_PASS_CLAIM`: Kontratı değişen (`MAJOR`) senaryo hâlâ güncel `PASS` gösterilemez.
+- `E10_DUPLICATE_SCENARIO_ID`: Mükerrer `SC-*` kimliği yasaktır.
+- `W1..W2`: Negatif/validasyon ve `@perf`/`@pagination`/`@idempotency` kapsama uyarıları.
 
-### Aşama 5: Opsiyonel Saf `.feature` Dışa Aktarımı (`--export-feature`)
-Cucumber, Behave, Playwright-BDD gibi doğrudan `.feature` uzantısı bekleyen araçlar için tek tıkla ayıklama yapılabilir:
+### Aşama 5: PASS Sonucu İşleme (`record`) ve Delta / Saf `.feature` Dışa Aktarımı
+TestSprite, Playwright, Cucumber, JUnit veya manuel doğrulama sonuçları state defterine mühürlenir ve sonraki koşumlarda yalnızca değişen/başarısız testler (`NEW + STALE + FAIL + FLAKY`) dışa aktarılabilir:
 
 ```powershell
+# 1. PASS/FAIL sonucunu kanıtıyla kaydet (veya --import-testsprite / --import-junit / --import-playwright / --import-cucumber):
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py record --state docs/testing/test-spec-state.json --result SC-AUTH-01=PASS --runner testsprite --evidence testsprite_tests/report.md
+
+# 2. Yalnızca çalıştırılması gereken Delta paketini çıkar (+ opsiyonel --include-smoke):
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-delta --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --out-md docs/testing/<SLUG>_DELTA_TEST_SPEC.md --out-feature specs/<SLUG>_DELTA.feature
+
+# 3. Tam paketi tek saf .feature dosyasına ayıkla:
 python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --export-feature docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --out specs/<SLUG>_ALL.feature
 ```
 
@@ -88,7 +94,7 @@ python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --export-f
 ## Standart Çıktı Özeti
 
 İşlem bittiğinde kullanıcıya kısa ve net rapor verilir:
-- **Üretilen Tek Dosya:** `docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md`
-- **Kapsam Özeti:** X Modül · Y Acceptance Criteria (`AC-...`) · Z Gherkin Senaryosu · N Rota & M API Endpoint (%100 kapsam)
+- **Çalışma Modu:** `BOOTSTRAP` | `NO_OP` | `INCREMENTAL` (`X UNCHANGED · Y MINOR/KEEP · Z MAJOR/UPDATED`)
+- **Tek Dosya & Defter:** `docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md` + `docs/testing/test-spec-state.json`
+- **Durum Dağılımı:** `PASS` (korunan) · `STALE` (re-test gereken) · `NEW` · `FAIL` · `FLAKY`
 - **Kapı Sonucu:** `check_test_spec.py` -> `[PASS]`
-- *(Varsa)* **Tespit Edilen Stub / Çelişkiler:** Bölüm 4'te listelenen açık noktalar.
