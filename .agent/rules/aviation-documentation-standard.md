@@ -10,8 +10,9 @@ kapi:
 # ✈️ Dokümantasyon ve Talimat Standardı: "Aviation Passenger Safety Card" (FAA AC 121-24C Style)
 
 > Bu kural; projelerde üretilen tüm kullanıcı kılavuzları (`docs/kullanici-rehberi.html`), test rehberleri
-> (`docs/KULLANICI_TEST_REHBERI.md`), `README.md`, kurulum (`setup`) ve "nasıl yapılır" (`how-to`) dokümanlarının
-> yanı sıra **AI kod ajanlarının kullanıcıya verdiği tüm yönlendirici yanıtlar ve talimatlar** için bağlayıcıdır.
+> (`docs/KULLANICI_TEST_REHBERI.md`), `README.md`, kurulum (`setup`) ve "nasıl yapılır" (`how-to`) dokümanlarının,
+> **tüm plan yönergelerinin (`/plan`, `/council`, `PLAN.template.md`, `.agent/plans/*.md`, `docs/plans/*.md`)**
+> ve **ana ekrana verilen tüm ajan sohbet yanıtlarının (`/caveman` + `FAA AC 121-24C`)** tamamı için bağlayıcıdır.
 
 ---
 
@@ -67,10 +68,9 @@ ajan yanıtları havacılık güvenlik kartı netliğinde olmalıdır.
 
 ---
 
-## 3. Ajan Sohbet Yanıtları Protokolü ve Negatif Sınır (Chat Response Contract & Anti-Panic Receipt Rule)
+## 3. Ana Ekran Sohbet Yanıtları Protokolü (`/caveman` + `FAA AC 121-24C`) ve Negatif Sınır
 
-Kullanıcı ajana "bu proje nasıl kurulur?", "X hatasını nasıl çözerim?", "şu sayfayı nasıl test ederim?" veya
-"hangi komutları çalıştırmalıyım?" gibi **kullanıcının bizzat uygulayacağı ileriye dönük yönerge/nasıl yapılır sorusu** sorduğunda ajan yanıtını şu şablonda üretir:
+Ana ekrana verilen **her ajan yanıtı** `/caveman` nesir sıkıştırması + `FAA AC 121-24C` standardında üretilir; kullanıcıya yönlendirici/nasıl yapılır adımları veya plan özeti sunulduğunda aşağıdaki Quick-Card şablonu zorunludur:
 
 ```markdown
 ### 📋 [İşlem / Görev Adı] (Aviation Quick-Card)

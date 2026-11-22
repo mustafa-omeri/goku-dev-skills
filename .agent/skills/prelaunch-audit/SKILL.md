@@ -50,7 +50,7 @@ Bu skill iki farklı çalışma moduna sahiptir:
 | 14 | Canonical URL | KRİTİK | Her sayfada mutlak HTTPS self-canonical, www/çıplak domain tekliği sağlanmış | `node .agent/skills/prelaunch-audit/scripts/html-audit.mjs <URL>` |
 | 15 | Görsel Alt Metinleri | ORTA | Her `<img>` etiketinde anlamlı `alt` (dekoratifte `alt=""`), dosya adı basılmamış | `node .agent/skills/prelaunch-audit/scripts/html-audit.mjs <URL>` |
 | 16 | Sık Sorulan Sorular (SSS) | ORTA | Gerçek sorulardan oluşan, görünür ve erişilebilir akordeon/liste | [seo-and-discoverability.md](references/seo-and-discoverability.md) |
-| 17 | Özel 404 Sayfası | YÜKSEK | Var olmayan adreste gerçek 404 HTTP kodu ve markalı yönlendirici sayfa (soft-404 yok) | [seo-and-discoverability.md](references/seo-and-discoverability.md) |
+| 17 | Özel Hata & Bakım Sayfaları (404, 500, 503) | YÜKSEK | Var olmayan adreste gerçek 404 HTTP kodu ve markalı yönlendirici sayfa; bakım/kesinti anları için 503 ve sunucu hatası için 500 özel sayfaları sisteme eklenmiş olmalı | [seo-and-discoverability.md](references/seo-and-discoverability.md) & `prelaunch_checker.py` |
 | 18 | Sosyal Paylaşım (OG/Twitter)| ORTA | `og:title`, `og:description`, `og:image` (1200x630 mutlak URL) eksiksiz | `node .agent/skills/prelaunch-audit/scripts/html-audit.mjs <URL>` |
 | 19 | Favicon Seti | ORTA | `favicon.ico`, SVG, `apple-touch-icon` (180x180) ve manifest; default logo yok | `python .agent/skills/prelaunch-audit/scripts/prelaunch_checker.py` |
 | 20 | llms.txt (Opsiyonel P3) | DÜŞÜK | Yalın markdown özet ve dokümantasyon indeksi | [seo-and-discoverability.md](references/seo-and-discoverability.md) |

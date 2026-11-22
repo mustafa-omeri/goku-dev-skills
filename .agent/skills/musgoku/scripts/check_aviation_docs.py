@@ -59,17 +59,30 @@ BROKEN_PLACEHOLDER_RE = re.compile(
 
 
 def find_doc_targets(root: Path) -> list[Path]:
-    """Kural kapsamında denetlenecek doküman ve şablonları toplar."""
+    """Kural kapsamında denetlenecek doküman, plan ve şablonları toplar."""
     targets: list[Path] = []
 
-    # Proje içi docs kılavuzları
+    # Proje içi docs kılavuzları ve yeni FAA AC 121-24C planları
     docs_dir = root / "docs"
     if docs_dir.is_dir():
         for p in docs_dir.rglob("*.md"):
-            # Yalnızca rehber, test, setup, how-to, runbook dosyaları
             lower = p.name.lower()
             if any(k in lower for k in ("test", "rehber", "guide", "setup", "how-to", "runbook", "manual")):
                 targets.append(p)
+            elif "plans" in [part.lower() for part in p.parts]:
+                # 2026-11-22 tarihinden itibaren üretilen veya FAA AC 121-24C damgalı yeni planlar denetlenir
+                try:
+                    head = p.read_text(encoding="utf-8", errors="ignore")[:600]
+                    if "FAA AC 121-24C" in head or any(d in p.name for d in ("20261122", "2026112", "202612", "2027")):
+                        targets.append(p)
+                except Exception:
+                    pass
+
+    # Aktif .agent/plans taslak planları
+    agent_plans_dir = root / ".agent" / "plans"
+    if agent_plans_dir.is_dir():
+        for p in agent_plans_dir.rglob("*.md"):
+            targets.append(p)
 
     # Kök rehberler
     for name in ("README.md", "HANDOFF.md"):
@@ -109,15 +122,27 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
         return errors, warnings
 
     lines = content.splitlines()
+    lower_name = path.name.lower()
+    is_plan = "plan" in lower_name or "plans" in [p.lower() for p in path.parts]
+    is_guide = any(k in lower_name for k in ("test", "rehber", "guide", "manual", "deploy", "setup")) or is_plan
 
-    # 1. E1: Acil Çıkış Tablosu Kontrolü (User manual, test guide, deployment plan)
-    is_guide = any(k in path.name.lower() for k in ("test", "rehber", "guide", "manual", "deploy", "setup"))
+    # 1. E1: Acil Çıkış Tablosu Kontrolü (User manual, test guide, deployment plan, planlar)
     if is_guide and not EMERGENCY_TABLE_RE.search(content):
         errors.append({
             "code": "E1",
             "file": str(path),
             "line": len(lines),
             "message": "FAA AC 121-24C Acil Çıkış / Sorun Giderme tablosu bulunamadı (| Belirti/Hata | Olası Neden | Anında Düzeltici Eylem |)",
+        })
+
+    # 2. E2: Prosedür / Plan adımlarında Eylem -> Beklenen Çıktı eşleşmesi kontrolü
+    has_numbered_steps = bool(re.search(r"^\s*\d+\.\s+\S", content, re.MULTILINE))
+    if is_guide and has_numbered_steps and not any(arrow in content for arrow in ("->", "──>", "→")):
+        errors.append({
+            "code": "E2",
+            "file": str(path),
+            "line": 1,
+            "message": "FAA AC 121-24C Eylem -> Beklenen Çıktı eşleşmesi bulunamadı (`[Adım N]. [Eylem] -> [Beklenen Çıktı]` formatı zorunludur).",
         })
 
     # 2. E3: Tehlikeli komut öncesinde CRITICAL uyarısı var mı?

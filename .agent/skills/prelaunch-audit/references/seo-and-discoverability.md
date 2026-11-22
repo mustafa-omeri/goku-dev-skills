@@ -54,8 +54,8 @@ robots.txt dosyasında üç ayrı tarama amacı bilinçli şekilde yapılandır�
 
 1. **Canonical URL:**
    Her sayfada tek bir mutlak HTTPS canonical linki (`<link rel="canonical" href="https://example.com/sayfa">`) bulunmalıdır. Sondaki eğik çizgi (trailing slash) ve `www` vs çıplak alan adı politikası tek bir standartta sabitlenmelidir.
-2. **Özel 404 Sayfası:**
-   Var olmayan bir adrese gidildiğinde sunucu **gerçek 404 HTTP durum kodu** dönmelidir. 200 OK dönüp içinde "Sayfa bulunamadı" yazan soft-404 durumları arama motoru indeksleme bütçesini tüketir.
+2. **Özel Hata ve Bakım Sayfaları (404, 500, 503):**
+   Var olmayan bir adrese gidildiğinde sunucu **gerçek 404 HTTP durum kodu** dönmelidir. 200 OK dönüp içinde "Sayfa bulunamadı" yazan soft-404 durumları arama motoru indeksleme bütçesini tüketir. Ayrıca bakım / geçici hizmet dışı durumları için **503 (Service Unavailable / Bakım Modu)** ve beklenmeyen sunucu hataları için **500** özel sayfaları sistemde yoksa canlıya çıkmadan önce muhakkak sisteme eklenmelidir (`prelaunch_checker.py` `custom_error_pages` kapısı ile denetlenir).
 
 ---
 

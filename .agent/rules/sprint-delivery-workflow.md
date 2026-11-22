@@ -100,16 +100,16 @@ Boş bırakmak yerine kapının seni uyarmasını tercih et.
    - ⛔ **Açık Kaynak (Open-Source) Önceliği Kesin Kuraldır:** Tescilli, kapalı veya ücretli araçlar yerine daima aktif bakımı yapılan, geniş topluluk desteği ve güvenilir lisansı (MIT, Apache 2.0, BSD) olan açık kaynaklı çözümler önceliklendirilmelidir.
    - Planda kütüphanenin adı, lisansı, dokümantasyon linki, neden seçildiği ve açık kaynak gerekçesi belirtilmelidir.
 
-### 2.1.1 Çoklu Araç Plan Modu (/plan — Antigravity IDE, Antigravity CLI, Claude Code, OpenCode, Genel CLI) ve KANBAN / TDD Köprüsü
-Antigravity IDE, Antigravity CLI (`agy`), Claude Code (`claude`), OpenCode (`opencode`) veya genel terminal CLI ortamlarında `/plan` komutu veya planlama talebi çalıştırıldığında:
-1. Üretilecek olan taslak plan (`<artifact-dir>/<plan_name>.md` veya `.agent/plans/<plan_name>.md`), doğrudan [.agent/templates/PLAN.template.md](../templates/PLAN.template.md) şablonunu kullanır; deterministik `[DOM]-[TIP]-[NO]` görev kimliklerini, TDD dikiş noktalarını (`seam`), 5 katmanlı dikey dilimi, **Tema ve Bileşen İskeleti Sözleşmesini** (16 Kilitli Tema, 55+ Bileşen, 18 Dashboard, Zero-CLS Skeleton), 2+ alternatifli mimari ikilemlerde Council Deliberation (Option A vs Option B) körlemesini ve ilgili KANBAN kartını açıkça belirtir.
+### 2.1.1 Çoklu Araç Plan Modu (/plan, /council — Fiziksel .md Dosyası & FAA AC 121-24C) ve KANBAN / TDD Köprüsü
+Antigravity IDE, Antigravity CLI (`agy`), Claude Code (`claude`), OpenCode (`opencode`) veya genel terminal CLI ortamlarında `/plan`, `/council` komutu veya planlama talebi çalıştırıldığında:
+1. ⛔ **Sohbet Çıktısı Plan Yasağı:** Plan sohbet çıktısı olarak basılamaz; her plan kendi fiziksel `.md` dosyasında (`<artifact-dir>/<plan_name>.md` veya `.agent/plans/<plan_name>.md`) ve **FAA AC 121-24C Dokümantasyon Standardı** ile [.agent/templates/PLAN.template.md](../templates/PLAN.template.md) şablonundan üretilir; deterministik `[DOM]-[TIP]-[NO]` görev kimliklerini, TDD dikiş noktalarını (`seam`), 5 katmanlı dikey dilimi, **Tema ve Bileşen İskeleti Sözleşmesini**, 2+ alternatifli mimari ikilemlerde Council Deliberation körlemesini ve ilgili KANBAN kartını açıkça belirtir.
 2. ⛔ **2-Modlu Onay & Proceed İcra Kilidi (Mod A: `/seal-plan` vs Mod B: `Proceed`):**
-   - **Mod A — Mühürle & Sıraya Al (`/seal-plan`, `"planı mühürle"`, `"backlog'a al"`, `"kodlama yapma"`):** Yalnızca **Faz 0.1..0.4** çalıştırılır (`archive_plan.py --seal-handoff --sprint-label "<Sprint>"`, `HANDOFF.md` §3 Gelecek Fazlar `⬜ Bekliyor`, `KANBAN.md` `Bekliyor`, varsa kardeş `HANDOFF.md`). Üretim koduna dokunulmadan durulur; kullanıcı sonradan `"Sprint X'i başlat"` dediğinde Faz 1+'den devam edilir.
+   - **Mod A — Mühürle & Sıraya Al (`/seal-plan`, `"planı mühürle"`, `"backlog'a al"`, `"kodlama yapma"`):** Yalnızca **Faz 0.1..0.4** çalıştırılır (`archive_plan.py --seal-handoff --sprint-label "<Sprint>"`, `HANDOFF.md` §3 Gelecek Fazlar `⬜ Bekliyor`, `KANBAN.md` `Bekliyor`, varsa kardeş `HANDOFF.md` + süreçleri). Üretim koduna dokunulmadan durulur; kullanıcı sonradan `"Sprint X'i başlat"` dediğinde Faz 1+'den devam edilir.
    - **Mod B — Onayla & Hemen Başla (`Proceed`, `"başla"`, `"uygula"`):** Kullanıcı Antigravity IDE'de "Proceed" butonuna bastığında veya CLI/terminal ortamlarında başlama onayı verdiğinde ajan önce **Faz 0**'ı, ardından **Faz 1+** adımlarını icra eder:
    - **Faz 0.1 (Plan Arşivleme `docs/plans/`):** Plan dosyası `python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug>` ile `docs/plans/plan_<slug>_<YYYYMMDD_HHMMSS>.md` olarak arşivlenir.
    - **Faz 0.2 (`HANDOFF.md` §3 Mühürleme):** Plandaki görevler `[DOM]-[TIP]-[NO]` kimlikleri ve `docs/plans/plan_<slug>_...` dosya referansıyla `HANDOFF.md` §3 canlı panosuna (WIP maks 3 aktif, kalanlar Gelecek Fazlar / Backlog tablosuna) yazılır.
    - **Faz 0.3 (Sprint & KANBAN Açılışı / Güncellemesi):** Çok adımlı veya mimari planlarda `SPRINT_PLAN.md`, `KANBAN.md` ve `RELEASE_PLAN.md` yoksa `.agent/templates/` altından oluşturulur; varsa güncellenir ve aktif kart `KANBAN.md` üzerinde `Yapılıyor`'a çekilir (WIP limiti maksimum 3 denetlenir).
-   - **Faz 0.4 (Kardeş Uygulama Handoff & AI Agent Sahiplik Kapısı):** Plan kardeş uygulamada geliştirme gerektiriyorsa `python .agent/skills/musgoku/scripts/sync_sibling_handoff.py` ile kardeş reponun `HANDOFF.md` dosyasına `<kaynak-proje> projesindeki <plan-yolu> plan dosyası referansına göre` bilgileri yazılır; kardeş reponun koduna geçmeden önce *"Geliştirmeyi ben mi yapayım, yoksa kardeş uygulamadaki AI Agent ile mi devam etmek istersiniz?"* sorulur.
+   - **Faz 0.4 (Kardeş Uygulama Handoff, Süreç Senkronu & Topoloji Sahiplik Kapısı):** Plan kardeş uygulamada geliştirme gerektiriyorsa dizin fark etmeksizin `python .agent/skills/musgoku/scripts/sync_sibling_handoff.py` ile kardeş reponun `HANDOFF.md` ve süreç dosyalarına (`KANBAN.md`, `SPRINT_PLAN.md`, `RELEASE_PLAN.md`) `<kaynak-proje> projesindeki <plan-yolu> plan dosyası referansına göre` bilgileri yazılır; aynı dizindeyse aynı kod ajanı süreci ilerletebilir, farklı dizindeyse öncelik kardeş projenin kendi kod ajanına verilerek koda dokunmadan önce kullanıcıya mutlaka sorulur.
    - **Faz 1+ (TDD Kırmızı → Yeşil):** TDD Kırmızı Test yazılıp terminalde **KIRMIZI (FAIL)** olduğu kanıtlanmadan üretim koduna dokunulamaz!
    - Test yeşile döndükten ve 5 katman (DB, API, UI, Tema/Bileşen İskeleti, Zero-CLS Skeleton Screen) tamamlandıktan sonra kart `Yapıldı`'ya taşınır ve `HANDOFF.md` güncellenir.
 
@@ -142,12 +142,12 @@ Sprint devam ederken kullanıcı tarafından talep edilen ve yapılması onaylan
 4. **TDD Kırmızı → Yeşil Döngüsü:**
    Yeni talep koda dökülürken doğrudan üretim kodu yazılmaz; [`tdd`](../skills/tdd/SKILL.md) disiplini gereğince belirlenen dikiş noktasında (`seam`) önce kırmızı test yazılır, minimal kodla yeşile çevrilir ve doğrulanır.
 
-### 2.5 Otonom Sprint Kapanış Kilidi, /verify-sprint ve Cerrahi Onarım İzlenebilirlik Protokolü (Auto-Remediation & Audit Trail Loop)
+### 2.5 Sprint Sonu Otomatik `/verify-sprint` Sorusu, Kapanış Kilidi ve Cerrahi Onarım İzlenebilirlik Protokolü (Auto-Remediation & Audit Trail Loop)
 
 Sprintteki son kartın `Yapıldı`'ya taşınması veya sprintin tamamlandığının bildirilmesi anında şu kapalı devre protokol işletilir:
 
-1. 🔒 **Sprint Kapanış Kilidi (Sprint-Done Lock):**
-   Ajan, sprintteki kartların tamamlandığı anda kullanıcıdan manuel komut beklemeden **otonom olarak** `/verify-sprint` ve `python .agent/skills/verify-sprint/scripts/sprint_auditor.py` çalıştırır. Rapor yeşil (`ONAYLANDI` / Sıfır Bulgu) olmadan sprint kapanışı veya commit onayına geçilemez.
+1. 🔒 **Sprint Sonu Otomatik `/verify-sprint` Sorusu & Kapanış Kilidi:**
+   Her sprint bittiğinde ajan **otomatik olarak kullanıcıya `/verify-sprint` çalıştırmayı sorar** (*"Sprint tamamlandı — `/verify-sprint` kabul denetimini çalıştırayım mı?"*). Kullanıcı onayladığında (veya doğrudan `/verify-sprint` verdiğinde) `python .agent/skills/verify-sprint/scripts/sprint_auditor.py` çalıştırılır. Rapor yeşil (`ONAYLANDI` / Sıfır Bulgu) olmadan sprint kapanışı veya commit onayına geçilemez.
 2. ⚠️ **Bulgu Tespiti ve Yapısal Mühürleme:**
    Eğer bir kart ilk geliştirmede birim testlerinden geçmiş olsa bile, `/verify-sprint` ve `sprint_auditor.py` tarafından bir eksiklik (eksik 5 katman, mock kalıntısı, kullanıcı test senaryosu yokluğu veya şartname sapması) yakalanırsa:
    - Kart `KANBAN.md` üzerinde derhal `Yapıldı`'dan `Yapılıyor` / `Bekliyor` sütununa geri çekilir.

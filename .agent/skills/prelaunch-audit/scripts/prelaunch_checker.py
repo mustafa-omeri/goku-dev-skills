@@ -109,6 +109,56 @@ def check_sitemap_xml(content: str) -> Dict[str, Any]:
     }
 
 
+def check_custom_error_pages(target_dir: Path) -> Dict[str, Any]:
+    """404, 500 ve 503 (Bakım / Hizmet Dışı) özel sayfalarının varlığını denetler."""
+    skip_dirs = {"node_modules", ".git", ".agent", "yedekler", "__pycache__", ".venv", "dist"}
+    found_404: List[str] = []
+    found_503: List[str] = []
+    found_500: List[str] = []
+
+    name_404_re = re.compile(r"(?:^|[/\\_-])(404|not[-_]?found)(?:\.|$)", re.IGNORECASE)
+    name_503_re = re.compile(r"(?:^|[/\\_-])(503|maintenance|bakim|service[-_]?unavailable)(?:\.|$)", re.IGNORECASE)
+    name_500_re = re.compile(r"(?:^|[/\\_-])(500|server[-_]?error|error[-_]?page)(?:\.|$)", re.IGNORECASE)
+    code_exts = {".html", ".htm", ".tsx", ".jsx", ".ts", ".js", ".vue", ".svelte", ".conf", ".nginx", ".json"}
+
+    for f in target_dir.rglob("*"):
+        if not f.is_file():
+            continue
+        if any(part in skip_dirs for part in f.parts):
+            continue
+        rel = str(f.relative_to(target_dir)).replace("\\", "/")
+        if name_404_re.search(rel):
+            found_404.append(rel)
+        if name_503_re.search(rel):
+            found_503.append(rel)
+        if name_500_re.search(rel):
+            found_500.append(rel)
+
+        if f.suffix.lower() in code_exts and f.stat().st_size < 512_000:
+            try:
+                txt = f.read_text(encoding="utf-8", errors="ignore")
+                if not found_404 and re.search(r"error_page\s+404|<NotFound|path=[\"']\*[\"']", txt):
+                    found_404.append(rel)
+                if not found_503 and re.search(r"error_page\s+503|ServiceUnavailable|Bakım\s+Modu|503\s+Service", txt, re.IGNORECASE):
+                    found_503.append(rel)
+            except Exception:
+                pass
+
+    issues: List[str] = []
+    if not found_404:
+        issues.append("MAJOR: Özel 404 (Sayfa Bulunamadı) sayfası/rotası eksik — sisteme eklenmelidir.")
+    if not found_503:
+        issues.append("MAJOR: Özel 503 (Bakım / Hizmet Dışı) sayfası/rotası eksik — sisteme eklenmelidir.")
+
+    return {
+        "status": "MAJOR" if issues else "PASS",
+        "found_404": found_404[:5],
+        "found_503": found_503[:5],
+        "found_500": found_500[:5],
+        "issues": issues,
+    }
+
+
 def audit_local_directory(target_dir: Path) -> Dict[str, Any]:
     results: Dict[str, Any] = {"scanned_path": str(target_dir), "items": {}}
 
@@ -135,6 +185,8 @@ def audit_local_directory(target_dir: Path) -> Dict[str, Any]:
         results["items"]["favicon"] = {"status": "PASS", "found": [f.name for f in favicon_files]}
     else:
         results["items"]["favicon"] = {"status": "MAJOR", "issues": ["Favicon or apple-touch-icon not found in directory."]}
+
+    results["items"]["custom_error_pages"] = check_custom_error_pages(target_dir)
 
     # Check for staging/localhost traps in html/js/json files
     traps = []

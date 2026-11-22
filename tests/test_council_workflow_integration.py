@@ -88,6 +88,66 @@ class TestCouncilWorkflowIntegration(unittest.TestCase):
             "code-review/SKILL.md içinde council/hakemlik köprüsü yok"
         )
 
+    def test_council_requires_physical_md_plan_file_and_sibling_question(self):
+        """/council planı sohbet çıktısı olarak değil ayrı .md plan dosyasında üretmeli ve kardeş projeyi sormalı."""
+        content = self.council_skill_file.read_text(encoding="utf-8")
+        self.assertIn(".md", content)
+        self.assertIn("PLAN.template.md", content)
+        self.assertIn("FAA AC 121-24C", content)
+        self.assertTrue(
+            "kardeş" in content.lower() and "sor" in content.lower(),
+            "council/SKILL.md içinde kardeş proje sorusu zorunluluğu yok"
+        )
+
+    def test_plan_must_be_physical_md_file_and_faa_ac_121_24c_compliant(self):
+        """/plan çıktıları sohbete ham metin olarak basılmamalı, .md dosyası ve FAA AC 121-24C olmalı."""
+        import subprocess
+        import tempfile
+
+        dev_txt = self.dev_workflow_file.read_text(encoding="utf-8")
+        self.assertIn("FAA AC 121-24C", dev_txt)
+        self.assertTrue(
+            "sohbet çıktısı" in dev_txt.lower() or "chat-only" in dev_txt.lower(),
+            "development-workflow.md içinde sohbet çıktısı yasağı yok"
+        )
+
+        # check_aviation_docs.py PLAN.template.md üzerinde geçmeli; E2'siz bozuk planı reddetmeli
+        gate_script = REPO_ROOT / ".agent" / "skills" / "musgoku" / "scripts" / "check_aviation_docs.py"
+        with tempfile.TemporaryDirectory() as tmp:
+            tmppath = Path(tmp)
+            plans_dir = tmppath / ".agent" / "plans"
+            plans_dir.mkdir(parents=True)
+            bad_plan = plans_dir / "bad_plan.md"
+            bad_plan.write_text("# Kötü Plan\n1. Sadece adım yazıldı çıktı yok\n", encoding="utf-8")
+            env = dict(**__import__("os").environ, AGENTS_PROJECT_ROOT=str(tmppath))
+            res_bad = subprocess.run(
+                [sys.executable, str(gate_script), "--json"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                env=env,
+            )
+            self.assertNotEqual(res_bad.returncode, 0, "check_aviation_docs.py FAA AC 121-24C eksik planı reddetmeli")
+            payload = __import__("json").loads(res_bad.stdout)
+            codes = {e["code"] for e in payload.get("errors", [])}
+            self.assertTrue({"E1", "E2"}.intersection(codes), f"Beklenen E1/E2 bulunamadı: {codes}")
+
+    def test_main_screen_caveman_faa_and_sprint_end_verify_sprint_prompt(self):
+        """Ana ekrana /caveman + FAA AC 121-24C yanıtı ve sprint bitiminde otomatik /verify-sprint sorusu."""
+        agents_txt = (REPO_ROOT / ".agent" / "AGENTS.md").read_text(encoding="utf-8")
+        aviation_txt = (REPO_ROOT / ".agent" / "rules" / "aviation-documentation-standard.md").read_text(encoding="utf-8")
+        verify_sprint_txt = (REPO_ROOT / ".agent" / "skills" / "verify-sprint" / "SKILL.md").read_text(encoding="utf-8")
+        routing_txt = (REPO_ROOT / ".agent" / "rules" / "skill-trigger-routing.md").read_text(encoding="utf-8")
+
+        self.assertIn("/caveman", agents_txt)
+        self.assertIn("FAA AC 121-24C", agents_txt)
+        self.assertIn("/caveman", aviation_txt)
+        self.assertIn("`/caveman`", routing_txt)
+        self.assertTrue(
+            "sorar" in verify_sprint_txt.lower() or "sorulur" in verify_sprint_txt.lower(),
+            "verify-sprint/SKILL.md sprint bitiminde kullanıcıya sorma protokolü içermeli"
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

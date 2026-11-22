@@ -245,6 +245,150 @@ def _upsert_context_note(
     return text.rstrip() + f"\n\n{section_heading}\n{note_block}\n"
 
 
+def detect_directory_topology(
+    sibling_root: Path | str,
+    source_root: Path | str,
+    workspace_mode: str = "auto",
+) -> Dict[str, Any]:
+    """Kardeş projenin aktif projeyle aynı dizin/workspace altında mı yoksa farklı dizinde mi olduğunu saptar.
+
+    - Aynı dizin (aynı üst workspace / monorepo / eş düzey klasör):
+      `SAME_AGENT_ALLOWED` — skill'ler projeye göre yüklendiği için aynı kod ajanı süreci ilerletebilir.
+    - Farklı dizin (bağımsız dizin / ayrı çalışma alanı):
+      `ASK_USER_PREFER_SIBLING_AGENT` — öncelik kardeş projenin kendi kod ajanındadır; öncesinde kullanıcıya sorulmalıdır.
+    """
+    sib_p = Path(sibling_root).resolve()
+    src_p = Path(source_root).resolve()
+
+    mode = (workspace_mode or "auto").strip().lower()
+    if mode == "same":
+        same_dir = True
+    elif mode == "different":
+        same_dir = False
+    else:
+        # Monorepo (biri diğerinin altında) veya aynı workspace ebeveyn dizini altında yan yana
+        same_parent = sib_p.parent == src_p.parent
+        nested = (src_p in sib_p.parents) or (sib_p in src_p.parents)
+        same_dir = bool(same_parent or nested)
+
+    if same_dir:
+        policy = "SAME_AGENT_ALLOWED"
+        guidance = (
+            "Kardeş proje aynı dizin/çalışma alanında: skill'ler projeye göre yüklendiği için "
+            "aynı kod ajanı süreci ilerletebilir."
+        )
+    else:
+        policy = "ASK_USER_PREFER_SIBLING_AGENT"
+        guidance = (
+            "Kardeş proje farklı dizinde: öncelik her projenin kendi kod ajanındadır; "
+            "kardeş projede geliştirmeye başlamadan önce kullanıcıya açıkça sorulmalıdır."
+        )
+
+    return {
+        "same_directory": same_dir,
+        "workspace_mode": mode,
+        "ownership_policy": policy,
+        "guidance": guidance,
+    }
+
+
+def _next_sprint_card_id(kanban_text: str, sprint_plan_text: str = "") -> tuple[str, str]:
+    """KANBAN.md için çakışmasız ve check_sprint_board.py uyumlu S<n>-<nn> kart ID'si üretir."""
+    matches = re.findall(r"\bS(\d+)-(\d+)\b", kanban_text + "\n" + sprint_plan_text)
+    if not matches:
+        return "S1-01", "S1"
+    max_sprint = max(int(s) for s, _ in matches)
+    nums_in_sprint = [int(n) for s, n in matches if int(s) == max_sprint]
+    next_num = (max(nums_in_sprint) + 1) if nums_in_sprint else 1
+    return f"S{max_sprint}-{next_num:02d}", f"S{max_sprint}"
+
+
+def _sync_sibling_process_files(
+    sib_p: Path,
+    source_name: str,
+    plan_ref: str,
+    task_id: str,
+    task_title: str,
+    summary: str,
+) -> list[str]:
+    """Dizin fark etmeksizin kardeş projedeki süreç dosyalarına (KANBAN, SPRINT_PLAN, RELEASE_PLAN) görev ve plan referansını ekler."""
+    synced: list[str] = []
+    kanban_p = sib_p / "KANBAN.md"
+    sprint_p = sib_p / "SPRINT_PLAN.md"
+    release_p = sib_p / "RELEASE_PLAN.md"
+
+    kanban_text = kanban_p.read_text(encoding="utf-8", errors="replace") if kanban_p.is_file() else ""
+    sprint_text = sprint_p.read_text(encoding="utf-8", errors="replace") if sprint_p.is_file() else ""
+
+    if re.match(r"^S\d+-\d+$", task_id):
+        card_id = task_id
+        sprint_tag = task_id.split("-")[0]
+    else:
+        card_id, sprint_tag = _next_sprint_card_id(kanban_text, sprint_text)
+
+    ref_note = f"{source_name} projesindeki `{plan_ref}` plan dosyası referansına göre"
+    safe_title = _sanitize_cell(task_title)
+    safe_summary = _sanitize_cell(summary) if summary else ref_note
+
+    if kanban_p.is_file() and task_id not in kanban_text:
+        card_block = (
+            f"\n### {card_id} · {task_id}: {safe_title}\n"
+            f"| alan | değer |\n"
+            f"|---|---|\n"
+            f"| durum | Bekliyor |\n"
+            f"| oncelik | P1 |\n"
+            f"| sprint | {sprint_tag} |\n"
+            f"| gherkin | specs/{card_id}.feature |\n"
+            f"| kapi | python .agent/skills/musgoku/scripts/check_handoff.py |\n"
+            f"| test | (yazılacak) — {ref_note} |\n"
+            f"| risk | orta |\n"
+        )
+        m_bekliyor = re.search(r"^##\s+Bekliyor\s*$", kanban_text, re.MULTILINE)
+        if m_bekliyor:
+            pos = m_bekliyor.end()
+            updated_kanban = kanban_text[:pos] + "\n" + card_block + kanban_text[pos:]
+        else:
+            updated_kanban = kanban_text.rstrip() + "\n\n## Bekliyor\n" + card_block
+        kanban_p.write_text(updated_kanban.rstrip() + "\n", encoding="utf-8")
+        synced.append("KANBAN.md")
+
+    if sprint_p.is_file() and task_id not in sprint_text:
+        mvp_line = f"- {card_id} · `{task_id}`: {safe_title} ({ref_note} — {safe_summary})"
+        m_mvp = re.search(r"^(?:#{2,4}\s+MVP\s+Kapsam|\*\*MVP\s+Kapsam\*\*).*$", sprint_text, re.MULTILINE)
+        if m_mvp:
+            pos = m_mvp.end()
+            updated_sprint = sprint_text[:pos] + f"\n{mvp_line}" + sprint_text[pos:]
+        else:
+            updated_sprint = sprint_text.rstrip() + f"\n\n### MVP Kapsam\n{mvp_line}\n"
+        sprint_p.write_text(updated_sprint.rstrip() + "\n", encoding="utf-8")
+        synced.append("SPRINT_PLAN.md")
+
+    if release_p.is_file():
+        release_text = release_p.read_text(encoding="utf-8", errors="replace")
+        if task_id not in release_text:
+            rel_row = f"| {card_id} | {task_id}: {safe_title} ({ref_note}) | {sprint_tag} | orta |"
+            m_rel = re.search(r"^##\s+2\.\s+Taşınan.*$", release_text, re.MULTILINE)
+            if m_rel:
+                lines = release_text.splitlines()
+                insert_idx = len(lines)
+                for idx, ln in enumerate(lines):
+                    if re.match(r"^##\s+2\.", ln.strip()):
+                        for j in range(idx + 1, len(lines)):
+                            if lines[j].strip().startswith("|"):
+                                insert_idx = j + 1
+                            elif lines[j].strip().startswith("## "):
+                                break
+                        break
+                lines.insert(insert_idx, rel_row)
+                updated_release = "\n".join(lines) + "\n"
+            else:
+                updated_release = release_text.rstrip() + f"\n\n| Kart | Neden | Yeni sprint | Risk |\n|---|---|---|---|\n{rel_row}\n"
+            release_p.write_text(updated_release, encoding="utf-8")
+            synced.append("RELEASE_PLAN.md")
+
+    return synced
+
+
 def sync_sibling_handoff(
     sibling_root: Path | str,
     source_root: Path | str,
@@ -254,10 +398,12 @@ def sync_sibling_handoff(
     summary: str = "",
     target_version: str = "Planlı",
     template_path: Optional[Path | str] = None,
+    workspace_mode: str = "auto",
 ) -> Dict[str, Any]:
-    """Kardeş uygulamanın HANDOFF.md dosyasına kaynak plan referansı ve görev yazar."""
+    """Kardeş uygulamanın HANDOFF.md ve süreç dosyalarına kaynak plan referansı ve görev yazar."""
     src_p = Path(source_root).resolve()
     sib_p = validate_sibling_root(sibling_root, src_p)
+    topology = detect_directory_topology(sib_p, src_p, workspace_mode=workspace_mode)
 
     clean_task_id = task_id.strip()
     if not clean_task_id:
@@ -293,12 +439,23 @@ def sync_sibling_handoff(
     )
     handoff_path.write_text(updated, encoding="utf-8")
 
+    synced_process_files = _sync_sibling_process_files(
+        sib_p=sib_p,
+        source_name=source_name,
+        plan_ref=clean_plan_ref,
+        task_id=clean_task_id,
+        task_title=task_title,
+        summary=summary,
+    )
+
     errors, warnings = check_handoff.validate_handoff(sib_p, ignore_git_diff=True)
     return {
         "sibling_root": str(sib_p),
         "handoff_path": str(handoff_path),
         "created": created,
         "task_id": clean_task_id,
+        "topology": topology,
+        "synced_process_files": synced_process_files,
         "errors": errors,
         "warnings": warnings,
     }
@@ -306,7 +463,7 @@ def sync_sibling_handoff(
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Kardeş uygulamanın HANDOFF.md dosyasına kaynak plan referansı ve görevleri yazar."
+        description="Kardeş uygulamanın HANDOFF.md ve süreç dosyalarına kaynak plan referansı ve görevleri yazar."
     )
     parser.add_argument("--sibling-root", required=True, help="Kardeş uygulama repo kök dizini")
     parser.add_argument("--source-root", default=".", help="Kaynak proje kök dizini (varsayılan: .)")
@@ -315,6 +472,12 @@ def main() -> int:
     parser.add_argument("--task-title", required=True, help="Kardeş uygulamada yapılacak işin kısa başlığı")
     parser.add_argument("--summary", default="", help="Sözleşme / API / DTO / şema değişiklik özeti")
     parser.add_argument("--version", default="Planlı", help="Hedef sürüm (varsayılan: Planlı)")
+    parser.add_argument(
+        "--workspace-mode",
+        choices=["auto", "same", "different"],
+        default="auto",
+        help="Aynı dizin / farklı dizin sahiplik kipi (varsayılan: auto)",
+    )
     args = parser.parse_args()
 
     try:
@@ -326,6 +489,7 @@ def main() -> int:
             task_title=args.task_title,
             summary=args.summary,
             target_version=args.version,
+            workspace_mode=args.workspace_mode,
         )
     except ValueError as exc:
         print(f"[ERR] {exc}", file=sys.stderr)
@@ -337,7 +501,9 @@ def main() -> int:
         return 1
 
     action = "oluşturuldu ve işlendi" if res["created"] else "güncellendi"
-    print(f"[OK] Kardeş HANDOFF.md {action}: {res['handoff_path']} ({res['task_id']})")
+    proc_info = ", ".join(res["synced_process_files"]) if res["synced_process_files"] else "HANDOFF.md"
+    print(f"[OK] Kardeş HANDOFF.md {action}: {res['handoff_path']} ({res['task_id']}) | Süreçler: {proc_info}")
+    print(f"[TOPOLOGY] {res['topology']['ownership_policy']}: {res['topology']['guidance']}")
     return 0
 
 

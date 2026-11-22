@@ -72,21 +72,22 @@ kapi:
 3. Kullanıcıya **HANDOFF & KB RAPORU** bloğunu yanıtta açıkça göster.
 4. Ancak bu blok gösterildikten sonra commit onayı iste.
 
-## 🔗 Çapraz-Proje (Kardeş Uygulama) Handoff & Yürütme Sahipliği Protokolü
+## 🔗 Çapraz-Proje (Kardeş Uygulama) Handoff, Süreç Senkronu & Topolojiye Göre Yürütme Sahipliği Protokolü
 
-Bir projede `/plan`, `/feature-architect`, `/spec-reconcile`, `/council`, `/deploy-plan` veya Adım 2.1 planlaması sonucunda **kardeş uygulamada (sibling / peer repo)** da bir geliştirme yapılması gerekiyorsa şu iki zorunlu kural istisnasız işletilir:
+Bir projede `/plan`, `/feature-architect`, `/spec-reconcile`, `/council`, `/deploy-plan` veya Adım 2.1 planlaması sonucunda **kardeş uygulamada (sibling / peer repo)** da bir geliştirme yapılması gerekiyorsa şu kurallar istisnasız işletilir:
 
-1. **Kardeş Uygulamanın `HANDOFF.md` Dosyasına Zorunlu Yazım (Faz 0.B):**
-   - Plan onaylandığında, kardeş uygulamanın kök dizinindeki `HANDOFF.md` dosyasına (yoksa `.agent/templates/HANDOFF.template.md` üzerinden oluşturularak) kaynak projenin plan referansı (`<kaynak-proje> projesindeki <plan-yolu> plan dosyası referansına göre`), API/DTO/şema sözleşme özeti ve deterministik `[DOM]-[TIP]-[NO]` görev satırları yazılır.
+1. **Dizin Fark Etmeksizin Kardeş `HANDOFF.md` ve Süreç Dosyalarına Zorunlu Yazım (Faz 0.B):**
+   - Plan onaylandığında, dizin fark etmeksizin kardeş uygulamanın kök dizinindeki `HANDOFF.md` dosyasına (yoksa `.agent/templates/HANDOFF.template.md` üzerinden oluşturularak) **ve varsa süreç dosyalarına (`KANBAN.md`, `SPRINT_PLAN.md`, `RELEASE_PLAN.md`)** kaynak projenin plan referansı (`<kaynak-proje> projesindeki <plan-yolu> plan dosyası referansına göre`), API/DTO/şema sözleşme özeti ve deterministik `[DOM]-[TIP]-[NO]` görev satırları yazılır.
    - Deterministik araç:
      ```bash
      python .agent/skills/musgoku/scripts/sync_sibling_handoff.py --sibling-root <kardeş-yol> --source-root . --plan <plan-yolu> --task-id <ID> --task-title "<Başlık>" --summary "<Sözleşme/Kapsam>"
      ```
-2. **Yürütme Sahipliği Karar Kapısı (Execution Ownership Gate — Koda Dokunmadan Önce Sor):**
-   - Kardeş `HANDOFF.md` mühürlendikten sonra, kardeş uygulamanın kaynak koduna tek bir satır dahi yazmadan önce kullanıcıya açıkça şu soru yöneltilir:
-     > *"Kardeş uygulamanın (`<kardeş-proje>`) `HANDOFF.md` dosyasına gerekli plan referansı ve görevler işlendi. Kardeş uygulamadaki geliştirmeyi ben mi yapayım, yoksa kardeş uygulamadaki AI Agent ile mi devam etmek istersiniz?"*
-   - Kullanıcı **mevcut ajanı** seçerse kardeş repoda TDD disipliniyle geliştirme yürütülür ve kapanışta kardeş reponun `HANDOFF.md` + kapıları güncellenir.
+2. **Aynı Dizin vs Farklı Dizin Yürütme Sahipliği Karar Kapısı (Execution Ownership Gate):**
+   - **Aynı Dizin / Çalışma Alanı (`SAME_AGENT_ALLOWED`):** Kardeş proje aynı çalışma dizininde / monorepo altında yer alıyorsa, skill'ler projelere göre yüklendiği için **aynı kod ajanı süreci ilerletebilir**.
+   - **Farklı Dizin (`ASK_USER_PREFER_SIBLING_AGENT`):** Kardeş proje farklı dizindeyse, **öncelik her projenin kendi kod ajanının ilgili geliştirmeyi yapmasıdır**. Kardeş uygulamanın kaynak koduna tek bir satır dahi yazmadan önce kullanıcıya açıkça şu soru yöneltilir:
+     > *"Kardeş uygulama (`<kardeş-proje>`) farklı dizinde bulunuyor ve `HANDOFF.md` + süreç dosyalarına referanslı görevler işlendi. Öncelik kardeş projenin kendi kod ajanındadır; kardeş uygulamadaki geliştirmeyi kendi kod ajanı mı yapsın, yoksa ben mi devralayım?"*
    - Kullanıcı **kardeş uygulamadaki AI Agent** ile devam etmeyi seçerse mevcut ajan kardeş reponun kaynak koduna kesinlikle dokunmaz; devir özetini paylaşarak yalnızca aktif repodaki (varsa) görevleri tamamlar veya oturumu devreder.
+   - Kullanıcı açıkça **mevcut ajanı** seçerse kardeş repoda TDD disipliniyle geliştirme yürütülür ve kapanışta kardeş reponun `HANDOFF.md`, süreç dosyaları ve kapıları güncellenir.
 
 ---
 

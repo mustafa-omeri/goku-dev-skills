@@ -11,7 +11,7 @@ Bu yetenek, projenin **aktif sprinti** (`SPRINT_PLAN.md`) ve hemen öncesinde ta
 
 ## Ne Zaman Kullanılır?
 
-- **🔒 Otonom Sprint Kapanış Kilidi (Sprint-Done Lock):** Sprint kapsamındaki son kart `Yapıldı` sütununa taşındığında veya sprintin bittiği beyan edildiğinde ajan manuel komut beklemeden **otonom olarak** tetikler.
+- **🔒 Sprint Sonu Otomatik `/verify-sprint` Sorusu (Sprint-Done Prompt):** Her sprint bittiğinde (sprintteki son kart `Yapıldı` sütununa ulaştığında veya sprintin tamamlandığı bildirildiğinde) ajan **otomatik olarak kullanıcıya `/verify-sprint` çalıştırmayı sorar** (*"Sprint tamamlandı — `/verify-sprint` kabul denetimini çalıştırayım mı?"*); kullanıcı onayladığında `sprint_auditor.py` ve denetim protokolünü yürütür.
 - Kullanıcı *"bu sprint bitti mi"*, *"sprinti doğrula"*, *"/verify-sprint"* veya *"sprint kabul denetimi"* dediğinde.
 - Bir sprintteki kartlar `Yapılıyor`'dan `Yapıldı`'ya taşınmadan hemen önce.
 - `RELEASE_PLAN.md` hazırlanırken ve sprint kapanış devri yapılırken.

@@ -1,11 +1,12 @@
 # [Özellik / Görev Başlığı] Uygulama Planı
 <!-- 
-  Bu dosya Antigravity IDE, Antigravity CLI (agy), Claude Code (claude), OpenCode (opencode) ve Genel CLI planlama modları (/plan) ve standart geliştirme planları için zorunlu şablondur.
-  Kaynak: .agent/templates/PLAN.template.md · Kural: .agent/rules/development-workflow.md Adım 2.1 & 2.2
-  UYARI: Serbest metinli, TDD'siz, tema iskeletsiz veya 5 katmansız plan üretmek AĞIR İHLALDİR (Anti-Adhoc-Planning Slop).
+  Bu dosya Antigravity IDE, Antigravity CLI (agy), Claude Code (claude), OpenCode (opencode) ve Genel CLI planlama modları (/plan, /council) ve standart geliştirme planları için zorunlu şablondur.
+  Kaynak: .agent/templates/PLAN.template.md · Kural: .agent/rules/development-workflow.md Adım 2.1 & 2.2 · .agent/rules/aviation-documentation-standard.md (FAA AC 121-24C + /caveman)
+  UYARI: Planlar sohbet çıktısı olarak verilemez; her plan ayrı bir fiziksel .md dosyasında üretilir ve tüm plan yönergeleri FAA AC 121-24C standardındadır.
 -->
 
 > **Hedef Dal / Sürüm:** `<doldur: örn. main / v1.19.0>` · **Tarih:** `<doldur: YYYY-MM-DD>`  
+> **Standart:** `FAA AC 121-24C Dokümantasyon Standardı + /caveman`  
 > **Görevlendirilen Skill'ler:** `<doldur: örn. musgoku, tdd, frontend-design, ui-ux-pro-max, diagram-design, security-audit>`  
 > **Kullanılan MCP'ler:** `<doldur: context7, sequential-thinking veya kullanılmadı>`  
 > **İlgili KANBAN Kartı:** `<doldur: örn. [SPRINT-XX]-[KART-ID] veya Yeni Kart>`  
@@ -61,11 +62,14 @@ Feature: <doldur: Özellik Adı>
 
 ### 5.1 🔗 Kardeş Uygulama (Cross-Repo) Etkisi & Yürütme Sahipliği
 > ⛔ Kardeş uygulamada geliştirme gerekmiyorsa yalnızca `'Tek Repo / Kardeş Uygulama Etkisi Yok'` yazın.
-> Gerekiyorsa: Faz 0'da `sync_sibling_handoff.py` ile kardeş `HANDOFF.md`'ye `<kaynak-proje> projesindeki <plan-yolu> plan dosyası referansına göre` işlenir ve kardeş koda dokunmadan önce aşağıdaki sahiplik sorusu kullanıcıya sorulur.
+> **Kardeş Proje Kuralları (Topoloji + Süreç Senkronu):**
+> - **Dizin Fark Etmeksizin:** `sync_sibling_handoff.py` ile kardeş projenin kendi `HANDOFF.md` dosyasına **ve süreçlerine (`KANBAN.md`, `SPRINT_PLAN.md`, `RELEASE_PLAN.md`)** `<kaynak-proje> projesindeki <plan-yolu> plan dosyası referansına göre` geliştirme maddeleri eklenir.
+> - **Aynı Dizin / Çalışma Alanında (`SAME_AGENT_ALLOWED`):** Skill'ler projelere göre yüklendiği için aynı kod ajanı süreci ilerletebilir.
+> - **Farklı Dizinde (`ASK_USER_PREFER_SIBLING_AGENT`):** Öncelik her projenin kendi kod ajanının ilgili geliştirmeyi yapmasıdır; koda dokunmadan önce kullanıcıya mutlaka sorulmalıdır.
 
-- **Etkilenen Kardeş Uygulama & Yol:** `<doldur: örn. ../backend-repo veya 'Tek Repo / Kardeş Uygulama Etkisi Yok'>`
-- **Kardeş `HANDOFF.md`'ye Yazılacak Görevler & Sözleşme Özeti:** `<doldur: Görev ID, başlık ve API/DTO/şema kontrat özeti>`
-- **Yürütme Sahipliği Sorusu (Proceed Sonrası Zorunlu):** *"Kardeş uygulamadaki geliştirmeyi ben mi yapayım, yoksa kardeş uygulamadaki AI Agent ile mi devam etmek istersiniz?"* (`[Seçenek 1: Mevcut Ajan / Seçenek 2: Kardeş AI Agent]`)
+- **Etkilenen Kardeş Uygulama, Yol & Topoloji:** `<doldur: örn. ../backend-repo (Aynı Dizin) / C:/.../other-repo (Farklı Dizin) veya 'Tek Repo / Kardeş Uygulama Etkisi Yok'>`
+- **Kardeş `HANDOFF.md` + Süreç Dosyalarına Yazılacak Görevler & Sözleşme Özeti:** `<doldur: Görev ID, başlık ve API/DTO/şema kontrat özeti>`
+- **Yürütme Sahipliği Sorusu (Farklı Dizinde Zorunlu):** *"Kardeş proje farklı dizinde yer alıyor; öncelik kardeş projenin kendi kod ajanındadır. Kardeş uygulamadaki geliştirmeyi kendi kod ajanı mı yapsın, yoksa ben mi devralayım?"* (`[Seçenek 1: Kardeş Projenin Kendi AI Agent'ı (Öncelikli) / Seçenek 2: Mevcut Ajan]`)
 
 ---
 
@@ -96,36 +100,25 @@ Feature: <doldur: Özellik Adı>
 
 ---
 
-## 8. 🧪 TDD Kırmızı-Yeşil Dikiş Noktaları (Seams) ve Sıralı İcra Fazları
-> ⛔ **PROCEED İCRA KURALI (MANDATORY — Çoklu Araç Uyumlu):** Kullanıcı Antigravity IDE'de "Proceed" butonuna bastığında veya Antigravity CLI (`agy`), Claude Code (`claude`), OpenCode (`opencode`) ve genel terminalde `"proceed"`, `"onay"`, `"uygula"` yazdığında ajan doğrudan üretim koduna GEÇEMEZ. Sırasıyla aşağıdaki **Faz 0** ve **Faz 1..4** adımlarını icra etmek zorundadır:
+## 8. 🧪 TDD Kırmızı-Yeşil Dikiş Noktaları (Seams) ve Sıralı İcra Fazları (FAA AC 121-24C)
+> ⛔ **PROCEED İCRA KURALI (MANDATORY — Çoklu Araç Uyumlu):** Tüm plan yönergeleri FAA AC 121-24C standardına uygun `[Adım N]. [Eylem / Komut] -> [Beklenen Çıktı]` sözdiziminde yazılır. Kullanıcı `"proceed"`, `"onay"`, `"uygula"` verdiğinde önce **Faz 0**, ardından **Faz 1..4** icra edilir.
 
 ### 📌 Faz 0: Onay Sonrası Mühürleme (`docs/plans/`, `HANDOFF.md` §3 & Sprint Açılışı — Koda Dokunmadan Önce Zorunlu)
-1. **Planı `docs/plans/` Altına Arşivle:** `python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug>` komutuyla onaylı planı `docs/plans/plan_<slug>_<YYYYMMDD_HHMMSS>.md` olarak kopyala.
-2. **`HANDOFF.md` §3 Canlı Panosuna İşle:** Bölüm 5'teki tüm `[DOM]-[TIP]-[NO]` görevlerini ve arşivlenen `docs/plans/...` dosya referansını `HANDOFF.md` §3 canlı görev panosuna (WIP maks 3 aktif, kalanlar Gelecek Fazlar/Backlog tablosuna) yaz.
-3. **Sprint & KANBAN Aç/Güncelle:** Çok adımlı veya mimari planlarda proje kökünde `SPRINT_PLAN.md`, `KANBAN.md` ve `RELEASE_PLAN.md` yoksa `.agent/templates/` şablonlarından oluştur; varsa kartları aç ve aktif kartı `Yapılıyor`'a al.
+1. **[Adım 1 - Planı `docs/plans/` Altına Arşivle]:** `python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug>` -> **Beklenen Çıktı:** `[ARCHIVED] docs/plans/plan_<slug>_<YYYYMMDD_HHMMSS>.md`
+2. **[Adım 2 - `HANDOFF.md` §3 Canlı Panosuna İşle]:** Bölüm 5'teki tüm `[DOM]-[TIP]-[NO]` görevlerini ve arşivlenen plan referansını `HANDOFF.md` §3 panosuna işle -> **Beklenen Çıktı:** `python .agent/skills/musgoku/scripts/check_handoff.py` `0 hata, 0 W3 uyarısı` döner.
+3. **[Adım 3 - Sprint & Kardeş Süreç Senkronu]:** `SPRINT_PLAN.md`, `KANBAN.md`, `RELEASE_PLAN.md` yoksa şablondan aç; kardeş proje varsa `sync_sibling_handoff.py` çalıştır -> **Beklenen Çıktı:** Aktif kart `Yapılıyor`'a taşınır ve kardeş `HANDOFF.md` + süreçler güncellenir.
 
 ### 🔴 Faz 1: Dikiş Noktası & Kırmızı Test (Red Loop)
-- **Test Dosyası:** `<doldur: örn. tests/.../feature.test.ts veya *Test.java>`
-- **Test Edilen Dikiş Noktası (Public Seam):** `<doldur: Dahili detaylar değil, genel arayüz davranışı>`
-- **Çalıştırılacak Test Komutu:** `<doldur: örn. pnpm test -- feature.test.ts>`
-- **Beklenen Başarısızlık Kanıtı:** Testin çalıştırılarak **KIRMIZI (FAIL)** olduğunun terminalde gösterilmesi zorunludur.
+1. **[Adım 1 - Kırmızı Test Yaz & Koştur]:** `<doldur: tests/.../feature.test.ts>` dosyasında `<doldur: genel dikiş noktası>` testini yaz ve `<doldur: test komutu>` çalıştır -> **Beklenen Çıktı:** Terminalde testin **KIRMIZI (FAIL)** olduğu görülür.
 
 ### 🟢 Faz 2: Minimal Geçiş Kodu (Green Loop)
-- **Üretim Kod Dosyası:** `<doldur: örn. src/.../FeatureService.ts>`
-- **Kapsam:** Yalnızca Faz 1'deki testi yeşile döndürecek minimal kod yazılır (spekülatif kod eklenmez).
-- **Çalıştırılacak Test Komutu:** `<doldur: örn. pnpm test -- feature.test.ts>`
-- **Beklenen Başarı Kanıtı:** Testin **YEŞİL (PASS)** olduğunun kanıtlanması.
+1. **[Adım 1 - Minimal Üretim Kodunu Yaz & Test Et]:** `<doldur: src/.../FeatureService.ts>` içine yalnız Faz 1 testini geçecek minimal kodu yaz ve `<doldur: test komutu>` çalıştır -> **Beklenen Çıktı:** Terminalde testin **YEŞİL (PASS)** olduğu görülür.
 
 ### 🧩 Faz 3: 5 Katman Tamamlama, Tema İskeleti & UX Durumları
-- Varsa API, DB ve UI katmanları bağlanır; seçilen `component-themes/` veya `dashboard-theme/` şablonu projenin yaşayan yüzey token'larıyla uygulanır.
-- Sayfa ve veri yükleme durumlarında **Zero-CLS Skeleton Screens UI** uygulanır (spinner yasaktır).
-- 3 Cihaz ergonomisi (Mobil, Tablet, Masaüstü) kontrol edilir.
+1. **[Adım 1 - 5 Katman & Zero-CLS Skeleton Bağlantısı]:** DB, API, UI, seçilen tema/bileşen şablonunu (`component-themes/` / `dashboard-theme/`) ve Zero-CLS Skeleton Screens UI kasetini uygula -> **Beklenen Çıktı:** 3 cihaz ergonomisinde (Mobil/Tablet/Masaüstü) veri akışı ve skeleton durumu eksiksiz çalışır.
 
 ### 🧹 Faz 4: Refactor, Kapılar & Kapanış
-- Kod temizliği (`code-review` & `codebase-design` standartları).
-- Zorunlu kapıların çalıştırılması: `python .agent/skills/musgoku/scripts/run_all_gates.py`.
-- Kullanıcı test senaryosunun `docs/KULLANICI_TEST_REHBERI.md` dosyasına eklenmesi.
-- `KANBAN.md` kartının `Yapıldı`'ya taşınması.
+1. **[Adım 1 - Kalite Kapıları & Kullanıcı Test Rehberi]:** `python .agent/skills/musgoku/scripts/run_all_gates.py` çalıştır, `docs/KULLANICI_TEST_REHBERI.md` güncelle ve `KANBAN.md` kartını `Yapıldı`'ya taşı -> **Beklenen Çıktı:** Tüm kapılar `[OK]` döner; sprint bitiminde kullanıcıya `"/verify-sprint çalıştırayım mı?"` sorulur.
 
 ---
 

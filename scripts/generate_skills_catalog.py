@@ -219,7 +219,7 @@ python .agent/skills/musgoku/scripts/check_theme_contrast.py --strict""",
         "badge_class": "badge-primary",
         "skills": ["musgoku", "tdd", "doc-coauthoring", "development-workflow"],
         "goal": "TDD Dikiş Noktası, 5 Katmanlı Dilim & Önce Kırmızı Test",
-        "description": "Antigravity IDE/CLI, Claude Code ve OpenCode'da standart PLAN.template.md şablonunda mimari plan üretir. [DOM]-[TIP]-[NO] kimlikleri, TDD dikiş noktaları, 5 katmanlı dikey dilim mimarisi, riskler ve kardeş repo etkileşimlerini kurgular. Kullanıcıya 2 modlu onay seçeneği sunar: /seal-plan ile doğrudan sıraya alıp durma veya Proceed ile hemen koda başlama.",
+        "description": "Antigravity IDE/CLI, Claude Code ve OpenCode'da sohbet çıktısı yerine ayrı bir fiziksel .md dosyasında ve FAA AC 121-24C standardında PLAN.template.md planı üretir. Kardeş proje varsa aynı/farklı dizin kuralıyla HANDOFF.md + süreç dosyalarına işler; /seal-plan veya Proceed onayı sunar.",
         "sample_prompt": "/plan: Yeni kullanıcı profil sayfası için TDD dikiş noktası ve 5 katmanlı dilim içeren mimari plan hazırla.",
         "protocol": "1. PLAN.template.md Üretimi -> [DOM]-[TIP]-[NO] kimlikleri ve 5 katmanlı dilim ➜ 2. Kullanıcı Onay Kapısı -> /seal-plan (Backlog'a Al & Dur) VEYA Proceed (Onayla & Başla) ➜ 3. Kırmızı Test Yazımı (Proceed durumunda) -> Terminalde FAIL kanıtı ➜ 4. Yeşil Kod & 5 Katman İcrası",
         "usage_snippet": """# 1. Plan Modu Tetikleme:
@@ -552,7 +552,7 @@ node .agent/skills/security-audit/scripts/validate-coverage-ledger.cjs""",
         "badge_class": "badge-info",
         "skills": ["karpathy-guidelines", "doc-coauthoring", "domain-modeling"],
         "goal": "Anonim Kör Akran İncelemesi (Borda Skoru) & ADR Kararı",
-        "description": "2+ alternatifli mimari ikilem ve riskli refactoring kararlarında 3 aşamalı anonim körleme (Stage 1 Proposals → Stage 2 Blind Review & Borda Skoru → Stage 3 Chairman Synthesis) ve docs/adr/ altında mimari karar kaydı üretir.",
+        "description": "2+ alternatifli mimari ikilem ve riskli refactoring kararlarında 3 aşamalı anonim körleme, Borda skoru ve ayrı fiziksel .md plan dosyası (FAA AC 121-24C) ile docs/adr/ kaydı üretir; kardeş proje varsa aynı/farklı dizin kuralıyla sorup HANDOFF.md ve süreçlere işler.",
         "sample_prompt": "/council: Mimari ikilem için 3 alternatifli kör hakemlik konseyi topla, Borda puanı hesapla ve ADR kaydı çıkar.",
         "protocol": "1. Stage 1: Alternatif Önerileri -> Option A/B/C mimari tasarım taslakları ➜ 2. Stage 2: Anonim Kör Hakemlik -> Bağımsız puanlama ve Borda skoru ➜ 3. Stage 3: Chairman Sentezi -> Uzlaşı ve nihai mimari seçim ➜ 4. ADR Karar Dokümanı -> docs/adr/ altına resmi kayıt",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
@@ -582,7 +582,7 @@ python .agent/skills/karpathy-guidelines/scripts/council_ranker.py --sample""",
         "badge_class": "badge-success",
         "skills": ["prelaunch-audit"],
         "goal": "20 Maddelik Lansman, KVKK/GDPR, Consent Mode v2 & WCAG 2.2 AA",
-        "description": "20 maddelik çekirdek kontrol listesi + 7 koşullu madde (KVKK m.10, 7499 s. Kanun yurt dışı aktarımı, Google Consent Mode v2, ham HTML SEO, WCAG 2.2 AA Axe, robots.txt, sitemap.xml, llms.txt) ile GO/NO-GO karar raporu üretir.",
+        "description": "20 maddelik çekirdek kontrol listesi + 7 koşullu madde (KVKK m.10, 7499 s. Kanun yurt dışı aktarımı, Google Consent Mode v2, ham HTML SEO, WCAG 2.2 AA Axe, 404/500/503 özel hata ve bakım sayfaları, robots.txt, sitemap.xml, llms.txt) ile GO/NO-GO karar raporu üretir.",
         "sample_prompt": "/prelaunch: Sitemizi yayına almaya hazır mıyız? 20 maddelik çekirdek denetimi ve yasal onay mekanizmalarını doğrula.",
         "protocol": "1. prelaunch_checker.py -> 20 maddelik çekirdek kontrol listesi ➜ 2. html-audit.mjs -> Ham HTML SEO ve meta etiket analizi ➜ 3. consent-check & axe-runner -> KVKK/GDPR ve WCAG 2.2 AA erişilebilirlik ➜ 4. PRELAUNCH-REPORT.md -> GO / NO-GO lansman kararı",
         "usage_snippet": """# Sohbette Doğrudan Tetikleme:
@@ -866,6 +866,32 @@ deployment planı
         "category": "Teslimat & Kalite"
     },
     {
+        "command": "/caveman",
+        "aliases": ["/caveman", "caveman", "kısa konuş", "token tasarrufu", "prose compression"],
+        "name": "Ana Ekran Yanıt Standardı (/caveman + FAA AC 121-24C)",
+        "badge": "Yanıt & Doküman",
+        "badge_class": "badge-info",
+        "skills": ["karpathy-guidelines"],
+        "goal": "Sıfır Lakırdı, Yüksek Yoğunluklu Nesir + FAA AC 121-24C Quick-Card",
+        "description": "Ana ekran yanıtlarını /caveman nesir sıkıştırması ve FAA AC 121-24C Dokümantasyon Standardı ile üretir: kod ve dosya yollarını %100 korur, dolgu cümlelerini siler, kronolojik [Adım N]. [Eylem] -> [Beklenen Çıktı] formatını uygular.",
+        "sample_prompt": "/caveman: Ana ekran yanıtlarını FAA AC 121-24C Quick-Card ve token tasarruflu formatta ver.",
+        "protocol": "1. Sıfır Nezaket & Dolgu -> Giriş/recap cümlelerini sil ➜ 2. Teknik Kesinlik -> Kod, yol, komut %100 tam ➜ 3. FAA AC 121-24C Akışı -> [Adım N]. [Eylem] -> [Beklenen Çıktı] + ⚠️ CRITICAL ➜ 4. Acil Çıkış -> Yönlendirici yanıtlarda Ditching tablosu",
+        "usage_snippet": """# Sohbette Tetikleme:
+/caveman
+kısa konuş
+
+# FAA AC 121-24C & Plan Kapısı:
+python .agent/skills/musgoku/scripts/check_aviation_docs.py --strict""",
+        "emergency": [
+            {
+                "symptom": "Plan veya rehber check_aviation_docs.py E1/E2 hatası verdi",
+                "cause": "Adımlarda '->' beklenen çıktı eşleşmesi veya Acil Çıkış tablosu eksik.",
+                "action": "Her numaralı adıma '-> Beklenen Çıktı:' ve sona Ditching tablosu ekleyin."
+            }
+        ],
+        "category": "Planlama & Mimari"
+    },
+    {
         "command": "/6HAT",
         "aliases": ["/6HAT", "/PO", "/ARCH", "/UX", "/SEO", "/GRW", "/QA", "/TIGHT", "/DIG", "/PUSHBACK", "6 şapka analizi", "six hats"],
         "name": "6 Şapka Bilişsel Danışmanlık & Anti-Sycophancy Süzgeci",
@@ -904,7 +930,7 @@ DOMAINS_MAP = [
         "color_var": "var(--accent-primary)",
         "subtle_var": "var(--accent-primary-subtle)",
         "border_var": "var(--accent-primary-border)",
-        "commands": ["/council", "/plan", "/seal-plan", "/review-prd", "/feature-architect", "/project-summary", "/6HAT"]
+        "commands": ["/council", "/plan", "/seal-plan", "/review-prd", "/feature-architect", "/project-summary", "/6HAT", "/caveman"]
     },
     {
         "id": "debug",

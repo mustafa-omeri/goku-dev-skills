@@ -211,6 +211,68 @@ class TestSyncSiblingHandoff(unittest.TestCase):
             )
             self.assertNotEqual(res_bad.returncode, 0)
 
+    def test_directory_topology_detection_and_process_files_sync(self):
+        """Aynı dizin vs farklı dizin sahipliği ve kardeş KANBAN/SPRINT_PLAN/RELEASE_PLAN senkronu."""
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            # 1) Aynı üst çalışma dizininde (same workspace) iki kardeş proje
+            workspace = base / "monospaceWS"
+            workspace.mkdir()
+            src_same = workspace / "frontendApp"
+            sib_same = workspace / "backendApp"
+            src_same.mkdir()
+            sib_same.mkdir()
+            (src_same / "package.json").write_text('{"name": "frontendApp"}', encoding="utf-8")
+            (sib_same / "pom.xml").write_text("<project/>", encoding="utf-8")
+
+            # Kardeş projede mevcut süreç dosyaları olsun
+            (sib_same / "KANBAN.md").write_text(
+                "# KANBAN.md\n\n## Bekliyor\n\n## Yapılıyor\n\n## Sınırdı\n\n## Yapıldı\n",
+                encoding="utf-8",
+            )
+            (sib_same / "SPRINT_PLAN.md").write_text(
+                "# SPRINT_PLAN.md\n\n## Sprint 1\n\n### Hedef\n\n### MVP Kapsam\n- BE-01 — mevcut\n\n### Kapsam Dışı\n- Yok\n",
+                encoding="utf-8",
+            )
+            (sib_same / "RELEASE_PLAN.md").write_text(
+                "# RELEASE_PLAN.md\n\n## 2. Taşınan Açık İşler\n| Kart | Neden | Yeni sprint | Risk |\n|---|---|---|---|\n",
+                encoding="utf-8",
+            )
+
+            topo_same = ssync.detect_directory_topology(sib_same, src_same)
+            self.assertTrue(topo_same["same_directory"])
+            self.assertEqual(topo_same["ownership_policy"], "SAME_AGENT_ALLOWED")
+
+            res_same = ssync.sync_sibling_handoff(
+                sibling_root=sib_same,
+                source_root=src_same,
+                plan_ref="docs/plans/plan_shared_20261122.md",
+                task_id="BE-API-099",
+                task_title="Yeni bildirim API ucu",
+                summary="POST /api/v1/notifications eklenecek.",
+                template_path=ROOT / ".agent" / "templates" / "HANDOFF.template.md",
+            )
+            self.assertEqual(res_same["topology"]["ownership_policy"], "SAME_AGENT_ALLOWED")
+            self.assertIn("KANBAN.md", res_same["synced_process_files"])
+            self.assertIn("SPRINT_PLAN.md", res_same["synced_process_files"])
+            self.assertIn("RELEASE_PLAN.md", res_same["synced_process_files"])
+
+            kanban_txt = (sib_same / "KANBAN.md").read_text(encoding="utf-8")
+            sprint_txt = (sib_same / "SPRINT_PLAN.md").read_text(encoding="utf-8")
+            release_txt = (sib_same / "RELEASE_PLAN.md").read_text(encoding="utf-8")
+            self.assertIn("BE-API-099", kanban_txt)
+            self.assertIn("plan_shared_20261122.md", kanban_txt)
+            self.assertIn("BE-API-099", sprint_txt)
+            self.assertIn("BE-API-099", release_txt)
+
+            # 2) Farklı dizinde (bağımsız root altında) kardeş proje
+            other_root = base / "isolatedOtherWS" / "externalService"
+            other_root.mkdir(parents=True)
+            (other_root / "requirements.txt").write_text("fastapi\n", encoding="utf-8")
+            topo_diff = ssync.detect_directory_topology(other_root, src_same)
+            self.assertFalse(topo_diff["same_directory"])
+            self.assertEqual(topo_diff["ownership_policy"], "ASK_USER_PREFER_SIBLING_AGENT")
+
 
 if __name__ == "__main__":
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestSyncSiblingHandoff)

@@ -161,6 +161,44 @@ class PrelaunchSecurityContractTests(unittest.TestCase):
                 violations.append(f"{path.relative_to(ROOT)}: contains project name {m.group(0)!r}")
         self.assertEqual(violations, [], "\n".join(violations))
 
+    def test_07_prelaunch_checker_detects_missing_404_503_pages(self):
+        """prelaunch_checker.py sistemde 404 ve 503 özel sayfaları yoksa MAJOR bulgu üretmeli."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmppath = Path(tmpdir)
+            (tmppath / "robots.txt").write_text("User-agent: *\nSitemap: https://example.com/sitemap.xml\n", encoding="utf-8")
+            (tmppath / "sitemap.xml").write_text("<urlset><url><loc>https://example.com/</loc></url></urlset>", encoding="utf-8")
+
+            res_missing = subprocess.run(
+                [sys.executable, str(PRELAUNCH_CHECKER), "--dir", str(tmppath), "--json"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+            )
+            data_missing = json.loads(res_missing.stdout)
+            err_pages = data_missing.get("items", {}).get("custom_error_pages")
+            self.assertIsNotNone(err_pages, "prelaunch_checker.py custom_error_pages kontrolü döndürmüyor")
+            self.assertEqual(err_pages.get("status"), "MAJOR")
+            joined = " ".join(err_pages.get("issues", []))
+            self.assertIn("404", joined)
+            self.assertIn("503", joined)
+
+            # 404.html ve 503.html eklendiğinde PASS dönmeli
+            (tmppath / "404.html").write_text("<h1>404 Sayfa Bulunamadı</h1>", encoding="utf-8")
+            (tmppath / "503.html").write_text("<h1>503 Bakım Modu</h1>", encoding="utf-8")
+            res_ok = subprocess.run(
+                [sys.executable, str(PRELAUNCH_CHECKER), "--dir", str(tmppath), "--json"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+            )
+            data_ok = json.loads(res_ok.stdout)
+            err_pages_ok = data_ok.get("items", {}).get("custom_error_pages", {})
+            self.assertEqual(err_pages_ok.get("status"), "PASS")
+
+        prelaunch_text = PRELAUNCH_SKILL.read_text(encoding="utf-8")
+        self.assertIn("503", prelaunch_text)
+        self.assertIn("404", prelaunch_text)
+
 
 if __name__ == "__main__":
     unittest.main()

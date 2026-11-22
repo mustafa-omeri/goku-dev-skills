@@ -78,14 +78,17 @@ Canlı ortamda beklenmeyen bir çökme yaşanırsa aşağıdaki adımlar tavizsi
    ```bash
    curl -Iv https://<alan-adi>/health
    ```
+   -> **Beklenen Çıktı:** `HTTP/2 200` ve `status: UP` yanıtı görülür.
 2. **SSL ve Güvenlik Başlıkları:**
    ```bash
    curl -s -D - https://<alan-adi> | grep -E 'X-Frame-Options|Strict-Transport-Security'
    ```
+   -> **Beklenen Çıktı:** `Strict-Transport-Security` ve `X-Frame-Options` başlıkları döner.
 3. **Log İzleme:**
    ```bash
    docker compose logs -f --tail=100 | grep -i error
    ```
+   -> **Beklenen Çıktı:** Hata veya istisna satırı bulunmaz (`0 error`).
 
 ---
 

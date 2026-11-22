@@ -110,9 +110,9 @@ python .agent/skills/karpathy-guidelines/scripts/council_ranker.py --sample
 
 ---
 
-## 6. Action-First & Token-Dense Output (Zero-Fluff & Prose Compression)
+## 6. Action-First, `/caveman` & FAA AC 121-24C Ana Ekran Yanıt Sözleşmesi (Zero-Fluff & Prose Compression)
 
-**Bilişsel yükü düşür, dolgu cümlelerini sıfırla, teknik kesinliği tam koru.**
+**Ana ekran yanıtları `/caveman` + `FAA AC 121-24C Dokümantasyon Standardı` ile üretilir: bilişsel yük sıfırlanır, teknik kesinlik %100 korunur.**
 
 Derived from [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) and [juliusbrussee/caveman](https://github.com/juliusbrussee/caveman):
 
