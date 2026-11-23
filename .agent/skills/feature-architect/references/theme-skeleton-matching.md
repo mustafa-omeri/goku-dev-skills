@@ -18,13 +18,14 @@ Bu protokol hiçbir özel IDE arayüzüne bağımlı değildir; tüm ajan ve CLI
 
 ---
 
-## 1. Boyut 1: 16 Resmi Kilitli Tema ve Yaşayan Yüzey Önceliği (`Living Surface`)
+## 1. Boyut 1: 16 Resmi Kilitli Tema, 88 Style Theme İlham Kataloğu ve Yaşayan Yüzey Önceliği (`Living Surface`)
 
-Hiçbir ekran veya bileşen keyfi hex kodlarıyla veya rastgele siyah arka planlarla (`#000000`) boyanamaz. Her plan ve özellik önerisi `.agent/skills/frontend-design/themes/themes.css` (ve `themes.md`) içindeki **16 Resmi Kilitli Tema** ve projenin **Yaşayan Yüzey (`Living Surface`)** moduyla eşleştirilir:
+Hiçbir ekran veya bileşen keyfi hex kodlarıyla veya rastgele siyah arka planlarla (`#000000`) boyanamaz. Her plan ve özellik önerisi `.agent/skills/ui-polish/references/themes.css` içindeki **16 Resmi Kilitli Tema**, `.agent/skills/frontend-design/themes/style-theme-palettes.md` içindeki **88 Style Theme İlham Paleti** (`get_palette.py --style-themes`), `.agent/skills/frontend-design/themes/palette-catalog.md` (10 Ölçülmüş Palet) ve projenin **Yaşayan Yüzey (`Living Surface`)** moduyla eşleştirilir:
 
 1. **Yaşayan Yüzey Önceliği (`Living Surface Supremacy`):**
    - Projenin mevcut `DESIGN.md` veya CSS kök değişkenleri açık zeminli (`Light Mode`) ise, karanlık bir bileşen şablonu seçilse dahi projenin açık yüzey token'larına (`--bg-surface`, `--bg-card`, `--text-primary`, `--border-subtle`) uyarlanır.
    - Koyu zeminli (`Dark Mode`) projelerde ise derin katmanlı yüzey hiyerarşisi (`surface-0` < `surface-1` < `surface-2`) korunur.
+   - **Tek-Taraflı Seçim Yasağı:** Ajan *"en uygun bu kombinasyonu seçtim ve ilerliyorum"* diyerek tek başına renk kilitleyemez; 16 kilitli tema + 88 style theme havuzundan esinlenen **3 alternatifi** (esin kaynağı, WCAG oranı ve `Reddedilen Varsayılanlar` gerekçesiyle) kullanıcı onayına sunar.
 2. **16 Resmi Kilitli Tema Kataloğu:**
    - `#01 Obsidian Velvet` (Derin kadife koyu, kurumsal SaaS & AI)
    - `#02 Cyber Neon` (Yüksek kontrast siber telemetri & geliştirici araçları)

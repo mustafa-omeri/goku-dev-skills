@@ -48,7 +48,7 @@ Ajan, kod yazmaya başlamadan önce terminalde `get_component.py --verify` ve `-
 ```markdown
 ### 🚀 UI-POLISH MASTER ORCHESTRATION RECEIPT
 1. **Detected Project Archetype:** [SaaS Analytics / Logistics & BI / FinTech / EdTech / E-Commerce / Docs & Tools]
-2. **Selected Locked Theme:** [1 Birincil Tema (Örn: #08 MARITIME AMBER) + 2 Alternatif Aday + 1 cümlelik gerekçe]
+2. **Selected Locked Theme & Palette Inspiration (3 Candidates + Rationale):** [1 Birincil Aday (Örn: #08 MARITIME AMBER veya Style Theme: NORDIC NEON -> WCAG türetimi) + 2 Alternatif Aday + esinlenilen palet/eleme gerekçesi; kullanıcı onayı olmadan tek-taraflı kilitlenmez]
 3. **Selected Component Themes (frontend-design --verify PASS):** [Logins: split-hero-cloud-storage-login, Sidebar: dark-slate-dock-sidebar, Cards: expandable-summary-metric-card, Nav: floating-pill-marker-navbar]
 4. **Invoked UI/UX Skills:** [canvas-design (manifesto & font), ui-ux-pro-max (icons & motion), design-system (tokens), mock-asset-provider (avatars)]
 5. **Viewport-Native Mobile Transformations (375px):** [Desktop Sidebar -> Bottom Tab Bar + Sheet Drawer; Data Table -> Stacked Summary Cards]
@@ -142,7 +142,7 @@ Projelerde aksi belirtilmedikçe standart ve varsayılan toast bildirim motoru *
 
 ### Faz 3: Token Mimarisi & 16 Kilitli Tema (`design-system` + `ui-polish`)
 1. **DESIGN.md Mutlak Hiyerarşisi (Supreme Contract Rule):** Projede mevcut bir `DESIGN.md` varsa, `themes.css` kasetleri veya harici şablonlar bu sözleşmeyi ASLA EZEMEZ. Yalnızca DOM düzeni ve hareket mekaniği referans alınır; renkler, yüzey modu (Light/Dark), border ve tipografi %100 projenin `DESIGN.md` token'larından gelir. Açık kurumsal temalara korsan koyu modal başlığı (`E14`), gökkuşağı rozet karnavalı (`E15`) veya reddedilen jenerik SaaS mor/indigo renkleri (`E7`) dayatmak kesinlikle yasaktır.
-2. `ui-polish/references/themes.css` içindeki 16 resmi kilitli temadan arketipe en uygun 1 birincil tema ve 2 alternatif aday belirle. (Brownfield projelerde projenin mevcut zemin tonu ve `DESIGN.md` token'ları kilitli temanın zeminini belirler; projenin yaşayan açık kanvası asla ezilemez).
+2. `ui-polish/references/themes.css` (16 resmi kilitli tema), `.agent/skills/frontend-design/themes/style-theme-palettes.md` (88 Style Theme ilham paleti), `palette-catalog.md` (10 ölçülmüş palet) ve `colors.csv` (192 sektörel palet) havuzundan esinlenerek arketipe uygun **3 alternatif aday** (esin kaynağı + WCAG kontrastı + ret gerekçeleriyle) sun ve kullanıcı onayını al. ⛔ Ajan tek başına *"ben bu kombinasyonu seçtim ve ilerliyorum"* diyerek F2 onayını atlayamaz (Brownfield projelerde mevcut zemin tonu ve `DESIGN.md` token'ları korunur; açık kanvas asla ezilemez).
 3. `design-system` 3 katmanlı token mimarisini (`primitive` -> `semantic` -> `component`) projeye bağla.
 4. Koddaki tüm sabit HEX/RGB ve generic Tailwind sınıflarını temizle; semantik CSS değişkenlerine eşle.
 5. Geliştirme anında canlı test için `skill-routing-matrix.md` içindeki Sıfır-Token Tema Seçici kancasını (`systemThemeSwitcherPill`) enjekte et.

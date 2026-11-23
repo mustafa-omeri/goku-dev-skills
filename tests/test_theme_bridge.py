@@ -239,5 +239,72 @@ class TestSearchBridge(unittest.TestCase):
             if out_temp.is_file():
                 out_temp.unlink()
 
+
+class TestStyleThemePalettes(unittest.TestCase):
+    def test_parse_style_themes_count_and_groups(self):
+        themes = get_palette.parse_style_themes()
+        self.assertEqual(len(themes), 88, f"Expected 88 style themes, got {len(themes)}")
+
+        groups = {}
+        for t in themes:
+            groups[t["group"]] = groups.get(t["group"], 0) + 1
+            self.assertIn("name", t)
+            self.assertIn("colors", t)
+            self.assertGreaterEqual(len(t["colors"]), 3)
+            for c in t["colors"]:
+                self.assertRegex(c["hex"], r"^#[0-9A-Fa-f]{6}$")
+
+        self.assertEqual(groups.get("Özel ve Başlangıç Temaları"), 6)
+        self.assertEqual(groups.get("Konsept Temalar"), 10)
+        self.assertEqual(sum(v for k, v in groups.items() if k.startswith("Koleksiyon")), 72)
+
+    def test_search_and_derive_wcag_roles(self):
+        themes = get_palette.parse_style_themes()
+        matches = get_palette.search_style_themes(themes, "NORDIC NEON")
+        self.assertGreaterEqual(len(matches), 1)
+        nordic = matches[0]
+        self.assertEqual(nordic["name"], "NORDIC NEON")
+
+        dark_derived = get_palette.derive_style_theme_roles(nordic, mode="dark")
+        light_derived = get_palette.derive_style_theme_roles(nordic, mode="light")
+        for d in (dark_derived, light_derived):
+            self.assertGreaterEqual(d["contrast_ratio"], 4.5, f"WCAG AA failed for {d}")
+            self.assertIn("bg_base", d["tokens"])
+            self.assertIn("text_primary", d["tokens"])
+            self.assertIn("accent_primary", d["tokens"])
+
+        # Low-contrast pastel palette must still auto-adjust text/bg to >= 4.5:1
+        pastel = get_palette.search_style_themes(themes, "CANDY PASTEL")[0]
+        pastel_light = get_palette.derive_style_theme_roles(pastel, mode="light")
+        self.assertGreaterEqual(pastel_light["contrast_ratio"], 4.5)
+
+    def test_cli_style_themes_and_search_bridge(self):
+        pal_script = FRONTEND_SCRIPTS / "get_palette.py"
+        res_list = subprocess.run(
+            [sys.executable, str(pal_script), "--style-themes"],
+            capture_output=True, text=True, encoding="utf-8", cwd=str(ROOT_DIR)
+        )
+        self.assertEqual(res_list.returncode, 0, res_list.stderr)
+        self.assertIn("88", res_list.stdout)
+        self.assertIn("NORDIC NEON", res_list.stdout)
+
+        res_css = subprocess.run(
+            [sys.executable, str(pal_script), "--style", "NORDIC NEON", "--mode", "dark", "--format", "css"],
+            capture_output=True, text=True, encoding="utf-8", cwd=str(ROOT_DIR)
+        )
+        self.assertEqual(res_css.returncode, 0, res_css.stderr)
+        self.assertIn("--bg-base:", res_css.stdout)
+        self.assertIn("--accent-primary:", res_css.stdout)
+        self.assertIn("WCAG", res_css.stdout)
+
+        search_script = UI_UX_SCRIPTS / "search.py"
+        res_search = subprocess.run(
+            [sys.executable, str(search_script), "nordic neon"],
+            capture_output=True, text=True, encoding="utf-8", cwd=str(ROOT_DIR)
+        )
+        self.assertEqual(res_search.returncode, 0, res_search.stderr)
+        self.assertIn("NORDIC NEON", res_search.stdout)
+        self.assertIn("get_palette.py --style", res_search.stdout)
+
 if __name__ == "__main__":
     unittest.main()

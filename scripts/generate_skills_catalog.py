@@ -1067,13 +1067,13 @@ python .agent/skills/project-summary/scripts/summarize_project.py --check"""
             "Mod 3: Refinement (Mevcut DESIGN.md)",
             "Mod 4: Redesign (--redesign / [OVERDRIVE])",
             "Mod 5: Cerrahi Skeleton Kaset Modu (/ui-polish --skeleton)",
-            "16 Resmi Kilitli Tema (themes.css)",
-            "16 UI&UX Tasarım Becerisi Orkestrasyonu",
+            "16 Resmi Kilitli Tema (themes.css) + 88 Style Theme Paleti",
+            "16 UI&UX Tasarım Becerisi & F2 3-Alternatif Onay Kapısı",
             "Geometry-Matched Skeleton Screens UI (Zero CLS)",
             "W4 Spinner Slop & Mekanik Kapılar",
             "Sileo Yay Fiziği Toast Sistemi (/ui-toast)"
         ],
-        "detail": "Tüm 16 UI&UX tasarım becerisini koordine eden, 16 resmi kilitli temayı ve geometry-matched skeleton ekranlarını uygulayan Master Design Orchestrator protokolüdür.",
+        "detail": "Tüm 16 UI&UX tasarım becerisini koordine eden, 16 resmi kilitli temayı, 88 Style Theme ilham paletini (tek-taraflı seçim yasağı ve F2 3-alternatif onay kapısıyla) ve geometry-matched skeleton ekranlarını uygulayan Master Design Orchestrator protokolüdür.",
         "sample_prompt": "/ui-polish --skeleton: Kart bileşenine geometry-matched skeleton kasetini entegre et.",
         "config_snippet": """# 1. Cerrahi Skeleton Kaset Entegrasyonu:
 /ui-polish --skeleton @[Bileşen]
@@ -1102,23 +1102,23 @@ python .agent/skills/musgoku/scripts/check_theme_contrast.py --strict"""
 
         "features": [
 
-            "55 Hazır Bileşen Teması (get_component.py)",
+            "56 Hazır Bileşen Teması (get_component.py)",
 
-            "10 WCAG Renk Paleti (get_palette.py)",
+            "10 WCAG Paleti + 88 Style Theme Paleti (get_palette.py)",
 
             "CC0 Kültür Varlığı Aracı (assets.mjs)",
 
-            "3 Dalga AI-Slop Koruması",
+            "3 Dalga AI-Slop & Tek-Taraflı Seçim Koruması",
 
             "İki Satır Başlık & 2 Font Tavanı"
 
         ],
 
-        "detail": "Üretim kalitesinde web arayüzü kodu üretir. Sıfırdan yazmadan önce 55 hazır HTML/CSS bileşen temasını (sidebars, navbars, cards, logins, footers) ve 10 ölçülmüş WCAG paletini CLI köprüleriyle tarar; DESIGN.md sözleşmesine tam sadık kalır.",
+        "detail": "Üretim kalitesinde web arayüzü kodu üretir. Sıfırdan yazmadan önce 56 hazır HTML/CSS bileşen temasını (sidebars, navbars, cards, logins, footers), 10 ölçülmüş WCAG paletini ve 88 Style Theme ilham paletini CLI köprüleriyle tarar; F2 3-alternatif onay kapısı ve DESIGN.md sözleşmesine sadık kalır.",
 
-        "sample_prompt": "Arayüzü DESIGN.md sözleşmesine ve hazır bileşen temalarına göre modernleştir, AI-slop kalıplarını temizle.",
+        "sample_prompt": "Arayüzü DESIGN.md sözleşmesine, 88 Style Theme ilham kataloğuna ve hazır bileşen temalarına göre modernleştir; AI-slop ve tek-taraflı seçim yapma.",
 
-        "config_snippet": """# 1. 55 Hazır Bileşen Temasını Listele ve Kodunu Çek:
+        "config_snippet": """# 1. 56 Hazır Bileşen Temasını Listele ve Kodunu Çek:
 
 python .agent/skills/frontend-design/scripts/get_component.py --list
 
@@ -1126,11 +1126,13 @@ python .agent/skills/frontend-design/scripts/get_component.py --theme violet-min
 
 
 
-# 2. 10 Ölçülmüş WCAG Paletini Listele ve CSS Değişkeni Üret:
+# 2. 10 Ölçülmüş WCAG Paleti + 88 Style Theme İlham Paletini Listele ve CSS Üret:
 
 python .agent/skills/frontend-design/scripts/get_palette.py --list
 
-python .agent/skills/frontend-design/scripts/get_palette.py --id 7 --format css
+python .agent/skills/frontend-design/scripts/get_palette.py --style-themes
+
+python .agent/skills/frontend-design/scripts/get_palette.py --style "NORDIC NEON" --mode dark --format css
 
 
 

@@ -126,9 +126,9 @@ components:
 
 ## 2. Değerlendirilen Yönler (veya Mevcut Baseline Özeti)
 
-> `mode: baseline` ise burada mevcut tasarımın karakteristik özeti yazılır. `mode: crafted` veya `mode: redesign` ise F2 aşamasında değerlendirilen 3 alternatif yön ve seçilen yönün gerekçesi belgelenir.
+> `mode: baseline` ise burada mevcut tasarımın karakteristik özeti yazılır. `mode: crafted` veya `mode: redesign` ise F2 aşamasında değerlendirilen **3 alternatif yön** ve seçilen yönün kullanıcı onaylı gerekçesi belgelenir. ⛔ Ajan tek başına *"ben seçtim, ilerliyorum"* diyemez; her aday için `16 Kilitli Tema (themes.css)` / `88 Style Theme Palettes (style-theme-palettes.md)` / `palette-catalog.md` / `colors.csv` esin kaynağı ve WCAG oranı yazılır.
 
-| Yön | Felsefe & Atmosfer | Aday Palet & Font Çifti | Karar & Gerekçe |
+| Yön | Felsefe & Atmosfer | Aday Palet (Esin Kaynağı & WCAG) & Font Çifti | Karar & Gerekçe |
 |---|---|---|---|
 | **Yön A** | `<doldur>` | `<doldur>` | `<doldur: Seçildi / Elendi — neden?>` |
 | **Yön B** | `<doldur>` | `<doldur>` | `<doldur: Seçildi / Elendi — neden?>` |

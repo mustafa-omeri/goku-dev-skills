@@ -42,13 +42,14 @@ if sys.stderr.encoding and sys.stderr.encoding.lower() != 'utf-8':
 TRUNCATE_AT = 300
 
 def get_local_recommendations(query: str, max_items: int = 3):
-    """Find ready-made component themes and measured palettes from frontend-design."""
+    """Find ready-made component themes, measured palettes, and style theme palettes from frontend-design."""
     local_components = []
     local_palettes = []
+    local_style_themes = []
 
     frontend_design_scripts = Path(__file__).resolve().parent.parent.parent / "frontend-design" / "scripts"
     if not frontend_design_scripts.exists():
-        return {"components": [], "palettes": []}
+        return {"components": [], "palettes": [], "style_themes": []}
 
     try:
         sys.path.insert(0, str(frontend_design_scripts))
@@ -65,7 +66,7 @@ def get_local_recommendations(query: str, max_items: int = 3):
                 "path": str(c.get("path", "")),
             })
 
-        # Search palettes
+        # Search 10 measured palettes
         all_palettes = get_palette.parse_catalog()
         matched_pals = get_palette.search_palettes(all_palettes, query)
         for p in matched_pals[:max_items]:
@@ -79,19 +80,32 @@ def get_local_recommendations(query: str, max_items: int = 3):
                 "metin": roles.get("metin", {}).get("hex", ""),
                 "vurgu": roles.get("vurgu", {}).get("hex", ""),
             })
+
+        # Search 88 style theme palettes
+        all_style_themes = get_palette.parse_style_themes()
+        matched_styles = get_palette.search_style_themes(all_style_themes, query)
+        for st in matched_styles[:max_items]:
+            local_style_themes.append({
+                "id": st["id"],
+                "name": st["name"],
+                "group": st["group"],
+                "colors": ", ".join(f"{c['name']} {c['hex']}" for c in st["colors"]),
+                "locked_theme_ref": st.get("locked_theme_ref"),
+            })
     except Exception:
         pass
     finally:
         if str(frontend_design_scripts) in sys.path:
             sys.path.remove(str(frontend_design_scripts))
 
-    return {"components": local_components, "palettes": local_palettes}
+    return {"components": local_components, "palettes": local_palettes, "style_themes": local_style_themes}
 
 
 def format_local_recommendations(recs: dict) -> str:
     components = recs.get("components", [])
     palettes = recs.get("palettes", [])
-    if not components and not palettes:
+    style_themes = recs.get("style_themes", [])
+    if not components and not palettes and not style_themes:
         return ""
 
     lines = ["\n### 📦 Ready-Made Local Assets (from frontend-design)"]
@@ -105,6 +119,12 @@ def format_local_recommendations(recs: dict) -> str:
         for p in palettes:
             lines.append(f"- **[#{p['id']}] {p['title']}** ({p['mode']}) · Kontrast: {p['contrast']}")
             lines.append(f"  *CSS Variables:* `python .agent/skills/frontend-design/scripts/get_palette.py --id {p['id']} --format css`")
+    if style_themes:
+        lines.append(f"**Matching Style Theme Palettes — 88 İlham Havuzu ({len(style_themes)}):**")
+        for st in style_themes:
+            ref = f" · Kilitli Eşlenik: `{st['locked_theme_ref']}`" if st.get("locked_theme_ref") else ""
+            lines.append(f"- **[ST-{st['id']:02d}] {st['name']}** ({st['group']}){ref} · {st['colors']}")
+            lines.append(f"  *CSS Variables (WCAG AA):* `python .agent/skills/frontend-design/scripts/get_palette.py --style \"{st['name']}\" --mode dark --format css`")
     lines.append("")
     return "\n".join(lines)
 

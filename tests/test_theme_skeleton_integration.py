@@ -129,6 +129,38 @@ class ThemeSkeletonIntegrationTests(unittest.TestCase):
                 violations.append(f"{path.relative_to(ROOT)}: contains project name {m.group(0)!r}")
         self.assertEqual(violations, [], "\n".join(violations))
 
+    def test_07_style_theme_palettes_catalog_and_anti_unilateral_rules(self):
+        style_catalog = ROOT / ".agent" / "skills" / "frontend-design" / "themes" / "style-theme-palettes.md"
+        self.assertTrue(style_catalog.is_file(), f"Missing {style_catalog}")
+        cat_text = style_catalog.read_text(encoding="utf-8")
+        self.assertIn("MIDNIGHT SLATE", cat_text)
+        self.assertIn("SUNSET MIST", cat_text)
+
+        enforcement = (ROOT / ".agent" / "rules" / "design-skills-enforcement.md").read_text(encoding="utf-8")
+        for needle in (
+            "style-theme-palettes.md",
+            "Tek-Taraflı",
+            "3 alternatif",
+            "Reddedilen Varsayılanlar",
+        ):
+            self.assertIn(needle, enforcement, f"design-skills-enforcement.md missing: {needle}")
+
+        cdp = (ROOT / ".agent" / "skills" / "ui-polish" / "references" / "creative-direction-protocol.md").read_text(encoding="utf-8")
+        self.assertIn("style-theme-palettes.md", cdp)
+        self.assertIn("Tek-Taraflı", cdp)
+
+        ui_polish = (ROOT / ".agent" / "skills" / "ui-polish" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("style-theme-palettes.md", ui_polish)
+
+        fe_design = (ROOT / ".agent" / "skills" / "frontend-design" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("style-theme-palettes.md", fe_design)
+
+        tsm = THEME_SKELETON_REF.read_text(encoding="utf-8")
+        self.assertIn("style-theme-palettes.md", tsm)
+
+        plan_tmpl = PLAN_TEMPLATE.read_text(encoding="utf-8")
+        self.assertIn("get_palette.py", plan_tmpl)
+
 
 if __name__ == "__main__":
     unittest.main()

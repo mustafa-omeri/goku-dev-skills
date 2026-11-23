@@ -80,7 +80,9 @@ Use `--design-system` when the task needs a coherent product-wide visual directi
 python .agent/skills/ui-ux-pro-max/scripts/search.py "<product_type> <industry> <keywords>" --design-system [-p "Project Name"]
 ```
 
-This aggregates product/style/color/landing/typography matches, applies reasoning rules from `ui-reasoning.csv`, and returns pattern, style, colors, typography, effects, and anti-patterns to avoid.
+This aggregates product/style/color/landing/typography matches, applies reasoning rules from `ui-reasoning.csv`, surfaces local assets (56 component themes, 10 measured palettes, and **88 Style Theme Color Palettes** from `frontend-design/themes/style-theme-palettes.md`), and returns pattern, style, colors, typography, effects, and anti-patterns to avoid.
+
+> ⛔ **Anti-Unilateral Color Selection Rule:** Search outputs and style themes are candidates (`candidate`) for inspiration, NOT an automatic unilateral decision. Present 3 distinct candidates (citing palette inspiration provenance, WCAG contrast, and Rejected Defaults) and follow the standard F2 user approval gate before locking `DESIGN.md` tokens.
 
 **Example:**
 ```bash

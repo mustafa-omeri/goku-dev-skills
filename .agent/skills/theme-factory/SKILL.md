@@ -69,4 +69,6 @@ After a preferred theme is selected:
 4. Maintain the theme's visual identity across all slides
 
 ## Create your Own Theme
-To handle cases where none of the existing themes work for an artifact, create a custom theme. Based on provided inputs, generate a new theme similar to the ones above. Give the theme a similar name describing what the font/color combinations represent. Use any basic description provided to choose appropriate colors/fonts. After generating the theme, show it for review and verification. Following that, apply the theme as described above.
+To handle cases where none of the existing 10 artifact themes work for an artifact:
+1. Inspect both the existing curated themes (`themes/*.md`), the 16 Locked Themes (`.agent/skills/ui-polish/references/themes.css`), and the **88 Style Theme Color Palettes** (`.agent/skills/frontend-design/themes/style-theme-palettes.md` via `python .agent/skills/frontend-design/scripts/get_palette.py --style-themes`) for inspiration.
+2. Never pick or lock a palette unilaterally ("I chose this and I'm proceeding") or use generic AI-slop defaults: present 3 grounded options with inspiration provenance, WCAG AA contrast check, and rationale, then wait for explicit user selection before applying.

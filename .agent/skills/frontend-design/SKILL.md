@@ -57,23 +57,19 @@ Similar to searching `./canvas-fonts` in `canvas-design` for typographic depth, 
 > `design-system`'dir; Tailwind/shadcn kurulumu `ui-styling`'in işidir. Aynı işi
 > üç yerde yapma.
 
-- **Curated Palette Cards**: The `./themes/` folder contains curated high-contrast color cards (`frontend-design-skill-theme-*.jpg`) providing intentional, masterfully paired HEX color palettes (e.g., Tiffany `#21F1A8` & Dark Gray `#171717`, True Pink `#FD1843` & Chill White `#FFF9FA`, Lime Sprout `#E4FD97` & Fresh Canopy `#2D3E2C`, etc.).
+- **Curated Palette Cards & 88 Style Theme Catalog (`./themes/`):**
+  * `themes/palette-catalog.md` + `frontend-design-skill-theme-*.jpg`: 10 measured, high-contrast WCAG palettes.
+  * `themes/style-theme-palettes.md`: **88 curated Style Theme Color Palettes** (6 Özel ve Başlangıç, 10 Konsept, 72 Koleksiyon 01–18) used as an **inspiration and WCAG-derived token pool** alongside the 16 Locked Themes (`ui-polish/references/themes.css`) and 192 `colors.csv` palettes.
 - **Dashboard Layout References**: The `./dashboard-theme/` folder contains 18 curated dashboard screenshots (`dashboard-theme-01.webp` → `dashboard-theme-18.webp`) plus a `README.md` guide. **When the user asks for a dashboard, always inspect this folder first** and borrow layout patterns (sidebar + topbar + card grid, KPI cards, tables, progress rings) instead of inventing a generic admin layout.
 - **Curated Component Themes**: The `./component-themes/` folder contains 55 production-ready HTML/CSS themes across 8 core categories (sidebars, navbars, menus, parallax, logins, footers, cards, accordions). **When the user asks for a sidebar, navbar, login, footer, card, accordion, menu, or parallax, always inspect `./component-themes/` first.** Each theme folder contains its standalone working code and a dedicated `<theme-name>.design.md` detailing aesthetic tone, layout anatomy, agent selection criteria, and framework adaptation.
 - **Zero-Friction CLI Bridges:**
   * Component Picker & Verification Bridge: `python .agent/skills/frontend-design/scripts/get_component.py --list` (or `--verify <theme1,theme2>` to mechanically reject hallucinated theme names, and `--theme <name> --adapt-guide` to get the `STRUCTURAL PORTING BLUEPRINT` + HTML/CSS skeleton)
-  * Palette Picker: `python .agent/skills/frontend-design/scripts/get_palette.py --list` (or `--id <1-10> --format css`)
-
-- **Zero-Friction CLI Bridges:**
-
-  * Component Picker & Verification Bridge: `python .agent/skills/frontend-design/scripts/get_component.py --list` (or `--verify <theme1,theme2>` to mechanically reject hallucinated theme names, and `--theme <name> --adapt-guide` to get the `STRUCTURAL PORTING BLUEPRINT` + HTML/CSS skeleton)
-
-  * Palette Picker: `python .agent/skills/frontend-design/scripts/get_palette.py --list` (or `--id <1-10> --format css`)
-- **How to Use**:
-  1. Before picking random colors or falling back to generic blues/purples, inspect the `./themes` folder.
-  2. Select a theme card that matches the tone, mood, and brand requirements of the interface.
-  3. Extract and map the exact primary, secondary, background, and accent colors into Tailwind classes or CSS variables (`--primary`, `--background`, `--foreground`, etc.).
-  4. Ensure sharp contrast, readability, and WCAG accessibility standards across all components.
+  * Palette Picker (10 Measured + 88 Style Themes with WCAG AA derivation): `python .agent/skills/frontend-design/scripts/get_palette.py --list` · `python .agent/skills/frontend-design/scripts/get_palette.py --style-themes` · `python .agent/skills/frontend-design/scripts/get_palette.py --style "NORDIC NEON" --mode dark --format css` (or `--id <1-10> --format css`)
+- **How to Use & Anti-Unilateral Selection Rule:**
+  1. Before picking random colors or falling back to generic blues/purples, inspect `./themes/palette-catalog.md`, `./themes/style-theme-palettes.md` (88 palettes), and `ui-polish/references/themes.css` (16 locked themes).
+  2. **Never unilaterally declare "I chose the best combination and I'm proceeding"**: unless preserving an existing Brownfield Living Surface, follow the standard F1 → F2 (3 distinct candidates with palette provenance, WCAG contrast, and Rejected Defaults) → User Approval → F3 Token workflow.
+  3. Extract and map the exact or WCAG-adjusted primary, secondary, surface, and accent colors into Tailwind classes or semantic CSS variables (`--bg-base`, `--text-primary`, `--accent-primary`, etc.).
+  4. Ensure sharp contrast (`>= 4.5:1` AA), readability, and WCAG accessibility standards across all components.
 
 NEVER use generic AI-generated aesthetics like overused font families (Inter, Roboto, Arial, system fonts), cliched color schemes (particularly purple gradients on white backgrounds), predictable layouts and component patterns, and cookie-cutter design that lacks context-specific character.
 

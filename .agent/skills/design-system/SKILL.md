@@ -280,3 +280,4 @@ python .agent/skills/design-system/scripts/slide-token-validator.py <dosya.html>
 4. Use HSL format for opacity control
 5. Document every token's purpose
 6. **Slides must import design-tokens.css and use var() exclusively**
+7. **Palette Provenance & Anti-Unilateral Selection:** Derive primitive/semantic palettes from the 16 Locked Themes (`../ui-polish/references/themes.css`), 88 Style Theme Palettes (`../frontend-design/themes/style-theme-palettes.md` via `python .agent/skills/frontend-design/scripts/get_palette.py --style "<TEMA>" --mode dark --format css`), or 10 measured palettes; never invent random hexes or lock a palette without user approval (F2 3-alternative gate).

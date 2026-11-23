@@ -88,11 +88,11 @@ Feature: <doldur: Özellik Adı>
 ---
 
 ## 7. 🎨 Tema ve Bileşen İskeleti Sözleşmesi (Theme & Component Skeleton Contract)
-> ⛔ **SIFIR AI-SLOP KURALI:** Arayüz içeren her planda ezbere bileşen veya keyfi renk yazmak yasaktır; `.agent/skills/feature-architect/references/theme-skeleton-matching.md` omurgasıyla eşleştirme zorunludur (Salt backend/CLI işlerinde `'Salt Backend / UI Kapsam Dışı'` yazılır):
+> ⛔ **SIFIR AI-SLOP & TEK-TARAFLI SEÇİM YASAĞI:** Arayüz içeren her planda ezbere bileşen veya keyfi renk yazmak, ayrıca ajanın tek başına *"ben bu kombinasyonu seçtim ve ilerliyorum"* demesi yasaktır; `.agent/skills/feature-architect/references/theme-skeleton-matching.md` omurgasıyla **3 aday + esin kaynağı + WCAG kontrastı + kullanıcı onayı** zorunludur (Salt backend/CLI işlerinde `'Salt Backend / UI Kapsam Dışı'` yazılır):
 
 | İskelet Boyutu | Seçilen Şablon / Kaset / Token | Kaynak / CLI Komutu |
 |---|---|---|
-| **1. Yaşayan Yüzey & 16 Kilitli Tema** | `<doldur: Light/Dark Living Surface + #01 Obsidian Velvet .. #16 Warm Alabaster>` | `.agent/skills/frontend-design/themes/themes.css` |
+| **1. Yaşayan Yüzey & 16 Kilitli Tema + 88 İlham Paleti** | `<doldur: Light/Dark Living Surface + 3 aday (#01..#16 veya 88 Style Theme esin kaynağı) + kullanıcı onay durumu>` | `.agent/skills/ui-polish/references/themes.css` & `python .agent/skills/frontend-design/scripts/get_palette.py --style-themes` |
 | **2. 55+ Doğrulanmış Bileşen Teması** | `<doldur: logins / sidebars / navbars / menus / cards / footers / accordions / parallax şablon ID'si>` | `python .agent/skills/frontend-design/scripts/get_component.py --list` |
 | **3. 18 Doğrulanmış Dashboard Şablonu** | `<doldur: dashboard-theme-01 .. 18 veya 'Dashboard Kapsam Dışı'>` | `.agent/skills/frontend-design/dashboard-theme/catalog.json` |
 | **4. Zero-CLS Skeleton Kaseti & 4 UX Durumu** | `<doldur: Profil / Metrik Kart / Tablo Satırı / Dashboard / Form Kaseti + Empty/Error State>` | `ui-polish` & `check_design_slop.py` |
