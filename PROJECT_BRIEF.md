@@ -44,7 +44,7 @@ related_docs:
 | `.agent/rules/` | Ajan kuralları ve anayasal sözleşmeler (sinif: OLCULEBILIR/TUTUM/SUREC) | 22 kural (12 ölçülebilir, 10 kapısız) |
 | `.agent/templates/` | Projelerde açılacak living markdown ve HTML şablonları | Kök şablonları (`PROJECT_SUMMARY`, `ACCEPTANCE_TEST_SPEC` ve `KULLANICI_REHBERI.html` dahil) |
 | `bin/` | `goku-dev-skills` npm CLI paket yürütücüsü (`cli.js`) | CLI arabirimi |
-| `tests/` | Depo bütünlüğü, drift, sızıntı, altın benchmark ve kural kapısı regresyon testleri | 30 test paketi (`feature-architect-bench/` 14 sentetik senaryo dahil) |
+| `tests/` | Depo bütünlüğü, drift, sızıntı, altın benchmark ve kural kapısı regresyon testleri | 31 test paketi (`feature-architect-bench/` 14 sentetik senaryo ve `test_diff_triage.py` dahil) |
 | `scripts/` | Skill kataloğu ve yardımcı üretim betikleri | Otomasyon araçları |
 
 ---
@@ -69,5 +69,5 @@ related_docs:
 ---
 
 ## 5. Yaşatma & Operasyonel Döngü
-- **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `check_test_spec.py`, `test_skills_catalog.py`, `test_project_summary.py`, `test_feature_architect.py`, `test_feature_architect_council.py`, `test_feature_architect_bench.py`, `test_council_workflow_integration.py`, `test_theme_skeleton_integration.py`, `test_prelaunch_security.py`, `test_clean_url_routing.py`, `test_cognitive_counsel.py`, `test_test_spec_generator.py`
-- **Son Başarılı Doğrulama:** 2026-11-22 · 30/30 test paketi PASS · Birleşik kapılar PASS (11 geçti, 0 başarısız) · Skill kataloğu (50 skill, 22 slash komutu) PASS · Dağıtım 4/4 tam paritede
+- **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `check_test_spec.py`, `diff_triage.py`, `test_skills_catalog.py`, `test_project_summary.py`, `test_feature_architect.py`, `test_feature_architect_council.py`, `test_feature_architect_bench.py`, `test_council_workflow_integration.py`, `test_theme_skeleton_integration.py`, `test_prelaunch_security.py`, `test_clean_url_routing.py`, `test_cognitive_counsel.py`, `test_test_spec_generator.py`, `test_diff_triage.py`
+- **Son Başarılı Doğrulama:** 2026-11-23 · 31/31 test paketi PASS · Birleşik kapılar PASS · Scout 33 repo (23 transferred) %100 paritede · Skill kataloğu (50 skill, 23 slash komutu) PASS

@@ -96,7 +96,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 Büyük mimari tercihlerde, riskli refactoring kararlarında veya belirsiz tasarım ikilemlerinde Andrej Karpathy'nin 3 aşamalı konsey protokolü uygulanır:
 
 1. **Stage 1 (First Opinions):** Bağımsız 2-3 alternatif çözüm üretilir (`Option A`, `Option B`, `Option C`).
-2. **Stage 2 (Anonymized Peer Review):** Çözümler harflendirilerek kimliği gizlenir (körleme); alt ajanlara veya modellere güçlü/zayıf yönler ve Karpathy sadelik filtresi üzerinden inceletilip sıralanır (`FINAL RANKING:`).
+2. **Stage 2 (Anonymized Peer Review & Doubt Isolation):** Çözümler harflendirilerek kimliği gizlenir (körleme); alt ajanlara kendi sonucunuzu/iddianızı (`CLAIM`) vermeden yalnızca `ARTIFACT + CONTRACT` ile inceletilip sıralanır (`FINAL RANKING:`) (`code-review/references/transferred_agent_skills.md`). Alt ajan görevlerinde model kademelendirmesi uygulanır: mekanik işler hızlı model, final inceleme ve 3+ tur takılan çözümler en yetenekli modelle yürütülür (`transferred_superpowers.md`).
 3. **Stage 3 (Chairman Synthesis):** Başkan ajan, akran eleştirilerini ve konsensüs tablosunu inceleyerek çelişkileri ayıklar; en yalın ve sağlam nihai sentezi üretir.
 
 Detaylı rehber ve prompt şablonları için:

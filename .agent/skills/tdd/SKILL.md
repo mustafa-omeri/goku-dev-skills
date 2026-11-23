@@ -34,4 +34,5 @@ Soru: "Genel arayüz nedir ve hangi dikiş noktalarını test etmeliyiz?" Her ö
 
 1. **Yeşilden Önce Kırmızı:** Önce başarısız olan testi yazın, ardından yalnızca o testi geçirecek kadar minimal kod yazın. Gelecekteki testleri tahmin edip spekülatif kod eklemeyin.
 2. **Döngü Başına Tek Dilim:** Bir dikiş noktası, bir test ve bir minimal kod.
-3. **Refactoring Döngünün Parçası Değildir:** Refactoring ve kod temizliği kırmızı-yeşil döngüsü içinde değil, inceleme aşamasında (`code-review` skill'i ile) yapılır.
+3. **Regresyon İspatı & Mutasyon Kontrolü:** Bir bug fix veya kritik koşul testinde gerçek koruma kanıtı için ya fix'i geçici geri alıp testin kırmızıya (`FAIL`) düştüğünü görün (`transferred_superpowers.md`), ya da kritik bir koşulu (`!` / `&&` <-> `||`) geçici ters çevirip testin kırıldığını doğrulayın — mutasyona rağmen yeşil kalan test eksik senaryodur (`transferred_agent_skills.md`).
+4. **Refactoring Döngünün Parçası Değildir:** Refactoring ve kod temizliği kırmızı-yeşil döngüsü içinde değil, inceleme aşamasında (`code-review` skill'i ile) yapılır.

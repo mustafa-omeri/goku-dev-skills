@@ -19,8 +19,9 @@ Bu yetenek, anlık geliştirme oturumunda **en son yapılan değişiklikleri**, 
 
 ## 4 Aşamalı Cerrahi Denetim ve Bulgu İşleme Protokolü
 
-### 1. Birleşik Kapsam-Duyarlı Kalite Kapısı (`run_all_gates.py`)
-- `git status --short` ile değişen dosyaları listele.
+### 1. Birleşik Kapsam-Duyarlı Kalite Kapısı (`run_all_gates.py`) & Demir Yasa
+- `git status --short` ile değişen dosyaları listele ve gerekirse `git diff HEAD | python .agent/skills/code-review/scripts/diff_triage.py --stats` ile zemin ihlali (`@ts-ignore`, `eslint-disable`, `# noqa`, skipped test, stub) kontrolü yap.
+- **Tamamlanma Öncesi Demir Yasa (`Verification Iron Law`):** Son düzenleme sonrasında güncel komut çıktısı (`exit 0`) okunmadan *"çalışıyor / geçti / tamamlandı"* denemez; *"linter temiz"* beyanı derleme (`tsc`/`mvn`) kanıtı yerine geçmez, alt ajan beyanı `git status` ve test çıktısıyla bağımsız doğrulanır (Bkz: `.agent/skills/code-review/references/transferred_superpowers.md`).
 - Projedeki tüm ölçülebilir kural kapılarını tek komutla çalıştır:
   ```bash
   python .agent/skills/musgoku/scripts/run_all_gates.py

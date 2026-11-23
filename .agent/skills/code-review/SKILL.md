@@ -22,9 +22,14 @@ Bu iki ekseni ayrı incelemek, bir eksenin diğerini maskelemesini kesin olarak 
 
 ## İnceleme Süreci
 
-### 1. Referans Noktasını Sabitleyin
+### 1. Referans Noktasını Sabitleyin & Deterministik Ön Triaj (`diff_triage.py`)
 Kullanıcının belirttiği referans noktasını (`commit SHA`, dal adı, tag, `main`, `HEAD~3` vb.) alın. Belirtilmediyse sorun.
 Diff komutunu hazırlayın: `git diff <ref>...HEAD` (merge-base karşılaştırması). Değişiklik listesini alın: `git log <ref>..HEAD --oneline`. Diff boşsa işlemi burada durdurun.
+Büyük/çoklu dosya değişikliklerinde körlemesine okumadan önce deterministik ön triajı çalıştırın:
+```bash
+git diff <ref>...HEAD | python .agent/skills/code-review/scripts/diff_triage.py --stats
+```
+Bu araç boyut/karmaşıklık skorunu, i18n/test demetlerini (`bundles`), kapsam manifestini (`coverage_manifest`) ve eklenen satırlardaki sessiz zemin düşürmelerini (`@ts-ignore`, `eslint-disable`, `# noqa`, skipped test, stub) çıkarır (`references/transferred_code_review_skill.md`, `references/transferred_agent_skills.md`, `references/transferred_open_code_review.md`).
 
 ### 2. Şartname Kaynağını Belirleyin
 1. Commit mesajlarındaki issue referansları (`#123`, `Closes #45`).
@@ -69,8 +74,13 @@ Bulguları `## Standartlar` ve `## Şartname` başlıkları altında yan yana su
   * **4-Parçalı Somut Bulgu Zorunluluğu:** Soyut tavsiye ("consider...") yasaktır. Her bulgu: 1) `What this is` (ne yapıyor), 2) `Problem` (somut hata durumu), 3) `Fix` (küçük çalışan onarım), 4) `If we skip it` (atlanırsa canlıda ne olur) formatında yazılır.
   * **İşe Göre Bölme:** Fonksiyonlar keyfi satır sayısına göre değil, sadece bağımsız işlere göre (`by job`) bölünür.
 - **Rejection Log (Bilinçli Tercih Kontrolü):** `HANDOFF.md`, `knowledge-base.md` ve `PROJECT_BRIEF.md` içinde belgelenmiş bilinçli mimari ödünler ve tavanı aşılmamış `shortcut: <tavan>, <tetikleyici>` yorumları "hata" olarak sunulmaz; `## Bilinçli Tercihler (Rejection Log)` tablosuna taşınır (Ayrıntı: `references/stop-conditions-and-rejections.md`). Yükseltme tetikleyicisi yazılmamış olanlar ise `no-trigger` çürüme riski olarak bayraklanır.
+- **Kapsam Muhasebesi, Davranışsal Etki & Presumptive Blockers:**
+  * Rapor sonunda `total_files`, `reviewed_files`, `skipped_files` (sebebiyle) ve `coverage_rate` belirtilir; `coverage_rate < 1.0` iken *"Sorun yok"* denemez (`references/transferred_open_code_review.md`).
+  * Hata olmasa bile kullanıcı/çağrıcı iş akışını değiştiren değişiklikler (flag/arayüz/dosya silme) ayrı bir `## Davranışsal Etki` başlığında raporlanır.
+  * Karmaşıklığı yalnız başka yere taşıyan refactoring, canonical yardımcı kopyası, sessiz fallback ve `diff_triage.py` tarafından yakalanan yeni susturma/stub ihlalleri **Presumptive Blocker** olarak ele alınır; yapısal çare önerilir ve kritik koşullar mutasyon testiyle sınanır (`references/transferred_agent_skills.md`, `references/transferred_code_review_skill.md`).
+- **Geri Bildirim Alma Protokolü (`receiving-code-review`):** İnceleme bulguları uygulanırken performanslı övgü yasaktır; her madde kod tabanıyla doğrulanır, YAGNI veya teknik olarak hatalı öneriler teknik kanıtla geri itilir (`references/transferred_superpowers.md`).
 - **STOP Koşulları:** Kod incelemesi sonrası refactoring veya onarım adımlarında gerçeklik beklentiyle uyuşmuyorsa (`Reality Mismatch`), alt ajan durur ve onay ister.
 - **Standartlar vs Şartname İhtilaflarında Konsey Hakemliği (Council Deliberation):** Bir eksenin "standart dışı / smell" dediği ancak şartnamenin zorunlu kıldığı çelişkili durumlarda (örn. geriye dönük uyumluluk köprüleri, mecburi parametre yığınları), `council` / `karpathy-guidelines` (§5 Council Deliberation) kör hakemliği işletilerek bilinçli trade-off kararı üretilir ve `knowledge-base.md` / `docs/adr/` kaydına bağlanır.
 - **Yanıt Sonu Şeffaflık İmzası:** Rapor sonunda 1-2 satırlık `Kontrol Edilmeyen / Kapsam Dışı:` ve `Kullanıcının Bilmesi Gereken Risk:` notu düşülür.
 
-Raporu şu özetle bitirin: Her iki eksendeki toplam bulgu sayısı ve her eksenin kendi içindeki en kritik sorunu.
+Raporu şu özetle bitirin: Her iki eksendeki toplam bulgu sayısı (`🔴 [blocking]`, `🟡 [important]`, `🟢 [nit]`), kapsam oranı (`coverage_rate`) ve her eksenin kendi içindeki en kritik sorunu.

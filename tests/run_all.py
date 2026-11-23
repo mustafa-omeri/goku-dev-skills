@@ -44,6 +44,7 @@ TEST_SCRIPTS = [
     ("Test Sync Sibling Handoff", HERE / "test_sync_sibling_handoff.py"),
     ("Test Review PRD", HERE / "test_review_prd.py"),
     ("Test Test Spec Generator", HERE / "test_test_spec_generator.py"),
+    ("Test Diff Triage", HERE / "test_diff_triage.py"),
 ]
 
 
