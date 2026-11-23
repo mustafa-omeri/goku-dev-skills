@@ -118,3 +118,84 @@ Ayrıntılı desenler ve veritabanına göre çözümler:
 
 Aynı mantık servisler arasında kopyalanmaz. Ortak sorgu/specification yardımcıları
 tek yerde tanımlanır ve paylaşılır.
+
+---
+
+## 9. Soft-Delete Mimarisi ve 4 Kritik Veri Katmanı Pratiği
+
+> Tüm projelerde silme işlemi varsayılan olarak **Soft-Delete** (`status = 'DELETED'` veya `is_deleted = true` / `deleted_at`) olarak kurgulanır ve `POST` metoduyla çalıştırılır. Fiziksel silme (`DELETE FROM` / `deleteById`) yalnızca mimari/plan aşamasında kullanıcı tarafından açıkça onaylanmış geçici tablolarda uygulanabilir (`check_api_docs.py` `W3` kapısı ile denetlenir).
+
+### 9.1 Fiil Tabanlı (RPC) Durum Geçişi ve Optimistic Locking (`@Version`)
+Soft-delete fiziksel bir yok etme değil, durum geçişidir (`ACTIVE -> DELETED`).
+- Endpoint `POST /api/v1/<resource>/{id}/cancel` veya `/archive` / `/delete` olarak tanımlanır.
+- Entity üzerinde `@Version private Long version;` alanı bulundurulur; Hibernate soft-delete `UPDATE` sorgusuna `WHERE id = ? AND version = ?` kısıtını otomatik ekler.
+- Zaten `DELETED` olan kayda tekrar silme isteği geldiğinde idempotent olarak `200 OK` dönülür.
+
+### 9.2 Veritabanı Seviyesinde İzolasyon (Global Query Filters) & Native SQL Kalkanı
+Geliştiricinin bir sorguda `WHERE is_deleted = false` / `status != 'DELETED'` koşulunu unutması silinmiş verinin kullanıcıya sızmasına yol açar (`check_api_docs.py` `W3` kapısı `@Entity` üzerinde global filtre varlığını denetler):
+
+1. **Hibernate 6.4+ / Spring Data JPA (`@SQLRestriction` veya `@SoftDelete`):**
+   *(Not: Eski `@Where` anotasyonu Hibernate 6.4+ ile kullanımdan kaldırılmıştır).*
+   ```java
+   @Entity
+   @Table(name = "users")
+   @SQLRestriction("status <> 'DELETED'") // Tüm Entity ve COUNT sorgularının SQL AST'sine otomatik eklenir
+   public class User {
+       @Id
+       @GeneratedValue(strategy = GenerationType.IDENTITY)
+       private Long id;
+
+       @Enumerated(EnumType.STRING)
+       @Column(nullable = false, length = 20)
+       private RecordStatus status = RecordStatus.ACTIVE;
+
+       @Version
+       private Long version;
+   }
+   ```
+2. **Prisma 6+ (`$extends` Client Extensions):**
+   *(Not: Eski `prisma.$use` middleware yerine Client Extensions veya `queryFragments` kullanılır).*
+   ```ts
+   const prisma = new PrismaClient().$extends({
+     query: {
+       $allModels: {
+         async $allOperations({ args, query, operation }) {
+           if (operation === 'findMany' || operation === 'findFirst' || operation === 'count') {
+             args.where = { ...args.where, deletedAt: null };
+           }
+           return query(args);
+         },
+       },
+     },
+   });
+   ```
+3. ⛔ **Native SQL (`nativeQuery = true`) ve Alt Sorgu Kalkanı (Kritik Tuzak):**
+   `@SQLRestriction` ve ORM global filtreleri **Native SQL sorgularında ve alt sorgularda (`EXISTS`, `IN`, `JOIN` subquery) ÇALIŞMAZ!**
+   - Native SQL yazıldığında hem **ana sorguda** hem de **tüm alt sorgu ve JOIN'lerde** `AND t.status != 'DELETED'` (veritabanındaki kanonik büyük harf enum değeriyle; PostgreSQL büyük/küçük harf duyarlıdır) açıkça yazılmak zorundadır.
+
+### 9.3 Unique (Benzersiz) Kısıtlama Çakışmalarını Önleme
+Kullanıcı `ali@ornek.com` adresiyle kayıt olup hesabını sildiğinde (soft-delete), aynı e-posta ile tekrar kayıt olmak isterse standart `UNIQUE(email)` kısıtlaması patlar. Tablo üzerinde tam `UNIQUE(email)` kullanılmaz; veritabanı motoruna göre şu iki çözümden biri zorunludur:
+
+1. **Çözüm 1 — Partial Unique Index (PostgreSQL, SQL Server, SQLite, Prisma `@@index` — Altın Standart):**
+   Yalnızca aktif (silinmemiş) kayıtları kapsayan koşullu benzersiz indeks oluşturulur:
+   ```sql
+   -- PostgreSQL (Büyük tablolarda CONCURRENTLY ile kilitlemeden)
+   CREATE UNIQUE INDEX CONCURRENTLY idx_users_active_email
+   ON users (email)
+   WHERE status != 'DELETED'; -- veya WHERE is_deleted = false / WHERE deleted_at IS NULL
+   ```
+   Prisma şemasında karşılığı:
+   ```prisma
+   @@index([email], where: "deleted_at IS NULL", unique: true, name: "idx_users_active_email")
+   ```
+2. **Çözüm 2 — Aktiflik Token'ı ile Composite Unique (Partial Index Desteklemeyen Motorlar: MySQL / MariaDB):**
+   - ⚠️ **SQL `NULL != NULL` Tuzağı Uyarısı:** Standart SQL'de `NULL` değerler birbirine eşit sayılmaz (`NULL != NULL`). Bu yüzden `deleted_at (nullable timestamp)` üzerinde kurulan `UNIQUE (email, deleted_at)` indeksinde `deleted_at IS NULL` iken aynı e-posta ile **birden fazla aktif kayıt** açılabilir!
+   - **Doğru Çözüm:** `deleted_at` (audit için nullable timestamp) yanında `deleted_token BIGINT NOT NULL DEFAULT 0` kolonu tutulur. Aktif kayıtlarda değer `0`'dır; kayıt soft-delete yapıldığında `deleted_token = id` (veya `UNIX_TIMESTAMP()`) yazılır ve indeks `UNIQUE (email, deleted_token)` olarak kurgulanır.
+
+### 9.4 Kaskad (İlişkili) Veri Yönetimi (`deleted_by_parent` vs `409 Conflict`)
+Bir ana kayıt (Müşteri, Şirket, Kategori) soft-delete yapıldığında ona bağlı alt kayıtların (Siparişler, Ürünler, Alt Bölümler) davranışı mimari/plan aşamasında şu iki seçenekten biriyle netleştirilir:
+
+| Seçenek | Mimari Davranış | Uygulama & Restore Kuralı |
+|---|---|---|
+| **Seçenek A: Kaskad Soft-Delete (`deleted_by_parent`)** | Ana kayıt silindiğinde aktif alt kayıtlar da aynı `@Transactional` içinde otomatik soft-delete yapılır. | Alt tablolarda `deleted_by_parent BOOLEAN NOT NULL DEFAULT false` kolonu tutulur. Ana kayıt silinirken dolaylı silinen alt kayıtlara `deleted_by_parent = true` yazılır. **Ana kayıt `restore` edildiğinde yalnız `deleted_by_parent = true` olan alt kayıtlar geri getirilir** (daha önce kullanıcı tarafından bireysel silinmiş alt kayıtlar yanlışlıkla canlandırılmaz). |
+| **Seçenek B: Aktif Alt Kayıt Koruması (`409 Conflict`)** | Altında aktif (`status = 'ACTIVE'`) kayıt bulunan ana kaydın silinmesine izin verilmez. | Servis katmanı `existsByParentIdAndStatus(id, ACTIVE)` kontrolü yapar; aktif alt kayıt varsa işlem **`409 Conflict`** (`errorCode: "ACTIVE_CHILDREN_EXIST"`) ve kullanıcı dostu açıklamayla reddedilir. |

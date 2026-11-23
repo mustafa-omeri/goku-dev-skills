@@ -160,6 +160,28 @@ public class UserController {
         self.assertIn("Plan Referanslı Görevler (Traceable HANDOFF)", report)
         self.assertIn("Öncelikli Protokol Kalkanı", report)
 
+    def test_detects_forbidden_put_delete_http_methods(self):
+        be_dir = self.root / "backend" / "src"
+        be_dir.mkdir(parents=True)
+        ctrl = be_dir / "OrderController.java"
+        ctrl.write_text(
+            """
+@RestController
+@RequestMapping("/api/v1/orders")
+public class OrderController {
+    @DeleteMapping("/{id}")
+    public void deleteOrder() {}
+}
+            """,
+            encoding="utf-8",
+        )
+        scanner = ReconcileScanner(backend_path=be_dir, project_root=self.root)
+        scanner.scan_backend()
+        scanner.cross_analyze()
+        types = [f.type for f in scanner.findings]
+        self.assertIn("SPEC_CONTRADICTION", types)
+        self.assertTrue(any("Forbidden HTTP Method (DELETE)" in f.title for f in scanner.findings))
+
 
 if __name__ == "__main__":
     unittest.main()

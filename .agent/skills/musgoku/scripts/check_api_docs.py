@@ -22,11 +22,14 @@ Kontroller
 E1 endpoint belgelenmemis        her METHOD /path `docs/APIs/` altinda olmali
 E2 docs/APIs dizini yok         endpoint varsa dokumantasyon dizini zorunlu
 E3 git-diff API sapmasi          Git diff'te controller/route degisti ama docs/APIs guncellenmedi
+E4 yasakli backend HTTP metodu   Backend'de PUT/DELETE/PATCH kullanildi (yalniz GET ve fiil tabanli POST)
+E5 yasakli frontend HTTP metodu  Frontend istemcisinde .put/.delete/.patch veya fetch PUT/DELETE/PATCH kullanildi
 W1 @Tag eksik                   controller sinifinda @Tag olmali
 W2 @Operation eksik             endpoint metodunda @Operation olmali
+W3 soft-delete izolasyon riski   Soft-delete entity'de @SQLRestriction/@SoftDelete yok veya fiziksel deleteById/DELETE FROM var
 
-E1-E3 hata (exit 1) · W1-W2 uyari · exit 2 arac hatasi
-Backend projesi degilse (pom.xml yok, controller/route yok) kapsam disi: exit 0.
+E1-E5 hata (exit 1) · W1-W3 uyari · exit 2 arac hatasi
+Backend/Frontend API projesi degilse kapsam disi: exit 0.
 
 Kullanim
 --------
@@ -79,6 +82,25 @@ METHOD_BY_ANNOTATION = {
     "PatchMapping": "PATCH",
     "DeleteMapping": "DELETE",
 }
+
+FORBIDDEN_HTTP_METHODS = {"PUT", "DELETE", "PATCH"}
+ALLOW_METHODS_COMMENT_RE = re.compile(
+    r"ALLOW-HTTP-METHODS\s*:\s*([A-Za-z,\s]+)", re.IGNORECASE
+)
+FE_FORBIDDEN_CALL_RE = re.compile(
+    r"\b(?:httpClient|axios|apiClient|api|client)\s*\.\s*(put|delete|patch)\s*\("
+    r"|\bmethod\s*:\s*[\"'](PUT|DELETE|PATCH)[\"']",
+    re.IGNORECASE,
+)
+ENTITY_RE = re.compile(r"@(?:[A-Za-z_][A-Za-z0-9_]*\.)*Entity\b")
+SOFT_DELETE_FIELD_RE = re.compile(
+    r"\b(?:isDeleted|is_deleted|deletedAt|deleted_at|deletedByParent|deleted_by_parent)\b"
+    r"|Status\.DELETED\b"
+)
+GLOBAL_FILTER_RE = re.compile(r"@(?:SQLRestriction|SoftDelete|Where|Filter)\b")
+HARD_DELETE_CALL_RE = re.compile(
+    r"\.\s*(?:deleteById|deleteAllById)\s*\(|\bDELETE\s+FROM\b", re.IGNORECASE
+)
 
 
 def find_project_root() -> Path:
@@ -380,6 +402,86 @@ def canonical(path: str) -> str:
     return path or "/"
 
 
+def collect_allowed_legacy_methods(root: Path) -> set[str]:
+    """docs/APIs altindaki `<!-- ALLOW-HTTP-METHODS: PUT,DELETE -->` istisnalarini toplar."""
+    allowed: set[str] = set()
+    docs_dir = root / "docs" / "APIs"
+    if not docs_dir.is_dir():
+        return allowed
+    for path in sorted(docs_dir.rglob("*.md")):
+        text = path.read_text(encoding="utf-8", errors="replace")
+        for m in ALLOW_METHODS_COMMENT_RE.finditer(text):
+            for token in m.group(1).split(","):
+                tok = token.strip().upper()
+                if tok in FORBIDDEN_HTTP_METHODS:
+                    allowed.add(tok)
+    return allowed
+
+
+def scan_frontend_forbidden_methods(root: Path, allowed_methods: set[str]) -> list[tuple[str, str]]:
+    """Frontend istemci kodunda (.ts/.tsx/.js/.jsx) PUT/DELETE/PATCH cagrilarini tarar."""
+    violations: list[tuple[str, str]] = []
+    fe_dirs = ("src", "app", "services", "lib")
+    for dname in fe_dirs:
+        base = root / dname
+        if not base.is_dir():
+            continue
+        for fpath in sorted(base.rglob("*")):
+            if not fpath.is_file() or fpath.suffix not in {".ts", ".tsx", ".js", ".jsx"}:
+                continue
+            if any(part in IGNORE_DIRS or part in {".agent", "__tests__", "test", "tests"} for part in fpath.parts):
+                continue
+            if fpath.name.endswith((".test.ts", ".test.tsx", ".spec.ts", ".spec.tsx", ".test.js", ".spec.js")):
+                continue
+            # Next.js App Router route.ts dosyalari zaten E4 backend taramasinda
+            if fpath.name.startswith("route.") and "api" in fpath.parts:
+                continue
+            text = fpath.read_text(encoding="utf-8", errors="replace")
+            if "ALLOW-HTTP-METHODS" in text:
+                continue
+            for idx, line in enumerate(text.splitlines(), 1):
+                stripped = line.strip()
+                if stripped.startswith("//") or stripped.startswith("*"):
+                    continue
+                m = FE_FORBIDDEN_CALL_RE.search(line)
+                if m:
+                    method = (m.group(1) or m.group(2)).upper()
+                    if method not in allowed_methods:
+                        rel = fpath.relative_to(root).as_posix()
+                        violations.append((
+                            rel,
+                            f"Frontend katmaninda yasakli HTTP metodu ({method}) kullanildi "
+                            f"(satir {idx}) — Yalniz GET ve fiil tabanli POST kullanilmalidir",
+                        ))
+    return violations
+
+
+def scan_soft_delete_warnings(root: Path) -> list[tuple[str, str]]:
+    """Java @Entity ve Repository/Service siniflarinda soft-delete izolasyon eksiklerini tarar."""
+    warnings: list[tuple[str, str]] = []
+    java_root = root / "src" / "main" / "java"
+    if not java_root.is_dir():
+        return warnings
+    for path in sorted(java_root.rglob("*.java")):
+        if any(part in IGNORE_DIRS for part in path.parts):
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        if ENTITY_RE.search(text) and SOFT_DELETE_FIELD_RE.search(text):
+            if not GLOBAL_FILTER_RE.search(text):
+                warnings.append((
+                    path.name,
+                    "Soft-delete alani bulunan @Entity sinifinda Global Query Filter "
+                    "(@SQLRestriction / @SoftDelete) eksik",
+                ))
+        if "ALLOW-HARD-DELETE" not in text and HARD_DELETE_CALL_RE.search(text):
+            warnings.append((
+                path.name,
+                "Fiziksel silme (deleteById / DELETE FROM) tespit edildi — varsayilan standart "
+                "Soft-Delete (POST + status='DELETED' / Global Query Filter) olmalidir",
+            ))
+    return warnings
+
+
 def check(root: Path):
     errors = []
     warnings = []
@@ -389,24 +491,43 @@ def check(root: Path):
     endpoints = java_endpoints + other_endpoints
     documented = collect_doc_paths(root)
     docs_dir = root / "docs" / "APIs"
+    allowed_methods = collect_allowed_legacy_methods(root)
+    fe_violations = scan_frontend_forbidden_methods(root, allowed_methods)
+    soft_delete_warns = scan_soft_delete_warnings(root)
 
     doc_index = sorted(set((m, canonical(p)) for m, p in documented))
     code_index = sorted(set((m, canonical(p), src) for m, p, src in endpoints))
 
-    if not endpoints:
+    for rel_file, msg in fe_violations:
+        errors.append(("E5", rel_file, msg))
+
+    for fname, msg in soft_delete_warns:
+        warnings.append(("W3", fname, msg))
+
+    if not endpoints and not errors and not warnings:
         return errors, warnings, {"endpoints": 0, "documented": len(documented),
                                  "backend": bool(documented)}
 
-    if not docs_dir.is_dir():
-        errors.append(("E2", "docs/APIs",
-                       f"{len(code_index)} endpoint var ama docs/APIs dizini yok"))
-    else:
+    if endpoints:
         for method, api_path, source in code_index:
-            if not any(m == method and (p == api_path
-                                        or bool(path_to_regex(p).search(api_path)))
-                       for m, p in doc_index):
-                errors.append(("E1", "docs/APIs",
-                               f"{method} {api_path} belgelenmemis ({source})"))
+            if method in FORBIDDEN_HTTP_METHODS and method not in allowed_methods:
+                errors.append((
+                    "E4",
+                    source,
+                    f"Yasakli HTTP metodu kullanildi: {method} {api_path} "
+                    f"(Yalniz GET ve fiil tabanli POST kullanilmalidir)",
+                ))
+
+        if not docs_dir.is_dir():
+            errors.append(("E2", "docs/APIs",
+                           f"{len(code_index)} endpoint var ama docs/APIs dizini yok"))
+        else:
+            for method, api_path, source in code_index:
+                if not any(m == method and (p == api_path
+                                            or bool(path_to_regex(p).search(api_path)))
+                           for m, p in doc_index):
+                    errors.append(("E1", "docs/APIs",
+                                   f"{method} {api_path} belgelenmemis ({source})"))
 
     # E3: Git çalışma ağacında API controller/route değişti ama docs/APIs güncellenmedi
     drift_routes = check_git_diff_api_drift(root)
@@ -429,17 +550,19 @@ def check(root: Path):
                          f"(tam liste icin --verbose)"))
 
     return errors, warnings, {"endpoints": len(code_index),
-                              "documented": len(doc_index), "backend": True}
+                              "documented": len(doc_index), "backend": bool(endpoints or errors or warnings)}
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(description="API dokumantasyonu kapisi")
+    parser = argparse.ArgumentParser(description="API dokumantasyonu ve POST-Only / Soft-Delete kapisi")
+    parser.add_argument("--root", type=Path, default=None,
+                        help="Hedef proje kok dizini (varsayilan: mevcut proje)")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--verbose", action="store_true",
                         help="@Operation eksiklerini tam liste olarak yaz")
     args = parser.parse_args(argv)
 
-    root = find_project_root()
+    root = args.root.resolve() if args.root else find_project_root()
     errors, warnings, stats = check(root)
 
     if args.json:
@@ -451,8 +574,8 @@ def main(argv=None) -> int:
         }, ensure_ascii=False, indent=2))
         return 1 if errors else 0
 
-    if not stats["endpoints"]:
-        print("Spring endpoint bulunamadi — kural bu projede kapsam disi")
+    if not stats["endpoints"] and not errors and not warnings:
+        print("Spring/API endpoint bulunamadi — kural bu projede kapsam disi")
         print("\nSONUC: 0 endpoint · [OK]")
         return 0
 

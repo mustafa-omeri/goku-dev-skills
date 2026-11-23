@@ -54,7 +54,7 @@ python .agent/skills/spec-reconciler/scripts/reconcile_scanner.py --json
 Tarama motoru üç temel sapma türünü sınıflandırır:
 1. **Belgelenmemiş Endpoint (Docs Drift):** Kodda olan fakat `docs/APIs/` altında yer almayan endpoint'ler.
 2. **Yetim Frontend Çağrısı (Contract Mismatch):** Frontend'in çağırdığı fakat backend'de karşılığı bulunmayan veya URL'i değişmiş rotalar.
-3. **Şartname / Tasarım Sapması (Spec Contradiction):** PRD veya RFC'deki kural ile canlı kod davranışının ayrışması.
+3. **Şartname / Tasarım Sapması & POST-Only / Soft-Delete İhlali (Spec & Architecture Contradiction):** PRD veya RFC'deki kural ile canlı kod davranışının ayrışması; backend veya frontend katmanında yasaklı `PUT / DELETE / PATCH` metotlarının kullanılması (`check_api_docs.py` `E4/E5`), soft-delete mimarisinde `@SQLRestriction` / Partial Unique Index / `Idempotency-Key` / `@Version` veya Kaskad (`409 Conflict` vs `deleted_by_parent`) kurallarının eksik kalması.
 
 ### Aşama 3: İnteraktif Karar Planı (Artifact Plan with User Feedback)
 Ajan doğrudan koda dalıp tek taraflı varsayımda bulunmaz. Kullanıcıya özel bir plan dokümanı (`request_feedback: true`) sunar. Şablon:

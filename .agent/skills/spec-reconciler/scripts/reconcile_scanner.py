@@ -479,6 +479,25 @@ class ReconcileScanner:
                     )
                 )
 
+            if ep.method in ("PUT", "DELETE", "PATCH"):
+                self.findings.append(
+                    DriftFinding(
+                        type="SPEC_CONTRADICTION",
+                        severity="CRITICAL",
+                        title=f"Forbidden HTTP Method ({ep.method}): {ep.method} {ep.path}",
+                        details=(
+                            f"Endpoint '{ep.method} {ep.path}' in {ep.source_file}:{ep.line} violates "
+                            f"POST-Only RPC mutation standard (PUT/DELETE/PATCH forbidden)."
+                        ),
+                        target_file=ep.source_file,
+                        suggested_actions=[
+                            f"Option A: Convert '{ep.method} {ep.path}' to verb-based RPC 'POST {ep.path}/<action>' "
+                            f"(e.g. /update, /cancel, /archive) with @Version / Idempotency-Key & @CacheEvict",
+                            "Option B: If external 3rd-party contract requires it, declare <!-- ALLOW-HTTP-METHODS: PUT,DELETE --> in docs/APIs/",
+                        ],
+                    )
+                )
+
         # 2. Frontend / Backend Contract Mismatch (Orphan Client API Calls)
         if self.frontend_path and self.frontend_calls:
             for fe_call in self.frontend_calls:

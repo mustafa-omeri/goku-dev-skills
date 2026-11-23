@@ -27,9 +27,9 @@ Bu yetenek, projenin geçmişten bugüne `SPRINT_PLAN.md`, `KANBAN.md` veya `HAN
 
 ### 2. 5 Katmanlı Dikey Dilim Retrospektifi (Full-Stack Vertical Slice)
 Tüm özelliklerin şu 5 katmandan eksiksiz geçtiğini doğrula:
-1. **DB / Şema / Migration:** Tablo, kolon, indeks ve RLS politikaları veritabanında var mı?
-2. **Backend / View / RPC / SQL:** Gerçek view veya endpoint'te arayüzün beklediği tüm kolonlar mevcut mu? (Kolon yoksa `undefined` döner ve bileşen sessizce hiç çizilmez).
-3. **İstemci API & Tip:** Servis, React Query / hook ve TypeScript arayüzü backend ile tam uyumlu mu?
+1. **DB / Şema / Migration:** Tablo, kolon, indeks ve RLS politikaları veritabanında var mı? Soft-delete tablolarında Global Query Filter (`@SQLRestriction` / `@SoftDelete` / Prisma `$extends` + Native SQL alt sorgu `status != 'DELETED'` filtresi), Partial Unique Index (`WHERE status != 'DELETED'`) ve Kaskad (`deleted_by_parent` veya `409 Conflict`) kuralları uygulanmış mı?
+2. **Backend / View / RPC / SQL:** Gerçek view veya endpoint'te arayüzün beklediği tüm kolonlar mevcut mu? (Kolon yoksa `undefined` döner ve bileşen sessizce hiç çizilmez). Tüm mutasyonlar `PUT/DELETE/PATCH` kullanmadan fiil tabanlı `POST` (`/cancel`, `/archive`, `/update`), `Idempotency-Key` / `@Version` (Optimistic Lock) ve `@CacheEvict` ile mi çalışıyor (`check_api_docs.py` `E4/W3`)?
+3. **İstemci API & Tip:** Servis, React Query / hook ve TypeScript arayüzü backend ile tam uyumlu mu? Frontend servislerinde `httpClient.put/delete/patch` yasağına (`check_api_docs.py` `E5`) ve mutasyon sonrası `invalidateQueries` / `revalidateTag` kuralına uyulmuş mu?
 4. **Kullanıcı Arayüzü & Etkileşim:** Bileşen veriyi doğru render ediyor mu? Boş durum (empty state) ve hata yönetimi var mı?
 5. **Yönetim / Giriş Formu (Döngü Kapanışı):** Bu veri sisteme nereden giriyor? (Admin formu veya kullanıcı gönderim ekranı olmadan özellik tamamlanmış sayılamaz).
 *Katmanlardan biri eksikse asla 'BİTTİ' sayılamaz; durum açıkça **'YARIM (Eksik Katman: ...)'** olarak ilan edilir.*

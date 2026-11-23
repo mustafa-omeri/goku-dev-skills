@@ -88,6 +88,12 @@ Bir veritabanı işlemi yapılırken ajan sırasıyla şu adımları işletmek *
   oluşturma yöntemleri tercih edilir.
 - ⛔ **Geri Alma (Rollback) Planı Olmadan Revizyon Yapılamaz:**
   Her revizyon bloğu, o revizyonu tersine çeviren DDL/DML komutunu içermek zorundadır.
+- ⛔ **Soft-Delete Tablolarında Tam `UNIQUE` Kısıtı Yasağı (Partial Unique Index Zorunluluğu):**
+  Soft-delete (`status = 'DELETED'` / `is_deleted` / `deleted_at`) kullanılan tablolarda silinen bir kaydın (ör. `ali@ornek.com`) yeniden kayıt olmasını engellememek için tam tablo `UNIQUE(email)` kısıtı koymak yasaktır:
+  * **PostgreSQL / SQL Server / SQLite / Prisma:** Yalnızca aktif kayıtları kapsayan koşullu indeks (`CREATE UNIQUE INDEX CONCURRENTLY idx_active_email ON users(email) WHERE status != 'DELETED';` veya `WHERE deleted_at IS NULL`) kullanılır.
+  * **Partial Index Desteklemeyen Motorlar (MySQL / MariaDB):** SQL standardında `NULL != NULL` olduğu için `UNIQUE(email, deleted_at)` aktif kayıtları (`deleted_at IS NULL`) koruyamaz! Aktif kayıtta `0`, silinende `id`/epoch alan `deleted_token BIGINT NOT NULL DEFAULT 0` kolonu ile `UNIQUE(email, deleted_token)` kurulur.
+- ⛔ **Kaskad (İlişkili) Soft-Delete Şema Koruması (`deleted_by_parent` vs `409 Conflict`):**
+  Ana-alt (parent-child) ilişkili tablolarda kaskad soft-delete (Seçenek A) uygulanacaksa alt tabloya `deleted_by_parent BOOLEAN NOT NULL DEFAULT false` kolonu eklenir (restore işleminde yalnız ebeveynle birlikte silinenleri ayırt etmek için); aksi halde (Seçenek B) altında aktif kayıt varken silme işlemi `409 Conflict` ile reddedilir.
 
 ---
 

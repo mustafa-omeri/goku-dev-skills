@@ -47,15 +47,15 @@ docs/APIs/
 ## 4. Zorunlu içerik
 
 - [ ] Tarih damgası (`YYYY-MM-DD`)
-- [ ] Endpoint (`METHOD /api/v1/path`)
-- [ ] Değişiklik açıklaması (ne ve neden)
+- [ ] Endpoint (`GET /api/v1/path` veya fiil tabanlı `POST /api/v1/path/{id}/<action>` — ⛔ **`PUT`, `DELETE`, `PATCH` kullanımı yasaktır**, `check_api_docs.py` `E4`/`E5` kapısıyla reddedilir)
+- [ ] Değişiklik açıklaması (ne ve neden; soft-delete/durum geçişi ise hedef statü ve kaskad davranışı)
 - [ ] Authorization gereksinimleri (hangi roller erişir)
-- [ ] Query / path parametreleri (varsa)
-- [ ] Request örneği (geçerli JSON)
+- [ ] Query / path parametreleri ve varsa `Idempotency-Key` / `@Version` (Optimistic Lock) gereksinimi
+- [ ] Request örneği (geçerli JSON; silme/iptal/arşivleme işlemlerinde `reason`, `version` vb. alanlar)
 - [ ] Response örneği (standart zarf formatında, gerçek kodla uyumlu)
 - [ ] Yeni alanların açıklaması
 - [ ] Breaking change varsa açıkça belirtilmiş **ve** migration guide var
-- [ ] Hata yanıtları (400 · 401 · 403 · 404 · 500)
+- [ ] Hata yanıtları (400 · 401 · 403 · 404 · **409 Conflict** · 500)
 
 ## 5. Koruyucu güncelleme
 

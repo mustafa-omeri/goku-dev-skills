@@ -22,14 +22,29 @@ public class <Module>Controller {
 - Yol önekli mi (`/api/v1/`) yoksa düz mü (`/v1/`) olup olmadığı **projeden
   doğrulanır**, bu kuralda sabit yazılmaz.
 
-### 1.2 HTTP metotları
+### 1.2 HTTP metotları ve POST-Only RPC Mimarisi (Kesin Kural)
 
-- ✅ **GET** — okuma
-- ✅ **POST** — yazma, işlem başlatma, eylemi anlatan uç nokta
-  (`/assign-company` gibi isimlendirme tercih edilir)
+- ✅ **GET** — Yalnızca yan etkisiz okuma ve sorgulama işlemleri.
+- ✅ **POST** — Tüm yazma, oluşturma, güncelleme, durum değiştirme (state transition) ve soft-delete işlemleri.
+- ⛔ **`PUT`, `DELETE`, `PATCH` Kesinlikle Yasaktır:** Proxy/WAF/hosting engelleri, CORS preflight maliyeti ve soft-delete durum geçişi anlamsallığı nedeniyle hiçbir kod ajanı `@PutMapping`, `@DeleteMapping`, `@PatchMapping` (veya Next.js `PUT/DELETE/PATCH`, FastAPI `@app.put/@app.delete/@app.patch`, istemci `httpClient.put/delete/patch`) **ASLA kullanamaz**. Bu kural `check_api_docs.py` (`E4` Backend / `E5` Frontend) kapısıyla mekanik olarak denetlenir. *(Yalnızca üçüncü parti/legacy sözleşme zorunluluğu varsa kullanıcı onayıyla `docs/APIs/` içine `<!-- ALLOW-HTTP-METHODS: PUT,DELETE -->` istisnası düşülür ve `knowledge-base.md`'ye kaydedilir).*
 
-POST varsayılandır. Farklı HTTP metotları kullanılan bir API sözleşmesi varsa
-o sözleşme esas alınır ve gerekçesi `knowledge-base.md`'ye yazılır.
+#### 1.2.1 Fiil Tabanlı (RPC / Sub-Resource) Endpoint İsimlendirmesi
+Soft-delete bir silme işlemi değil, kaydın durumunu değiştiren (`ACTIVE -> DELETED` veya `is_deleted = true`) bir iş mantığı geçişidir. Standart silme/güncelleme yerine işlemin amacını net anlatan alt kaynak (sub-resource) yolları kullanılır:
+- **İptal / Arşiv / Soft-Delete:** `POST /api/v1/orders/{id}/cancel`, `POST /api/v1/users/{id}/archive`, `POST /api/v1/categories/{id}/delete`
+- **Güncelleme / Durum Geçişi:** `POST /api/v1/users/{id}/update`, `POST /api/v1/companies/assign-company`, `POST /api/v1/orders/{id}/approve`
+- **Avantaj:** Request body (`@Valid @RequestBody`) içinde silme/iptal nedeni (`reason`), işlemi onaylayan bilgisi, `version` (optimistic lock) gibi zengin denetim (audit) verileri güvenle taşınır.
+
+#### 1.2.2 POST Ödünleşimi #1 — Idempotency-Key ve Optimistic Locking (`@Version`)
+HTTP doğası gereği `POST` idempotent değildir. Ağ kopmaları veya istemci yeniden denemelerinde (retry) mükerrer işlem oluşmaması için iki mekanizma zorunludur:
+1. **`Idempotency-Key` Başlığı / Alanı:** Kritik mutasyonlarda (ödeme, sipariş, kayıt oluşturma, bakiye/limit değişimi) istemci `Idempotency-Key: <UUID-v4>` gönderir; sunucu aynı anahtarı tekrar görürse işlemi yinelemeden ilk yanıtı döner.
+2. **Optimistic Locking (`@Version`) ve İdempotent Soft-Delete:**
+   - Entity sınıflarında `@Version private Long version;` alanı zorunludur; eşzamanlı güncelleme çakışmalarında `ObjectOptimisticLockingFailureException` yakalanıp **`409 Conflict`** dönülür.
+   - Zaten `DELETED` veya `CANCELLED` durumundaki bir kayda tekrar silme/iptal `POST` isteği gelirse sistem hata fırlatmaz; idempotent olarak aynı başarılı sonucu (`200 OK`) döner.
+
+#### 1.2.3 POST Ödünleşimi #2 — Manuel Önbellek Temizliği (`@CacheEvict`)
+Standart HTTP ara katmanları (CDN, tarayıcı) ve uygulama önbellekleri `POST` isteğinde ilgili kaynağın `GET` önbelleğini otomatik geçersiz kılmaz. Bu nedenle:
+- Backend mutasyon metotlarında `@CacheEvict(value = "...", key = "...")` veya `@Caching(evict = ...)` ile hem tekil kayıt hem liste önbelleği manuel temizlenir.
+- Frontend tarafında mutasyon başarılı olduğunda (`onSuccess` / `onSettled`) `queryClient.invalidateQueries()` (Next.js'te `revalidateTag()` / `revalidatePath()`) açıkça çağrılır.
 
 ### 1.3 İstek doğrulama
 
@@ -137,8 +152,10 @@ JSON'u zorla yorumlamak yerine mevcut sarmalayıcıya uyulur. Zarf yoksa:
 |---|---|---|
 | `success` | İşlem başarılı | 200 |
 | `warning` | Sonuç var ama tamamlanmadı | 200 |
-| `error` | İstek reddedildi (doğrulama, iş kuralı) | 400 · 403 · 404 |
+| `error` | İstek reddedildi (doğrulama, yetki, bulunamadı, çakışma) | 400 · 403 · 404 · **409** |
 | `fail` | Sistem hatası | 500 |
+
+- **`409 Conflict` Kullanım Senaryoları:** Optimistic lock versiyon çakışması (`@Version`), altında aktif kayıt bulunan bir ana kaydın silinmeye çalışılması (`ACTIVE_CHILDREN_EXIST`) veya partial unique kısıt çakışması.
 
 Zarf **tipli sınıf/record** ile üretilir; `Map` ile elle kurulmaz.
 Ayrıntı: [pagination-search.md](./pagination-search.md) §3 madde 14.

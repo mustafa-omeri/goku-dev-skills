@@ -311,6 +311,69 @@ def test_api_docs_violations():
         check("docs/APIs guncellenince E1 ve E3 kalkti", not errors2,
               "; ".join(f"{c} {m}" for c, _n, m in errors2))
 
+    # E4: Yasakli Backend HTTP Metodu (PUT / DELETE / PATCH) + Legacy Istisna
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp = Path(tmpdir)
+        java = tmp / "src" / "main" / "java" / "a"
+        java.mkdir(parents=True)
+        (java / "BadController.java").write_text(
+            "package a;\n@RestController\n@RequestMapping(\"/api/v1/orders\")\n"
+            "public class BadController {\n"
+            "    @PutMapping(\"/{id}\")\n    public String update() { return \"\"; }\n"
+            "    @DeleteMapping(\"/{id}\")\n    public String remove() { return \"\"; }\n"
+            "}\n",
+            encoding="utf-8",
+        )
+        docs = tmp / "docs" / "APIs"
+        docs.mkdir(parents=True)
+        (docs / "orders.md").write_text(
+            "PUT /api/v1/orders/{id}\nDELETE /api/v1/orders/{id}\n",
+            encoding="utf-8",
+        )
+        errors_e4, _w_e4, _s_e4 = check_api_docs.check(tmp)
+        check("E4 yasakli backend HTTP metodu (PUT/DELETE) yakalandi", "E4" in codes(errors_e4))
+
+        # Legacy istisna etiketi eklendiginde E4 kalkmali
+        (docs / "orders.md").write_text(
+            "<!-- ALLOW-HTTP-METHODS: PUT,DELETE -->\n"
+            "PUT /api/v1/orders/{id}\nDELETE /api/v1/orders/{id}\n",
+            encoding="utf-8",
+        )
+        errors_e4_allow, _w_allow, _s_allow = check_api_docs.check(tmp)
+        check("ALLOW-HTTP-METHODS istisnasi ile E4 susturuldu", "E4" not in codes(errors_e4_allow))
+
+    # E5: Frontend Istemci Katmaninda Yasakli PUT / DELETE / PATCH Cagrisi
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp = Path(tmpdir)
+        fe_dir = tmp / "src" / "services"
+        fe_dir.mkdir(parents=True)
+        (fe_dir / "userService.ts").write_text(
+            "import { httpClient } from './http';\n"
+            "export const updateUser = (id: string, dto: unknown) => httpClient.put(`/api/v1/users/${id}`, dto);\n"
+            "export const deleteUser = (id: string) => httpClient.delete(`/api/v1/users/${id}`);\n",
+            encoding="utf-8",
+        )
+        errors_e5, _w_e5, _s_e5 = check_api_docs.check(tmp)
+        check("E5 frontend httpClient.put/delete yakalandi", "E5" in codes(errors_e5))
+
+    # W3: Soft-Delete Izolasyon Eksikligi (@SQLRestriction/@SoftDelete yok veya fiziksel deleteById)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp = make_java_project(
+            Path(tmpdir),
+            doc="GET /api/v1/thing/{id}\nPOST /api/v1/thing\n",
+        )
+        java_dir = tmp / "src" / "main" / "java" / "a"
+        (java_dir / "ThingEntity.java").write_text(
+            "package a;\nimport jakarta.persistence.Entity;\n"
+            "@Entity\npublic class ThingEntity {\n"
+            "    private Long id;\n"
+            "    private boolean isDeleted = false;\n"
+            "}\n",
+            encoding="utf-8",
+        )
+        _err_w3, warnings_w3, _s_w3 = check_api_docs.check(tmp)
+        check("W3 soft-delete @SQLRestriction/@SoftDelete eksigi yakalandi", "W3" in codes(warnings_w3))
+
 
 def make_vite_project(tmp: Path, next_dep=False, files=None) -> Path:
     deps = {"react": "^19.0.0", "react-router-dom": "^7.0.0"}

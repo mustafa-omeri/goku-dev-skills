@@ -160,35 +160,41 @@ httpClient.interceptors.response.use(
 );
 ```
 
-### Feature Service Pattern
+### Feature Service Pattern (POST-Only RPC Standardı)
+> ⛔ **Kesin Kural (`PUT`, `DELETE`, `PATCH` Yasağı):** İstemci servis katmanında `httpClient.put()`, `httpClient.delete()`, `httpClient.patch()` veya `fetch(..., { method: 'PUT' | 'DELETE' | 'PATCH' })` **ASLA kullanılmaz** (`check_api_docs.py` `E5` kapısı ile bloklanır). Tüm oluşturma, güncelleme, durum değiştirme ve soft-delete/arşivleme işlemleri **fiil tabanlı (RPC) `POST`** uç noktaları üzerinden yürütülür.
+
 ```tsx
 // src/features/user-management/services/userService.ts
 import { httpClient } from '@/services/http';
-import type { User, CreateUserDto, UpdateUserDto, PaginatedResponse } from '../types';
+import type { User, CreateUserDto, UpdateUserDto, ArchiveUserDto, PaginatedResponse, UserFilters } from '../types';
 
 export const userService = {
   getUsers: async (filters?: UserFilters): Promise<PaginatedResponse<User>> => {
-    const { data } = await httpClient.get('/api/users', { params: filters });
+    const { data } = await httpClient.get('/api/v1/users', { params: filters });
     return data;
   },
 
   getUserById: async (id: string): Promise<User> => {
-    const { data } = await httpClient.get(`/api/users/${id}`);
+    const { data } = await httpClient.get(`/api/v1/users/${id}`);
     return data;
   },
 
-  createUser: async (dto: CreateUserDto): Promise<User> => {
-    const { data } = await httpClient.post('/api/users', dto);
+  createUser: async (dto: CreateUserDto, idempotencyKey?: string): Promise<User> => {
+    const { data } = await httpClient.post('/api/v1/users', dto, {
+      headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
+    });
     return data;
   },
 
+  // ✅ PUT yerine fiil tabanlı POST (/update) + Optimistic Lock version alanı
   updateUser: async (dto: UpdateUserDto): Promise<User> => {
-    const { data } = await httpClient.put(`/api/users/${dto.id}`, dto);
+    const { data } = await httpClient.post(`/api/v1/users/${dto.id}/update`, dto);
     return data;
   },
 
-  deleteUser: async (id: string): Promise<void> => {
-    await httpClient.delete(`/api/users/${id}`);
+  // ✅ DELETE yerine fiil tabanlı POST (/archive veya /cancel) + zengin body (reason, version)
+  archiveUser: async (id: string, payload: ArchiveUserDto): Promise<void> => {
+    await httpClient.post(`/api/v1/users/${id}/archive`, payload);
   },
 };
 ```
@@ -196,12 +202,15 @@ export const userService = {
 ## Kurallar
 
 1. **API çağrıları sadece `services/` katmanında** yapılır, bileşen içinde doğrudan Axios çağrısı yapılmaz.
-2. **TanStack Query her zaman kullanılır** — Manuel `useEffect` + `useState` ile data fetching yasaktır.
-3. **Query key'ler hiyerarşik ve tutarlı** olmalıdır.
-4. **Error handling user-friendly** olmalı — Servisler anlamlı hata mesajları fırlatmalı.
-5. **Liste verisi her zaman otomatik tazelenir** — aşağıdaki hiyerarşiye göre.
-6. **Type safety** — Tüm API yanıtları TypeScript ile tiplendirilmeli.
-7. **`import.meta.env`** kullanılır (`process.env` değil).
+2. **Yalnız `GET` ve `POST` kullanılır (`PUT/DELETE/PATCH` yasaktır)** — Tüm mutasyon ve soft-delete işlemleri eylemi anlatan `POST /api/v1/<resource>/{id}/<action>` (`/update`, `/cancel`, `/archive`) uçlarına gönderilir.
+3. **Manuel Cache Invalidation Zorunluluğu (`POST` Ödünleşimi)** — Tarayıcı ve HTTP ara katmanları `POST` sonrasında `GET` önbelleğini otomatik düşürmediği için her `useMutation` içinde `queryClient.invalidateQueries({ queryKey: ... })` (Next.js'te `revalidateTag` / `revalidatePath`) çağrılması zorunludur.
+4. **Idempotency & 409 Conflict Yönetimi** — Kritik `POST` mutasyonlarında `Idempotency-Key` başlığı veya DTO `version` (Optimistic Lock) alanı gönderilir; `409 Conflict` (eşzamanlı değişiklik veya aktif alt kayıt engeli) durumunda kullanıcıya anlamlı mesaj gösterilir.
+5. **TanStack Query her zaman kullanılır** — Manuel `useEffect` + `useState` ile data fetching yasaktır.
+6. **Query key'ler hiyerarşik ve tutarlı** olmalıdır.
+7. **Error handling user-friendly** olmalı — Servisler anlamlı hata mesajları fırlatmalı.
+8. **Liste verisi her zaman otomatik tazelenir** — aşağıdaki hiyerarşiye göre.
+9. **Type safety** — Tüm API yanıtları TypeScript ile tiplendirilmeli.
+10. **`import.meta.env`** kullanılır (`process.env` değil).
 
 ---
 
@@ -243,7 +252,9 @@ yazılır. Burada sabit değer **yoktur**.
 
 ## Anti-Patterns
 
-- ❌ Bileşen içinde doğrudan `axios.get()` çağrısı
+- ❌ `httpClient.put()`, `httpClient.delete()`, `httpClient.patch()` veya `fetch(..., { method: 'PUT' | 'DELETE' | 'PATCH' })` kullanımı (`E5` kapı ihlali — yalnız `GET` ve fiil tabanlı `POST` kullanılır)
+- ❌ `POST` mutasyonu sonrasında `queryClient.invalidateQueries()` / `revalidateTag()` çağırmayı unutmak
+- ❌ Bileşen içinde doğrudan `axios.get()` / `axios.post()` çağrısı
 - ❌ `useEffect` ile data fetching
 - ❌ `process.env` kullanımı (Vite'ta `import.meta.env` kullanılır)
 - ❌ Global state'te API yanıtı saklama (sorgu cache'i yeterli)

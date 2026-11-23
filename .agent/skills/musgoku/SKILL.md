@@ -183,7 +183,9 @@ Tam akış: [`rules/development-workflow.md`](../../rules/development-workflow.m
 ### Backend
 
 - [ ] Yanıt zarfı standart formatta mı?
-- [ ] Endpoint yalnız GET/POST mu, eylemi adında belirtiyor mu?
+- [ ] ⛔ **Kesin POST-Only Kuralı:** Endpoint yalnız `GET` veya fiil tabanlı `POST` (`/cancel`, `/archive`, `/update`) mu? (`PUT`, `DELETE`, `PATCH` kesinlikle kullanılmadı mı — `check_api_docs.py` `E4`)
+- [ ] **POST Ödünleşimleri:** Kritik mutasyonlarda `Idempotency-Key` / `@Version` (Optimistic Lock) ve `@CacheEvict` manuel önbellek temizliği uygulandı mı?
+- [ ] **Soft-Delete 4 Kritik Pratik:** Silme işlemi soft-delete (`status = 'DELETED'`) mi, Entity'de Global Query Filter (`@SQLRestriction` / `@SoftDelete` / Prisma `$extends` + Native SQL alt sorgu filtresi) var mı, Partial Unique Index (`WHERE status != 'DELETED'`) ve Kaskad stratejisi (`deleted_by_parent` veya `409 Conflict`) kurgulandı mı?
 - [ ] DTO katmanlar arası taşıma için kullanılıyor mu?
 - [ ] Yetki kontrolü servis katmanında mı?
 - [ ] Swagger annotation'ları ve modül dokümanı güncel mi?
@@ -193,9 +195,10 @@ Tam akış: [`rules/development-workflow.md`](../../rules/development-workflow.m
 ### Frontend
 
 - [ ] Yığın Vite SPA mı, Next.js mi? (yanlış kavram kullanılmadı mı?)
+- [ ] ⛔ **Kesin POST-Only İstemci Kuralı:** Servis katmanında `httpClient.put / delete / patch` kullanılmadan yalnız `GET` ve fiil tabanlı `POST` kullanıldı mı (`check_api_docs.py` `E5`)?
 - [ ] Tüm görünür metinler i18n anahtarından mı geliyor?
 - [ ] Her iki dil dosyası senkron mu?
 - [ ] React hook sırası ve erken return kurallarına uyuldu mu?
-- [ ] Mutasyon sonrası ekran **refresh olmadan** doğru değeri gösteriyor mu?
+- [ ] Mutasyon sonrası `invalidateQueries` / `revalidateTag` ile ekran **refresh olmadan** doğru değeri gösteriyor mu?
 - [ ] Bundle & chunk bütçesi terminal çıktısında ölçüldü mü, >500 kB (lazy) / >200 kB (entry) aşımı veya Vite uyarısı var mı?
 - [ ] `npx tsc --noEmit` temiz mi?
