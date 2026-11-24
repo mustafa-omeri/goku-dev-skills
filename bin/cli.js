@@ -38,7 +38,7 @@ const https = require('https');
 
 
 
-const VERSION = '1.42.0';
+const VERSION = '1.46.0';
 
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 
@@ -590,7 +590,7 @@ const PROFILES = {
 
     name: 'Fullstack / All',
 
-    desc: 'All 48 skills, 22 rules, 55 component themes & 16 validation gates (~65 MB)',
+    desc: 'All 50 skills, 22 rules, 56 component themes & 16 validation gates (~65 MB)',
 
     skills: Object.keys(SKILLS_MANIFEST),
 
@@ -2217,6 +2217,28 @@ async function cmdInit(options) {
 
 
 
+function cmdSyncAgy(options) {
+  const child_process = require('child_process');
+  const scriptPath = path.join(PKG_ROOT, 'scripts', 'sync_agy_global.py');
+  if (!fs.existsSync(scriptPath)) {
+    console.error(`${c.red}Error:${c.reset} sync_agy_global.py not found at ${scriptPath}`);
+    process.exit(1);
+  }
+  const pyArgs = [scriptPath];
+  if (options.dest) pyArgs.push('--dest', path.resolve(process.cwd(), options.dest));
+  if (options.minimal) pyArgs.push('--minimal');
+  if (options.check || options.dryRun) pyArgs.push('--check');
+  const child = child_process.spawnSync('python', pyArgs, {
+    stdio: 'inherit',
+    cwd: PKG_ROOT,
+  });
+  if (child.error) {
+    console.error(`${c.red}Failed to execute python:${c.reset} ${child.error.message}`);
+    process.exit(1);
+  }
+  process.exit(child.status || 0);
+}
+
 // Command: update (Surgical updater for already-installed skills & rules)
 
 async function cmdUpdate(options) {
@@ -3073,6 +3095,8 @@ ${c.bold}Commands:${c.reset}
 
   ${c.green}update [options]${c.reset}                 Surgically update only already-installed skills & rules
 
+  ${c.green}sync-agy [options]${c.reset}               Install/sync full skillset as Antigravity CLI global plugin
+
   ${c.green}list${c.reset}                             List all available skills, profiles & component categories
 
   ${c.green}add <skill-name...>${c.reset}             Install one or more individual skills
@@ -3312,6 +3336,11 @@ ${c.bold}Examples:${c.reset}
 
       await cmdInit(options);
 
+      break;
+
+    case 'sync-agy':
+    case 'agy-sync':
+      cmdSyncAgy(options);
       break;
 
 

@@ -48,6 +48,7 @@ TEST_SCRIPTS = [
     ("Test Plan Conflict Guard", HERE / "test_plan_conflict_guard.py"),
     ("Test UI Pre-Design Gate", HERE / "test_ui_predesign_gate.py"),
     ("Test Walkthrough Archive", HERE / "test_walkthrough_archive.py"),
+    ("Test Agy Global Plugin", HERE / "test_agy_global_plugin.py"),
 ]
 
 

@@ -28,7 +28,7 @@ related_docs:
 
 ## 1. Teknoloji Yığını & Altyapı
 - **Proje Adı / Slug:** skillSetWorks (`skillSetWorks`)
-- **Paket / Sürüm:** `goku-dev-skills` v1.45.0 (`package.json`)
+- **Paket / Sürüm:** `goku-dev-skills` v1.46.0 (`package.json`)
 - **Birincil Dil:** Python 3.11 / Node.js 18+ / Markdown
 - **Frameworkler & Kütüphaneler:** Python `unittest`, `pytest`, `pytest-cov`, `argparse`, Node.js CLI runtime
 - **Veritabanı / Altyapı:** Yok (Uygulama kodu içermez; kural, skill ve dağıtım motorudur)
@@ -43,9 +43,9 @@ related_docs:
 | `.agent/skills/` | Ajan beceri paketleri (musgoku, feature-architect, review-prd, test-spec-generator, project-summary, ui-ux-pro-max, tdd, council, tr-app-compliance vb.) | 50 skill |
 | `.agent/rules/` | Ajan kuralları ve anayasal sözleşmeler (sinif: OLCULEBILIR/TUTUM/SUREC) | 22 kural (12 ölçülebilir, 10 kapısız) |
 | `.agent/templates/` | Projelerde açılacak living markdown ve HTML şablonları | Kök şablonları (`PROJECT_SUMMARY`, `ACCEPTANCE_TEST_SPEC` ve `KULLANICI_REHBERI.html` dahil) |
-| `bin/` | `goku-dev-skills` npm CLI paket yürütücüsü (`cli.js`) | CLI arabirimi |
-| `tests/` | Depo bütünlüğü, drift, sızıntı, altın benchmark ve kural kapısı regresyon testleri | 34 test paketi (`test_ui_predesign_gate.py` ve `test_walkthrough_archive.py` dahil) |
-| `scripts/` | Skill kataloğu ve yardımcı üretim betikleri | Otomasyon araçları |
+| `bin/` | `goku-dev-skills` npm CLI paket yürütücüsü (`cli.js`) | `init`, `update`, `add`, `sync-agy` |
+| `tests/` | Depo bütünlüğü, drift, sızıntı, altın benchmark ve kural kapısı regresyon testleri | 35 test paketi (`test_agy_global_plugin.py` dahil) |
+| `scripts/` | Skill kataloğu (`generate_skills_catalog.py`) ve global Antigravity plugin senkronu (`sync_agy_global.py`) | Otomasyon araçları |
 
 ---
 

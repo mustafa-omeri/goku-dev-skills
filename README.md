@@ -2,17 +2,17 @@
 
 <div align="center">
 
-[![Version](https://img.shields.io/badge/version-1.35.1-blue.svg?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/goku-dev-skills)
-[![Skills](https://img.shields.io/badge/skills-47%20battle--tested-8A2BE2.svg?style=for-the-badge&logo=expertsexchange)](./.agent/skills/)
-[![Rules](https://img.shields.io/badge/rules-21%20enforced-orange.svg?style=for-the-badge&logo=codereview)](./.agent/rules/)
-[![Gates](https://img.shields.io/badge/gates-15%20deterministic-success.svg?style=for-the-badge&logo=checkmarx)](./.agent/skills/musgoku/scripts/)
+[![Version](https://img.shields.io/badge/version-1.46.0-blue.svg?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/goku-dev-skills)
+[![Skills](https://img.shields.io/badge/skills-50%20battle--tested-8A2BE2.svg?style=for-the-badge&logo=expertsexchange)](./.agent/skills/)
+[![Rules](https://img.shields.io/badge/rules-22%20enforced-orange.svg?style=for-the-badge&logo=codereview)](./.agent/rules/)
+[![Gates](https://img.shields.io/badge/gates-16%20deterministic-success.svg?style=for-the-badge&logo=checkmarx)](./.agent/skills/musgoku/scripts/)
 [![Tests](https://img.shields.io/badge/tests-100%25%20green-brightgreen.svg?style=for-the-badge&logo=pytest)](./tests/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge)](./LICENSE)
 
 **Universal, Agent-Agnostic Intelligence & Production Workflow Engine for AI Coding Assistants**  
 *Turning stochastic language models into senior software architects, meticulous UI/UX craftspeople, and disciplined QA sentinels.*
 
-[Overview](#-overview) • [Why Goku?](#-why-goku-dev-skills-anti-slop-matrix) • [42 Skills & Archetypes](#-the-42-production-skills--developer-archetypes) • [Quickstart](#-quick-start--installation) • [DESIGN.md & `/ui-polish`](#-project-specific-designmd-contract--ui-polish-11-skill-orchestrator) • [3-Tier Verification](#-3-tier-verification-architecture-verify-last-verify-sprint-verify-prd) • [Slash Commands](#-session-slash-commands-12-ensemble-workflows) • [Verification Gates](#-the-15-deterministic-verification-gates)
+[Overview](#-overview) • [Why Goku?](#-why-goku-dev-skills-anti-slop-matrix) • [Skills & Archetypes](#-the-50-production-skills--developer-archetypes) • [Quickstart & Platforms](#-quick-start--installation) • [DESIGN.md & `/ui-polish`](#-project-specific-designmd-contract--ui-polish-11-skill-orchestrator) • [3-Tier Verification](#-3-tier-verification-architecture-verify-last-verify-sprint-verify-prd) • [Slash Commands](#-session-slash-commands-ensemble-workflows) • [Verification Gates](#-the-16-deterministic-verification-gates)
 
 </div>
 
@@ -24,11 +24,11 @@
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                              GOKU DEV SKILLS ECOSYSTEM v1.15.1                         │
+│                              GOKU DEV SKILLS ECOSYSTEM v1.46.0                         │
 ├──────────────────────────────┬─────────────────────────────┬───────────────────────────┤
-│    42 PRODUCTION SKILLS      │     20 ENFORCED RULES       │   56 COMPONENT THEMES     │
-│ 30 Core + 12 Slash Skills    │ 15 Deterministic Gate Cmds  │ Standalone HTML/CSS/JS    │
-│ 11-Skill UI Polish & DESIGN  │ Full-Stack Vertical Slice   │ Bespoke Rationale Docs    │
+│    50 PRODUCTION SKILLS      │     22 ENFORCED RULES       │   56 COMPONENT THEMES     │
+│ Core Domain + Slash Skills   │ 16 Deterministic Gate Cmds  │ Standalone HTML/CSS/JS    │
+│ Global Agy & Claude Support  │ Full-Stack Vertical Slice   │ 20 Living Doc Templates   │
 │ 3-Tier Verification Engine   │ Zero-Slop · WCAG AA Parity  │ Zero-Friction CLI Bridges │
 └──────────────────────────────┴─────────────────────────────┴───────────────────────────┘
 ```
@@ -86,7 +86,7 @@ Most AI coding assistants produce **"Skin-Deep Code"**: they scaffold quick Reac
 
 ---
 
-## 🧠 The 42 Production Skills & Developer Archetypes
+## 🧠 The 50 Production Skills & Developer Archetypes
 
 The **42 production skills** (30 core domain skills + 12 first-class ensemble slash command skills) are organized into **6 cohesive Developer Archetypes**:
 
@@ -314,15 +314,94 @@ npx goku-dev-skills update --dest ./my-backend-service
 > - `"/gs-update"`, `"Goku skill güncelle"`, `"skill update"`, `"GS update"`, `"GS güncelle"`
 > - `"goku update"`, `"skillset güncelle"`, `"skill'leri güncelle"`, `"sync skills"`
 
-### 3. Multi-Agent & Platform Support
+### 3. Platform-by-Platform Setup (Antigravity, Antigravity CLI, Claude Code, Claude Code CLI)
 
-| AI Assistant / Tool | Command Example | Target Workspace Location |
-| :--- | :--- | :--- |
-| **Google Antigravity / OpenCode** | `npx goku-dev-skills init` | `.agent/skills/` & `.agent/rules/` |
-| **Cursor** | `npx goku-dev-skills add <skill> --agent cursor` | `.cursor/rules/<skill>/` |
-| **Claude Code** | `npx goku-dev-skills add <skill> --agent claude` | `.claude/skills/<skill>/` |
-| **Windsurf** | `npx goku-dev-skills add <skill> --agent windsurf` | `.windsurf/rules/<skill>/` |
-| **Custom Path** | `npx goku-dev-skills init --dest <path>` | Custom target directory |
+You can install `goku-dev-skills` **per-project** (committed or gitignored inside a single repository) OR **globally** on your machine so every project gets the full skillset automatically without copying `.agent/` into each repository.
+
+#### A. Antigravity CLI (`agy`) & Antigravity IDE / App — Global Setup (Zero Per-Project Copy)
+
+Installs all **50 skills**, **20 templates**, **22 on-demand rules** (`references/rules/`), and a budget-safe `< 24 KB` global router (`rules/AGENTS.md` with Scope Guard + Path Bridge) as a native Antigravity plugin at `~/.gemini/config/plugins/goku-dev-skills/` (shared by both **Antigravity CLI (`agy`)** and **Antigravity IDE / App**):
+
+```bash
+# 1. Install or update the global Antigravity plugin (full package, ~65 MB)
+npx goku-dev-skills sync-agy
+
+# Or from a cloned skillSetWorks repo (also deduplicates shadowed ~/.gemini/config/skills entries):
+python scripts/sync_agy_global.py --dedupe-global-skills
+
+# Minimal mode (excludes the 55+ HTML component themes, ~11 MB):
+npx goku-dev-skills sync-agy -m
+
+# Dry-run preview without modifying disk:
+npx goku-dev-skills sync-agy --check
+```
+
+**Verify & Manage the Global Plugin (`agy`):**
+```bash
+agy plugin validate ~/.gemini/config/plugins/goku-dev-skills --json
+agy plugin list --json
+agy plugin disable goku-dev-skills   # Temporarily turn off across all repos
+agy plugin enable goku-dev-skills    # Re-enable
+```
+
+> [!NOTE]
+> **Precedence & Context Safety:** Antigravity resolves **Workspace (`.agent/`) > Global (`~/.gemini/config/`)**. Repositories that already have their own `.agent/` folder or custom root constitution (`AGENTS.md` / `CLAUDE.md`) automatically keep local precedence, and only `rules/AGENTS.md` (`< 24 KB`) is loaded Always-On while the 22 full rules remain on-demand in `references/rules/`.
+
+#### B. Antigravity IDE / App & OpenCode — Per-Project Setup
+
+```bash
+# Auto-detect stack (pom.xml, package.json, requirements.txt) and install into ./.agent/
+npx goku-dev-skills init --detect
+
+# Or install a specific profile (backend, frontend, creative, fullstack)
+npx goku-dev-skills init -p fullstack
+```
+
+#### C. Claude Code & Claude Code CLI (`claude`) — Per-Project & Global Setup
+
+Claude Code discovers skills from `.claude/skills/<skill>/SKILL.md` (project-level) and `~/.claude/skills/<skill>/SKILL.md` (personal global across all repositories).
+
+**1) Per-Project Installation (`.claude/skills/`):**
+```bash
+# Install one or more skills into ./.claude/skills/
+npx goku-dev-skills add council doc-coauthoring feature-architect tdd --agent claude
+
+# Or install all 50 skills into ./.claude/skills/ (from a cloned skillSetWorks repo):
+# macOS / Linux:
+mkdir -p .claude/skills && cp -R .agent/skills/* .claude/skills/
+# Windows PowerShell:
+New-Item -ItemType Directory -Force .claude\skills | Out-Null; Copy-Item -Recurse -Force C:\path\to\skillSetWorks\.agent\skills\* .claude\skills\
+```
+
+**2) Global Installation (`~/.claude/skills/` — Available in Every Repo):**
+```bash
+# Install specific skills globally for Claude Code & Claude Code CLI
+npx goku-dev-skills add council karpathy-guidelines doc-coauthoring feature-architect --agent claude --dest ~/.claude/skills
+
+# Or copy all 50 skills globally (from a cloned skillSetWorks repo):
+# macOS / Linux:
+mkdir -p ~/.claude/skills && cp -R .agent/skills/* ~/.claude/skills/
+# Windows PowerShell:
+New-Item -ItemType Directory -Force "$HOME\.claude\skills" | Out-Null; Copy-Item -Recurse -Force .\.agent\skills\* "$HOME\.claude\skills\"
+```
+
+After adding or updating skills while a Claude Code CLI session is running, refresh them with:
+```text
+/reload-skills
+```
+*(Optional: if you also want repository-level instructions in Claude Code, keep a project `CLAUDE.md` or copy `.agent/AGENTS.md` into `CLAUDE.md` — never overwrite an existing custom `CLAUDE.md`.)*
+
+#### D. Quick Platform Reference Matrix
+
+| AI Assistant / CLI | Scope | Command Example | Target Location |
+| :--- | :--- | :--- | :--- |
+| **Antigravity CLI (`agy`) & IDE** | Global (all repos) | `npx goku-dev-skills sync-agy` | `~/.gemini/config/plugins/goku-dev-skills/` |
+| **Antigravity / OpenCode** | Per-project | `npx goku-dev-skills init --detect` | `.agent/skills/`, `.agent/rules/`, `.agent/templates/` |
+| **Claude Code & Claude Code CLI** | Per-project | `npx goku-dev-skills add <skill...> --agent claude` | `.claude/skills/<skill>/` |
+| **Claude Code & Claude Code CLI** | Global (all repos) | `npx goku-dev-skills add <skill...> --agent claude --dest ~/.claude/skills` | `~/.claude/skills/<skill>/` |
+| **Cursor** | Per-project | `npx goku-dev-skills add <skill> --agent cursor` | `.cursor/rules/<skill>/` |
+| **Windsurf** | Per-project | `npx goku-dev-skills add <skill> --agent windsurf` | `.windsurf/rules/<skill>/` |
+| **Custom Path** | Custom | `npx goku-dev-skills init --dest <path>` | Custom target directory |
 
 ---
 
@@ -356,7 +435,7 @@ python scripts/generate_skills_catalog.py --check
 
 ---
 
-## ⚡ Session Slash Commands (12 Ensemble Workflows)
+## ⚡ Session Slash Commands (Ensemble Workflows)
 
 All 12 ensemble slash commands are registered as first-class skills under `.agent/skills/` so typing `/` in your IDE chat immediately surfaces them with autocomplete descriptions:
 
@@ -403,7 +482,7 @@ To prevent the **"Phantom Done"** failure mode (where an agent declares a featur
 
 ---
 
-## 🧪 The 15 Deterministic Verification Gates
+## 🧪 The 16 Deterministic Verification Gates
 
 Every measurable rule (`sinif: OLCULEBILIR`) in Goku Dev Skills is backed by a standalone verification command with deterministic exit codes (`0` = pass, `1` = violation, `2` = configuration/usage error). The gate table in `AGENTS.md` §3.1 is auto-generated from rule frontmatter via `rules_gates.py --emit-table`:
 
