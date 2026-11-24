@@ -46,6 +46,8 @@ TEST_SCRIPTS = [
     ("Test Test Spec Generator", HERE / "test_test_spec_generator.py"),
     ("Test Diff Triage", HERE / "test_diff_triage.py"),
     ("Test Plan Conflict Guard", HERE / "test_plan_conflict_guard.py"),
+    ("Test UI Pre-Design Gate", HERE / "test_ui_predesign_gate.py"),
+    ("Test Walkthrough Archive", HERE / "test_walkthrough_archive.py"),
 ]
 
 

@@ -87,8 +87,10 @@ def _check_plan_eviction(root: Path, handoff_text: str) -> List[Tuple[str, str]]
     for pdir in plan_dirs:
         if pdir.is_dir():
             for pfile in pdir.rglob("*.md"):
-                if "archive" not in str(pfile).lower():
-                    plan_files.append(pfile)
+                lower_parts = [part.lower() for part in pfile.parts]
+                if "archive" in lower_parts or "walkthrough" in lower_parts or "walkthrough" in pfile.name.lower():
+                    continue
+                plan_files.append(pfile)
 
     for plan_file in plan_files:
         try:

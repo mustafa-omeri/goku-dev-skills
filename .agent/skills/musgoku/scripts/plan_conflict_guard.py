@@ -353,7 +353,8 @@ def _collect_queued_plans_and_backlog(root: Path, exclude_plan: Optional[Path] =
             resolved = pfile.resolve()
             if resolved in seen_paths or (exclude_res and resolved == exclude_res):
                 continue
-            if "archive" in str(pfile).lower():
+            lower_parts = [part.lower() for part in pfile.parts]
+            if "archive" in lower_parts or "walkthrough" in lower_parts or "walkthrough" in pfile.name.lower():
                 continue
             if pfile.name in completed_plan_names:
                 continue

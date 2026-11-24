@@ -289,6 +289,14 @@ Ajan tasarım üzerinde çalışırken bu üç modu kesinlikle gözetir:
 - `.agent/templates/PRODUCT.template.md` → `<repo-kök>/PRODUCT.md`
 - `.agent/templates/DESIGN.template.md` → `<repo-kök>/DESIGN.md`
 
+### 2.8.1 Kod Öncesi Ön-Tasarım Onayı (Wireframe / User Flow / Prototype / Mockup) ve `--ui-preview` 1:1 Sadakat Kilidi
+Frontend ekranı etkileyen her planlama (`/plan`, `/seal-plan` veya kardeş frontend repodan `sync_sibling_handoff.py --ui-wireframe-expected` ile gelen işlerde), kodlama başlamadan önce `DESIGN.md` sözleşmesi (yoksa brownfield baseline özeti) okunarak aşağıdaki 4 ön-tasarım seviyesinden kapsamına uygun olanı sunulur:
+- **Wireframe (Tel Kafes — Varsayılan Tier 1):** Plan `.md` içinde (`PLAN.template.md` §7.1) renksiz, sade `Before -> After` ASCII/kutu yerleşim iskeleti ve 4 UX durumu. Ek dosya üretmez, sıfır şişkinlik sağlar.
+- **User Flow / Site Haritası (Tier 2):** 2+ ekran geçişi veya yeni rota akışı gerektiğinde ekranlar arası adım şeması (`diagram-design` / Mermaid).
+- **Prototype / Mockup (`--ui-preview`, `--ui-ux` veya `"--UI&UX"` — Tier 3 Gerçek Ekran Kilidi):** Kullanıcı bu bayrağı belirttiğinde soyut kutu yerine **projenin mevcut gerçek ekran kodları ve `DESIGN.md` tokenları** ile tarayıcıda açılan `Before <-> After` etkileşimli prototip / yüksek detaylı mockup önizlemesi üretilir (`docs/plans/wireframes/`).
+- **1:1 Birebir Ekran Garantisi (`UI-PREVIEW-LOCK`):** Kullanıcı `--ui-preview` (`--ui-ux`) önizlemesini onayladığında `UI-PREVIEW-LOCK` imzası (hedef ekran yolu, DOM/layout imzası, `DESIGN.md` tokenları) plana mühürlenir. Kodlama aşamasında onaylanan önizlemeden görsel veya yapısal sapma (`Preview Drift`) **kesinlikle yasaktır**; sonuç ekranı onaylanan önizleme ile birebir aynı olmalıdır.
+- **Mühürleme Uyarısı:** `archive_plan.py`, UI dosyası etkileyen bir planda wireframe bölümü yoksa `[WARN] [UI-WIREFRAME-MISSING]` basar; bilinçli atlamada `--allow-no-wireframe` ile susturulabilir.
+
 ## 3. Sahiplik haritası — her konunun tek sahibi vardır
 
 Tasarım alanına giren 13 skill'in sorumluluk sınırı şudur. **Bir konuyu iki

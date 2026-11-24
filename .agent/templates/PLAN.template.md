@@ -69,6 +69,7 @@ Feature: <doldur: Özellik Adı>
 
 - **Etkilenen Kardeş Uygulama, Yol & Topoloji:** `<doldur: örn. ../backend-repo (Aynı Dizin) / C:/.../other-repo (Farklı Dizin) veya 'Tek Repo / Kardeş Uygulama Etkisi Yok'>`
 - **Kardeş `HANDOFF.md` + Süreç Dosyalarına Yazılacak Görevler & Sözleşme Özeti:** `<doldur: Görev ID, başlık ve API/DTO/şema kontrat özeti>`
+- **Kardeş UI Wireframe Beklentisi (Frontend Kardeş Varsa):** `<doldur: Kardeş repo frontend içeriyorsa '--ui-wireframe-expected' ile aktarım yapılır; asıl DESIGN.md + Before -> After Wireframe kardeş ajanda çizilir | Yoksa 'UI Kapsam Dışı'>`
 - **Yürütme Sahipliği Sorusu (Farklı Dizinde Zorunlu):** *"Kardeş proje farklı dizinde yer alıyor; öncelik kardeş projenin kendi kod ajanındadır. Kardeş uygulamadaki geliştirmeyi kendi kod ajanı mı yapsın, yoksa ben mi devralayım?"* (`[Seçenek 1: Kardeş Projenin Kendi AI Agent'ı (Öncelikli) / Seçenek 2: Mevcut Ajan]`)
 
 ### 5.2 🛡️ Ön-Mühürleme Çakışma, Tekrar ve Sıralı Plan Ezme Matrisi (Pre-Seal Conflict Check)
@@ -105,15 +106,41 @@ Feature: <doldur: Özellik Adı>
 | **4. Zero-CLS Skeleton Kaseti & 4 UX Durumu** | `<doldur: Profil / Metrik Kart / Tablo Satırı / Dashboard / Form Kaseti + Empty/Error State>` | `ui-polish` & `check_design_slop.py` |
 | **5. Görsel Varlık & Karşılama Turu** | `<doldur: generate_auth_hero.py / mock-asset-provider / onboarding-tour veya 'Gerekmiyor'>` | `generate_auth_hero.py` & `onboarding-tour` |
 
+### 7.1 🖼️ UI/UX Ön-Tasarım Önizlemesi (`DESIGN.md` + `Before -> After` Wireframe & `--ui-preview` 1:1 Kilit)
+> 💡 **Kapsam Triage (Sıfır Şişkinlik):** `Tier 0` (Salt Backend / tek satır CSS -> Atlanır) | `Tier 1` (**Varsayılan Wireframe**: `DESIGN.md` okunur + renksiz ASCII `Before -> After` tel kafes) | `Tier 2` (+ `User Flow / Site Haritası`) | `Tier 3` (`--ui-preview` / `--ui-ux` / `"--UI&UX"`: mevcut gerçek ekran DOM + `DESIGN.md` ile canlı `Prototype`/`Mockup` önizlemesi ve onayda 1:1 `UI-PREVIEW-LOCK`).
+> *(Salt backend/CLI işlerinde yalnızca `Tier 0: Salt Backend / UI Kapsam Dışı` yazın.)*
+
+- **Seçilen Ön-Tasarım Seviyesi & `DESIGN.md` Çapası:** `<doldur: Tier 0 | Tier 1 (Wireframe) | Tier 2 (User Flow + Wireframe) | Tier 3 (--ui-preview Gerçek Ekran Kilidi) — DESIGN.md modu ve Surface Mode özeti>`
+
+```text
+[BEFORE: <Mevcut Ekran / Rota>]
++----------------------------------------------------------+
+| <Mevcut başlık, filtre, içerik yerleşimi özeti>          |
++----------------------------------------------------------+
+
+[AFTER: <Planlanan Ekran / Rota> — Wireframe Onay Taslağı]
++----------------------------------------------------------+
+| <Yeni yerleşim, eklenen/taşınan bileşenler, CTA>         |
++----------------------------------------------------------+
+UX Durumlari: Skeleton (...) | Empty (...) | Error (...) | Mobil (390px): ...
+```
+
+- **Gerçek Ekran 1:1 Kilidi (`--ui-preview` / `--ui-ux` çağrıldıysa doldurulur, aksi halde `Kullanılmadı (Tier 1 ASCII Wireframe)`):**
+  - `UI-PREVIEW-LOCK`:
+    - Gerçek Kaynak Ekran Dosyası: `<doldur veya 'Kullanılmadı'>`
+    - Üretilen Önizleme HTML Yolu: `<doldur: docs/plans/wireframes/ui_preview_<slug>.html veya 'Kullanılmadı'>`
+    - Kilitlenen DOM/Layout İmzası: `<doldur: grid/flex iskeleti, bileşen sırası veya 'Kullanılmadı'>`
+    - Kilitlenen `DESIGN.md` Tokenları: `<doldur: surface-ground, primary, typography veya 'Kullanılmadı'>`
+
 ---
 
 ## 8. 🧪 TDD Kırmızı-Yeşil Dikiş Noktaları (Seams) ve Sıralı İcra Fazları (FAA AC 121-24C)
 > ⛔ **PROCEED İCRA KURALI (MANDATORY — Çoklu Araç Uyumlu):** Tüm plan yönergeleri FAA AC 121-24C standardına uygun `[Adım N]. [Eylem / Komut] -> [Beklenen Çıktı]` sözdiziminde yazılır. Kullanıcı `"proceed"`, `"onay"`, `"uygula"` verdiğinde önce **Faz 0**, ardından **Faz 1..4** icra edilir.
 
 ### 📌 Faz 0: Onay Sonrası Mühürleme (`docs/plans/`, `HANDOFF.md` §3 & Sprint Açılışı — Koda Dokunmadan Önce Zorunlu)
-1. **[Adım 1 - Ön-Mühürleme Çakışma Kalkanı & `docs/plans/` Altına Arşivle]:** `python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug>` -> **Beklenen Çıktı:** Çakışma/ezme kalkanı (`plan_conflict_guard.py`) yeşil geçer ve `[ARCHIVED] docs/plans/plan_<slug>_<YYYYMMDD_HHMMSS>.md` basılır.
-2. **[Adım 2 - `HANDOFF.md` §3 Canlı Panosuna İşle]:** Bölüm 5'teki tüm `[DOM]-[TIP]-[NO]` görevlerini ve arşivlenen plan referansını `HANDOFF.md` §3 panosuna işle -> **Beklenen Çıktı:** `python .agent/skills/musgoku/scripts/check_handoff.py` `0 hata, 0 W3 uyarısı` döner.
-3. **[Adım 3 - Sprint & Kardeş Süreç Senkronu]:** `SPRINT_PLAN.md`, `KANBAN.md`, `RELEASE_PLAN.md` yoksa şablondan aç; kardeş proje varsa `sync_sibling_handoff.py` çalıştır -> **Beklenen Çıktı:** Aktif kart `Yapılıyor`'a taşınır ve kardeş `HANDOFF.md` + süreçler güncellenir.
+1. **[Adım 1 - Ön-Mühürleme Çakışma & Wireframe Kalkanı + `docs/plans/` Altına Arşivle]:** `python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug>` (UI planında wireframe uyarısını susturmak gerekirse `--allow-no-wireframe` ekleyin) -> **Beklenen Çıktı:** Çakışma/ezme kalkanı (`plan_conflict_guard.py`) yeşil geçer ve `[ARCHIVED] docs/plans/plan_<slug>_<YYYYMMDD_HHMMSS>.md` basılır.
+2. **[Adım 2 - `HANDOFF.md` §3 Canlı Panosuna İşle]:** Bölüm 5'teki tüm `[DOM]-[TIP]-[NO]` görevlerini ve arşivlenen plan referansını `HANDOFF.md` §3 panosuna işle -> **Beklenen Çıktı:** `python .agent/skills/musgoku/scripts/check_handoff.py` `0 hata, 0 W3/W4 uyarısı` döner.
+3. **[Adım 3 - Sprint & Kardeş Süreç Senkronu]:** `SPRINT_PLAN.md`, `KANBAN.md`, `RELEASE_PLAN.md` yoksa şablondan aç; kardeş proje varsa `sync_sibling_handoff.py` (kardeş frontend ise `--ui-wireframe-expected`) çalıştır -> **Beklenen Çıktı:** Aktif kart `Yapılıyor`'a taşınır ve kardeş `HANDOFF.md` + süreçler güncellenir.
 
 ### 🔴 Faz 1: Dikiş Noktası & Kırmızı Test (Red Loop)
 1. **[Adım 1 - Kırmızı Test Yaz & Koştur]:** `<doldur: tests/.../feature.test.ts>` dosyasında `<doldur: genel dikiş noktası>` testini yaz ve `<doldur: test komutu>` çalıştır -> **Beklenen Çıktı:** Terminalde testin **KIRMIZI (FAIL)** olduğu görülür.
@@ -125,7 +152,7 @@ Feature: <doldur: Özellik Adı>
 1. **[Adım 1 - 5 Katman & Zero-CLS Skeleton Bağlantısı]:** DB, API, UI, seçilen tema/bileşen şablonunu (`component-themes/` / `dashboard-theme/`) ve Zero-CLS Skeleton Screens UI kasetini uygula -> **Beklenen Çıktı:** 3 cihaz ergonomisinde (Mobil/Tablet/Masaüstü) veri akışı ve skeleton durumu eksiksiz çalışır.
 
 ### 🧹 Faz 4: Refactor, Kapılar & Kapanış
-1. **[Adım 1 - Kalite Kapıları & Kullanıcı Test Rehberi]:** `python .agent/skills/musgoku/scripts/run_all_gates.py` çalıştır, `docs/KULLANICI_TEST_REHBERI.md` güncelle ve `KANBAN.md` kartını `Yapıldı`'ya taşı -> **Beklenen Çıktı:** Tüm kapılar `[OK]` döner; sprint bitiminde kullanıcıya `"/verify-sprint çalıştırayım mı?"` sorulur.
+1. **[Adım 1 - Kalite Kapıları, Walkthrough Arşivi & Kullanıcı Test Rehberi]:** `python .agent/skills/musgoku/scripts/run_all_gates.py` çalıştır, `docs/KULLANICI_TEST_REHBERI.md` güncelle, `KANBAN.md` kartını `Yapıldı`'ya taşı ve varsa `walkthrough.md` özetini `python .agent/skills/musgoku/scripts/archive_plan.py --plan <walkthrough> --walkthrough --for-plan <arşivli-plan>` ile mühürle -> **Beklenen Çıktı:** Tüm kapılar `[OK]` döner, `<plan_stem>_walkthrough.md` kaydedilir; sprint bitiminde kullanıcıya `"/verify-sprint çalıştırayım mı?"` sorulur.
 
 ---
 

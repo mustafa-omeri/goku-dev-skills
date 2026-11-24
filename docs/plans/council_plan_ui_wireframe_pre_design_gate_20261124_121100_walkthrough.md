@@ -1,0 +1,26 @@
+# Walkthrough — UI/UX Ön-Tasarım Önizleme, `Before -> After` Wireframe & `--ui-preview` (`--ui-ux`) 1:1 Ekran Kilidi (`S2-21`)
+
+## 1. Yapılan Değişiklikler
+- **Plan Arşivi & Konsey:** [council_plan_ui_wireframe_pre_design_gate_20261124_121100.md](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/docs/plans/council_plan_ui_wireframe_pre_design_gate_20261124_121100.md) · [S2-21.feature](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/specs/S2-21.feature) (`council_ranker.py`: `Option B`, Borda `1.00`, `4/4` oy).
+- **Şablon & Kurallar:**
+  - [PLAN.template.md](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/.agent/templates/PLAN.template.md): `§5.1` kardeş UI wireframe beklentisi, `§7.1` 4 seviyeli UI/UX ön-tasarım bloku (`Tier 0` Bypass, `Tier 1` varsayılan plan-içi renksiz ASCII `Before -> After` Tel Kafes, `Tier 2` User Flow, `Tier 3` `--ui-preview` / `--ui-ux` / `"--UI&UX"` canlı gerçek ekran + `UI-PREVIEW-LOCK` 1:1 sadakat tablosu) ve `§8` Faz 0 (`--allow-no-wireframe`, `--ui-wireframe-expected`).
+  - [development-workflow.md](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/.agent/rules/development-workflow.md): `Adım 2.1` Madde `6.1` ve `Adım 2.2` Faz 0 güncellendi.
+  - [design-skills-enforcement.md](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/.agent/rules/design-skills-enforcement.md): `§2.8.1` Kod Öncesi Ön-Tasarım Onayı ve `UI-PREVIEW-LOCK` 1:1 sadakat kilidi eklendi (§3 sahiplik tablosuna dokunulmadı).
+- **Otomasyon Scriptleri:**
+  - [archive_plan.py](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/.agent/skills/musgoku/scripts/archive_plan.py): `check_ui_predesign_plan()` (`[WARN] [UI-WIREFRAME-MISSING]`, `--allow-no-wireframe`), `UI-PREVIEW-LOCK` alan denetimi ve `archive_walkthrough()` (`--walkthrough`, `--for-plan` -> `docs/plans/<plan_stem>_walkthrough.md`, `--walkthrough-subdir` -> `docs/plans/walkthrough/<slug>_<ts>_walkthrough.md`).
+  - [check_handoff.py](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/.agent/skills/musgoku/scripts/check_handoff.py), [plan_conflict_guard.py](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/.agent/skills/musgoku/scripts/plan_conflict_guard.py), [check_aviation_docs.py](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/.agent/skills/musgoku/scripts/check_aviation_docs.py): Walkthrough dosyaları (`*walkthrough*.md` ve `docs/plans/walkthrough/`) bekleyen plan veya acil çıkış tablosu gerektiren runbook sayılmaz (zero false-positive).
+  - [sync_sibling_handoff.py](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/.agent/skills/musgoku/scripts/sync_sibling_handoff.py): `--ui-wireframe-expected` bayrağı eklendi; kardeş `HANDOFF.md`, `KANBAN.md` ve `SPRINT_PLAN.md` içine `[UI-ÖN-TASARIM ZORUNLU]` notu yazar.
+- **Katalog & Süreç:** [generate_skills_catalog.py](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/scripts/generate_skills_catalog.py) -> [.agent/skills-catalog.html](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/.agent/skills-catalog.html) (`/plan`, `/seal-plan`, `frontend-design`, `musgoku`, arama anahtar kelimeleri), [package.json](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/package.json) (`1.45.0`), [PROJECT_BRIEF.md](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/PROJECT_BRIEF.md), [HANDOFF.md](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/HANDOFF.md), [KANBAN.md](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/KANBAN.md), [SPRINT_PLAN.md](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/SPRINT_PLAN.md), [RELEASE_PLAN.md](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/RELEASE_PLAN.md), [knowledge-base.md](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/knowledge-base.md), [KULLANICI_TEST_REHBERI.md](file:///C:/devtools/myProjectsAreaWS/toolsWS/skillSetWorks/docs/KULLANICI_TEST_REHBERI.md) (`§3.50`).
+
+## 2. Doğrulanan Test ve Kapı Sonuçları
+- `python tests/run_all.py`: `33/33 TESTİN HEPSİ BAŞARIYLA GEÇTİ!` (son düzenleme öncesinde 33/33 tam koşu; ardından `development-workflow.md` final düzenlemesi sonrası `test_ui_predesign_gate.py`, `test_rule_gates.py` ve `run_all_gates.py` yeniden koşturuldu).
+- Final düzenleme sonrası doğrulananlar:
+  - `python -m unittest tests/test_ui_predesign_gate.py`: `Ran 6 tests in 0.041s` — `OK`
+  - `python tests/test_rule_gates.py`: `SONUC: tum testler gecti` (`22 kural`, `12 olculebilir`, `16 sahiplik satiri`)
+  - `python .agent/skills/musgoku/scripts/run_all_gates.py`: `11 geçti · 5 kapsam dışı/atlandı · 0 başarısız (Toplam 16 kapı)` — `[OK]`
+  - `python .agent/skills/musgoku/scripts/check_aviation_docs.py`: `13 dosya tarandı · [OK]`
+  - `python .agent/skills/musgoku/scripts/check_design_skills.py`: `16 konu · [OK]`
+  - `python .agent/skills/musgoku/scripts/check_handoff.py --strict`: `0 uyarı · [OK]`
+  - `python .agent/skills/musgoku/scripts/check_sprint_board.py`: `30 kart · 28 Yapıldı · 2 açık · 0 hata · [OK]`
+  - `python .agent/skills/musgoku/scripts/check_project_brief.py`: `0 hata · 0 uyarı · [OK]`
+  - `python .agent/skills/verify-sprint/scripts/sprint_auditor.py`: `[PASSED] 28 adet Yapıldı kartı denetlendi; 0 kartta bulgu tespit edildi.`

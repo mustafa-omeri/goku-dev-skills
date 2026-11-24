@@ -213,24 +213,25 @@ python .agent/skills/musgoku/scripts/check_theme_contrast.py --strict""",
     },
     {
         "command": "/plan",
-        "aliases": ["/plan", "plan modu", "[PLAN]", "proceed", "plan hazirla"],
-        "name": "Antigravity Plan Modu & Mimari TDD Protokolü",
+        "aliases": ["/plan", "plan modu", "[PLAN]", "proceed", "plan hazirla", "--ui-preview", "--ui-ux", "--UI&UX", "wireframe"],
+        "name": "Antigravity Plan Modu, Before->After Wireframe & Mimari TDD",
         "badge": "Mimari & TDD",
         "badge_class": "badge-primary",
-        "skills": ["musgoku", "tdd", "doc-coauthoring", "development-workflow"],
-        "goal": "TDD Dikiş Noktası, 5 Katmanlı Dilim & Önce Kırmızı Test",
-        "description": "Antigravity IDE/CLI, Claude Code ve OpenCode'da sohbet çıktısı yerine ayrı bir fiziksel .md dosyasında ve FAA AC 121-24C standardında PLAN.template.md planı üretir. Kardeş proje varsa aynı/farklı dizin kuralıyla HANDOFF.md + süreç dosyalarına işler; /seal-plan veya Proceed onayı sunar.",
-        "sample_prompt": "/plan: Yeni kullanıcı profil sayfası için TDD dikiş noktası ve 5 katmanlı dilim içeren mimari plan hazırla.",
-        "protocol": "1. PLAN.template.md Üretimi -> [DOM]-[TIP]-[NO] kimlikleri ve 5 katmanlı dilim ➜ 2. Kullanıcı Onay Kapısı -> /seal-plan (Backlog'a Al & Dur) VEYA Proceed (Onayla & Başla) ➜ 3. Kırmızı Test Yazımı (Proceed durumunda) -> Terminalde FAIL kanıtı ➜ 4. Yeşil Kod & 5 Katman İcrası",
-        "usage_snippet": """# 1. Plan Modu Tetikleme:
+        "skills": ["musgoku", "tdd", "doc-coauthoring", "development-workflow", "frontend-design", "diagram-design"],
+        "goal": "DESIGN.md + Before->After Wireframe / --ui-preview 1:1 Kilit, TDD & 5 Katmanlı Dilim",
+        "description": "Antigravity IDE/CLI, Claude Code ve OpenCode'da sohbet çıktısı yerine ayrı bir fiziksel .md dosyasında PLAN.template.md planı üretir. Frontend etkileyen planlarda kodlamadan önce DESIGN.md'yi okuyarak varsayılan renksiz ASCII Before -> After Wireframe (Tel Kafes), kapsamına göre User Flow ve '--ui-preview' (--ui-ux / --UI&UX) bayrağıyla mevcut gerçek ekran kodları + DESIGN.md üzerinden canlı Prototype/Mockup önizlemesi sunar; onayda UI-PREVIEW-LOCK ile 1:1 birebir ekran garantisi verir. Kardeş frontend varsa sync_sibling_handoff.py --ui-wireframe-expected ile aktarır.",
+        "sample_prompt": "/plan --ui-preview: Mevcut gerçek siparişler ekranı ve DESIGN.md üzerinden yeni filtre drawer taslağını Before/After canlı önizlemeyle hazırla.",
+        "protocol": "1. DESIGN.md Okuma & Ön-Tasarım -> Varsayılan ASCII Before->After Wireframe (veya --ui-preview gerçek ekran önizlemesi + UI-PREVIEW-LOCK) ➜ 2. PLAN.template.md Üretimi -> [DOM]-[TIP]-[NO] kimlikleri ve 5 katmanlı dilim ➜ 3. Kullanıcı Onay Kapısı -> /seal-plan (Backlog'a Al & Dur) VEYA Proceed (Onayla & Başla) ➜ 4. Kırmızı Test -> 1:1 Ekran & Yeşil Kod İcrası",
+        "usage_snippet": """# 1. Standart Plan Modu (Varsayılan: DESIGN.md + Plan-içi ASCII Before -> After Wireframe):
 /plan [Özellik Açıklaması]
 
-# 2. Örnek Plan Üretimi:
-/plan PostgreSQL 17 uyumlu Sprint 21 uygulama planı (OCAI-FEAT-022, OCAI-FEAT-023)
+# 2. Gerçek Ekran Önizleme & 1:1 Garanti Modu (--ui-preview / --ui-ux / --UI&UX):
+/plan --ui-preview Siparişler sayfasına filtre barı ve detay çekmecesi ekle
+/plan --ui-ux Yeni dashboard özet kartları (User Flow + Mockup)
 
 # 3. Plan Onayında İki Yol:
-# Yol A (/seal-plan): Hiç kod yazmadan planı mühürle, HANDOFF.md Gelecek Fazlar'a ⬜ Bekliyor olarak al ve dur.
-# Yol B (Proceed): Planı onayla, Faz 0 arşivlemesini yap ve doğrudan TDD kırmızı test ile geliştirmeye başla.""",
+# Yol A (/seal-plan): Kod yazmadan mühürle, HANDOFF.md Gelecek Fazlar'a ⬜ Bekliyor al (--allow-no-wireframe ile UI uyarısını susturabilirsin).
+# Yol B (Proceed): Onayla, UI-PREVIEW-LOCK ile 1:1 birebir ekran ve TDD kırmızı testten geliştirmeye başla.""",
         "emergency": [
             {
                 "symptom": "Test ilk çalıştırmada yeşil çıktı (False Positive)",
@@ -264,11 +265,12 @@ mühürle, bunları plana dahil et, todo olarak ekle, sıraya al
 python .agent/skills/musgoku/scripts/plan_conflict_guard.py --root . --plan <plan-yolu>
 python .agent/skills/musgoku/scripts/plan_conflict_guard.py --root . --check-queue --strict
 
-# 3. Deterministik Mühürleme (CRITICAL ezmede durur; bilinçli geçişte --allow-conflicts ile PRE-SEAL-CONFLICT-AUDIT gömer):
+# 3. Deterministik Mühürleme (CRITICAL ezmede --allow-conflicts; UI wireframe uyarısında --allow-no-wireframe):
 python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug> --seal-handoff --sprint-label "Sprint 21"
-python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug> --seal-handoff --allow-conflicts
+python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug> --seal-handoff --allow-conflicts --allow-no-wireframe
 
-# 4. Doğrulama Kapıları (W3 Task Eviction, W4 Plan Clobber, W5 Kanban Tekrarı):
+# 4. Kardeş Frontend Repo Aktarımı & Doğrulama Kapıları (W3/W4/W5):
+python .agent/skills/musgoku/scripts/sync_sibling_handoff.py --sibling-root ../frontend --plan <plan> --task-id FE-01 --task-title "UI" --ui-wireframe-expected
 python .agent/skills/musgoku/scripts/check_handoff.py --strict
 python .agent/skills/musgoku/scripts/check_sprint_board.py""",
         "emergency": [
@@ -1108,6 +1110,8 @@ python .agent/skills/musgoku/scripts/check_theme_contrast.py --strict"""
 
             "10 WCAG Paleti + 88 Style Theme Paleti (get_palette.py)",
 
+            "Before -> After Wireframe (Varsayılan) & --ui-preview / --ui-ux 1:1 Kilidi",
+
             "CC0 Kültür Varlığı Aracı (assets.mjs)",
 
             "3 Dalga AI-Slop & Tek-Taraflı Seçim Koruması",
@@ -1116,7 +1120,7 @@ python .agent/skills/musgoku/scripts/check_theme_contrast.py --strict"""
 
         ],
 
-        "detail": "Üretim kalitesinde web arayüzü kodu üretir. Sıfırdan yazmadan önce 56 hazır HTML/CSS bileşen temasını (sidebars, navbars, cards, logins, footers), 10 ölçülmüş WCAG paletini ve 88 Style Theme ilham paletini CLI köprüleriyle tarar; F2 3-alternatif onay kapısı ve DESIGN.md sözleşmesine sadık kalır.",
+        "detail": "Üretim kalitesinde web arayüzü kodu üretir. Koddan önce DESIGN.md okuyarak plan içi renksiz Before -> After Wireframe (veya --ui-preview / --ui-ux istendiğinde gerçek ekran DOM + DESIGN.md tokenlı canlı Prototype/Mockup önizlemesi ve UI-PREVIEW-LOCK 1:1 ekran kilidi) sunar; 56 hazır HTML/CSS bileşen temasını ve 88 Style Theme paletini CLI köprüleriyle tarar.",
 
         "sample_prompt": "Arayüzü DESIGN.md sözleşmesine, 88 Style Theme ilham kataloğuna ve hazır bileşen temalarına göre modernleştir; AI-slop ve tek-taraflı seçim yapma.",
 
@@ -1714,24 +1718,28 @@ python .agent/skills/i18n-localization/scripts/i18n_checker.py --strict"""
         "features": [
             "5 Katmanlı Dikey Dilim (DB → Backend → Client → UI → Admin)",
             "Ön-Mühürleme Çakışma & Ezme Kalkanı (plan_conflict_guard.py)",
-            "archive_plan.py (CRITICAL'de durur / --allow-conflicts ile PRE-SEAL-CONFLICT-AUDIT gömer)",
+            "archive_plan.py (CRITICAL'de durur / --allow-conflicts / --allow-no-wireframe)",
+            "sync_sibling_handoff.py (--ui-wireframe-expected Kardeş Frontend Kontratı)",
             "check_handoff.py (W3/W4) & check_sprint_board.py (W5) Kuyruk Denetimi",
             "Java/Spring & React/Vite Mimari Kuralları + Birleşik Kapılar (run_all_gates.py)"
         ],
 
-        "detail": "Global geliştirme yönlendiricisi. Backend/Frontend 5 katmanlı dikey dilim mimarisini, birleşik kalite kapılarını ve plan mühürlerken (/seal-plan, 'mühürle', 'bunları plana dahil et', 'todo olarak ekle') canlı kod tekrarı (ALREADY_DONE_EXACT / ENRICHED_SUPERSET / SIMPLIFIED_SUBSET_REGRESSION) ile sıralı plan ezmesini (DOUBLE_NEW_COLLISION / SHARED_SURFACE_OVERWRITE) yakalayan plan_conflict_guard.py kalkanını yönetir.",
+        "detail": "Global geliştirme yönlendiricisi. Backend/Frontend 5 katmanlı dikey dilim mimarisini, planlarda DESIGN.md + Before -> After Wireframe / --ui-preview (--ui-ux) 1:1 gerçek ekran kilidini ve plan mühürlerken (/seal-plan, 'mühürle', 'bunları plana dahil et', 'todo olarak ekle') canlı kod tekrarı ile sıralı plan ezmesini yakalayan plan_conflict_guard.py kalkanını yönetir.",
 
-        "sample_prompt": "/seal-plan veya normal geliştirme: Planı canlı kod ve bekleyen planlarla çakışma taramasından geçir, ardından 5 katmanlı dikey dilimle uygula.",
+        "sample_prompt": "/seal-plan veya normal geliştirme: Planı çakışma ve UI Wireframe denetiminden geçir, ardından 5 katmanlı dikey dilimle uygula.",
 
         "config_snippet": """# 1. Ön-Mühürleme Çakışma, Tekrar & Sıralı Plan Ezme Kalkanı:
 python .agent/skills/musgoku/scripts/plan_conflict_guard.py --root . --plan <plan-yolu>
 python .agent/skills/musgoku/scripts/plan_conflict_guard.py --root . --check-queue --strict
 
-# 2. Plan Arşivleme & Backlog Mühürleme (CRITICAL'de durur / --allow-conflicts ile PRE-SEAL-CONFLICT-AUDIT gömer):
+# 2. Plan & Walkthrough Arşivleme (CRITICAL ezmede --allow-conflicts; UI uyarı susturma --allow-no-wireframe; Walkthrough için --walkthrough):
 python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug> --seal-handoff --sprint-label "Sprint 21"
-python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug> --seal-handoff --allow-conflicts
+python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug> --seal-handoff --allow-conflicts --allow-no-wireframe
+python .agent/skills/musgoku/scripts/archive_plan.py --plan <walkthrough-yolu> --walkthrough --for-plan docs/plans/<plan>.md
+python .agent/skills/musgoku/scripts/archive_plan.py --plan <walkthrough-yolu> --walkthrough --slug sprint-21 --walkthrough-subdir
 
-# 3. Birleşik Kalite & Pano Kapıları:
+# 3. Kardeş Frontend Wireframe Beklentisi & Birleşik Kapılar:
+python .agent/skills/musgoku/scripts/sync_sibling_handoff.py --sibling-root ../frontend --plan <plan> --task-id FE-01 --task-title "UI" --ui-wireframe-expected
 python .agent/skills/musgoku/scripts/run_all_gates.py
 python .agent/skills/musgoku/scripts/check_handoff.py --strict
 python .agent/skills/musgoku/scripts/check_sprint_board.py"""
@@ -2654,12 +2662,20 @@ def parse_skill_md(skill_path: Path) -> dict:
             "goku update", "skill update", "gs update", "güncelle", "cerrahi", "w4", "w5",
             "spinner slop", "run_all_gates", "seal", "seal-plan", "mühürle", "planı mühürle",
             "todo olarak ekle", "bunları plana dahil et", "sıraya al", "plan_conflict_guard",
-            "archive_plan", "allow-conflicts", "pre-seal-conflict-audit", "clobber",
-            "already_done_exact", "enriched_superset", "simplified_subset_regression",
+            "archive_plan", "allow-conflicts", "allow-no-wireframe", "ui-wireframe-expected",
+            "walkthrough", "for-plan", "walkthrough-subdir",
+            "ui-preview", "ui-ux", "ui-preview-lock", "wireframe", "tel kafes",
+            "pre-seal-conflict-audit", "clobber", "already_done_exact", "enriched_superset",
+            "simplified_subset_regression",
         ])
 
-    if name in ("ui-polish", "frontend-design", "ui-styling", "design-system"):
-        search_keywords.extend(["skeleton", "iskelet", "kaset", "shimmer", "w4", "spinner slop", "zero cls", "16 kilitli tema", "themes.css", "sileo", "toast", "ui-toast"])
+    if name in ("ui-polish", "frontend-design", "ui-styling", "design-system", "diagram-design"):
+        search_keywords.extend([
+            "skeleton", "iskelet", "kaset", "shimmer", "w4", "spinner slop", "zero cls",
+            "16 kilitli tema", "themes.css", "sileo", "toast", "ui-toast",
+            "wireframe", "tel kafes", "user flow", "site haritası", "prototype", "prototip",
+            "mockup", "maket", "before after", "ui-preview", "ui-ux", "ui-preview-lock",
+        ])
 
 
 

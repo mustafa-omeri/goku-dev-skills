@@ -142,6 +142,64 @@ def seal_plan_to_handoff(
     return handoff_p
 
 
+UI_TARGET_RE = re.compile(
+    r"(?:src/(?:pages|components|views|screens|layouts|app|ui)/[^\s`'\"]+|\.(?:tsx|jsx|vue|svelte|astro|css|scss)\b)",
+    re.IGNORECASE,
+)
+UI_EXPLICIT_BYPASS_RE = re.compile(
+    r"(?:Salt\s+Backend|UI\s+Kapsam\s+Dışı|UI\s+Etkisi\s*:\s*Yok|Tier\s+0\s*[:\-—]\s*Bypass)",
+    re.IGNORECASE,
+)
+UI_WIREFRAME_PRESENT_RE = re.compile(
+    r"(?:\[\s*BEFORE\b.*?\[\s*AFTER\b|Before\s*->\s*After|Tel\s*Kafes|UI-PREVIEW-LOCK|ui_preview_|<div|\+---+|┌───)",
+    re.IGNORECASE | re.DOTALL,
+)
+UI_PREVIEW_LOCK_RE = re.compile(r"\bUI-PREVIEW-LOCK\b", re.IGNORECASE)
+UI_PREVIEW_FLAG_RE = re.compile(r"(?:--ui-preview\b|--ui-ux\b|--UI&UX\b)", re.IGNORECASE)
+
+
+def check_ui_predesign_plan(plan_text: str) -> dict:
+    """Planın UI etkileyip etkilemediğini ve Before->After Wireframe / UI-PREVIEW-LOCK durumunu denetler."""
+    text = plan_text or ""
+    explicit_bypass = bool(UI_EXPLICIT_BYPASS_RE.search(text))
+    ui_targets = UI_TARGET_RE.findall(text)
+    ui_flag = bool(UI_PREVIEW_FLAG_RE.search(text))
+    ui_detected = (bool(ui_targets) or ui_flag) and not explicit_bypass
+
+    has_preview_lock = bool(UI_PREVIEW_LOCK_RE.search(text))
+    has_wireframe = bool(UI_WIREFRAME_PRESENT_RE.search(text))
+
+    warnings: List[dict] = []
+    if ui_detected and not has_wireframe:
+        warnings.append(
+            {
+                "code": "UI-WIREFRAME-MISSING",
+                "message": (
+                    "Plan UI dosyası etkiliyor ancak §7.1 Before -> After Wireframe (veya --ui-preview "
+                    "UI-PREVIEW-LOCK) bölümü bulunamadı. Uyarıyı susturmak için --allow-no-wireframe kullanın."
+                ),
+            }
+        )
+    elif ui_detected and ui_flag and has_preview_lock:
+        # Kilit bloğunda doldurulmamış <doldur placeholder kontrolü
+        lock_pos = text.upper().find("UI-PREVIEW-LOCK")
+        lock_snippet = text[lock_pos : lock_pos + 600]
+        if "<doldur" in lock_snippet:
+            warnings.append(
+                {
+                    "code": "UI-PREVIEW-LOCK-INCOMPLETE",
+                    "message": "--ui-preview kilidi açık ancak UI-PREVIEW-LOCK alanlarında '<doldur' yer tutucusu kaldı.",
+                }
+            )
+
+    return {
+        "ui_detected": ui_detected,
+        "has_wireframe": has_wireframe,
+        "has_preview_lock": has_preview_lock,
+        "warnings": warnings,
+    }
+
+
 def _inject_conflict_audit(content: str, report: dict) -> str:
     """Çakışma/tekrar/sıralama bulguları varsa arşivlenen plan içine audit bloğunu gömer."""
     if not report.get("findings"):
@@ -170,6 +228,7 @@ def archive_plan(
     sprint_label: str = "Planlı Backlog",
     allow_conflicts: bool = False,
     skip_conflict_check: bool = False,
+    allow_no_wireframe: bool = False,
 ) -> Path:
     """Onaylanan plan dosyasını <project_root>/docs/plans/<prefix>_<slug>_<YYYYMMDD_HHMMSS>.md olarak arşivler.
 
@@ -178,10 +237,17 @@ def archive_plan(
     seal_handoff=True verildiğinde görevleri HANDOFF.md Gelecek Fazlar panosuna ⬜ Bekliyor olarak mühürler.
     Mühürleme öncesi plan_conflict_guard ile canlı kod ve bekleyen plan çakışmaları denetlenir;
     CRITICAL ezme varsa allow_conflicts=True verilmedikçe PlanConflictError fırlatılır.
+    UI etkileyen planlarda Before->After Wireframe yoksa uyarı basar (allow_no_wireframe=True ile susturulur).
     """
     src_p = Path(plan_path).resolve()
     if not src_p.is_file():
         raise FileNotFoundError(f"Plan dosyası bulunamadı: {src_p}")
+
+    raw_content = src_p.read_text(encoding="utf-8", errors="replace")
+    if not allow_no_wireframe:
+        ui_check = check_ui_predesign_plan(raw_content)
+        for warn in ui_check["warnings"]:
+            print(f"[WARN] [{warn['code']}] {warn['message']}", file=sys.stderr)
 
     root_p = Path(project_root).resolve()
     conflict_report = None
@@ -204,7 +270,7 @@ def archive_plan(
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
     dest_p = plans_dir / f"{clean_prefix}{slug_part}_{timestamp}.md"
-    content = src_p.read_text(encoding="utf-8", errors="replace")
+    content = raw_content
     if conflict_report is not None:
         content = _inject_conflict_audit(content, conflict_report)
     dest_p.write_text(content, encoding="utf-8")
@@ -218,6 +284,52 @@ def archive_plan(
 
     if seal_handoff:
         seal_plan_to_handoff(dest_p, root_p, sprint_label=sprint_label)
+
+    return dest_p
+
+
+def archive_walkthrough(
+    walkthrough_path: Path | str,
+    project_root: Path | str,
+    for_plan: Optional[Path | str] = None,
+    slug: Optional[str] = None,
+    subdir: bool = False,
+    move: bool = False,
+) -> Path:
+    """Uygulanan plan, sprint veya geliştirme için walkthrough.md çıktısını repo içine arşivler.
+
+    - `for_plan` verilirse: `<plan_stem>_walkthrough.md` (varsayılan `docs/plans/`, `subdir=True` ise `docs/plans/walkthrough/`).
+    - `for_plan` yoksa (bağımsız sprint / geliştirme): `docs/plans/walkthrough/<slug>_<YYYYMMDD_HHMMSS>_walkthrough.md`.
+    - Varsayılan `move=False` ile kaynak `<artifact-dir>/walkthrough.md` dosyası korunur.
+    """
+    src_p = Path(walkthrough_path).resolve()
+    if not src_p.is_file():
+        raise FileNotFoundError(f"Walkthrough dosyası bulunamadı: {src_p}")
+
+    root_p = Path(project_root).resolve()
+    plans_dir = root_p / "docs" / "plans"
+    target_dir = (plans_dir / "walkthrough") if (subdir or not for_plan) else plans_dir
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    if for_plan:
+        plan_stem = Path(for_plan).stem
+        if plan_stem.endswith("_walkthrough"):
+            plan_stem = plan_stem[: -len("_walkthrough")]
+        filename = f"{plan_stem}_walkthrough.md"
+    else:
+        clean_slug = _sanitize_token(slug) if slug else "walkthrough"
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{clean_slug}_{timestamp}_walkthrough.md"
+
+    dest_p = target_dir / filename
+    dest_p.write_text(src_p.read_text(encoding="utf-8", errors="replace"), encoding="utf-8")
+
+    src_norm = str(src_p).replace("\\", "/").lower()
+    if move and src_p != dest_p and "docs/plans/" not in src_norm:
+        try:
+            src_p.unlink()
+        except OSError:
+            pass
 
     return dest_p
 
@@ -255,9 +367,49 @@ def main() -> int:
         action="store_true",
         help="Ön-mühürleme çakışma ve sıralı plan ezme taramasını atla",
     )
+    parser.add_argument(
+        "--allow-no-wireframe",
+        action="store_true",
+        help="UI etkileyen planda Before->After Wireframe yoksa çıkarılan [WARN] uyarısını sustur",
+    )
+    parser.add_argument(
+        "--walkthrough",
+        action="store_true",
+        help="Plan yerine tamamlanan işin walkthrough.md özetini docs/plans/ veya docs/plans/walkthrough/ altına arşivle",
+    )
+    parser.add_argument(
+        "--for-plan",
+        default=None,
+        help="--walkthrough modunda eşleşecek arşivli plan dosyası (<plan_stem>_walkthrough.md üretir)",
+    )
+    parser.add_argument(
+        "--walkthrough-subdir",
+        action="store_true",
+        help="--walkthrough çıktısını docs/plans/walkthrough/ alt klasörüne yaz",
+    )
     args = parser.parse_args()
 
     root_p = Path(args.root).resolve()
+    if args.walkthrough:
+        try:
+            dest_p = archive_walkthrough(
+                walkthrough_path=args.plan,
+                project_root=root_p,
+                for_plan=args.for_plan,
+                slug=args.slug,
+                subdir=args.walkthrough_subdir,
+                move=args.move,
+            )
+        except FileNotFoundError as exc:
+            print(f"[ERR] {exc}", file=sys.stderr)
+            return 1
+        try:
+            rel = dest_p.relative_to(root_p)
+        except ValueError:
+            rel = dest_p
+        print(f"[WALKTHROUGH-ARCHIVED] {str(rel).replace(chr(92), '/')}")
+        return 0
+
     try:
         dest_p = archive_plan(
             plan_path=args.plan,
@@ -269,6 +421,7 @@ def main() -> int:
             sprint_label=args.sprint_label,
             allow_conflicts=args.allow_conflicts,
             skip_conflict_check=args.skip_conflict_check,
+            allow_no_wireframe=args.allow_no_wireframe,
         )
     except PlanConflictError as exc:
         print(f"[BLOCKED] {exc}", file=sys.stderr)

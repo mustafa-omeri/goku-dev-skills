@@ -194,6 +194,12 @@ def _upsert_table_row(text: str, task_id: str, row_line: str) -> str:
     return text.rstrip() + "\n" + "\n".join(suffix) + "\n"
 
 
+UI_WIREFRAME_NOTE = (
+    "[UI-ÖN-TASARIM ZORUNLU] Kardeş repo frontend kodlamadan önce kendi DESIGN.md sözleşmesine göre "
+    "Before -> After Wireframe (veya --ui-preview / --ui-ux ile 1:1 gerçek ekran kilidi) onayına sunulmalıdır."
+)
+
+
 def _upsert_context_note(
     text: str,
     source_name: str,
@@ -202,20 +208,26 @@ def _upsert_context_note(
     task_title: str,
     summary: str,
     today: str,
+    ui_wireframe_expected: bool = False,
 ) -> str:
     """Kaynak proje plan referansı ve sözleşme notunu idempotent olarak işler."""
     begin_marker = f"<!-- XREPO:{task_id}:BEGIN -->"
     end_marker = f"<!-- XREPO:{task_id}:END -->"
 
     summary_line = _sanitize_cell(summary) if summary else "Detaylar kaynak planda belirtilmiştir."
-    note_block = "\n".join([
+    note_lines = [
         begin_marker,
         f"- **[{task_id}]** `{source_name}` projesindeki `{plan_ref}` plan dosyası referansına göre:",
         f"  - **Görev:** {_sanitize_cell(task_title)}",
         f"  - **Kapsam & Sözleşme Özeti:** {summary_line}",
+    ]
+    if ui_wireframe_expected:
+        note_lines.append(f"  - **UI Ön-Tasarım Zorunluluğu:** {UI_WIREFRAME_NOTE}")
+    note_lines.extend([
         f"  - **Aktarım Tarihi:** {today}",
         end_marker,
     ])
+    note_block = "\n".join(note_lines)
 
     pattern = re.compile(
         rf"{re.escape(begin_marker)}.*?{re.escape(end_marker)}",
@@ -310,6 +322,7 @@ def _sync_sibling_process_files(
     task_id: str,
     task_title: str,
     summary: str,
+    ui_wireframe_expected: bool = False,
 ) -> list[str]:
     """Dizin fark etmeksizin kardeş projedeki süreç dosyalarına (KANBAN, SPRINT_PLAN, RELEASE_PLAN) görev ve plan referansını ekler."""
     synced: list[str] = []
@@ -329,8 +342,14 @@ def _sync_sibling_process_files(
     ref_note = f"{source_name} projesindeki `{plan_ref}` plan dosyası referansına göre"
     safe_title = _sanitize_cell(task_title)
     safe_summary = _sanitize_cell(summary) if summary else ref_note
+    ui_tag = " [UI-ÖN-TASARIM ZORUNLU]" if ui_wireframe_expected else ""
 
     if kanban_p.is_file() and task_id not in kanban_text:
+        ui_row = (
+            f"| ui_on_tasarim | [UI-ÖN-TASARIM ZORUNLU] Koddan önce DESIGN.md + Before -> After Wireframe (--ui-preview / --ui-ux) onayı |\n"
+            if ui_wireframe_expected
+            else ""
+        )
         card_block = (
             f"\n### {card_id} · {task_id}: {safe_title}\n"
             f"| alan | değer |\n"
@@ -340,7 +359,8 @@ def _sync_sibling_process_files(
             f"| sprint | {sprint_tag} |\n"
             f"| gherkin | specs/{card_id}.feature |\n"
             f"| kapi | python .agent/skills/musgoku/scripts/check_handoff.py |\n"
-            f"| test | (yazılacak) — {ref_note} |\n"
+            f"| test | (yazılacak) — {ref_note}{ui_tag} |\n"
+            f"{ui_row}"
             f"| risk | orta |\n"
         )
         m_bekliyor = re.search(r"^##\s+Bekliyor\s*$", kanban_text, re.MULTILINE)
@@ -353,7 +373,7 @@ def _sync_sibling_process_files(
         synced.append("KANBAN.md")
 
     if sprint_p.is_file() and task_id not in sprint_text:
-        mvp_line = f"- {card_id} · `{task_id}`: {safe_title} ({ref_note} — {safe_summary})"
+        mvp_line = f"- {card_id} · `{task_id}`: {safe_title} ({ref_note} — {safe_summary}){ui_tag}"
         m_mvp = re.search(r"^(?:#{2,4}\s+MVP\s+Kapsam|\*\*MVP\s+Kapsam\*\*).*$", sprint_text, re.MULTILINE)
         if m_mvp:
             pos = m_mvp.end()
@@ -399,6 +419,7 @@ def sync_sibling_handoff(
     target_version: str = "Planlı",
     template_path: Optional[Path | str] = None,
     workspace_mode: str = "auto",
+    ui_wireframe_expected: bool = False,
 ) -> Dict[str, Any]:
     """Kardeş uygulamanın HANDOFF.md ve süreç dosyalarına kaynak plan referansı ve görev yazar."""
     src_p = Path(source_root).resolve()
@@ -422,6 +443,8 @@ def sync_sibling_handoff(
     today = datetime.date.today().isoformat()
     source_name = src_p.name
     ref_cell = f"{source_name} projesindeki `{clean_plan_ref}` plan dosyası referansına göre"
+    if ui_wireframe_expected:
+        ref_cell += " [UI-ÖN-TASARIM ZORUNLU]"
     row_line = (
         f"| {_sanitize_cell(clean_task_id)} | ⏭️ | {_sanitize_cell(task_title)} "
         f"| {_sanitize_cell(ref_cell)} | {_sanitize_cell(target_version)} |"
@@ -436,6 +459,7 @@ def sync_sibling_handoff(
         task_title=task_title,
         summary=summary,
         today=today,
+        ui_wireframe_expected=ui_wireframe_expected,
     )
     handoff_path.write_text(updated, encoding="utf-8")
 
@@ -446,6 +470,7 @@ def sync_sibling_handoff(
         task_id=clean_task_id,
         task_title=task_title,
         summary=summary,
+        ui_wireframe_expected=ui_wireframe_expected,
     )
 
     errors, warnings = check_handoff.validate_handoff(sib_p, ignore_git_diff=True)
@@ -456,6 +481,7 @@ def sync_sibling_handoff(
         "task_id": clean_task_id,
         "topology": topology,
         "synced_process_files": synced_process_files,
+        "ui_wireframe_expected": bool(ui_wireframe_expected),
         "errors": errors,
         "warnings": warnings,
     }
@@ -478,6 +504,11 @@ def main() -> int:
         default="auto",
         help="Aynı dizin / farklı dizin sahiplik kipi (varsayılan: auto)",
     )
+    parser.add_argument(
+        "--ui-wireframe-expected",
+        action="store_true",
+        help="Kardeş projede kodlamadan önce DESIGN.md + Before->After Wireframe onayı istendiğini işaretle",
+    )
     args = parser.parse_args()
 
     try:
@@ -490,6 +521,7 @@ def main() -> int:
             summary=args.summary,
             target_version=args.version,
             workspace_mode=args.workspace_mode,
+            ui_wireframe_expected=args.ui_wireframe_expected,
         )
     except ValueError as exc:
         print(f"[ERR] {exc}", file=sys.stderr)

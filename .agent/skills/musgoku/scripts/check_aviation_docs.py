@@ -123,7 +123,11 @@ def check_file(path: Path) -> tuple[list[dict], list[dict]]:
 
     lines = content.splitlines()
     lower_name = path.name.lower()
-    is_plan = "plan" in lower_name or "plans" in [p.lower() for p in path.parts]
+    lower_parts = [p.lower() for p in path.parts]
+    if "walkthrough" in lower_name or "walkthrough" in lower_parts:
+        return errors, warnings
+
+    is_plan = "plan" in lower_name or "plans" in lower_parts
     is_guide = any(k in lower_name for k in ("test", "rehber", "guide", "manual", "deploy", "setup")) or is_plan
 
     # 1. E1: Acil Çıkış Tablosu Kontrolü (User manual, test guide, deployment plan, planlar)
