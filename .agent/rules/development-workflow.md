@@ -10,11 +10,11 @@ sinif: SUREC
 
 ## Adım 0 — Oturum Köprüsü (⚡ MCP-First)
 
-- ⭐ **Birincil / Zorunlu (Second Brain MCP):** Kod yazmadan, düzeltme yapmadan veya test koşmadan önce `.mcp.json`'da tanımlı `second-brain-vault` MCP sunucusunu çağır:
+- ⭐ **Birincil / Zorunlu (Second Brain MCP):** Kod yazmadan, düzeltme yapmadan, test koşmadan veya *"sıradaki işler / nerede kaldık / açık işler"* sorularını yanıtlamadan önce `.mcp.json`'da tanımlı `second-brain-vault` MCP sunucusunu çağır:
   1. `bootstrap(project="<slug>", depth="brief")` — proje bağlamı, geliştirici profili, kural ve kanıtlı dersler.
-  2. `get_project_state(slug="<slug>")` — aktif durum, nerede kaldık, kilitli kararlar.
+  2. `get_project_state(slug="<slug>", depth="full")` — aktif durum, nerede kaldık, açık işler, tarihsel bağlam ve **Kesin Başlangıç Sırası** kararı.
   3. Mimari kural ve kilitli kararlar için `ask(question="...")` veya `get_decision(slug="...")`.
-- ⚠️ **Yedek / Fallback (Yalnızca MCP Erişilemezse):** Yerel dosya okuma fallback'tir; **yalnızca `second-brain-vault` erişilemez olduğunda** repo kökündeki `HANDOFF.md` dosyasını oku. Ajan sessiz düşüş yapamaz, MCP hatasını belirtmelidir. MCP çalıştığında yerel dosyalar baştan sona ham okunmaz (token tasarrufu: ~15.000 → ~1.500).
+- ⚠️ **Yedek / Fallback (Yalnızca MCP Erişilemezse):** Yerel dosya okuma fallback'tir; **yalnızca `second-brain-vault` erişilemez olduğunda** repo kökündeki `HANDOFF.md` ve süreç dosyalarını oku. Ajan sessiz düşüş yapamaz, MCP hatasını belirtmelidir. MCP çalıştığında yerel görev/hafıza dosyaları (`HANDOFF.md`, `KANBAN.md`, `docs/plans/`, `knowledge-base.md`) ham okunmaz — yalnız yazılır (token tasarrufu: ~15.000 → ~1.500).
 - Projenin iş kavramları ve ortak dili için varsa `GLOSSARY.md` dosyasını oku.
 - Dosya yoksa veya boşsa kendin yaz.
 - ⛔ **Mükerrer Görev Dosyası Yasağı (Anti-Task-File Proliferation):** `TASK.md`, `ACTIVE_TASK.md`, `TODO.md` gibi ad-hoc takip dosyaları AÇILMAZ. Kullanıcı talep etse dahi, tek kaynağın `HANDOFF.md` (§3 Sıradaki İşler & Aktif Görev) olduğu nazikçe ve güvenle beyan edilir.

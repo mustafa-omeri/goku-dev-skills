@@ -128,7 +128,7 @@ Kullanıcının belirli bir isteği doğrudan ve kestirmeden ajana bildirmesini 
 | docker, prod imajı, docker compose, deploy, konteyner / production image, containerize | `production-docker-architect` | `skills/production-docker-architect/SKILL.md` |
 | api dokümantasyonu, swagger güncel mi / api docs, openapi | `rules/api-documentation-enforcement.md` | — |
 | veritabanı revizyonu, migration, yeni tablo, yeni kolon, db şeması / db migration, schema change, add column, new table | `rules/db-migration-enforcement.md` + `musgoku` | — |
-| oturum devri, handoff, nerede kaldık / session handoff, where we left off | `rules/handoff-session-continuity.md` | — |
+| oturum devri, handoff, nerede kaldık, sıradaki işler, açık işler / session handoff, where we left off, next tasks | **Önce** `second-brain-vault` MCP (`get_project_state(depth="full")`) · Fallback: `rules/handoff-session-continuity.md` | — |
 | overcomplication, gereksiz karmaşıklık, varsayımı belirt, llm council, akran incelemesi, hakemlik, caveman, kısa konuş, token tasarrufu, nesir sıkıştırma / overengineering, simplify, surface assumptions, llm council, peer review, council deliberation, caveman, prose compression, token efficient | `karpathy-guidelines` | `skills/karpathy-guidelines/SKILL.md` |
 | tasarım becerisi, daha iyi yaz, amatör mü / better code, improve quality | `karpathy-guidelines` + tasarım üçlüsü | — |
 | gözlem kaydet, skill geliştir, süreç analizi, yeni skill öner / log observation, improve skill, observe task | `task-observer` | `skills/task-observer/SKILL.md` |

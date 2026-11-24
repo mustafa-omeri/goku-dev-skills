@@ -20,9 +20,9 @@ kapi:
 
 ## Zorunlu akış
 
-1. **İlk iş (MCP-First):** `second-brain-vault` MCP üzerinden `bootstrap(project="<slug>", depth="brief")` ve `get_project_state(slug="<slug>")` çağırarak nerede kalındığını, geliştirici tercihlerini ve bağlı kararları al.
-2. 🛡️ **Yedek Okuma (Fallback — Yalnızca MCP Erişilemezse):** Yalnızca `second-brain-vault` MCP'sine ulaşılamıyorsa veya hata dönerse repo kökündeki `HANDOFF.md` dosyasını oku. Ajan sessiz düşüş yapamaz; çıktısında *"second-brain-vault MCP erişilemediği için yerel HANDOFF.md okundu"* beyanını vermek zorundadır.
-3. ⛔ `knowledge-base.md` dosyasını baştan sona dosya olarak okuma; soru varsa `ask` veya `search` ile MCP'ye sor (token tasarrufu).
+1. **İlk iş & Tek Otorite (MCP-First):** `second-brain-vault` MCP üzerinden `bootstrap(project="<slug>", depth="brief")` ve `get_project_state(slug="<slug>", depth="full")` çağırarak nerede kalındığını, geliştirici tercihlerini, bağlı kararları, açık işleri ve **Kesin Başlangıç Sırası** kararını al.
+2. 🛡️ **Yedek Okuma (Fallback — Yalnızca MCP Erişilemezse):** Yalnızca `second-brain-vault` MCP'sine ulaşılamıyorsa veya hata dönerse repo kökündeki `HANDOFF.md` ve süreç dosyalarını oku. Ajan sessiz düşüş yapamaz; çıktısında *"second-brain-vault MCP erişilemediği için yerel HANDOFF.md okundu"* beyanını vermek zorundadır.
+3. ⛔ **Yazar Ama Okumaz:** Ajan `HANDOFF.md`, `KANBAN.md`, `SPRINT_PLAN.md` ve `knowledge-base.md` dosyalarını oturum içinde güncel tutar (yazar), ancak durum/görev/hata geçmişi sormak için bunları dosya sisteminden ham okumaz — soruları MCP'ye sorar (token tasarrufu).
 4. ⛔ Proje durumu ve kurallar **alınmadan** kod yazma, düzeltme yapma, test koşma, migration üretme.
 5. ⛔ Yerel dosya **yoksa veya boşsa** (yalnız başlık/şablon) → süreci **kendin devir al**:
    `git log`, `git status`, mevcut testler ve gerçek koddan durumu çıkar, sonra
@@ -60,13 +60,10 @@ kapi:
      * Çıktı raporunun ve yanıtın en altında doğrudan:
        1. **Sıradaki İş:** Onaylı master planda sırada bekleyen 1 numaralı açık iş (`🎯 1. ⏭️ [ID - İş Tanımı]`) açıkça hatırlatılır.
        2. **Commit Teklifi:** Çalışma ağacında değişiklik varsa (`git status --short`), commit mesajı, semantik tag ve test adımları sunularak commit onayı istenir.
-   - **"Nerede Kaldık?" Derin Kurtarma Protokolü (Deep Recovery Protocol):**
-     * Kullanıcı *"nerede kaldık?"*, *"durum ne?"*, *"sıradaki işler ne?"* dediğinde ajan yalnızca `HANDOFF.md`'nin en altındaki son 1-2 satıra bakamaz (Sığ Okuma Tuzağı).
-     * Ajan şu sırayla derin tarama yapar:
-       1. `HANDOFF.md` §3 Canlı Görev Panosu ve hemen altındaki Gelecek Fazlar tablosu,
-       2. `docs/plans/` (veya `SPRINT_PLAN.md`) altındaki aktif onaylı master planlar,
-       3. `docs/KULLANICI_TEST_REHBERI.md` doğrulanmamış senaryoları.
-       Tüm açık maddeleri konsolide ederek kullanıcıya eksiksiz durum ve sıradaki adımı raporlar.
+   - **"Nerede Kaldık?" Derin Kurtarma Protokolü (⚡ MCP-First Tek Otorite):**
+     * Kullanıcı *"nerede kaldık?"*, *"durum ne?"*, *"sıradaki işler ne?"*, *"açık işler neler?"* dediğinde ajan repodaki yerel dokümanları (`HANDOFF.md`, `KANBAN.md`, `SPRINT_PLAN.md`, `docs/plans/`, `docs/KULLANICI_TEST_REHBERI.md`) **taramaz!**
+     * Ajan ilk ve zorunlu adım olarak `second-brain-vault` MCP `get_project_state(slug="<slug>", depth="full")` (ve gerekirse `ask()`) çağırır; SecondBrain'in tarihsel bağlarıyla ürettiği **Kesin Başlangıç Sırası** kararını ve tam listeyi doğrudan sunar.
+     * ⛔ **Fallback Kuralı (Yalnız MCP Arızasında):** Yalnızca `second-brain-vault` MCP yanıt vermezse veya hata dönerse (gerekçeyi açıkça yazarak) sırasıyla 1) `HANDOFF.md` §3 + `KANBAN.md`, 2) `docs/plans/` (ve `SPRINT_PLAN.md`), 3) `docs/KULLANICI_TEST_REHBERI.md` taranarak konsolide durum çıkarılır.
    - **Güncellik kanıtı kuralı:** Gerçekte ölçülmüş sayılar (test sayısı, 0 typecheck hatası, chunk kB boyutları) yazılır.
    - ⛔ **Katman Bütünlüğü & Sahte Bitti Yasağı:** Bir sprint veya özelliğin 'BİTTİ / TAMAMLANDI' olarak kaydedilebilmesi için Katman Denetimi Matrisinde (DB, View/RPC, İstemci, UI, Yönetim/Admin Formu) hiçbir '❌ Yok' veya '⚠️ Yarım' bulunmaması şarttır. Herhangi bir katmanı eksik veya TODO olan bir iş için 'BİTTİ' yazılamaz; durum açıkça 'YARIM (Eksik Katman: ...)' olarak belirtilmeli ve eksik katman §3 Sıradaki İşler tablosuna ilk sıradan kaydedilmelidir.
 3. Kullanıcıya **HANDOFF & KB RAPORU** bloğunu yanıtta açıkça göster.
