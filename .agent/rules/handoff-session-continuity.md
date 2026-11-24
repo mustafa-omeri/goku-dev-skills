@@ -51,7 +51,7 @@ kapi:
      * ✅ Ajanın tek hafızası **diskteki dosyalardır**. Kullanıcı "unutmayacağını kanıtla" dediğinde, ajan tüm görevleri deterministik ID'lerle (`[DOM]-[TIP]-[NO]`) `HANDOFF.md` §3 Canlı Görev Panosu veya Gelecek Fazlar tablosuna mühürler ve kullanıcıya **dosya yolu ve satır aralığıyla** kanıt sunar (`file:///path/to/HANDOFF.md#L...`).
    - **Sıfır-Buharlaşma ve İki Kademeli Pano Kuralı (Zero-Eviction Master Board & Interruption Resilience):**
      * Planlama (`/plan`, `/feature-architect`, `/spec-reconcile` vb.) onaylandığı anda — **tek satır üretim kodu yazılmadan önce** — onaylı plan `docs/plans/plan_<slug>_<YYYYMMDD_HHMMSS>.md` altına arşivlenir (`archive_plan.py`) ve plandaki tüm maddeler eksiksiz olarak deterministik ID + plan dosya referansıyla `HANDOFF.md` §3 canlı panosuna veya hemen altındaki `📌 Gelecek Fazlar & Onaylı Master Plan Backlog` tablosuna kaydedilir. (Çok adımlı/mimari işlerde `SPRINT_PLAN.md` ve `KANBAN.md` açılır/güncellenir.)
-     * **Sonradan Tetiklenebilir Backlog Mühürleme (`/seal-plan` & `--seal-handoff`):** Kullanıcı planı onaylayıp hemen kodlatmak yerine araya başka iş/sprint almak isterse, `archive_plan.py --plan <yol> --slug <slug> --seal-handoff --sprint-label "<Sprint>"` komutuyla plan görevleri `📌 Gelecek Fazlar` tablosuna `⬜ Bekliyor` durumunda mühürlenir (`check_handoff.py` `W3` kapısından 0 uyarıyla geçer) ve kodlama yapılmadan durulur. Kullanıcı daha sonra herhangi bir oturumda *"Sprint X'i başlat"* dediğinde ajan bu tablo ve `docs/plans/` referansından doğrudan Faz 1'i başlatır.
+     * **Sonradan Tetiklenebilir Backlog Mühürleme (`/seal-plan`, Doğal Dil Talepleri (*"mühürle"*, *"bunları plana dahil et"*, *"todo olarak ekle"*, *"sıraya al"*) & Ön-Mühürleme Çakışma Kalkanı (`plan_conflict_guard.py` + `W4`)):** Kullanıcı planı onaylayıp hemen kodlatmak yerine araya başka iş/sprint almak isterse, `archive_plan.py --plan <yol> --slug <slug> --seal-handoff --sprint-label "<Sprint>"` komutuyla plan görevleri `📌 Gelecek Fazlar` tablosuna `⬜ Bekliyor` durumunda mühürlenir (`check_handoff.py` `W3` kapısından 0 uyarıyla geçer) ve kodlama yapılmadan durulur. Kullanıcı daha sonra herhangi bir oturumda *"Sprint X'i başlat"* dediğinde ajan bu tablo ve `docs/plans/` referansından doğrudan Faz 1'i başlatır.
      * Araya acil kullanıcı istekleri, anlık hata düzeltmeleri (hotfix) veya yeni bulgular (`BUG`) girdiğinde:
        1. `🎯 1. ⏭️ [Araya Giren Acil Görev]` en üst sıraya alınır.
        2. Onaylı master planın kalan maddeleri **ASLA panodan silinemez, ezilemez veya buharlaştırılamaz**. Alt sıralara (`2. ⬜`, `3. ⬜`...) veya `📌 Gelecek Fazlar & Onaylı Master Plan Backlog` tablosuna ötelenir.
@@ -121,6 +121,7 @@ python .agent/skills/musgoku/scripts/check_handoff.py
 | `W1` | Uyarı | `§3 Sıradaki İşler` aktif görev panosunda tamamlanmış (`✅ BİTTİ` / `TAMAMLANDI`) satır temizlenmeden bırakıldı. |
 | `W2` | Uyarı | Git çalışma ağacında arayüz bileşeni (`.tsx`, `.jsx`, `.vue`, `.svelte`) değiştiği halde `docs/KULLANICI_TEST_REHBERI.md` mevcut değil. |
 | `W3` | Uyarı | `docs/plans/` altındaki onaylı planda yer alan görevler `HANDOFF.md` içinde bulunamadı (Task Eviction / Buharlaşma Riski). |
+| `W4` | Uyarı | Kuyruktaki bekleyen sıralı planlar (`docs/plans/` + `HANDOFF.md` §3) arasında aynı dosya/endpoint üzerinde ezme çakışması (Plan Clobber) tespit edildi. |
 
 ## Bu kuralın istisnası
 

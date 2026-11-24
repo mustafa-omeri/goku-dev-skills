@@ -4,7 +4,7 @@ type: project-brief
 project: skillSetWorks
 status: active
 created: 2026-10-27
-updated: 2026-11-23
+updated: 2026-11-24
 primary_language: Python 3.11 / Node.js / Markdown
 frameworks: ["pytest", "unittest", "node-cli"]
 database: ["Yok / Kural ve Dağıtım Deposu"]
@@ -28,11 +28,11 @@ related_docs:
 
 ## 1. Teknoloji Yığını & Altyapı
 - **Proje Adı / Slug:** skillSetWorks (`skillSetWorks`)
-- **Paket / Sürüm:** `goku-dev-skills` v1.42.0 (`package.json`)
+- **Paket / Sürüm:** `goku-dev-skills` v1.44.0 (`package.json`)
 - **Birincil Dil:** Python 3.11 / Node.js 18+ / Markdown
 - **Frameworkler & Kütüphaneler:** Python `unittest`, `pytest`, `pytest-cov`, `argparse`, Node.js CLI runtime
 - **Veritabanı / Altyapı:** Yok (Uygulama kodu içermez; kural, skill ve dağıtım motorudur)
-- **Build / Yönetim Araçları:** `delivery.py` (Projelere dağıtım aracı), `rules_gates.py` (Kural denetleyicisi), `run_all_gates.py` (Birleşik kapı koşturucu), `check_handoff.py` (Oturum devri kapısı), `archive_plan.py` (`/plan` & `/seal-plan` onay sonrası `docs/plans/` arşivleyici ve `--seal-handoff` backlog mühürleyici), `sync_sibling_handoff.py` (Kardeş uygulama `HANDOFF.md` cross-repo devir motoru), `prd_review_helper.py` (`/review-prd` bağlam & analiz yardımcısı), `test_spec_scanner.py` / `test_spec_tracker.py` / `check_test_spec.py` (`test-spec-generator` / `/test-spec` v2 artımlı kod+doküman envanter çıkarıcı, Major/Minor çift-hash takip, PASS referans defteri, cerrahi yama, `export-delta` ve tek-dosya Gherkin+AC kapsama kapısı), `fa_scan.py` / `kg_query.py` / `review_units.py` / `fa_engine` (`discovery`, `graph`, `snapshot`, `intelligence`, `runtime`, `evolution`, `cache`) / `gap_scanner.py` / `engine_advisor.py` / `council_merger.py` (Feature Architect v2.1 deterministik tam-yığın mimari zeka, kanonik bilgi grafiği, V1-V10 kanıt yönetişimli Defect-First Council v3, L3 runtime doğrulayıcı ve artımlı önbellek motoru), `bin/cli.js` (CLI paketi)
+- **Build / Yönetim Araçları:** `delivery.py` (Projelere dağıtım aracı), `rules_gates.py` (Kural denetleyicisi), `run_all_gates.py` (Birleşik kapı koşturucu), `check_handoff.py` (Oturum devri kapısı), `archive_plan.py` (`/plan` & `/seal-plan` onay sonrası `docs/plans/` arşivleyici ve `--seal-handoff` backlog mühürleyici), `plan_conflict_guard.py` (Ön-mühürleme & Sprint/Kanban canlı kod `EXACT`/`ENRICHED`/`SIMPLIFIED` ve bekleyen sıralı plan ezme `CLOBBER` tespit kalkanı), `sync_sibling_handoff.py` (Kardeş uygulama `HANDOFF.md` cross-repo devir motoru), `prd_review_helper.py` (`/review-prd` bağlam & analiz yardımcısı), `test_spec_scanner.py` / `test_spec_tracker.py` / `check_test_spec.py` (`test-spec-generator` / `/test-spec` v2 artımlı kod+doküman envanter çıkarıcı, Major/Minor çift-hash takip, PASS referans defteri, cerrahi yama, `export-delta` ve tek-dosya Gherkin+AC kapsama kapısı), `fa_scan.py` / `kg_query.py` / `review_units.py` / `fa_engine` (`discovery`, `graph`, `snapshot`, `intelligence`, `runtime`, `evolution`, `cache`) / `gap_scanner.py` / `engine_advisor.py` / `council_merger.py` (Feature Architect v2.1 deterministik tam-yığın mimari zeka, kanonik bilgi grafiği, V1-V10 kanıt yönetişimli Defect-First Council v3, L3 runtime doğrulayıcı ve artımlı önbellek motoru), `bin/cli.js` (CLI paketi)
 
 ---
 
@@ -44,7 +44,7 @@ related_docs:
 | `.agent/rules/` | Ajan kuralları ve anayasal sözleşmeler (sinif: OLCULEBILIR/TUTUM/SUREC) | 22 kural (12 ölçülebilir, 10 kapısız) |
 | `.agent/templates/` | Projelerde açılacak living markdown ve HTML şablonları | Kök şablonları (`PROJECT_SUMMARY`, `ACCEPTANCE_TEST_SPEC` ve `KULLANICI_REHBERI.html` dahil) |
 | `bin/` | `goku-dev-skills` npm CLI paket yürütücüsü (`cli.js`) | CLI arabirimi |
-| `tests/` | Depo bütünlüğü, drift, sızıntı, altın benchmark ve kural kapısı regresyon testleri | 31 test paketi (`feature-architect-bench/` 14 sentetik senaryo ve `test_diff_triage.py` dahil) |
+| `tests/` | Depo bütünlüğü, drift, sızıntı, altın benchmark ve kural kapısı regresyon testleri | 32 test paketi (`feature-architect-bench/` 14 sentetik senaryo ve `test_plan_conflict_guard.py` dahil) |
 | `scripts/` | Skill kataloğu ve yardımcı üretim betikleri | Otomasyon araçları |
 
 ---
@@ -69,5 +69,5 @@ related_docs:
 ---
 
 ## 5. Yaşatma & Operasyonel Döngü
-- **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `check_test_spec.py`, `diff_triage.py`, `test_skills_catalog.py`, `test_project_summary.py`, `test_feature_architect.py`, `test_feature_architect_council.py`, `test_feature_architect_bench.py`, `test_council_workflow_integration.py`, `test_theme_skeleton_integration.py`, `test_prelaunch_security.py`, `test_clean_url_routing.py`, `test_cognitive_counsel.py`, `test_test_spec_generator.py`, `test_diff_triage.py`
-- **Son Başarılı Doğrulama:** 2026-11-23 · 31/31 test paketi PASS · Birleşik kapılar PASS · Scout 33 repo (23 transferred) %100 paritede · Skill kataloğu (50 skill, 23 slash komutu) PASS
+- **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `check_test_spec.py`, `plan_conflict_guard.py`, `diff_triage.py`, `test_skills_catalog.py`, `test_project_summary.py`, `test_feature_architect.py`, `test_feature_architect_council.py`, `test_feature_architect_bench.py`, `test_council_workflow_integration.py`, `test_theme_skeleton_integration.py`, `test_prelaunch_security.py`, `test_clean_url_routing.py`, `test_cognitive_counsel.py`, `test_test_spec_generator.py`, `test_plan_conflict_guard.py`
+- **Son Başarılı Doğrulama:** 2026-11-24 · 32/32 test paketi PASS · Birleşik kapılar PASS · Skill kataloğu (50 skill, 23 slash komutu) PASS

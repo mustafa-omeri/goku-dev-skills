@@ -31,6 +31,7 @@ E11 WIP limiti              Yapiliyor sutunu limiti asiliyor
 W1 oncelik gecersizP1/P2/P3 disinda
 W2 risk gecersiz            yuksek/orta/dusuk disinda
 W3 MVP disi                 kart ne MVP kapsaminda ne Kapsam Disi listesinde
+W5 kart cakismasi           acik kartlar arasinda ayni dosya/yuzey veya semantik tekrar
 
 E1-E11 hata (exit 1) · W1-W3 uyari (exit 0) · exit 2 = arac hatasi.
 **SPRINT_PLAN.md ve KANBAN.md hic yoksa kapi kapsam disidir: exit 0.**
@@ -408,6 +409,18 @@ def check(root: Path, wip_limit: int = 3):
                 errors.append(("E10", "RELEASE_PLAN.md",
                                "kapanmamis kartlar planda gecmiyor: "
                                + ", ".join(sorted(carried))))
+
+    # --- W5 acik kartlar arasi semantik/yuzey cakismasi
+    try:
+        scripts_dir = Path(__file__).resolve().parent
+        if str(scripts_dir) not in sys.path:
+            sys.path.insert(0, str(scripts_dir))
+        import plan_conflict_guard  # noqa: E402
+
+        for dup in plan_conflict_guard.analyze_kanban_duplicates(root):
+            warnings.append(("W5", "KANBAN.md", dup["message"]))
+    except Exception:
+        pass
 
     done = len(columns[DONE_COLUMN])
     stats = {"scope": "denetlendi", "cards": total, "done": done,

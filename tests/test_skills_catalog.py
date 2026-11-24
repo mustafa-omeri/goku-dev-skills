@@ -138,6 +138,17 @@ def run_tests() -> bool:
         "s.config_detail" in catalog_content,
     )
 
+    # TEST 8: Seal-Plan / Çakışma Kalkanı & Kart Önizleme / Arama Kapsamı
+    print("\n=== TEST 8: Seal-Plan, Arama & Kart Örnek Kullanım Bütünlüğü ===")
+    check(
+        "Katalog HTML'inde 'seal' araması hem skill search_index hem /seal-plan üzerinde mevcut",
+        "/seal-plan" in catalog_content and "PRE-SEAL-CONFLICT-AUDIT" in catalog_content and "--allow-conflicts" in catalog_content,
+    )
+    check(
+        "Skill kartlarında Ne İşe Yarar (skill-detail-note) ve Örnek Kullanım (skill-usage-preview) render ediliyor",
+        "skill-detail-note" in catalog_content and "skill-usage-preview" in catalog_content and "matched-slash-banner" in catalog_content,
+    )
+
     print("\n" + "=" * 60)
     if failures:
         print(f"SONUÇ: {len(failures)} KONTROL BAŞARISIZ: {failures}")

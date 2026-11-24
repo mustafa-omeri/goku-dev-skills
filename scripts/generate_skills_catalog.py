@@ -247,43 +247,45 @@ python .agent/skills/musgoku/scripts/check_theme_contrast.py --strict""",
     },
     {
         "command": "/seal-plan",
-        "aliases": ["/seal-plan", "seal-plan", "planı mühürle", "plani muhurle", "backlog'a al", "backloga al", "yalnızca mühürle", "siraya al", "sıraya al", "[SEAL-PLAN]"],
-        "name": "2-Modlu Plan Onay Kapısı: Kodlamadan Mühürle & Backlog'a Al",
+        "aliases": ["/seal-plan", "seal-plan", "planı mühürle", "plani muhurle", "mühürle", "bunları plana dahil et", "todo olarak ekle", "listeye ekle", "backlog'a al", "backloga al", "yalnızca mühürle", "siraya al", "sıraya al", "sonraya bırak", "kuyruğa ekle", "[SEAL-PLAN]"],
+        "name": "2-Modlu Plan Onay Kapısı & Ön-Mühürleme Çakışma Kalkanı",
         "badge": "Plan & Backlog",
         "badge_class": "badge-accent",
         "skills": ["musgoku", "handoff-session-continuity", "development-workflow", "sprint-delivery-workflow"],
-        "goal": "Kodlamadan Dur, docs/plans/ Arşivle, HANDOFF.md Gelecek Fazlar'a '⬜ Bekliyor' Olarak Mühürle",
-        "description": "Hazırlanan mimari plan onaylandığında ancak geliştirmenin HEMEN BAŞLATILMASI İSTENMEDİĞİNDE (ör. araya başka acil sprint/özellik girecekse veya plan ilerisi için sıraya alınıyorsa) kullanılır. Hiçbir uygulama kodu, migration veya entity değiştirmeden planı docs/plans/plan_<slug>_<timestamp>.md altına taşır, tüm task ID'lerini HANDOFF.md §3 Gelecek Fazlar panosuna '⬜ Bekliyor' olarak işler (W3 kapısı 0 hata), KANBAN.md backlog'unu günceller, varsa kardeş repo HANDOFF.md'sine çapraz referans ekler ve geliştirme yapmadan temiz durur.",
-        "sample_prompt": "/seal-plan: Hazırlanan Sprint 21 planını kodlama yapmadan mühürle, docs/plans altına arşivle ve HANDOFF.md'de sıradaki işlerde bekliyor olarak kaydet.",
-        "protocol": "1. Mod A Tespiti -> /seal-plan veya 'planı mühürle' komutu ➜ 2. Cerrahi Faz 0 İcrası -> archive_plan.py --seal-handoff --sprint-label '<Label>' ➜ 3. HANDOFF & KANBAN Senkronu -> docs/plans arşivi + Gelecek Fazlar'a ⬜ Bekliyor olarak ekleme (0 W3 uyarısı) ➜ 4. Kardeş Repo Senkronu (Varsa) -> sync_sibling_handoff.py ➜ 5. Temiz Durma -> Çalışma ağacına kod/migration dokunmadan devir raporu verme",
-        "usage_snippet": """# 1. Sohbette Doğrudan Tetikleme (Plan Artifact Sonrası):
+        "goal": "Çakışma/Ezme Tespiti + Kodlamadan Dur, docs/plans/ Arşivle, HANDOFF.md'ye Mühürle",
+        "description": "Kullanıcı '/seal-plan' dediğinde veya doğal dilde 'mühürle', 'bunları plana dahil et', 'todo olarak ekle', 'listeye ekle', 'sıraya al', 'sonraya bırak', 'kuyruğa ekle' gibi taleplerle maddeleri beklemeye aldığında tetiklenir. Mühürleme öncesi plan_conflict_guard.py ile canlı kod (ALREADY_DONE_EXACT / ENRICHED_SUPERSET / SIMPLIFIED_SUBSET_REGRESSION) ve bekleyen sıralı planlar arası birbirini ezme (DOUBLE_NEW_COLLISION / MODIFY_DELETE_CLOBBER / SHARED_SURFACE_OVERWRITE / SEQUENTIAL_ORDER_DEPENDENCY) denetimi yapar. CRITICAL ezmede PlanConflictError (exit 1) ile durur; bilinçli onayda --allow-conflicts ile mühürleyip plan sonuna <!-- PRE-SEAL-CONFLICT-AUDIT:BEGIN --> tablosunu gömer. Temizse kod yazmadan planı docs/plans/ altına arşivler, HANDOFF.md §3 (W3/W4=0) ve KANBAN.md (W5=0) backlog'una mühürler.",
+        "sample_prompt": "/seal-plan: Hazırlanan Sprint 21 planını çakışma taramasından geçirip kodlama yapmadan mühürle ve HANDOFF.md'de bekliyor olarak kaydet.",
+        "protocol": "1. Tetikleme Tespiti -> /seal-plan veya 'mühürle / plana dahil et / todo ekle' ➜ 2. Ön-Mühürleme Çakışma & Ezme Kalkanı -> plan_conflict_guard.py (EXACT/ENRICHED/SIMPLIFIED + Sıralı Plan Clobber) ➜ 3. Cerrahi Faz 0 İcrası -> archive_plan.py --seal-handoff --sprint-label '<Label>' ➜ 4. HANDOFF & KANBAN & Kardeş Senkronu -> ⬜ Bekliyor mühürleme (W3/W4=0) ➜ 5. Temiz Durma -> Koda dokunmadan rapor",
+        "usage_snippet": """# 1. Sohbette Doğrudan Tetikleme (Slash veya Doğal Dil):
 /seal-plan
-/seal-plan planı mühürle ve sıraya al
-planı mühürle
+mühürle, bunları plana dahil et, todo olarak ekle, sıraya al
 
-# 2. Deterministik CLI Motoru (archive_plan.py --seal-handoff):
+# 2. Ön-Mühürleme Çakışma & Sıralı Plan Ezme Taraması (plan_conflict_guard.py):
+python .agent/skills/musgoku/scripts/plan_conflict_guard.py --root . --plan <plan-yolu>
+python .agent/skills/musgoku/scripts/plan_conflict_guard.py --root . --check-queue --strict
+
+# 3. Deterministik Mühürleme (CRITICAL ezmede durur; bilinçli geçişte --allow-conflicts ile PRE-SEAL-CONFLICT-AUDIT gömer):
 python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug> --seal-handoff --sprint-label "Sprint 21"
+python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug> --seal-handoff --allow-conflicts
 
-# 3. Kardeş Repo Senkronu (Opsiyonel / İki Taraflı Planlarda):
-python .agent/skills/musgoku/scripts/sync_sibling_handoff.py --sibling-root ../kardes-repo --plan docs/plans/<plan>.md --task-id OCAI-FEAT-022 --task-title "Admin Özel Sektör"
-
-# 4. Doğrulama Kapısı (W3 Sıfır Uyarı):
-python .agent/skills/musgoku/scripts/check_handoff.py --strict""",
+# 4. Doğrulama Kapıları (W3 Task Eviction, W4 Plan Clobber, W5 Kanban Tekrarı):
+python .agent/skills/musgoku/scripts/check_handoff.py --strict
+python .agent/skills/musgoku/scripts/check_sprint_board.py""",
         "emergency": [
+            {
+                "symptom": "[BLOCKED] CRITICAL plan conflict detected during archive_plan.py",
+                "cause": "Yeni plan canlıdaki zengin kodu sadeleştirerek eziyor (SIMPLIFIED_SUBSET_REGRESSION) veya bekleyen bir planla aynı dosyayı [NEW] ile çakıştırıyor.",
+                "action": "Plandaki [NEW] etiketini [MODIFY] yapın veya bilinçli olarak devam edecekseniz --allow-conflicts bayrağını ekleyin."
+            },
             {
                 "symptom": "/seal-plan dedikten sonra ajan kod yazmaya başladı",
                 "cause": "Mod A (Mühürle & Dur) yerine yanlışlıkla Mod B (Proceed) kuralına girildi.",
                 "action": "Kodu derhal geri alın (git checkout); yalnızca archive_plan.py --seal-handoff çalıştırıp durun."
             },
             {
-                "symptom": "check_handoff.py W3 uyarısı verdi (Arşivlenmiş plan HANDOFF'ta bulunamadı)",
-                "cause": "archive_plan.py çalıştırılırken --seal-handoff bayrağı verilmedi.",
-                "action": "archive_plan.py --plan <yol> --slug <slug> --seal-handoff çalıştırarak planı HANDOFF.md tablosuna bağlayın."
-            },
-            {
-                "symptom": "Kardeş repo HANDOFF.md güncellenmedi",
-                "cause": "Plan dosyasında kardeş repo etkisi tanımlanmasına rağmen sync_sibling_handoff.py atlandı.",
-                "action": "python .agent/skills/musgoku/scripts/sync_sibling_handoff.py çalıştırarak kardeş projenin HANDOFF.md dosyasına plan referansını mühürleyin."
+                "symptom": "check_handoff.py W3 veya W4 uyarısı verdi",
+                "cause": "Arşivlenmiş plan HANDOFF'ta yok (W3) ya da bekleyen planlar aynı dosyayı/endpoint'i eziyor (W4).",
+                "action": "archive_plan.py --seal-handoff veya plan_conflict_guard.py --check-queue çalıştırıp sıralı birleştirme notu ekleyin."
             }
         ],
         "category": "Planlama & Mimari"
@@ -1707,25 +1709,32 @@ python .agent/skills/i18n-localization/scripts/i18n_checker.py --strict"""
 
         "badge_class": "badge-info",
 
-        "file": "PROJECT_BRIEF.md / DB_MIGRATIONS.md / 15 Kapı",
+        "file": "PROJECT_BRIEF.md / DB_MIGRATIONS.md / plan_conflict_guard.py / Kapılar",
 
-        "features": ["5 Katmanlı Dikey Dilim", "Java/Spring & React/Vite", "15 Ölçülebilir Kalite Kapısı", "Cerrahi Skill Güncelleme"],
+        "features": [
+            "5 Katmanlı Dikey Dilim (DB → Backend → Client → UI → Admin)",
+            "Ön-Mühürleme Çakışma & Ezme Kalkanı (plan_conflict_guard.py)",
+            "archive_plan.py (CRITICAL'de durur / --allow-conflicts ile PRE-SEAL-CONFLICT-AUDIT gömer)",
+            "check_handoff.py (W3/W4) & check_sprint_board.py (W5) Kuyruk Denetimi",
+            "Java/Spring & React/Vite Mimari Kuralları + Birleşik Kapılar (run_all_gates.py)"
+        ],
 
-        "detail": "Global geliştirme yönlendiricisi. Backend (Java/Spring Boot) ve Frontend (React/TypeScript/Vite) mimarisini, 15 deterministik doğrulama kapısını ve cerrahi skill güncelleme protokolünü yönetir.",
+        "detail": "Global geliştirme yönlendiricisi. Backend/Frontend 5 katmanlı dikey dilim mimarisini, birleşik kalite kapılarını ve plan mühürlerken (/seal-plan, 'mühürle', 'bunları plana dahil et', 'todo olarak ekle') canlı kod tekrarı (ALREADY_DONE_EXACT / ENRICHED_SUPERSET / SIMPLIFIED_SUBSET_REGRESSION) ile sıralı plan ezmesini (DOUBLE_NEW_COLLISION / SHARED_SURFACE_OVERWRITE) yakalayan plan_conflict_guard.py kalkanını yönetir.",
 
-        "sample_prompt": "Spring Boot REST controller ve JPA entity katmanını 5 katmanlı dikey dilimle oluştur; doğrulama kapılarını çalıştır.",
+        "sample_prompt": "/seal-plan veya normal geliştirme: Planı canlı kod ve bekleyen planlarla çakışma taramasından geçir, ardından 5 katmanlı dikey dilimle uygula.",
 
-        "config_snippet": """# Temel Mimari & Kalite Kapıları:
+        "config_snippet": """# 1. Ön-Mühürleme Çakışma, Tekrar & Sıralı Plan Ezme Kalkanı:
+python .agent/skills/musgoku/scripts/plan_conflict_guard.py --root . --plan <plan-yolu>
+python .agent/skills/musgoku/scripts/plan_conflict_guard.py --root . --check-queue --strict
 
-python .agent/skills/musgoku/scripts/rules_gates.py --strict
+# 2. Plan Arşivleme & Backlog Mühürleme (CRITICAL'de durur / --allow-conflicts ile PRE-SEAL-CONFLICT-AUDIT gömer):
+python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug> --seal-handoff --sprint-label "Sprint 21"
+python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug> --seal-handoff --allow-conflicts
 
-python .agent/skills/musgoku/scripts/check_project_brief.py
-
-python .agent/skills/musgoku/scripts/check_db_migrations.py
-
-python .agent/skills/musgoku/scripts/check_api_docs.py
-
-python .agent/skills/musgoku/scripts/check_bundle_limits.py"""
+# 3. Birleşik Kalite & Pano Kapıları:
+python .agent/skills/musgoku/scripts/run_all_gates.py
+python .agent/skills/musgoku/scripts/check_handoff.py --strict
+python .agent/skills/musgoku/scripts/check_sprint_board.py"""
 
     },
 
@@ -2602,9 +2611,24 @@ def parse_skill_md(skill_path: Path) -> dict:
 
 
 
-    # Ek anahtar kelimeler (arama için)
+    # Bağlı slash komutları (skill <-> slash çapraz arama ve rozet bağlantısı)
+    linked_slash = [c for c in SLASH_COMMANDS if name in c.get("skills", [])]
+    linked_command_names = [c["command"] for c in linked_slash]
 
-    search_keywords = [name, category, purpose, cfg["file"], cfg["detail"]] + triggers
+    # Ek anahtar kelimeler (arama için)
+    search_keywords = [
+        name, category, purpose, cfg["file"], cfg["detail"],
+        prompt, cli_cmd, cfg.get("config_snippet") or "",
+    ] + triggers
+    for lc in linked_slash:
+        search_keywords.extend([
+            lc.get("command", ""),
+            lc.get("name", ""),
+            lc.get("goal", ""),
+            lc.get("description", ""),
+            lc.get("usage_snippet", ""),
+        ])
+        search_keywords.extend(lc.get("aliases", []))
 
     if "features" in cfg:
 
@@ -2626,7 +2650,13 @@ def parse_skill_md(skill_path: Path) -> dict:
         search_keywords.extend(["github", "api", "unsplash", "pexels", "resim", "foto", "avatar", "profil", "etkinlik", "assets.json"])
 
     if name == "musgoku":
-        search_keywords.extend(["goku update", "skill update", "gs update", "güncelle", "cerrahi", "w4", "spinner slop", "run_all_gates"])
+        search_keywords.extend([
+            "goku update", "skill update", "gs update", "güncelle", "cerrahi", "w4", "w5",
+            "spinner slop", "run_all_gates", "seal", "seal-plan", "mühürle", "planı mühürle",
+            "todo olarak ekle", "bunları plana dahil et", "sıraya al", "plan_conflict_guard",
+            "archive_plan", "allow-conflicts", "pre-seal-conflict-audit", "clobber",
+            "already_done_exact", "enriched_superset", "simplified_subset_regression",
+        ])
 
     if name in ("ui-polish", "frontend-design", "ui-styling", "design-system"):
         search_keywords.extend(["skeleton", "iskelet", "kaset", "shimmer", "w4", "spinner slop", "zero cls", "16 kilitli tema", "themes.css", "sileo", "toast", "ui-toast"])
@@ -2660,6 +2690,8 @@ def parse_skill_md(skill_path: Path) -> dict:
         "sample_prompt": prompt,
 
         "cli_cmd": cli_cmd,
+
+        "linked_commands": linked_command_names,
 
         "search_index": " ".join(search_keywords).lower()
 
@@ -2834,7 +2866,8 @@ def generate_catalog_html(skills: list[dict]) -> str:
                 f'<div class="sheet-card" tabindex="0" role="button" data-cmd="{cmd["command"]}" '
 
                 f'data-name="{cmd_name_clean.lower()}" data-desc="{cmd_desc_clean.lower()}" data-goal="{cmd_goal_clean.lower()}" '
-
+                f'data-aliases="{html.escape(" ".join(cmd.get("aliases", [])).lower())}" '
+                f'data-snippet="{html.escape(cmd.get("usage_snippet", "").lower())}" '
                 f'onclick="selectFromBottomSheet(\'{cmd["command"]}\')" '
 
                 f'onkeydown="if(event.key===\'Enter\'||event.key===\' \'){{selectFromBottomSheet(\'{cmd["command"]}\');event.preventDefault();}}">'
@@ -5543,6 +5576,74 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
 
 
+    .skill-detail-note {{
+      font-size: 0.76rem;
+      color: var(--text-tertiary);
+      line-height: 1.45;
+      margin: -0.45rem 0 0.7rem 0;
+      padding-left: 0.55rem;
+      border-left: 2px solid var(--border-subtle);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }}
+
+    .skill-usage-preview {{
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xs);
+      padding: 0.45rem 0.6rem;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }}
+
+    .skill-usage-preview:hover {{
+      border-color: var(--accent-primary);
+    }}
+
+    .skill-usage-label {{
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+      margin-bottom: 0.2rem;
+    }}
+
+    .skill-usage-text {{
+      font-style: italic;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }}
+
+    .skill-usage-cli {{
+      margin-top: 0.3rem;
+      padding-top: 0.3rem;
+      border-top: 1px dashed var(--border-subtle);
+      font-size: 0.68rem;
+      color: var(--text-tertiary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }}
+
+    .matched-slash-banner {{
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--accent-slash-subtle, rgba(56, 189, 248, 0.08));
+      border: 1px solid var(--accent-slash-border, rgba(56, 189, 248, 0.3));
+      border-radius: var(--radius-md);
+      margin-bottom: 0.35rem;
+    }}
+
     .triggers-preview {{
 
       display: flex;
@@ -7892,25 +7993,18 @@ def generate_catalog_html(skills: list[dict]) -> str:
       // Filter slash commands
 
       const filteredSlash = allSlashCommands.filter(c => {{
-
         const matchCategory = (currentCategory === 'all' || c.category === currentCategory);
-
-        const matchSearch = !query || 
-
-          c.command.toLowerCase().includes(query) || 
-
-          c.name.toLowerCase().includes(query) || 
-
-          c.goal.toLowerCase().includes(query) || 
-
+        const matchSearch = !query ||
+          c.command.toLowerCase().includes(query) ||
+          c.name.toLowerCase().includes(query) ||
+          c.goal.toLowerCase().includes(query) ||
           c.description.toLowerCase().includes(query) ||
-
+          (c.protocol && c.protocol.toLowerCase().includes(query)) ||
+          (c.usage_snippet && c.usage_snippet.toLowerCase().includes(query)) ||
+          (c.sample_prompt && c.sample_prompt.toLowerCase().includes(query)) ||
           c.skills.some(sk => sk.toLowerCase().includes(query)) ||
-
           c.aliases.some(a => a.toLowerCase().includes(query));
-
         return matchCategory && matchSearch;
-
       }});
 
 
@@ -7955,7 +8049,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
 
 
-      renderSkillItems(filteredSkills);
+      renderSkillItems(filteredSkills, query ? filteredSlash : []);
 
       renderSlashCards(filteredSlash);
 
@@ -8021,11 +8115,13 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
           <div class="drawer-section-title">Durum & Sözleşme</div>
 
-          <div style="display:flex;gap:0.5rem;align-items:center;">
+          <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center;">
 
             <span class="badge ${{s.badge_class}}">${{escapeHtml(s.config_status)}}</span>
 
             <span class="drawer-file-name" style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-tertiary);">${{escapeHtml(s.config_file)}}</span>
+
+            ${{(s.linked_commands || []).map(lc => `<button class="btn-action" style="padding:0.15rem 0.5rem;font-size:0.72rem;border-color:var(--accent-slash-border);color:var(--accent-slash);" onclick="openSlashDrawer('${{escapeHtml(lc)}}')">${{SVG_SLASH}} ${{escapeHtml(lc)}}</button>`).join('')}}
 
           </div>
 
@@ -8463,11 +8559,26 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
 
 
-    function renderSkillItems(filtered) {{
+    function renderSkillItems(filtered, matchedSlash = []) {{
 
       const container = document.getElementById('skillsContainer');
 
       container.innerHTML = '';
+
+      if (matchedSlash && matchedSlash.length > 0) {{
+        const banner = document.createElement('div');
+        banner.className = 'matched-slash-banner';
+        const pills = matchedSlash.map(cmd =>
+          `<button class="btn-action" style="padding:0.25rem 0.6rem;font-size:0.75rem;border-color:var(--accent-slash-border);color:var(--accent-slash);font-weight:600;" onclick="openSlashDrawer('${{escapeHtml(cmd.command)}}')" title="${{escapeHtml(cmd.name)}}">${{SVG_SLASH}} ${{escapeHtml(cmd.command)}} — ${{escapeHtml(cmd.name)}}</button>`
+        ).join(' ');
+        banner.innerHTML = `
+          <span style="font-size:0.75rem;font-weight:700;color:var(--accent-slash);display:inline-flex;align-items:center;gap:0.35rem;">
+            ${{SVG_SLASH}} Eşleşen Oturum Komutları (${{matchedSlash.length}}):
+          </span>
+          <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">${{pills}}</div>
+        `;
+        container.appendChild(banner);
+      }}
 
 
 
@@ -8557,7 +8668,13 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
               <p class="skill-purpose">${{escapeHtml(s.purpose)}}</p>
 
+              ${{s.config_detail && s.config_detail !== s.purpose ? `<div class="skill-detail-note" title="${{escapeHtml(s.config_detail)}}">${{escapeHtml(s.config_detail)}}</div>` : ''}}
 
+              <div class="skill-usage-preview" onclick="event.stopPropagation();copySkillPromptByName('${{escapeHtml(s.name)}}')" title="Örnek kullanımı kopyalamak için tıkla">
+                <div class="skill-usage-label">Örnek Kullanım</div>
+                <div class="skill-usage-text">"${{escapeHtml(s.sample_prompt)}}"</div>
+                ${{s.cli_cmd ? `<div class="skill-usage-cli"><code>$ ${{escapeHtml(s.cli_cmd)}}</code></div>` : ''}}
+              </div>
 
               <div class="triggers-preview">${{triggersPreview || '<span style="color:var(--text-tertiary);font-size:0.72rem">Genel yönlendirici</span>'}}</div>
 
@@ -9065,9 +9182,41 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
       currentSearch = document.getElementById('searchInput').value;
 
-      if (currentSearch.trim().startsWith('/') && activeView === 'skills') {{
+      const q = currentSearch.toLowerCase().trim();
 
-        switchView('slash');
+      if (q && activeView === 'skills') {{
+
+        const hasSlashMatch = allSlashCommands.some(c =>
+
+          c.command.toLowerCase().includes(q) ||
+
+          c.name.toLowerCase().includes(q) ||
+
+          c.goal.toLowerCase().includes(q) ||
+
+          c.description.toLowerCase().includes(q) ||
+
+          (c.usage_snippet && c.usage_snippet.toLowerCase().includes(q)) ||
+
+          c.aliases.some(a => a.toLowerCase().includes(q))
+
+        );
+
+        const hasSkillMatch = allSkills.some(s =>
+
+          (currentCategory === 'all' || s.category === currentCategory) &&
+
+          s.search_index.includes(q)
+
+        );
+
+        if ((q.startsWith('/') && hasSlashMatch) || (!hasSkillMatch && hasSlashMatch)) {{
+
+          switchView('slash');
+
+          return;
+
+        }}
 
       }}
 
@@ -9389,7 +9538,11 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
           const goal = card.dataset.goal || '';
 
-          const match = !q || cmd.includes(q) || name.includes(q) || desc.includes(q) || goal.includes(q);
+          const aliases = card.dataset.aliases || '';
+
+          const snippet = card.dataset.snippet || '';
+
+          const match = !q || cmd.includes(q) || name.includes(q) || desc.includes(q) || goal.includes(q) || aliases.includes(q) || snippet.includes(q);
 
           if (match) {{
 
@@ -9653,18 +9806,14 @@ def generate_catalog_html(skills: list[dict]) -> str:
 
       }}
 
-      const matched = allSlashCommands.filter(c => 
-
+      const matched = allSlashCommands.filter(c =>
         c.command.toLowerCase().includes(q) ||
-
         c.name.toLowerCase().includes(q) ||
-
         c.description.toLowerCase().includes(q) ||
-
         c.goal.toLowerCase().includes(q) ||
-
+        (c.usage_snippet && c.usage_snippet.toLowerCase().includes(q)) ||
+        (c.aliases && c.aliases.some(a => a.toLowerCase().includes(q))) ||
         c.skills.some(s => s.toLowerCase().includes(q))
-
       );
 
       renderCommandPalette(matched);

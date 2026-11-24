@@ -13,6 +13,7 @@ Denetlenen Hata ve Uyarı Kodları:
   W1 - §3 Sıradaki İşler aktif görev tablosunda tamamlanmış (✅ BİTTİ / TAMAMLANDI) satır bırakılmış.
   W2 - Git çalışma ağacında arayüz (UI) bileşeni değiştiği halde docs/KULLANICI_TEST_REHBERI.md mevcut değil.
   W3 - docs/plans/ altındaki onaylı planda yer alan görevler HANDOFF.md içinde bulunamadı (Task Eviction / Buharlaşma).
+  W4 - Kuyruktaki bekleyen planlar (docs/plans/ + HANDOFF.md §3) arasında aynı dosya/endpoint üzerinde ezme çakışması (Plan Clobber) var.
 """
 import argparse
 import re
@@ -278,6 +279,22 @@ def validate_handoff(root: Path, ignore_git_diff: bool = False) -> Tuple[List[Tu
 
     # W3: Onaylı plan görevlerinin HANDOFF'tan buharlaşması kontrolü
     warnings.extend(_check_plan_eviction(root, text))
+
+    # W4: Bekleyen sıralı planlar arasında birbirini ezme / yüzey çakışması (Clobber) kontrolü
+    try:
+        scripts_dir = Path(__file__).resolve().parent
+        if str(scripts_dir) not in sys.path:
+            sys.path.insert(0, str(scripts_dir))
+        import plan_conflict_guard  # noqa: E402
+
+        q_report = plan_conflict_guard.analyze_queue(root)
+        for qf in q_report.get("findings", []):
+            warnings.append((
+                "W4",
+                f"Bekleyen planlar arası çakışma ({qf['type']}): {qf['message']}",
+            ))
+    except Exception:
+        pass
 
     return errors, warnings
 

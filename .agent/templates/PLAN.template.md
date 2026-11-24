@@ -71,6 +71,13 @@ Feature: <doldur: Özellik Adı>
 - **Kardeş `HANDOFF.md` + Süreç Dosyalarına Yazılacak Görevler & Sözleşme Özeti:** `<doldur: Görev ID, başlık ve API/DTO/şema kontrat özeti>`
 - **Yürütme Sahipliği Sorusu (Farklı Dizinde Zorunlu):** *"Kardeş proje farklı dizinde yer alıyor; öncelik kardeş projenin kendi kod ajanındadır. Kardeş uygulamadaki geliştirmeyi kendi kod ajanı mı yapsın, yoksa ben mi devralayım?"* (`[Seçenek 1: Kardeş Projenin Kendi AI Agent'ı (Öncelikli) / Seçenek 2: Mevcut Ajan]`)
 
+### 5.2 🛡️ Ön-Mühürleme Çakışma, Tekrar ve Sıralı Plan Ezme Matrisi (Pre-Seal Conflict Check)
+> ⛔ Plan mühürlenmeden (`/seal-plan` / `"mühürle"` / `"todo olarak ekle"`) önce `python .agent/skills/musgoku/scripts/plan_conflict_guard.py --root . --plan <plan-yolu>` ile canlı kod (`ALREADY_DONE_EXACT` / `ENRICHED_SUPERSET` / `SIMPLIFIED_SUBSET_REGRESSION`) ve bekleyen sıralı planlar (`DOUBLE_NEW_COLLISION` / `SHARED_SURFACE_OVERWRITE` / `SEQUENTIAL_ORDER_DEPENDENCY`) taranır.
+
+| Hedef / Yüzey | Sınıflandırma | İlgili Canlı Dosya / Bekleyen Plan | Alınacak Önlem |
+|---|---|---|---|
+| `<doldur: örn. src/x.ts veya 'Temiz (NEW_CLEAN)'>` | `<doldur: NEW_CLEAN / ENRICHED_SUPERSET / SHARED_SURFACE_OVERWRITE>` | `<doldur: plan_...md veya canlı kod>` | `<doldur: [NEW]->[MODIFY] / Sıra bağımlılığı>` |
+
 ---
 
 ## 6. 🏗️ 5 Katmanlı Dikey Dilim Mimarisi (Full-Stack Vertical Slice)
@@ -104,7 +111,7 @@ Feature: <doldur: Özellik Adı>
 > ⛔ **PROCEED İCRA KURALI (MANDATORY — Çoklu Araç Uyumlu):** Tüm plan yönergeleri FAA AC 121-24C standardına uygun `[Adım N]. [Eylem / Komut] -> [Beklenen Çıktı]` sözdiziminde yazılır. Kullanıcı `"proceed"`, `"onay"`, `"uygula"` verdiğinde önce **Faz 0**, ardından **Faz 1..4** icra edilir.
 
 ### 📌 Faz 0: Onay Sonrası Mühürleme (`docs/plans/`, `HANDOFF.md` §3 & Sprint Açılışı — Koda Dokunmadan Önce Zorunlu)
-1. **[Adım 1 - Planı `docs/plans/` Altına Arşivle]:** `python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug>` -> **Beklenen Çıktı:** `[ARCHIVED] docs/plans/plan_<slug>_<YYYYMMDD_HHMMSS>.md`
+1. **[Adım 1 - Ön-Mühürleme Çakışma Kalkanı & `docs/plans/` Altına Arşivle]:** `python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug>` -> **Beklenen Çıktı:** Çakışma/ezme kalkanı (`plan_conflict_guard.py`) yeşil geçer ve `[ARCHIVED] docs/plans/plan_<slug>_<YYYYMMDD_HHMMSS>.md` basılır.
 2. **[Adım 2 - `HANDOFF.md` §3 Canlı Panosuna İşle]:** Bölüm 5'teki tüm `[DOM]-[TIP]-[NO]` görevlerini ve arşivlenen plan referansını `HANDOFF.md` §3 panosuna işle -> **Beklenen Çıktı:** `python .agent/skills/musgoku/scripts/check_handoff.py` `0 hata, 0 W3 uyarısı` döner.
 3. **[Adım 3 - Sprint & Kardeş Süreç Senkronu]:** `SPRINT_PLAN.md`, `KANBAN.md`, `RELEASE_PLAN.md` yoksa şablondan aç; kardeş proje varsa `sync_sibling_handoff.py` çalıştır -> **Beklenen Çıktı:** Aktif kart `Yapılıyor`'a taşınır ve kardeş `HANDOFF.md` + süreçler güncellenir.
 

@@ -104,7 +104,7 @@ Boş bırakmak yerine kapının seni uyarmasını tercih et.
 Antigravity IDE, Antigravity CLI (`agy`), Claude Code (`claude`), OpenCode (`opencode`) veya genel terminal CLI ortamlarında `/plan`, `/council` komutu veya planlama talebi çalıştırıldığında:
 1. ⛔ **Sohbet Çıktısı Plan Yasağı:** Plan sohbet çıktısı olarak basılamaz; her plan kendi fiziksel `.md` dosyasında (`<artifact-dir>/<plan_name>.md` veya `.agent/plans/<plan_name>.md`) ve **FAA AC 121-24C Dokümantasyon Standardı** ile [.agent/templates/PLAN.template.md](../templates/PLAN.template.md) şablonundan üretilir; deterministik `[DOM]-[TIP]-[NO]` görev kimliklerini, TDD dikiş noktalarını (`seam`), 5 katmanlı dikey dilimi, **Tema ve Bileşen İskeleti Sözleşmesini**, 2+ alternatifli mimari ikilemlerde Council Deliberation körlemesini ve ilgili KANBAN kartını açıkça belirtir.
 2. ⛔ **2-Modlu Onay & Proceed İcra Kilidi (Mod A: `/seal-plan` vs Mod B: `Proceed`):**
-   - **Mod A — Mühürle & Sıraya Al (`/seal-plan`, `"planı mühürle"`, `"backlog'a al"`, `"kodlama yapma"`):** Yalnızca **Faz 0.1..0.4** çalıştırılır (`archive_plan.py --seal-handoff --sprint-label "<Sprint>"`, `HANDOFF.md` §3 Gelecek Fazlar `⬜ Bekliyor`, `KANBAN.md` `Bekliyor`, varsa kardeş `HANDOFF.md` + süreçleri). Üretim koduna dokunulmadan durulur; kullanıcı sonradan `"Sprint X'i başlat"` dediğinde Faz 1+'den devam edilir.
+   - **Mod A — Mühürle & Sıraya Al (`/seal-plan`, `"planı mühürle"`, `"mühürle"`, `"bunları plana dahil et"`, `"todo olarak ekle"`, `"listeye ekle"`, `"sıraya al"`, `"sonraya bırak"`, `"backlog'a al"`, `"kodlama yapma"`):** Yalnızca **Faz 0.1..0.4** çalıştırılır (`archive_plan.py --seal-handoff --sprint-label "<Sprint>"` öncesi `plan_conflict_guard.py` canlı kod ve sıralı plan çakışma/ezme kalkanı çalışır; `HANDOFF.md` §3 Gelecek Fazlar `⬜ Bekliyor`, `KANBAN.md` `Bekliyor`, varsa kardeş `HANDOFF.md` + süreçleri güncellenir). Üretim koduna dokunulmadan durulur; kullanıcı sonradan `"Sprint X'i başlat"` dediğinde Faz 1+'den devam edilir.
    - **Mod B — Onayla & Hemen Başla (`Proceed`, `"başla"`, `"uygula"`):** Kullanıcı Antigravity IDE'de "Proceed" butonuna bastığında veya CLI/terminal ortamlarında başlama onayı verdiğinde ajan önce **Faz 0**'ı, ardından **Faz 1+** adımlarını icra eder:
    - **Faz 0.1 (Plan Arşivleme `docs/plans/`):** Plan dosyası `python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug>` ile `docs/plans/plan_<slug>_<YYYYMMDD_HHMMSS>.md` olarak arşivlenir.
    - **Faz 0.2 (`HANDOFF.md` §3 Mühürleme):** Plandaki görevler `[DOM]-[TIP]-[NO]` kimlikleri ve `docs/plans/plan_<slug>_...` dosya referansıyla `HANDOFF.md` §3 canlı panosuna (WIP maks 3 aktif, kalanlar Gelecek Fazlar / Backlog tablosuna) yazılır.
@@ -268,9 +268,7 @@ Bu karar PRD standartlarıyla **tutarlıdır**; kapsam farkı yoktur
 - `**MVP Kapsam**` — bu sprintte teslim edilecekler (kart ID'leriyle)
 - `**Kapsam Dışı**` — bilinçli olarak dışarıda bırakılanlar
 
-Bir kart ne birinde ne diğerinde geçmiyorsa uyarı alır (W3). Bu, "kapsam
-sürüklenmesi"nin en ucuz denetimidir: sprint hedefiyle kartlar arasındaki
-sapma ilk gün görünür.
+Bir kart ne birinde ne diğerinde geçmiyorsa uyarı alır (W3). Açık `KANBAN.md` kartları arasında aynı dosya/yüzey veya semantik tekrar varsa `W5` uyarısı verilir. Bu, "kapsam sürüklenmesi" ve mükerrer kart açılmasının en ucuz denetimidir.
 
 ---
 

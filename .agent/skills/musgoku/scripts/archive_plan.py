@@ -27,6 +27,15 @@ if str(THIS_DIR) not in sys.path:
     sys.path.insert(0, str(THIS_DIR))
 
 import check_handoff  # noqa: E402
+import plan_conflict_guard  # noqa: E402
+
+
+class PlanConflictError(RuntimeError):
+    """Ön-mühürleme sırasında CRITICAL çakışma/ezme veya regresyon tespit edildiğinde fırlatılır."""
+
+    def __init__(self, message: str, report: dict):
+        super().__init__(message)
+        self.report = report
 
 
 def _sanitize_token(value: str) -> str:
@@ -133,6 +142,24 @@ def seal_plan_to_handoff(
     return handoff_p
 
 
+def _inject_conflict_audit(content: str, report: dict) -> str:
+    """Çakışma/tekrar/sıralama bulguları varsa arşivlenen plan içine audit bloğunu gömer."""
+    if not report.get("findings"):
+        return content
+    section = plan_conflict_guard.format_markdown_audit_section(report)
+    cleaned = re.sub(
+        r"<!--\s*PRE-SEAL-CONFLICT-AUDIT:BEGIN\s*-->.*?<!--\s*PRE-SEAL-CONFLICT-AUDIT:END\s*-->\s*",
+        "",
+        content,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    anchor = re.search(r"^##\s+11\.\s+🚨", cleaned, re.MULTILINE)
+    if anchor:
+        idx = anchor.start()
+        return cleaned[:idx].rstrip() + "\n\n" + section + "\n\n" + cleaned[idx:]
+    return cleaned.rstrip() + "\n\n---\n\n" + section + "\n"
+
+
 def archive_plan(
     plan_path: Path | str,
     project_root: Path | str,
@@ -141,18 +168,33 @@ def archive_plan(
     move: bool = False,
     seal_handoff: bool = False,
     sprint_label: str = "Planlı Backlog",
+    allow_conflicts: bool = False,
+    skip_conflict_check: bool = False,
 ) -> Path:
     """Onaylanan plan dosyasını <project_root>/docs/plans/<prefix>_<slug>_<YYYYMMDD_HHMMSS>.md olarak arşivler.
 
     Varsayılan olarak (move=False) kaynak dosyayı korur; böylece Antigravity IDE/CLI
     `<artifact-dir>` içindeki artifact bağlantısı bozulmaz.
     seal_handoff=True verildiğinde görevleri HANDOFF.md Gelecek Fazlar panosuna ⬜ Bekliyor olarak mühürler.
+    Mühürleme öncesi plan_conflict_guard ile canlı kod ve bekleyen plan çakışmaları denetlenir;
+    CRITICAL ezme varsa allow_conflicts=True verilmedikçe PlanConflictError fırlatılır.
     """
     src_p = Path(plan_path).resolve()
     if not src_p.is_file():
         raise FileNotFoundError(f"Plan dosyası bulunamadı: {src_p}")
 
     root_p = Path(project_root).resolve()
+    conflict_report = None
+    if not skip_conflict_check:
+        conflict_report = plan_conflict_guard.analyze_plan_conflicts(root_p, src_p)
+        if conflict_report["critical_count"] > 0 and not allow_conflicts:
+            raise PlanConflictError(
+                f"Ön-mühürleme sırasında {conflict_report['critical_count']} CRITICAL çakışma/ezme "
+                f"tespit edildi ({conflict_report['overall_classification']}). "
+                f"Bilinçli olarak devam etmek için --allow-conflicts kullanın.",
+                conflict_report,
+            )
+
     plans_dir = root_p / "docs" / "plans"
     plans_dir.mkdir(parents=True, exist_ok=True)
 
@@ -163,6 +205,8 @@ def archive_plan(
 
     dest_p = plans_dir / f"{clean_prefix}{slug_part}_{timestamp}.md"
     content = src_p.read_text(encoding="utf-8", errors="replace")
+    if conflict_report is not None:
+        content = _inject_conflict_audit(content, conflict_report)
     dest_p.write_text(content, encoding="utf-8")
 
     src_norm = str(src_p).replace("\\", "/").lower()
@@ -201,6 +245,16 @@ def main() -> int:
         default="Planlı Backlog",
         help="--seal-handoff ile yazılacak hedef faz/sprint etiketi (örn. 'Sprint 21')",
     )
+    parser.add_argument(
+        "--allow-conflicts",
+        action="store_true",
+        help="CRITICAL çakışma/ezme bulgularına rağmen mühürlemeye izin ver ve raporu plana işle",
+    )
+    parser.add_argument(
+        "--skip-conflict-check",
+        action="store_true",
+        help="Ön-mühürleme çakışma ve sıralı plan ezme taramasını atla",
+    )
     args = parser.parse_args()
 
     root_p = Path(args.root).resolve()
@@ -213,7 +267,14 @@ def main() -> int:
             move=args.move,
             seal_handoff=args.seal_handoff,
             sprint_label=args.sprint_label,
+            allow_conflicts=args.allow_conflicts,
+            skip_conflict_check=args.skip_conflict_check,
         )
+    except PlanConflictError as exc:
+        print(f"[BLOCKED] {exc}", file=sys.stderr)
+        for f in exc.report.get("findings", []):
+            print(f"  [{f['severity']}] [{f['type']}] {f['target']} -> {f['message']}", file=sys.stderr)
+        return 1
     except FileNotFoundError as exc:
         print(f"[ERR] {exc}", file=sys.stderr)
         return 1

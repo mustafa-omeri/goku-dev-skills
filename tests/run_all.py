@@ -45,6 +45,7 @@ TEST_SCRIPTS = [
     ("Test Review PRD", HERE / "test_review_prd.py"),
     ("Test Test Spec Generator", HERE / "test_test_spec_generator.py"),
     ("Test Diff Triage", HERE / "test_diff_triage.py"),
+    ("Test Plan Conflict Guard", HERE / "test_plan_conflict_guard.py"),
 ]
 
 
