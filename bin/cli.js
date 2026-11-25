@@ -38,7 +38,7 @@ const https = require('https');
 
 
 
-const VERSION = '1.47.0';
+const VERSION = '1.48.0';
 
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 
@@ -439,6 +439,16 @@ const SKILLS_MANIFEST = {
 
   },
 
+  'seal-plan': {
+
+    category: 'Session Commands / Ensemble',
+
+    desc: 'Pre-seal conflict check & backlog archival: seals approved plans into docs/plans/, HANDOFF.md & KANBAN.md without writing code.',
+
+    triggers: '/seal-plan, seal plan, plani muhurle, muhurle, add to backlog, siraya al',
+
+  },
+
   'seo-apply': {
 
     category: 'Session Commands / Ensemble',
@@ -675,6 +685,8 @@ const PROFILES = {
 
       'council',
 
+      'seal-plan',
+
       'seo-apply',
 
       'commitx',
@@ -810,6 +822,8 @@ const PROFILES = {
       'check-security',
 
       'council',
+
+      'seal-plan',
 
       'commitx',
 

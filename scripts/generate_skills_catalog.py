@@ -115,7 +115,7 @@ CATEGORIES = {
 
         "ui-polish", "verify-prd", "review-prd", "verify-last", "verify-sprint", "fix-bug", "check-security",
 
-        "council", "seo-apply", "commitx", "gs-update",
+        "council", "seal-plan", "seo-apply", "commitx", "gs-update",
 
         "prelaunch", "prelaunch-update", "project-summary", "feature-architect", "spec-reconciler", "test-spec-generator"
 
@@ -252,7 +252,7 @@ python .agent/skills/musgoku/scripts/check_theme_contrast.py --strict""",
         "name": "2-Modlu Plan Onay Kapısı & Ön-Mühürleme Çakışma Kalkanı",
         "badge": "Plan & Backlog",
         "badge_class": "badge-accent",
-        "skills": ["musgoku", "handoff-session-continuity", "development-workflow", "sprint-delivery-workflow"],
+        "skills": ["seal-plan", "musgoku", "handoff-session-continuity", "development-workflow", "sprint-delivery-workflow"],
         "goal": "Çakışma/Ezme Tespiti + Kodlamadan Dur, docs/plans/ Arşivle, HANDOFF.md'ye Mühürle",
         "description": "Kullanıcı '/seal-plan' dediğinde veya doğal dilde 'mühürle', 'bunları plana dahil et', 'todo olarak ekle', 'listeye ekle', 'sıraya al', 'sonraya bırak', 'kuyruğa ekle' gibi taleplerle maddeleri beklemeye aldığında tetiklenir. Mühürleme öncesi plan_conflict_guard.py ile canlı kod (ALREADY_DONE_EXACT / ENRICHED_SUPERSET / SIMPLIFIED_SUBSET_REGRESSION) ve bekleyen sıralı planlar arası birbirini ezme (DOUBLE_NEW_COLLISION / MODIFY_DELETE_CLOBBER / SHARED_SURFACE_OVERWRITE / SEQUENTIAL_ORDER_DEPENDENCY) denetimi yapar. CRITICAL ezmede PlanConflictError (exit 1) ile durur; bilinçli onayda --allow-conflicts ile mühürleyip plan sonuna <!-- PRE-SEAL-CONFLICT-AUDIT:BEGIN --> tablosunu gömer. Temizse kod yazmadan planı docs/plans/ altına arşivler, HANDOFF.md §3 (W3/W4=0) ve KANBAN.md (W5=0) backlog'una mühürler.",
         "sample_prompt": "/seal-plan: Hazırlanan Sprint 21 planını çakışma taramasından geçirip kodlama yapmadan mühürle ve HANDOFF.md'de bekliyor olarak kaydet.",
@@ -972,6 +972,23 @@ DOMAINS_MAP = [
 
 
 CONFIG_METADATA = {
+    "seal-plan": {
+        "status": "Backlog Mühürleme",
+        "badge_class": "badge-accent",
+        "file": "archive_plan.py + plan_conflict_guard.py + sync_sibling_handoff.py",
+        "features": [
+            "Ön-Mühürleme Çakışma & Ezme Kalkanı (plan_conflict_guard.py)",
+            "docs/plans/ Tarih-Saat Damgalı Plan Arşivi",
+            "HANDOFF.md §3 Gelecek Fazlar ⬜ Bekliyor Mühürleme",
+            "KANBAN.md & SPRINT_PLAN.md Backlog Senkronu",
+            "Kodlamadan Temiz Durma (Mod A)"
+        ],
+        "detail": "Planlanan işleri tek satır üretim kodu yazmadan çakışma taramasından geçirip docs/plans/ altına arşivler ve HANDOFF/KANBAN backlog'una mühürler.",
+        "sample_prompt": "/seal-plan: Hazırlanan planı çakışma taramasından geçirip kodlama yapmadan mühürle.",
+        "config_snippet": """# Ön-Mühürleme Çakışma Taraması & Mühürleme:
+python .agent/skills/musgoku/scripts/plan_conflict_guard.py --root . --plan <plan-yolu>
+python .agent/skills/musgoku/scripts/archive_plan.py --plan <plan-yolu> --slug <slug> --seal-handoff --sprint-label "S2 Backlog" """
+    },
     "diagram-design": {
         "status": "45 Görsel Tip & Vektör",
         "badge_class": "badge-accent",
