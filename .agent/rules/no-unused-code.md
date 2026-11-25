@@ -6,7 +6,7 @@ kapi:
   - yigin: "TypeScript / React"
     komut: "npx tsc --noEmit"
   - yigin: "Java / Spring derleme"
-    komut: "mvn clean compile -DskipTests"
+    komut: "mvn clean test-compile"
   - yigin: "Java / kullanılmayan kod"
     komut: "pwsh -NoProfile -File .agent/skills/musgoku/scripts/check-unused.ps1"
 ---

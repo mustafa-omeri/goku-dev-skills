@@ -12,6 +12,7 @@ Kullanım:
 """
 import argparse
 import json
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -112,7 +113,79 @@ def run_gates(root: Path, include_slow: bool = False) -> Dict[str, Any]:
             "output": out if res.returncode != 0 else "",
         })
 
+    # Java / Spring Boot kullanilmayan kod & gereksiz @Autowired kapisi (pom.xml varsa)
+    has_pom = (root / "pom.xml").is_file()
+    check_unused_ps1 = root / ".agent" / "skills" / "musgoku" / "scripts" / "check-unused.ps1"
+    if not has_pom:
+        results.append({
+            "name": "Java / Kullanılmayan Kod & Autowired",
+            "command": "pwsh -NoProfile -File .agent/skills/musgoku/scripts/check-unused.ps1",
+            "status": "SKIPPED",
+            "reason": "pom.xml yok (Java kapsam dışı)",
+            "exit_code": 0,
+        })
+    elif not check_unused_ps1.is_file():
+        results.append({
+            "name": "Java / Kullanılmayan Kod & Autowired",
+            "command": "pwsh -NoProfile -File .agent/skills/musgoku/scripts/check-unused.ps1",
+            "status": "SKIPPED",
+            "reason": "check-unused.ps1 kurulu değil",
+            "exit_code": 0,
+        })
+    else:
+        pwsh_exe = shutil.which("pwsh")
+        if not pwsh_exe:
+            results.append({
+                "name": "Java / Kullanılmayan Kod & Autowired",
+                "command": "pwsh -NoProfile -File .agent/skills/musgoku/scripts/check-unused.ps1",
+                "status": "SKIPPED",
+                "reason": "pwsh bulunamadı",
+                "exit_code": 0,
+            })
+        else:
+            res = subprocess.run(
+                [pwsh_exe, "-NoProfile", "-File", str(check_unused_ps1)],
+                cwd=str(root),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
+            out = (res.stdout + "\n" + res.stderr).strip()
+            last_line = out.splitlines()[-1] if out.splitlines() else ""
+            results.append({
+                "name": "Java / Kullanılmayan Kod & Autowired",
+                "command": "pwsh -NoProfile -File .agent/skills/musgoku/scripts/check-unused.ps1",
+                "status": "PASS" if res.returncode == 0 else "FAIL",
+                "exit_code": res.returncode,
+                "summary": last_line[:160],
+                "output": out if res.returncode != 0 else "",
+            })
+
     if include_slow:
+        # Java / Spring Boot test-compile (pom.xml varsa)
+        if has_pom:
+            mvnw_cmd = root / ("mvnw.cmd" if sys.platform.startswith("win") else "mvnw")
+            mvn_exe = str(mvnw_cmd) if mvnw_cmd.is_file() else (shutil.which("mvn") or "mvn")
+            mvn_args = [mvn_exe, "-B", "clean", "test-compile"]
+            res = subprocess.run(
+                mvn_args,
+                cwd=str(root),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
+            out = (res.stdout + "\n" + res.stderr).strip()
+            results.append({
+                "name": "Java / Spring Test-Compile",
+                "command": "mvn clean test-compile",
+                "status": "PASS" if res.returncode == 0 else "FAIL",
+                "exit_code": res.returncode,
+                "summary": out.splitlines()[-1][:160] if out.splitlines() else "",
+                "output": out if res.returncode != 0 else "",
+            })
+
         # Bundle limits (only if vite config exists)
         has_vite = any((root / f).is_file() for f in ("vite.config.ts", "vite.config.js", "vite.config.mjs"))
         bundle_script = root / ".agent" / "skills" / "musgoku" / "scripts" / "check_bundle_limits.py"

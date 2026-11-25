@@ -28,7 +28,7 @@ Bu yetenek, anlık geliştirme oturumunda **en son yapılan değişiklikleri**, 
   ```
 - Kapsam ilkesine göre (`AGENTS.md` §3.3):
   * Yalnızca `.agent/` veya `*.md` değiştiyse: Uygulama derleme/test adımları atlanır (`SKIPPED`).
-  * `src/**`, `api/**`, `components/**`, `supabase/**` değiştiyse: `build`, `typecheck` ve ilgili birim testleri zorunlu çalıştırılır.
+  * `src/**`, `api/**`, `components/**`, `supabase/**` değiştiyse: `build`, `typecheck` (Java projelerinde `mvn clean test-compile` + `check-unused.ps1`) ve ilgili birim testleri zorunlu çalıştırılır.
   * Hata varsa anında raporlanır ve düzeltilir.
 
 ### 2. Cerrahi Katman ve İkili Eşleme (Dual Mapping) Analizi

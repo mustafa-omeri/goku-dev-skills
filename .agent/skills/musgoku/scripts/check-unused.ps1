@@ -1,42 +1,182 @@
-<#
+﻿<#
 .SYNOPSIS
-  Kullanilmayan import ve local degisken denetimi (Eclipse JDT / ecj ile).
+  Java / Spring Boot kullanilmayan kod, gereksiz @Autowired ve olu sinif denetimi.
 
 .DESCRIPTION
-  javac (mvn compile) su uyarilari URETMEZ:
+  javac (mvn compile / test-compile) su bulgulari URETMEZ:
     - "The import X is never used"                       (unusedImport)
     - "The value of the local variable X is not used"    (unusedLocal)
+    - "The value of the field X is not used"             (unusedPrivate / @Slf4j)
     - "Unnecessary @SuppressWarnings("X")"               (warningToken)
-  Bu mesajlar VS Code Java (Eclipse JDT) derleyicisine aittir. Bu script ayni
-  derleyiciyi (ecj) Lombok javaagent ile calistirir.
+    - Tek constructor / parametre uzerinde gereksiz @Autowired
+    - Test siniflarinda kullanilmayan package-private @Autowired alanlar
+    - Referanssiz olu (dead) DTO / yardimci siniflar
+  Bu script Eclipse JDT (ecj) + Lombok javaagent ile statik Spring/Java taramasini
+  birlikte calistirir.
 
   IKI AYRI CIKTI - karistirma:
-    * BULGU  (exit 1) : unusedImport, unusedLocal, gereksiz @SuppressWarnings.
-                         Bunlar duzeltilmesi gereken gercek kod durumudur.
+    * BULGU  (exit 1) : unusedImport, unusedLocal, unusedPrivate, @Slf4j unused log,
+                         gereksiz @SuppressWarnings, gereksiz @Autowired, olu siniflar.
     * UYARI  (exit 0'da bile yazilir, kapiyi KIRMAZ):
-                         unchecked / raw type. Bunlar derleyici/IDE uyarisidir
-                         ve su an calisan kodu bozmadan temizlenemez; bkz.
-                         rules/no-unused-code.md #4.2 "Calisan kodu bozma".
-
-  Sahte gecis (vacuous pass) korumasi: once bilerek 3 bulgu + 1 uyari iceren
-  bir CANARY dosyasi denetlenir. Canary'de 3 bulgu ve en az 1 uyari yakalanmazsa
-  script FAIL verir (ecj hic calismadi / arguman hatali demektir) ve proje
-  sonucuna guvenilmez.
+                         unchecked / raw type. Bkz. rules/no-unused-code.md #4.2.
 
   Exit: 0 = OK · 1 = bulgu var · 2 = ecj derleme hatasi · 3 = canary/arac hatasi
 
 .EXAMPLE
   pwsh -NoProfile -File .agent/skills/musgoku/scripts/check-unused.ps1
   pwsh -NoProfile -File .agent/skills/musgoku/scripts/check-unused.ps1 -MainOnly
+  pwsh -NoProfile -File .agent/skills/musgoku/scripts/check-unused.ps1 -StaticOnly
 #>
 param(
     [switch]$MainOnly,
+    [switch]$StaticOnly,
+    [string]$ProjectRoot = "",
     [string]$EcjVersion = "3.38.0"
 )
 
 $ErrorActionPreference = "Stop"
-$root = (Resolve-Path "$PSScriptRoot\..\..\..\..").Path
+if ($ProjectRoot) {
+    $root = (Resolve-Path $ProjectRoot).Path
+} else {
+    $root = (Resolve-Path "$PSScriptRoot\..\..\..\..").Path
+}
 Set-Location $root
+
+function Strip-JavaComments([string]$Text) {
+    return [regex]::Replace($Text, '/\*[\s\S]*?\*/|//[^\r\n]*', {
+        param($m)
+        return ($m.Value -replace '[^\r\n]', ' ')
+    })
+}
+
+function Get-LineNumber([string]$Text, [int]$Index) {
+    if ($Index -le 0) { return 1 }
+    return ([regex]::Matches($Text.Substring(0, $Index), "`n")).Count + 1
+}
+
+function Invoke-SpringStaticChecks([string]$RootDir, [bool]$IncludeTests, [bool]$CheckSlf4j) {
+    $findings = New-Object System.Collections.Generic.List[string]
+    $mainDir = Join-Path $RootDir "src\main\java"
+    $testDir = Join-Path $RootDir "src\test\java"
+    $resDir  = Join-Path $RootDir "src\main\resources"
+
+    $mainFiles = if (Test-Path $mainDir) { @(Get-ChildItem -Path $mainDir -Recurse -Filter "*.java" -File) } else { @() }
+    $testFiles = if ($IncludeTests -and (Test-Path $testDir)) { @(Get-ChildItem -Path $testDir -Recurse -Filter "*.java" -File) } else { @() }
+    $allJavaFiles = @($mainFiles + $testFiles)
+
+    # Tum dosya iceriklerini (yorumsuz) ve kaynak dosya metinlerini tek geciste hazirla
+    $fileContents = @{}
+    foreach ($f in $allJavaFiles) {
+        $raw = Get-Content $f.FullName -Raw -Encoding UTF8
+        $fileContents[$f.FullName] = Strip-JavaComments $raw
+    }
+
+    $resContents = @{}
+    if (Test-Path $resDir) {
+        foreach ($rf in @(Get-ChildItem -Path $resDir -Recurse -File)) {
+            try {
+                $resContents[$rf.FullName] = Get-Content $rf.FullName -Raw -Encoding UTF8
+            } catch {
+                # binary resource atlanir
+            }
+        }
+    }
+
+    $springStereotypeRe = '@(SpringBootApplication|Configuration|RestController|Controller|ControllerAdvice|RestControllerAdvice|Service|Component|Repository|Entity|Table|MappedSuperclass|Embeddable|Aspect|WebFilter|ServletComponentScan|Converter|Mapper)\b'
+    $frameworkExtendRe  = 'extends\s+\w*(Repository|Filter|Exception|RuntimeException|OncePerRequestFilter|WebMvcConfigurer|HandlerInterceptor)\b'
+    $frameworkImplRe    = 'implements\s+[^{]*\b(CommandLineRunner|ApplicationRunner|Filter|Converter|Serializer|Deserializer|Formatter|WebSocketConfigurer|WebSocketMessageBrokerConfigurer)\b'
+
+    # 1) src/main/java: Gereksiz @Autowired, @Slf4j unused log ve referanssiz olu siniflar
+    foreach ($f in $mainFiles) {
+        $rel = $f.FullName.Replace("$RootDir\", "")
+        $clean = $fileContents[$f.FullName]
+        $clsName = [System.IO.Path]::GetFileNameWithoutExtension($f.Name)
+
+        # 1a) Constructor/metot parametresinde gereksiz @Autowired (@Autowired(required = false) haric)
+        foreach ($m in [regex]::Matches($clean, '(?<=[(,]\s*)@Autowired(?!\s*\([^)]*required\s*=\s*false\b)\b')) {
+            $ln = Get-LineNumber $clean $m.Index
+            $findings.Add("${rel}:${ln}  Redundant @Autowired on parameter (Spring 4.3+ injects automatically)")
+        }
+
+        # 1b) Tek constructor uzerinde gereksiz @Autowired (@Autowired(required = false) haric)
+        $ctorMatches = [regex]::Matches($clean, "(?m)^[ \t]*(?:(?:public|protected|private)\s+)?$([regex]::Escape($clsName))\s*\(")
+        if ($ctorMatches.Count -eq 1) {
+            foreach ($m in [regex]::Matches($clean, "@Autowired(?!\s*\([^)]*required\s*=\s*false\b)\s*(?:(?:public|protected|private)\s+)?$([regex]::Escape($clsName))\s*\(")) {
+                $ln = Get-LineNumber $clean $m.Index
+                $findings.Add("${rel}:${ln}  Redundant @Autowired on single constructor")
+            }
+        }
+
+        # 1c) @Slf4j var ama 'log.' hic cagrilmamis (StaticOnly modunda)
+        if ($CheckSlf4j) {
+            $slfMatch = [regex]::Match($clean, '@(Slf4j|Log4j2)\b')
+            if ($slfMatch.Success -and ($clean -notmatch '\blog\.')) {
+                $ln = Get-LineNumber $clean $slfMatch.Index
+                $findings.Add("${rel}:${ln}  @Slf4j tanimli ama 'log' alani hic kullanilmiyor")
+            }
+        }
+
+        # 1d) Referanssiz olu sinif taramasi (Spring bean/entity/exception/config haric)
+        if ($f.Name -in @("package-info.java", "module-info.java")) { continue }
+        if ($f.Name -match '(Test|Tests|IT|Application|Config|Properties|Exception)\.java$') { continue }
+        if ($clean -match $springStereotypeRe -or $clean -match $frameworkExtendRe -or $clean -match $frameworkImplRe) { continue }
+        if ($clean -match '\bpublic\s+static\s+void\s+main\s*\(') { continue }
+
+        $declMatch = [regex]::Match($clean, "(?:public\s+)?(?:final\s+|abstract\s+|sealed\s+)?(?:class|interface|enum|record)\s+$([regex]::Escape($clsName))\b")
+        if ($declMatch.Success) {
+            $wordRe = "\b$([regex]::Escape($clsName))\b"
+            $externalRef = $false
+            foreach ($entry in $fileContents.GetEnumerator()) {
+                if ($entry.Key -eq $f.FullName) { continue }
+                if ($entry.Value -match $wordRe) { $externalRef = $true; break }
+            }
+            if (-not $externalRef) {
+                foreach ($resVal in $resContents.Values) {
+                    if ($resVal -match $wordRe) { $externalRef = $true; break }
+                }
+            }
+            if (-not $externalRef) {
+                $ln = Get-LineNumber $clean $declMatch.Index
+                $findings.Add("${rel}:${ln}  The class ${clsName} appears unused (0 external references)")
+            }
+        }
+    }
+
+    # 2) src/main/java + src/test/java: private olmayan (@Autowired package-private/protected) kullanilmayan alanlar
+    foreach ($f in $allJavaFiles) {
+        $rel = $f.FullName.Replace("$RootDir\", "")
+        $clean = $fileContents[$f.FullName]
+        $fieldPattern = '@Autowired(?:\s*\([^)]*\))?\s+(?:protected\s+)?(?!(?:private|public|static)\b)[A-Za-z_][\w<>\[\],.? \t]*?\s+([a-zA-Z_]\w*)\s*;'
+        foreach ($m in [regex]::Matches($clean, $fieldPattern)) {
+            $fieldName = $m.Groups[1].Value
+            $occ = ([regex]::Matches($clean, "\b$([regex]::Escape($fieldName))\b")).Count
+            if ($occ -le 1) {
+                $ln = Get-LineNumber $clean $m.Index
+                $findings.Add("${rel}:${ln}  The value of the @Autowired field ${fieldName} is not used")
+            }
+        }
+        if ($CheckSlf4j -and ($testFiles -contains $f)) {
+            $slfMatch = [regex]::Match($clean, '@(Slf4j|Log4j2)\b')
+            if ($slfMatch.Success -and ($clean -notmatch '\blog\.')) {
+                $ln = Get-LineNumber $clean $slfMatch.Index
+                $findings.Add("${rel}:${ln}  @Slf4j tanimli ama 'log' alani hic kullanilmiyor")
+            }
+        }
+    }
+
+    return @($findings)
+}
+
+if ($StaticOnly) {
+    $staticFindings = Invoke-SpringStaticChecks -RootDir $root -IncludeTests (-not $MainOnly) -CheckSlf4j $true
+    if ($staticFindings.Count -gt 0) {
+        Write-Host "`n[FAIL] $($staticFindings.Count) kullanilmayan kod / gereksiz @Autowired bulgusu (-StaticOnly):" -ForegroundColor Red
+        $staticFindings | ForEach-Object { Write-Host "  $_" }
+        exit 1
+    }
+    Write-Host "[OK] Statik Spring/Java denetimi temiz (-StaticOnly)." -ForegroundColor Green
+    exit 0
+}
 
 # `java` PATH'te eski bir JDK olabilir (bu makinede Java 8). ecj 21 bytecode
 # istedigi icin UnsupportedClassVersionError -> canary 0 bulgu -> yalan FAIL.
@@ -69,29 +209,17 @@ mvn -B -q dependency:build-classpath "-Dmdep.includeScope=test" "-Dmdep.outputFi
 if (-not (Test-Path $cpFile)) { throw "Classpath uretilemedi (mvn dependency:build-classpath)" }
 $cp = (Get-Content $cpFile -Raw).Trim()
 
-# ⛔ Maven, ARTIK BULUNAMAYAN bir artifact icin classpath'e `.pom` yolunu
-#    yazar. ECJ bu yolu jar sanip acmaya calisir ve TUM classpath'i dusurur:
-#    "Failed to init Classpath for jar file ... .pom / zip END header not found"
-#    -> sonuc "cannot be resolved to a type" sahte hatalari + guvenilmez bulgu.
-#    Gozlenen: ticari lisansli veya ayri depoda duran bazi artifact'lar Maven
-#    Central'da YOK; Maven yalnizca `.pom` yolunu cozuyor. Ayni durum, repo
-#    eklenmesi unutulmus bir bagimlilik icin de gorulur.
-# Cozum: classpath'ten `.jar` ile bitmeyen girdileri ayikla VE raporla.
 $cpEntries = @($cp -split ';' | Where-Object { $_ -and (Test-Path $_) })
 $cpJars = @($cpEntries | Where-Object { $_ -like '*.jar' })
 $cpSkipped = @($cpEntries | Where-Object { $_ -notlike '*.jar' })
 if ($cpSkipped.Count -gt 0) {
     Write-Host ("[WARN] {0} classpath girdisi .jar degil, ECJ'den cikarildi (bozuk/eksik artifact):" -f $cpSkipped.Count) -ForegroundColor Yellow
     $cpSkipped | ForEach-Object { Write-Host "       $_" -ForegroundColor DarkYellow }
-    Write-Host "       Bu bir DENETIM ARACI sorunudur, kod hatası değil. Düzeltme: bagimlilik Kaldirilmalı ya da dogru repo/surum eklenmeli." -ForegroundColor DarkYellow
+    Write-Host "       Bu bir DENETIM ARACI sorunudur, kod hatasi değil. Düzeltme: bagimlilik kaldirilmali ya da dogru repo/surum eklenmeli." -ForegroundColor DarkYellow
 }
 if ($cpJars.Count -eq 0) { throw "Classpath'te hic jar yok — denetim calistirilamaz" }
 $cp = ($cpJars -join ';')
 
-# ecj'yi calistirir; bulgulari, uyarilari, hata sayisini ve log yolunu dondurur.
-# Onemli: once BULGU deseni denenir, tutmazsa UYARI deseni. Boylece
-# "Unnecessary @SuppressWarnings("unchecked")" mesaji (icinde "unchecked" gecer)
-# yanlislikla hem bulgu hem uyari olarak iki kez sayilmaz.
 $FindingPattern = 'is never used|is not used|Unnecessary @SuppressWarnings'
 $NoticePattern  = 'unchecked|raw type'
 
@@ -109,8 +237,6 @@ function Invoke-Ecj([string[]]$Sources, [string]$LogFile) {
             $window = $log[($i + 1)..([Math]::Min($i + 4, $log.Count - 1))]
             $msg = ($window | Where-Object { $_ -match $FindingPattern } | Select-Object -First 1)
             if ($msg) {
-                # Lombok @Slf4j henüz log çağrılmamış sınıflarda sentetik 'log' alanı için sahte bulgu üretmesin
-                if ($msg -match 'The value of the field .+\.log is not used') { continue }
                 $findings += "${file}:${line}  $($msg.Trim())"; continue
             }
             $note = ($window | Where-Object { $_ -match $NoticePattern } | Select-Object -First 1)
@@ -158,7 +284,7 @@ if ($canary.ToolError -or $canary.Findings.Count -ne 3 -or $canary.Notices.Count
 }
 Write-Host "[canary] 3/3 bulgu + $($canary.Notices.Count) uyari yakalandi (import + local degisken + gereksiz SuppressWarnings + unchecked) -> denetleyici calisiyor."
 
-# 2) PROJE denetimi
+# 2) PROJE denetimi (ECJ + Spring statik tarama)
 $sources = @("src\main\java")
 if (-not $MainOnly -and (Test-Path "src\test\java")) { $sources += "src\test\java" }
 $fileCount = @(Get-ChildItem -Path $sources -Recurse -Filter *.java -File).Count
@@ -168,9 +294,13 @@ if ($result.ToolError) {
     Write-Host "[FAIL] ecj arac hatasi: $($result.ToolError) (log: $($result.Log))" -ForegroundColor Red
     exit 3
 }
-if ($result.Findings.Count -gt 0) {
-    Write-Host "`n[FAIL] $($result.Findings.Count) kullanilmayan kod / gereksiz susturma ($fileCount dosya tarandi):" -ForegroundColor Red
-    $result.Findings | ForEach-Object { Write-Host "  $_" }
+
+$staticFindings = Invoke-SpringStaticChecks -RootDir $root -IncludeTests (-not $MainOnly) -CheckSlf4j $false
+$allFindings = @($result.Findings) + @($staticFindings)
+
+if ($allFindings.Count -gt 0) {
+    Write-Host "`n[FAIL] $($allFindings.Count) kullanilmayan kod / gereksiz @Autowired / susturma ($fileCount dosya tarandi):" -ForegroundColor Red
+    $allFindings | ForEach-Object { Write-Host "  $_" }
     if ($result.Errors -gt 0) { Write-Host "(ecj $($result.Errors) derleme hatasi da raporladi - log: $($result.Log))" -ForegroundColor Yellow }
     Write-Notices $result "proje"
     exit 1
@@ -180,6 +310,6 @@ if ($result.Errors -gt 0) {
     Write-Notices $result "proje"
     exit 2
 }
-Write-Host "[OK] Kullanilmayan import/local degisken ve gereksiz @SuppressWarnings yok. ($fileCount dosya: $($sources -join ', '))" -ForegroundColor Green
+Write-Host "[OK] Kullanilmayan import/degisken, gereksiz @Autowired, olu sinif ve gereksiz @SuppressWarnings yok. ($fileCount dosya: $($sources -join ', '))" -ForegroundColor Green
 Write-Notices $result "proje"
 exit 0

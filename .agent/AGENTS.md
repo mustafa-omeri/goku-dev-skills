@@ -233,7 +233,7 @@ kanıtlayamazsın — sadece beyan edersin.** Bu ayrım gizli değildir.
 | Proje Yönetimi / Oturum Devri ve Görev Panosu | `python .agent/skills/musgoku/scripts/check_handoff.py` | [`handoff-session-continuity.md`](rules/handoff-session-continuity.md) |
 | Frontend / i18n | `python .agent/skills/i18n-localization/scripts/i18n_checker.py` | [`i18n-enforcement.md`](rules/i18n-enforcement.md) |
 | TypeScript / React | `npx tsc --noEmit` | [`no-unused-code.md`](rules/no-unused-code.md) |
-| Java / Spring derleme | `mvn clean compile -DskipTests` | [`no-unused-code.md`](rules/no-unused-code.md) |
+| Java / Spring derleme | `mvn clean test-compile` | [`no-unused-code.md`](rules/no-unused-code.md) |
 | Java / kullanılmayan kod | `pwsh -NoProfile -File .agent/skills/musgoku/scripts/check-unused.ps1` | [`no-unused-code.md`](rules/no-unused-code.md) |
 | Proje Mimarisi / Canlı Brief | `python .agent/skills/musgoku/scripts/check_project_brief.py` | [`project-brief-maintenance.md`](rules/project-brief-maintenance.md) |
 | Skill sözleşmesi / tetikleyici sözlüğü | `cd .agent/skills/ui-ux-pro-max/scripts/tests && python -m unittest test_skill_contracts` | [`skill-trigger-routing.md`](rules/skill-trigger-routing.md) |

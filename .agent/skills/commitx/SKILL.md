@@ -21,7 +21,7 @@ Commit ve sürüm etiketlemesine geçmeden önce çalışma ağacındaki tüm ka
 ```bash
 python .agent/skills/musgoku/scripts/run_all_gates.py
 ```
-- Uygulama kodu (`src/**`, `app/**`, `api/**`) değiştiyse ilgili derleme (`npm run build` / `mvn clean compile -DskipTests`), tip kontrolü (`npx tsc --noEmit`) ve birim testlerini çalıştır.
+- Uygulama kodu (`src/**`, `app/**`, `api/**`) değiştiyse ilgili derleme (`npm run build` / `mvn clean test-compile` + `pwsh -NoProfile -File .agent/skills/musgoku/scripts/check-unused.ps1`), tip kontrolü (`npx tsc --noEmit`) ve birim testlerini çalıştır.
 - ⛔ **Blokaj Kuralı:** Herhangi bir kapı `[FAIL]` dönerse (`E3`/`E4`/`E5`/`E6` `PROJECT_BRIEF.md` sapması, `check_handoff.py` `E3` sapması veya test hatası) commit işlemi **durdurulur**, önce eksik doküman/kod onarılır ve kapı yeşile döndürülür.
 
 ### 2. Oturum Devri ve Hafıza Senkronizasyonu
