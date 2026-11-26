@@ -28,7 +28,7 @@ related_docs:
 
 ## 1. Teknoloji Yığını & Altyapı
 - **Proje Adı / Slug:** skillSetWorks (`skillSetWorks`)
-- **Paket / Sürüm:** `goku-dev-skills` v1.49.2 (`package.json`)
+- **Paket / Sürüm:** `goku-dev-skills` v1.50.0 (`package.json`)
 - **Birincil Dil:** Python 3.11 / Node.js 18+ / Markdown
 - **Frameworkler & Kütüphaneler:** Python `unittest`, `pytest`, `pytest-cov`, `argparse`, Node.js CLI runtime
 - **Veritabanı / Altyapı:** Yok (Uygulama kodu içermez; kural, skill ve dağıtım motorudur)
@@ -49,7 +49,22 @@ related_docs:
 
 ---
 
-## 3. Bağlayıcı Kararlar & Dış Referanslar (Decisions & References)
+## 2.1. Komut Haritası & Giriş Noktaları (Zero-Scan Cockpit)
+
+| Eylem | Komut | Not |
+|---|---|---|
+| **Tam Test Paketi** | `python tests/run_all.py` | 40 regresyon paketi |
+| **Birleşik Kural Kapıları** | `python .agent/skills/musgoku/scripts/run_all_gates.py` | Tüm teslimat kapıları |
+| **Brief Kapısı** | `python .agent/skills/musgoku/scripts/check_project_brief.py` | Mimari & diff drift denetimi |
+| **Projelere Dağıtım** | `python delivery.py` | Hedef repolara `.agent/` dağıtımı |
+| **Global Plugin Senkronu** | `python scripts/sync_agy_global.py` | Antigravity plugin & skill kataloğu |
+
+- **Ana Giriş Noktaları (Entry Points):** `delivery.py`, `bin/cli.js`, `.agent/skills/musgoku/scripts/run_all_gates.py`, `tests/run_all.py`
+- **Ortam Değişkeni Anahtarları (⚠️ Değer yazılmaz):** `AGENTS_PROJECT_ROOT` (Opsiyonel kapı hedef kök dizini)
+
+---
+
+## 3. Bağlayıcı Kararlar & Detay İndeksi (llms.txt Pattern)
 
 > Projeyi etkileyen veya bu projede hayata geçirilen temel anayasal ve yerel kararlar:
 

@@ -72,6 +72,7 @@ INFRA_EDGE_PREFIXES = (
 )
 
 INFRA_EDGE_FILES = {
+    ".env.example",
     "supabase/config.toml",
     "wrangler.toml",
     "dockerfile",
@@ -89,9 +90,18 @@ BRIEF_PLACEHOLDERS = (
     "[Ana Dil / Çerçeve]",
 )
 
+SECRET_PATTERNS = (
+    re.compile(r"\bsk-(?:proj-|live-|test-)?[A-Za-z0-9_-]{20,}\b"),
+    re.compile(r"\bghp_[A-Za-z0-9]{20,}\b"),
+    re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
+    re.compile(r"\bxox[baprs]-[A-Za-z0-9-]{10,}\b"),
+    re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
+)
+
 STANDARD_SECTIONS = [
     "Teknoloji Yığını",
     "Dizin Ağacı",
+    "Komut Haritası",
     "Bağlayıcı Kararlar",
     "Veritabanı Modeli",
     "Yaşatma"
@@ -308,6 +318,16 @@ def validate_project_brief(project_root: Path) -> tuple[list[tuple[str, str]], l
                 "E7",
                 f"PROJECT_BRIEF.md içinde doldurulmamış şablon yer tutucusu bulundu: '{token}'"
             ))
+
+    # 2.6 Gizli anahtar / ham token sızıntısı kontrolü (E8)
+    for pat in SECRET_PATTERNS:
+        if pat.search(content):
+            errors.append((
+                "E8",
+                "PROJECT_BRIEF.md içinde ham gizli anahtar/token deseni tespit edildi! "
+                "Yalnızca ortam değişkeni anahtar adını (örn. OPENAI_API_KEY) yazın."
+            ))
+            break
 
     # 3. Git Diff Drift denetimi (E3, E4, E6)
     changed_deps, changed_db, changed_infra = check_git_diff_drift(project_root)

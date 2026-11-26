@@ -42,15 +42,32 @@ related_docs:
 
 ---
 
-## 3. Bağlayıcı Kararlar & Dış Referanslar (Decisions & References)
+## 2.1. Komut Haritası & Giriş Noktaları (Zero-Scan Cockpit)
+> AI ajanı projeyi taramadan aşağıdaki komutları, giriş noktalarını ve ortam anahtarlarını doğrudan kullanır.
 
-> Projeyi etkileyen veya bu projede hayata geçirilen temel anayasal ve yerel kararlar:
+| Eylem | Komut | Not |
+|---|---|---|
+| **Kurulum** | `[Örn: pnpm install]` | Bağımlılık yükleme |
+| **Geliştirme (Dev)** | `[Örn: pnpm dev]` | Yerel sunucu |
+| **Build / Tip Kontrol** | `[Örn: pnpm build]` | Üretim derlemesi |
+| **Test & Lint** | `[Örn: pnpm test && pnpm lint]` | Regresyon ve statik analiz |
+| **Doğrulama Kapısı** | `python .agent/skills/musgoku/scripts/run_all_gates.py` | Teslimat kapıları |
 
-| Karar / Standart | Konum / Link | İlişki Tipi | Etki Alanı |
+- **Ana Giriş Noktaları (Entry Points):** `[Örn: src/main.tsx, src/server/index.ts, bin/cli.js]`
+- **Ortam Değişkeni Anahtarları (`.env.example` — ⚠️ DEĞER YAZILMAZ):** `[Örn: DATABASE_URL, API_BASE_URL]`
+
+---
+
+## 3. Bağlayıcı Kararlar & Detay İndeksi (llms.txt Pattern)
+
+> Projeyi etkileyen temel kararlar ve detay dokümanlarına yönlendirme indeksi:
+
+| Karar / Doküman | Konum / Link | İlişki / Ne Zaman Okunur? | Etki Alanı |
 |---|---|---|---|
-| Kod Ajanı Vault'a Yazmaz | `[[projects/_STANDARTLAR/decisions/kod-ajani-vaulta-yazmaz]]` | `implements` | Dokümantasyon & Ingest |
-| CamelCase Proje İsimlendirmesi | `[[projects/_STANDARTLAR/decisions/proje-isimlendirmesi-camelcase]]` | `implements` | Klasör & Repo Standartları |
-| Proje İçi Kararlar | `knowledge-base.md` | `contains` | Mimari & Hata Çözümleri |
+| Kod Ajanı Vault'a Yazmaz | `[[projects/_STANDARTLAR/decisions/kod-ajani-vaulta-yazmaz]]` | `implements` (Anayasal) | Dokümantasyon & Ingest |
+| CamelCase Proje İsimlendirmesi | `[[projects/_STANDARTLAR/decisions/proje-isimlendirmesi-camelcase]]` | `implements` (Anayasal) | Klasör & Repo Standartları |
+| Oturum & Görev Panosu | `HANDOFF.md` | Her oturum başında sıradaki işler için | Canlı Görev Takibi |
+| Kalıcı Kararlar & Hatalar | `knowledge-base.md` | Yalnız yaz (append-only); okuma MCP ile | Mimari & Hata Çözümleri |
 
 ---
 

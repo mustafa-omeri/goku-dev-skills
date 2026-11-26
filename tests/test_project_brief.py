@@ -65,6 +65,11 @@ related_docs:
 |---|---|---|
 | `src/` | Kaynak kod | Modüler |
 
+## 2.1. Komut Haritası & Giriş Noktaları
+| Eylem | Komut |
+|---|---|
+| Test | `npm test` |
+
 ## 3. Bağlayıcı Kararlar & Dış Referanslar
 | Karar | Link |
 |---|---|
@@ -216,6 +221,44 @@ def test_git_diff_e6_serverless_infra():
         check("PROJECT_BRIEF.md güncellenince E6 kalkıyor", "E6" not in codes(errors2))
 
 
+def test_zero_scan_best_practices():
+    print("=== TEST 3C: Zero-Scan Best Practices (W2 Komut Haritası, E6 .env.example, E8 Sır Koruması) ===")
+    import subprocess
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_root = Path(tmp_dir)
+        (tmp_root / "README.md").write_text("# Readme", encoding="utf-8")
+
+        # 1. Komut Haritası yoksa W2 uyarısı vermeli
+        legacy_brief = VALID_BRIEF.replace("## 2.1. Komut Haritası & Giriş Noktaları\n| Eylem | Komut |\n|---|---|\n| Test | `npm test` |\n\n", "")
+        (tmp_root / "PROJECT_BRIEF.md").write_text(legacy_brief, encoding="utf-8")
+        _, warnings = gate.validate_project_brief(tmp_root)
+        check("W2 tetikleniyor (Komut Haritası eksik)", "W2" in codes(warnings))
+
+        # 2. Açık sır/token yazılırsa E8 vermeli; sadece env key adı yazılırsa E8 vermemeli
+        env_key_only = VALID_BRIEF + "\n- Env Keys: `OPENAI_API_KEY`, `DATABASE_URL`\n"
+        (tmp_root / "PROJECT_BRIEF.md").write_text(env_key_only, encoding="utf-8")
+        errors_clean, _ = gate.validate_project_brief(tmp_root)
+        check("Sadece env key adı E8 tetiklemez", "E8" not in codes(errors_clean))
+
+        secret_leak = VALID_BRIEF + "\n- OPENAI_API_KEY=sk-proj-1234567890abcdefghijklmnop\n"
+        (tmp_root / "PROJECT_BRIEF.md").write_text(secret_leak, encoding="utf-8")
+        errors_leak, _ = gate.validate_project_brief(tmp_root)
+        check("E8 tetikleniyor (ham gizli anahtar sızıntısı)", "E8" in codes(errors_leak))
+
+        # 3. .env.example git diff drift -> E6
+        subprocess.run(["git", "init"], cwd=str(tmp_root), capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=str(tmp_root), capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.name", "Test User"], cwd=str(tmp_root), capture_output=True, check=True)
+        (tmp_root / "PROJECT_BRIEF.md").write_text(VALID_BRIEF, encoding="utf-8")
+        (tmp_root / ".env.example").write_text("DATABASE_URL=\n", encoding="utf-8")
+        subprocess.run(["git", "add", "."], cwd=str(tmp_root), capture_output=True, check=True)
+        subprocess.run(["git", "commit", "-m", "init"], cwd=str(tmp_root), capture_output=True, check=True)
+
+        (tmp_root / ".env.example").write_text("DATABASE_URL=\nREDIS_URL=\n", encoding="utf-8")
+        errors_env, _ = gate.validate_project_brief(tmp_root)
+        check("E6 tetikleniyor (.env.example değişti ama PROJECT_BRIEF.md güncellenmedi)", "E6" in codes(errors_env))
+
+
 def test_valid_project():
     print("=== TEST 4: Geçerli proje testi (false positive kontrolü) ===")
     with tempfile.TemporaryDirectory() as tmp_dir:
@@ -236,6 +279,7 @@ def main():
     test_scope()
     test_error_scenarios()
     test_git_diff_e6_serverless_infra()
+    test_zero_scan_best_practices()
     test_valid_project()
 
     print("\n" + "=" * 60)

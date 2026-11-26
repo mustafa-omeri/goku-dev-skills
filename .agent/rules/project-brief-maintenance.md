@@ -36,8 +36,9 @@ Ajan aşağıdaki 5 temel durumda `PROJECT_BRIEF.md` dosyasını senkronize etme
 | **1** | **Bağımlılık ve Stack Değişikliği** | `pnpm add driver.js`, `npm i lucide-react`, `pom.xml`, `requirements.txt` eklenmesi veya framework major sürüm artışı | Frontmatter `frameworks:` listesi ve `§1 Teknoloji Yığını & Altyapı` |
 | **2** | **Veritabanı Şeması ve Migration** | Yeni bir SQL migration dosyası (`*.sql`), yeni tablo/kolon, RLS kuralı, enum veya Prisma entity'si | Frontmatter `database:` listesi ve `§4 Veritabanı Modeli & Migration Politikası` |
 | **3** | **Altyapı & Sunucusuz İşlevler (Infra/Edge)** | Yeni bir Edge Function (`supabase/functions/`), `Dockerfile`, `docker-compose.yml`, Netlify/Vercel konfigürasyonu | `§1 Altyapı` ve `§2 Dizin Ağacı` |
-| **4** | **Bağlayıcı Kararlar & Doküman Referansları** | Kalıcı bir mimari karar (ADR) alınması, `knowledge-base.md` kararı veya yeni doküman (PRD, test rehberi, özet dokümanı) eklenmesi | Frontmatter `related_docs:`, `depends_on:` ve `§3 Bağlayıcı Kararlar & Dış Referanslar` |
+| **4** | **Bağlayıcı Kararlar & Doküman Referansları** | Kalıcı bir mimari karar (ADR) alınması, `knowledge-base.md` kararı veya yeni doküman (PRD, test rehberi, özet dokümanı) eklenmesi | Frontmatter `related_docs:`, `depends_on:` ve `§3 Bağlayıcı Kararlar & Detay İndeksi` |
 | **5** | **Yeni Dizin / Modül Sorumluluğu** | Projeye yeni bir modül, Web Worker motoru (`src/modules/search/worker/`) veya çekirdek servis katmanı eklenmesi | `§2 Dizin Ağacı & Modül Sorumlulukları` tablosu |
+| **6** | **Komut, Giriş Noktası & `.env.example` Anahtarı** | Dev/Build/Test komutunun, ana entry point'in veya `.env.example` ortam değişkeni anahtarının değişmesi | `§2.1 Komut Haritası & Giriş Noktaları` (⚠️ **Sır değeri yazılmaz, yalnız key adı!**) |
 
 ### 1.2 Ne Zaman Güncellenmez? (İş Mantığı vs. Mimari Omurga Ayrımı)
 
@@ -104,11 +105,13 @@ python .agent/skills/musgoku/scripts/check_project_brief.py
 - **E3 (Bağımlılık Sapması - Git Diff Drift):** Git çalışma ağacında `package.json`, `pom.xml`, `requirements.txt` vb. değişmiş ama `PROJECT_BRIEF.md` güncellenmemiş!
 - **E4 (DB / Şema Sapması - Git Diff Drift):** Git çalışma ağacında migration veya DB modelleri değişmiş ama `PROJECT_BRIEF.md` güncellenmemiş!
 - **E5 (Kırık Dosya Bağlantısı):** Frontmatter'daki `related_docs` listesindeki dosya yolları diskte mevcut değil.
-- **E6 (Edge Function / Altyapı Sapması - Git Diff Drift):** Git çalışma ağacında sunucusuz işlev (`supabase/functions/**`, `netlify/functions/**`) veya altyapı yapılandırması (`Dockerfile`, `docker-compose.yml`, `wrangler.toml`, `supabase/config.toml`) değişmiş ama `PROJECT_BRIEF.md` güncellenmemiş!
+- **E6 (Edge Function / Altyapı / Env Sapması - Git Diff Drift):** Git çalışma ağacında sunucusuz işlev (`supabase/functions/**`, `netlify/functions/**`), `.env.example` veya altyapı yapılandırması (`Dockerfile`, `docker-compose.yml`, `wrangler.toml`, `supabase/config.toml`) değişmiş ama `PROJECT_BRIEF.md` güncellenmemiş!
 - **E7 (Şablon Yer Tutucusu):** `PROJECT_BRIEF.md` içinde doldurulmamış şablon yer tutucusu (`[PROJE_ADI]`, `[proje-slug]`, `[YYYY-MM-DD]`) bırakılmış.
+- **E8 (Gizli Anahtar Sızıntısı):** `PROJECT_BRIEF.md` içinde ham API key, token veya private key deseni (`sk-...`, `ghp_...`, `AKIA...`) tespit edildi (yalnız env key adı yazılabilir).
 - **W1 (Tarih Sapması):** Dosya içeriği değiştiği halde frontmatter'daki `updated` alanı bugünün tarihini taşımıyor.
+- **W2 (Eksik Mimari Bölümü):** Standart bölümlerden (`Teknoloji Yığını`, `Dizin Ağacı`, `Komut Haritası`, `Bağlayıcı Kararlar`, `Veritabanı Modeli`, `Yaşatma`) biri eksik.
 
-E1-E7 kodları **hata (exit 1)** üretir ve commit/handoff sürecini bloke eder.
+E1-E8 kodları **hata (exit 1)** üretir ve commit/handoff sürecini bloke eder.
 
 - 💡 **Çift Yönlü Güvenlik Ağı (Dual Mapping Guard):** `check_db_migrations.py` kapısı da simetrik olarak `E5` (Dual Mapping Drift Guard) denetimiyle donatılmıştır; dolayısıyla bir ajan yalnızca veritabanı kapısını çalıştırsa dahi `PROJECT_BRIEF.md` güncellenmeden `exit 0` alamaz. Mimari ve şema asla birbirinden kopamaz.
 
