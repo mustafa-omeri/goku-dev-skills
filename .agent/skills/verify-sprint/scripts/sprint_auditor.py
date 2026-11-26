@@ -81,7 +81,14 @@ def parse_kanban(text: str) -> Dict[str, List[Tuple[str, str, Dict[str, str], in
     return columns
 
 
-def audit_sprint(root: Path) -> Dict[str, Any]:
+def audit_sprint(
+    root: Path,
+    *,
+    run_smoke: bool = False,
+    smoke_mode: str = "hybrid",
+    api_url: Optional[str] = None,
+    ui_url: Optional[str] = None,
+) -> Dict[str, Any]:
     root = root.resolve()
     sprint_path = root / "SPRINT_PLAN.md"
     board_path = root / "KANBAN.md"
@@ -195,6 +202,36 @@ def audit_sprint(root: Path) -> Dict[str, Any]:
                 "issues": issues,
             })
 
+    if run_smoke:
+        smoke_script = Path(__file__).resolve().parents[2] / "smoke-test" / "scripts" / "smoke_runner.py"
+        if smoke_script.is_file():
+            import importlib.util
+
+            spec = importlib.util.spec_from_file_location("smoke_runner", smoke_script)
+            if spec and spec.loader:
+                smoke_mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(smoke_mod)
+                smoke_res = smoke_mod.run_smoke(
+                    root,
+                    scope="sprint",
+                    mode=smoke_mode,
+                    api_url=api_url,
+                    ui_url=ui_url,
+                    skip_browser=True if not ui_url else False,
+                )
+                if smoke_res.get("status") == "FAILED":
+                    findings.append({
+                        "card_id": "SMOKE",
+                        "title": "Etki-Odaklı Sprint Smoke Testi",
+                        "issues": [
+                            {
+                                "type": f.get("code", "SMOKE_FAIL"),
+                                "msg": f"{f.get('location', '')}: {f.get('message', '')}",
+                            }
+                            for f in smoke_res.get("findings", [])
+                        ],
+                    })
+
     has_findings = len(findings) > 0
     status = "FAILED" if has_findings else "PASSED"
     summary = f"{len(done_cards)} adet Yapıldı kartı denetlendi; {len(findings)} kartta bulgu tespit edildi."
@@ -238,10 +275,20 @@ def _slug(text: str) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Sprint Acceptance and Verification Auditor")
     parser.add_argument("--root", default=".", help="Proje kök dizini")
+    parser.add_argument("--smoke", action="store_true", help="Etkilenen API/ekran smoke testlerini de koş")
+    parser.add_argument("--smoke-mode", choices=["auto", "hybrid", "live"], default="hybrid")
+    parser.add_argument("--api-url", default=None, help="Canlı API URL")
+    parser.add_argument("--ui-url", default=None, help="Canlı UI URL")
     parser.add_argument("--json", action="store_true", help="JSON çıktı formatı")
     args = parser.parse_args()
 
-    res = audit_sprint(Path(args.root))
+    res = audit_sprint(
+        Path(args.root),
+        run_smoke=args.smoke,
+        smoke_mode=args.smoke_mode,
+        api_url=args.api_url,
+        ui_url=args.ui_url,
+    )
     if args.json:
         print(json.dumps(res, ensure_ascii=False, indent=2))
     else:

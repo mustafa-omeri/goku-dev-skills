@@ -39,13 +39,21 @@ Bu yetenek, anlık geliştirme oturumunda **en son yapılan değişiklikleri**, 
   * **Arayüz (UI/CSS) değiştiyse:** `DESIGN.md` sözleşmesi, WCAG kontrastı ve anti-slop kuralları korundu mu? (`check_design_contract.py`, `check_design_slop.py`, `check_theme_contrast.py`).
   * **Uygulama kodu değiştiyse:** `HANDOFF.md` ve gerekiyorsa `docs/KULLANICI_TEST_REHBERI.md` güncellendi mi? (`check_handoff.py` E3/W2).
 
+### 2.5. Etki-Odaklı API & Ekran Smoke Testi (`smoke-test`)
+- Kod veya API rotası değiştiyse (`doc_only` değilse) etkilenen endpoint'ler ve tüketici UI ekranları üzerinde `smoke_runner.py` çalıştırılır:
+  ```powershell
+  python .agent/skills/smoke-test/scripts/smoke_runner.py --root . --scope last --mode auto --json
+  ```
+- Canlı sunucu açıksa HTTP probe + headless browser (`Playwright` veya `pending_mcp_browser_checks` için `chrome-devtools-mcp`) ile runtime hataları (`5xx`, `console.error`, `BROKEN_DATA_PIPELINE`) taranır.
+- TestSprite kredisi tükenmiş/limitli ise `--testsprite-status exhausted` ile otomatik olarak Seçenek B yerel canlı E2E motoru zorunlu koşulur.
+
 ### 3. Hızlı Kullanıcı Test Adımı
 - Kullanıcının tarayıcıda veya konsolda bu son değişikliği 1-2 adımda gözüyle nasıl doğrulayacağını net olarak sun.
 
 ### 4. Bulgu Yönetimi ve Auto-Heal Protokolü (Zorunlu İcra Adımı)
 ⛔ **Kırık Kapıyla Commit İsteme Yasağı:**
 1. **Auto-heal (Otomatik Eşleme Senkronizasyonu):** Saf dokümantasyon senkron eksikliği tespit edildiğinde (DB değişti ama `DB_MIGRATIONS.md` / `PROJECT_BRIEF.md` güncellenmedi, API rotası değişti ama `docs/APIs/` yazılmadı, kod değişti ama `HANDOFF.md` güncellenmedi); ajan ara onay sormadan bu dosyaları otomatik senkronize eder (**Auto-heal**).
-2. **Kod/Test Kırıklığı:** `run_all_gates.py` derleme, tip (`tsc`) veya test hatası verirse commit onayına KESİNLİKLE gidilemez. Hata derhal `fix-bug` (`diagnosing-bugs`) cerrahi onarım akışına sokulur.
+2. **Kod/Test/Smoke Kırıklığı (Otonom Fix Döngüsü):** `run_all_gates.py` derleme/tip/test hatası veya `smoke_runner.py` runtime/kontrat bulgusu (`API_SMOKE_500`, `UI_CONSOLE_ERROR`, `BROKEN_DATA_PIPELINE`) verirse commit onayına KESİNLİKLE gidilemez. Hata ara onay sormadan derhal `fix-bug` (`diagnosing-bugs`) / `tdd` cerrahi onarım akışına sokulur ve tekrar `smoke_runner.py` ile `0 bulgu (PASSED)` doğrulanır.
 
 ---
 

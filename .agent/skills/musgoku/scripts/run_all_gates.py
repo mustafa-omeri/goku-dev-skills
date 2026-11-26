@@ -43,7 +43,7 @@ FAST_PYTHON_GATES = [
 ]
 
 
-def run_gates(root: Path, include_slow: bool = False) -> Dict[str, Any]:
+def run_gates(root: Path, include_slow: bool = False, include_smoke: bool = False) -> Dict[str, Any]:
     root = root.resolve()
     results: List[Dict[str, Any]] = []
 
@@ -208,6 +208,29 @@ def run_gates(root: Path, include_slow: bool = False) -> Dict[str, Any]:
                 "output": out if res.returncode != 0 else "",
             })
 
+    if include_smoke:
+        smoke_script = root / ".agent" / "skills" / "smoke-test" / "scripts" / "smoke_runner.py"
+        if smoke_script.is_file():
+            res = subprocess.run(
+                [sys.executable, str(smoke_script), "--root", str(root), "--scope", "last", "--mode", "hybrid"],
+                cwd=str(root),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
+            out = (res.stdout + "\n" + res.stderr).strip()
+            last_line = out.splitlines()[-1] if out.splitlines() else ""
+            status = "SKIPPED" if res.returncode == 0 and "[SKIPPED]" in out else ("PASS" if res.returncode == 0 else "FAIL")
+            results.append({
+                "name": "Etki-Odaklı Smoke Testi",
+                "command": "python .agent/skills/smoke-test/scripts/smoke_runner.py --scope last --mode hybrid",
+                "status": status,
+                "exit_code": 0 if status == "SKIPPED" else res.returncode,
+                "summary": last_line[:160],
+                "output": out if status == "FAIL" else "",
+            })
+
     failed = [r for r in results if r["status"] == "FAIL"]
     passed = [r for r in results if r["status"] == "PASS"]
     skipped = [r for r in results if r["status"] == "SKIPPED"]
@@ -227,10 +250,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Birleşik Kapsam-Duyarlı Doğrulama Kapısı Orkestratörü")
     parser.add_argument("--root", type=Path, default=Path.cwd(), help="Proje kök dizini")
     parser.add_argument("--include-slow", action="store_true", help="Ağır build/bundle kapılarını da dahil et")
+    parser.add_argument("--include-smoke", action="store_true", help="Etki-odaklı smoke testini de dahil et")
     parser.add_argument("--json", action="store_true", help="JSON çıktı üret")
     args = parser.parse_args()
 
-    summary = run_gates(args.root, include_slow=args.include_slow)
+    summary = run_gates(args.root, include_slow=args.include_slow, include_smoke=args.include_smoke)
     if args.json:
         print(json.dumps(summary, ensure_ascii=False, indent=2))
         return 1 if summary["failed_count"] > 0 else 0

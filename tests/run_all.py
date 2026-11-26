@@ -50,6 +50,7 @@ TEST_SCRIPTS = [
     ("Test Walkthrough Archive", HERE / "test_walkthrough_archive.py"),
     ("Test Agy Global Plugin", HERE / "test_agy_global_plugin.py"),
     ("Test Java Unused Gates", HERE / "test_java_unused_gates.py"),
+    ("Test Smoke Runner", HERE / "test_smoke_runner.py"),
 ]
 
 

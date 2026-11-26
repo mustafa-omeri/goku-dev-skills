@@ -23,8 +23,8 @@ Bu yetenek, projenin **aktif sprinti** (`SPRINT_PLAN.md`) ve hemen öncesinde ta
 Sprint kabul ve 5 katman bütünlüğü prompt tahminine bırakılmaz; aşağıdaki kapı ile mekanik olarak taranır:
 ```powershell
 python .agent/skills/verify-sprint/scripts/sprint_auditor.py
-# veya JSON çıktısı:
-python .agent/skills/verify-sprint/scripts/sprint_auditor.py --json
+# Etki-odaklı API & ekran smoke testleriyle birlikte (önerilen sprint kapanışı):
+python .agent/skills/verify-sprint/scripts/sprint_auditor.py --smoke --smoke-mode live --json
 ```
 
 ---
@@ -44,6 +44,11 @@ Sprint kapsamındaki her özellik için 5 katmanı doğrula:
 4. **UI & Kullanıcı Etkileşimi:** Arayüz bileşeni canlı veriyle çalışıyor mu?
 5. **Yönetim / Giriş Formu:** Verinin sisteme giriş yolu tamamlandı mı?
 *Katmanlardan biri eksikse kart `Yapıldı` olamaz; `YARIM (Eksik Katman)` işaretlenir.*
+
+### 2.5. Sprint Etki-Odaklı API & Ekran Smoke Testi (`smoke-test` — Seçenek A+B)
+- Sprint boyunca değişen veya eklenen tüm API uç noktaları ve tüketici UI ekranları üzerinde `smoke_runner.py --scope sprint --mode live` (ve `sprint_auditor.py --smoke`) çalıştırılır.
+- TestSprite kredisi/limiti uygunsa delta paketi koşturulabilir; **kota limiti/Paused durumunda otomatik olarak Seçenek B yerel canlı E2E (HTTP API probe + Playwright / `chrome-devtools-mcp` UI smoke) zorunlu çalıştırılır**.
+- Tespit edilen `API_SMOKE_500`, `UI_CONSOLE_ERROR`, `UI_BLANK_SCREEN` veya `BROKEN_DATA_PIPELINE` bulguları Aşama 5 otonom cerrahi onarım döngüsüne aktarılır.
 
 ### 3. Kullanıcı Test Rehberi Adımları
 - `docs/KULLANICI_TEST_REHBERI.md` kontrol edilir: Kart için kullanıcının tarayıcıda gözüyle doğrulayabileceği adımlar yazılmış mı?

@@ -147,7 +147,7 @@ Sprint devam ederken kullanıcı tarafından talep edilen ve yapılması onaylan
 Sprintteki son kartın `Yapıldı`'ya taşınması veya sprintin tamamlandığının bildirilmesi anında şu kapalı devre protokol işletilir:
 
 1. 🔒 **Sprint Sonu Otomatik `/verify-sprint` Sorusu & Kapanış Kilidi:**
-   Her sprint bittiğinde ajan **otomatik olarak kullanıcıya `/verify-sprint` çalıştırmayı sorar** (*"Sprint tamamlandı — `/verify-sprint` kabul denetimini çalıştırayım mı?"*). Kullanıcı onayladığında (veya doğrudan `/verify-sprint` verdiğinde) `python .agent/skills/verify-sprint/scripts/sprint_auditor.py` çalıştırılır. Rapor yeşil (`ONAYLANDI` / Sıfır Bulgu) olmadan sprint kapanışı veya commit onayına geçilemez.
+   Her sprint bittiğinde ajan **otomatik olarak kullanıcıya `/verify-sprint` çalıştırmayı sorar** (*"Sprint tamamlandı — `/verify-sprint` kabul denetimini çalıştırayım mı?"*). Kullanıcı onayladığında (veya doğrudan `/verify-sprint` verdiğinde) `python .agent/skills/verify-sprint/scripts/sprint_auditor.py --smoke --smoke-mode live` çalıştırılır (TestSprite limiti varsa otomatik Seçenek B yerel canlı E2E'ye düşer). Rapor yeşil (`ONAYLANDI` / Sıfır Bulgu) olmadan sprint kapanışı veya commit onayına geçilemez.
 2. ⚠️ **Bulgu Tespiti ve Yapısal Mühürleme:**
    Eğer bir kart ilk geliştirmede birim testlerinden geçmiş olsa bile, `/verify-sprint` ve `sprint_auditor.py` tarafından bir eksiklik (eksik 5 katman, mock kalıntısı, kullanıcı test senaryosu yokluğu veya şartname sapması) yakalanırsa:
    - Kart `KANBAN.md` üzerinde derhal `Yapıldı`'dan `Yapılıyor` / `Bekliyor` sütununa geri çekilir.

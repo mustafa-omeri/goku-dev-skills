@@ -117,7 +117,7 @@ CATEGORIES = {
 
         "council", "seal-plan", "seo-apply", "commitx", "gs-update",
 
-        "prelaunch", "prelaunch-update", "project-summary", "feature-architect", "spec-reconciler", "test-spec-generator"
+        "prelaunch", "prelaunch-update", "project-summary", "feature-architect", "spec-reconciler", "test-spec-generator", "smoke-test"
 
     ]
 
@@ -353,6 +353,37 @@ python .agent/skills/musgoku/scripts/check_sprint_board.py""",
                 "symptom": "Kart 'Yapıldı' görünüyor ama katman eksik (Phantom Done)",
                 "cause": "Sadece UI yazılmış, DB migration veya backend endpoint'i açılmamış.",
                 "action": "Kartı hemen 'Yapılıyor' durumuna çekin ve eksik katmanı HANDOFF.md 1. sıraya yazın."
+            }
+        ],
+        "category": "Teslimat & Kalite"
+    },
+    {
+        "command": "/smoke-test",
+        "aliases": ["/smoke-test", "[SMOKE-TEST]", "smoke test", "etkilenen ekranları test et", "api smoke test"],
+        "name": "Etki-Odaklı API & Ekran Smoke Test Orkestratörü (Seçenek A+B)",
+        "badge": "Runtime & Etki Smoke",
+        "badge_class": "badge-info",
+        "skills": ["smoke-test", "verify-last", "verify-sprint", "fix-bug"],
+        "goal": "Blast-Radius Etki Haritası + Seçenek A (Hibrit) + Seçenek B (Canlı E2E) + Otonom Fix",
+        "description": "Bir endpoint veya sprint geliştirmesi bitiminde KnowledgeGraph ve ters import grafiği ile etkilenen API uç noktalarını ve tüketici UI ekran rotalarını çıkarır; hibrit kontrat/hedefli testleri (Seçenek A) ve canlı HTTP/Playwright/Chrome DevTools E2E problarını (Seçenek B) koşar. TestSprite kredi limiti varsa otomatik yerel E2E'ye düşer ve yakaladığı bulguları fix-bug/tdd ile otonom onarır.",
+        "sample_prompt": "/smoke-test: Değişen API endpoint'lerini ve etkilenen tüketici ekranları canlı smoke testten geçir; bulgu yakalarsan onar.",
+        "protocol": "1. Patlama Yarıçapı (impact_mapper.py) -> Etkilenen endpoint + UI rotası + testler ➜ 2. TestSprite Kota Kontrolü -> Limit varsa otomatik Seçenek B fallback ➜ 3. Çift Modlu Koşum (smoke_runner.py) -> Kontrat + Hedefli Test + Canlı HTTP/Browser ➜ 4. Bulunca Otonom Fix -> fix-bug/tdd + Re-Smoke PASS",
+        "usage_snippet": """# 1. Etkilenen Ekran & API Etki Haritası:
+python .agent/skills/smoke-test/scripts/impact_mapper.py --root . --scope last --json
+
+# 2. Çift Modlu Smoke Koşumu (Otomatik Hibrit/Canlı + TestSprite Fallback):
+python .agent/skills/smoke-test/scripts/smoke_runner.py --root . --scope last --mode auto --json
+python .agent/skills/smoke-test/scripts/smoke_runner.py --root . --scope sprint --mode live --testsprite-status exhausted --json""",
+        "emergency": [
+            {
+                "symptom": "TestSprite kredi limiti doldu / hesap Paused",
+                "cause": "Bulut TestSprite kotası tükendi.",
+                "action": "--testsprite-status exhausted ile çalıştırın; motor otomatik Seçenek B yerel HTTP + Playwright/Chrome DevTools smoke'a düşer."
+            },
+            {
+                "symptom": "API_SMOKE_500 veya UI_CONSOLE_ERROR yakalandı",
+                "cause": "Değişen endpoint veya tüketici UI ekranında çalışma zamanı hatası var.",
+                "action": "fix-bug kırmızı test döngüsüyle hatayı onarın ve smoke_runner.py ile 0 bulgu doğrulayın."
             }
         ],
         "category": "Teslimat & Kalite"
@@ -966,7 +997,7 @@ DOMAINS_MAP = [
         "color_var": "var(--status-info)",
         "subtle_var": "var(--status-info-subtle)",
         "border_var": "var(--status-info-border)",
-        "commands": ["/verify-last", "/verify-sprint", "/verify-prd", "/spec-reconcile", "/test-spec"]
+        "commands": ["/verify-last", "/verify-sprint", "/verify-prd", "/spec-reconcile", "/test-spec", "/smoke-test"]
     }
 ]
 
@@ -2129,9 +2160,9 @@ python .agent/skills/seo-growth/scripts/seo_checker.py --strict"""
 
         "file": "SPRINT_PLAN.md / KANBAN.md / specs/*.feature",
 
-        "features": ["Aktif Sprint Kabul Denetimi", "Gherkin Senaryo Doğrulaması", "Kart Başına 5 Katman", "check_sprint_board.py Kapısı"],
+        "features": ["Aktif Sprint Kabul Denetimi", "Gherkin Senaryo Doğrulaması", "Kart Başına 5 Katman", "check_sprint_board.py + --smoke"],
 
-        "detail": "Aktif sprint veya yeni kapanan sprint sınırındaki tüm kartların Gherkin kabul kriterlerini, 5 katmanlı dikey dilimini ve docs/KULLANICI_TEST_REHBERI.md adımlarını doğrular.",
+        "detail": "Aktif sprint veya yeni kapanan sprint sınırındaki tüm kartların Gherkin kabul kriterlerini, 5 katmanlı dikey dilimini, docs/KULLANICI_TEST_REHBERI.md adımlarını ve sprint sonu smoke testini doğrular.",
 
         "sample_prompt": "/verify-sprint: Aktif sprint hedeflerini, kart kabul kriterlerini (Gherkin) ve 5 katman dikey dilim bütünlüğünü denetle.",
 
@@ -2139,7 +2170,32 @@ python .agent/skills/seo-growth/scripts/seo_checker.py --strict"""
 
 /verify-sprint
 
-python .agent/skills/musgoku/scripts/check_sprint_board.py"""
+python .agent/skills/verify-sprint/scripts/sprint_auditor.py --smoke --smoke-mode live"""
+
+    },
+
+    "smoke-test": {
+
+        "status": "Etki & Runtime Smoke",
+
+        "badge_class": "badge-info",
+
+        "file": "impact_mapper.py + smoke_runner.py",
+
+        "cli_cmd": "python .agent/skills/smoke-test/scripts/smoke_runner.py --root . --scope last --mode auto --json",
+
+        "features": ["Blast-Radius Endpoint -> UI Ekran Eşlemesi", "Seçenek A (Hibrit Kontrat + Hedefli Test)", "Seçenek B (Canlı HTTP + Playwright/Chrome DevTools)", "TestSprite Kota Fallback & Otonom Fix"],
+
+        "detail": "Endpoint veya sprint geliştirmesi bitiminde etkilenen API ve UI ekranlarına çift modlu (Seçenek A + B) smoke testi koşar, TestSprite limitinde yerel E2E'ye düşer ve bulguları otonom onarır.",
+
+        "sample_prompt": "/smoke-test: Değişen API endpoint'lerini ve etkilenen ekranları canlı smoke testten geçir.",
+
+        "config_snippet": """# 1. Etki Haritası & Hibrit/Canlı Smoke Koşumu:
+python .agent/skills/smoke-test/scripts/impact_mapper.py --root . --scope last --json
+python .agent/skills/smoke-test/scripts/smoke_runner.py --root . --scope last --mode auto --json
+
+# 2. Sprint Sonu Zorunlu Canlı Mod + TestSprite Fallback:
+python .agent/skills/smoke-test/scripts/smoke_runner.py --root . --scope sprint --mode live --testsprite-status exhausted --json"""
 
     },
 
@@ -2478,6 +2534,7 @@ SAMPLE_PROMPTS = {
     "verify-last": "/verify-last: Son yapılan geliştirmeleri, uncommitted dosyaları ve regresyon riskini cerrahi olarak denetle.",
 
     "verify-sprint": "/verify-sprint: Aktif sprint hedeflerini, kart kabul kriterlerini (Gherkin) ve 5 katman dikey dilim bütünlüğünü denetle.",
+    "smoke-test": "/smoke-test: Değişen API endpoint'lerini ve etkilenen tüketici UI ekranlarını çift modlu smoke testten geçir.",
 
     "review-prd": "/review-prd: Elimdeki PRD'yi bu projeye göre 6 şapka, council Borda ve 5 katman fizibiliteyle tek raporda değerlendir.",
     "test-spec-generator": "/test-spec: Tüm projeyi (kod + doküman) inceleyip tek bir dosyada Gherkin senaryoları ve Acceptance Criteria çıkar.",
