@@ -276,6 +276,84 @@ class TestSmokeRunner(unittest.TestCase):
             self.assertEqual(res["status"], "FAILED")
             self.assertTrue(any(f.get("card_id") == "SMOKE" for f in res["findings"]))
 
+    def test_playwright_ui_smoke_isolates_listeners_across_routes(self):
+        import types
+
+        created_pages = []
+
+        class _FakePage:
+            def __init__(self):
+                self.listeners = {}
+
+            def on(self, event, fn):
+                self.listeners.setdefault(event, []).append(fn)
+
+            def remove_listener(self, event, fn):
+                if event in self.listeners and fn in self.listeners[event]:
+                    self.listeners[event].remove(fn)
+
+            def goto(self, url, **_kwargs):
+                for fn in list(self.listeners.get("console", [])):
+                    fn(types.SimpleNamespace(type="error", text=f"err:{url}"))
+                return types.SimpleNamespace(status=200)
+
+            def wait_for_timeout(self, _ms):
+                return None
+
+            def evaluate(self, _expr):
+                return 42
+
+            def close(self):
+                return None
+
+        class _FakeBrowser:
+            def new_page(self):
+                p = _FakePage()
+                created_pages.append(p)
+                return p
+
+            def close(self):
+                return None
+
+        class _FakePlaywrightCtx:
+            def __enter__(self):
+                return types.SimpleNamespace(
+                    chromium=types.SimpleNamespace(launch=lambda **_kw: _FakeBrowser())
+                )
+
+            def __exit__(self, *_args):
+                return False
+
+        fake_pw_mod = types.ModuleType("playwright")
+        fake_sync_mod = types.ModuleType("playwright.sync_api")
+        fake_sync_mod.sync_playwright = lambda: _FakePlaywrightCtx()
+
+        old_pw = sys.modules.get("playwright")
+        old_sync = sys.modules.get("playwright.sync_api")
+        sys.modules["playwright"] = fake_pw_mod
+        sys.modules["playwright.sync_api"] = fake_sync_mod
+        try:
+            checks, used = smoke_runner._run_playwright_ui_smoke(
+                "http://127.0.0.1:5173", ["/a", "/b", "/c"]
+            )
+            self.assertTrue(used)
+            self.assertEqual(len(checks), 3)
+            for chk in checks:
+                self.assertEqual(
+                    len(chk["console_errors"]),
+                    1,
+                    f"Her rota icin tam 1 console_error olmali (listener birikimi yok): {chk}",
+                )
+        finally:
+            if old_pw is not None:
+                sys.modules["playwright"] = old_pw
+            else:
+                sys.modules.pop("playwright", None)
+            if old_sync is not None:
+                sys.modules["playwright.sync_api"] = old_sync
+            else:
+                sys.modules.pop("playwright.sync_api", None)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -44,7 +44,7 @@ related_docs:
 | `.agent/rules/` | Ajan kuralları ve anayasal sözleşmeler (sinif: OLCULEBILIR/TUTUM/SUREC) | 22 kural (12 ölçülebilir, 10 kapısız) |
 | `.agent/templates/` | Projelerde açılacak living markdown ve HTML şablonları | Kök şablonları (`PROJECT_SUMMARY`, `ACCEPTANCE_TEST_SPEC` ve `KULLANICI_REHBERI.html` dahil) |
 | `bin/` | `goku-dev-skills` npm CLI paket yürütücüsü (`cli.js`) | `init`, `update`, `add`, `sync-agy` |
-| `tests/` | Depo bütünlüğü, drift, sızıntı, altın benchmark ve kural kapısı regresyon testleri | 37 test paketi (`test_smoke_runner.py` ve `test_agy_global_plugin.py` dahil) |
+| `tests/` | Depo bütünlüğü, drift, sızıntı, altın benchmark ve kural kapısı regresyon testleri | 40 test paketi (`test_smoke_runner.py`, `test_sprint_auditor.py`, `test_gsap_init.py` ve `test_skill_pytest_suites.py` dahil) |
 | `scripts/` | Skill kataloğu (`generate_skills_catalog.py`) ve global Antigravity plugin senkronu (`sync_agy_global.py`) | Otomasyon araçları |
 
 ---
@@ -70,4 +70,4 @@ related_docs:
 
 ## 5. Yaşatma & Operasyonel Döngü
 - **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `check_test_spec.py`, `plan_conflict_guard.py`, `archive_plan.py`, `diff_triage.py`, `impact_mapper.py`, `smoke_runner.py`, `test_skills_catalog.py`, `test_project_summary.py`, `test_feature_architect.py`, `test_feature_architect_council.py`, `test_feature_architect_bench.py`, `test_council_workflow_integration.py`, `test_theme_skeleton_integration.py`, `test_prelaunch_security.py`, `test_clean_url_routing.py`, `test_cognitive_counsel.py`, `test_test_spec_generator.py`, `test_plan_conflict_guard.py`, `test_ui_predesign_gate.py`, `test_walkthrough_archive.py`, `test_smoke_runner.py`
-- **Son Başarılı Doğrulama:** 2026-11-26 · 37/37 test paketi · Birleşik kapılar PASS · Skill kataloğu (52 skill, 24 slash komutu) PASS
+- **Son Başarılı Doğrulama:** 2026-11-26 · 40/40 test paketi (`tests/run_all.py`) · 15/15 alt-skill unittest dizini · Birleşik kapılar `[OK]` · Skill kataloğu (52 skill, 24 slash komutu) PASS

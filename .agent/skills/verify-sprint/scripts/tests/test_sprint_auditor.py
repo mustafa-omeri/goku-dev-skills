@@ -46,6 +46,10 @@ class SprintAuditorSeamTests(unittest.TestCase):
             )
             (root / "docs").mkdir(parents=True)
             (root / "docs" / "KULLANICI_TEST_REHBERI.md").write_text("# Test Rehberi\n", encoding="utf-8")
+            (root / "docs" / "kullanici-rehberi.html").write_text(
+                "<aside class='app-sidebar'></aside><div id='features-container'></div>",
+                encoding="utf-8",
+            )
             # KANBAN has S12-28 in Yapıldı, but specs/S12-28.feature is missing, and test is placeholder
             (root / "KANBAN.md").write_text(
                 "## Bekliyor\n\n## Yapılıyor\n\n## Sınırdı\n\n## Yapıldı\n\n"
@@ -95,6 +99,10 @@ class SprintAuditorSeamTests(unittest.TestCase):
                 "# Test Rehberi\n## S12-28 Bildirim Testi\n1. Bildirim butonuna bas.\n2. Toast mesajını gözle doğrula.\n",
                 encoding="utf-8",
             )
+            (root / "docs" / "kullanici-rehberi.html").write_text(
+                "<aside class='app-sidebar'></aside><div id='features-container'></div>",
+                encoding="utf-8",
+            )
             (root / "KANBAN.md").write_text(
                 "## Bekliyor\n\n## Yapılıyor\n\n## Sınırdı\n\n## Yapıldı\n\n"
                 "### S12-28 · Bildirim Gönderimi\n"
@@ -133,6 +141,18 @@ class SprintAuditorSeamTests(unittest.TestCase):
         self.assertIn("Planlanan ve Uygulanan Onarım", entry)
         self.assertIn("Onarım Doğrulama Testleri", entry)
         self.assertIn("İkinci Denetim Sonucu", entry)
+
+    def test_05_detects_missing_html_guide_finding(self):
+        auditor = _load_auditor()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "SPRINT_PLAN.md").write_text("## Sprint 12\n**Hedef**: Test\n", encoding="utf-8")
+            (root / "docs").mkdir(parents=True)
+            (root / "docs" / "KULLANICI_TEST_REHBERI.md").write_text("# Test Rehberi\n", encoding="utf-8")
+            (root / "KANBAN.md").write_text("## Yapıldı\n", encoding="utf-8")
+            res = auditor.audit_sprint(root)
+            self.assertEqual(res["status"], "FAILED")
+            self.assertTrue(any(f["card_id"] == "HTML_GUIDE" for f in res["findings"]))
 
 
 if __name__ == "__main__":

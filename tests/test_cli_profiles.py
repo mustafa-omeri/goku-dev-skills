@@ -161,6 +161,42 @@ class TestCliProfiles(unittest.TestCase):
         self.assertIn("My Custom OpenCode Rules", custom_agents.read_text(encoding="utf-8"))
         self.assertTrue((custom_oc / "GOKU_AGENTS.md").is_file())
 
+    def test_profiles_and_component_themes_parity_with_disk(self):
+        import re
+
+        cli_text = CLI_PATH.read_text(encoding="utf-8")
+        # 1. COMPONENT_THEMES must match all themes on disk (56 themes)
+        disk_themes = {
+            p.parent.name
+            for p in (ROOT / ".agent" / "skills" / "frontend-design" / "component-themes").rglob("*.html")
+        }
+        ct_match = re.search(r"const COMPONENT_THEMES = \{(.*?)\n\};", cli_text, re.S)
+        self.assertIsNotNone(ct_match)
+        cat_keys = set(re.findall(r"^\s+'([a-z0-9-]+)':", ct_match.group(1), re.M))
+        cli_themes = set(re.findall(r"'([a-z0-9-]+)'", ct_match.group(1))) - cat_keys
+        self.assertEqual(disk_themes - cli_themes, set(), "Diskteki tum component temalari CLI'da bulunmali")
+
+        # 2. Backend & Frontend profiles must include core verification/planning skills, rules & templates
+        be_dest = self.temp_dir / "be_parity"
+        fe_dest = self.temp_dir / "fe_parity"
+        subprocess.run(["node", str(CLI_PATH), "init", "-p", "backend", "--dest", str(be_dest)], cwd=str(ROOT), check=True, capture_output=True)
+        subprocess.run(["node", str(CLI_PATH), "init", "-p", "frontend", "-m", "--dest", str(fe_dest)], cwd=str(ROOT), check=True, capture_output=True)
+
+        for dest in (be_dest, fe_dest):
+            skills = {d.name for d in (dest / ".agent" / "skills").iterdir() if d.is_dir()}
+            rules = {f.name for f in (dest / ".agent" / "rules").glob("*.md")}
+            templates = {f.name for f in (dest / ".agent" / "templates").iterdir() if f.is_file()}
+            for req_skill in ("verify-last", "verify-sprint", "spec-reconciler"):
+                self.assertIn(req_skill, skills)
+            for req_rule in ("aviation-documentation-standard.md", "cognitive-counsel-framework.md"):
+                self.assertIn(req_rule, rules)
+            for req_tpl in ("PLAN.template.md", "ACCEPTANCE_TEST_SPEC.template.md", "DEPLOYMENT_PLAN.template.md", "DEPLOYMENT_TARGET.template.yaml"):
+                self.assertIn(req_tpl, templates)
+
+        fe_templates = {f.name for f in (fe_dest / ".agent" / "templates").iterdir() if f.is_file()}
+        self.assertIn("KULLANICI_REHBERI.template.html", fe_templates)
+        self.assertIn("rehber_design.md", fe_templates)
+
 
 if __name__ == "__main__":
     unittest.main()

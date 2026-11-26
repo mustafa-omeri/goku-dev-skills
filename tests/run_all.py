@@ -51,6 +51,9 @@ TEST_SCRIPTS = [
     ("Test Agy Global Plugin", HERE / "test_agy_global_plugin.py"),
     ("Test Java Unused Gates", HERE / "test_java_unused_gates.py"),
     ("Test Smoke Runner", HERE / "test_smoke_runner.py"),
+    ("Test Sprint Auditor", HERE.parent / ".agent" / "skills" / "verify-sprint" / "scripts" / "tests" / "test_sprint_auditor.py"),
+    ("Test GSAP Init", HERE / "test_gsap_init.py"),
+    ("Test Skill Pytest Suites", HERE / "test_skill_pytest_suites.py"),
 ]
 
 

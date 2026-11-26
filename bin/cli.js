@@ -82,7 +82,7 @@ const c = {
 
 
 
-// Available 40 skills with descriptions
+// Available 52 skills with descriptions
 
 const SKILLS_MANIFEST = {
 
@@ -573,7 +573,7 @@ const SKILLS_MANIFEST = {
 
 
 
-// Component themes categories (55 HTML themes)
+// Component themes categories (56 HTML themes)
 
 const COMPONENT_THEMES = {
 
@@ -581,7 +581,7 @@ const COMPONENT_THEMES = {
 
   'navbars': ['floating-pill-marker-navbar'],
 
-  'menus': ['fullscreen-overlay-stagger-menu'],
+  'menus': ['adaptive-overflow-card-hub', 'fullscreen-overlay-stagger-menu'],
 
   'parallax': ['split-section-story-parallax', 'multi-layer-pure-css-parallax'],
 
@@ -607,7 +607,7 @@ const PROFILES = {
 
     name: 'Fullstack / All',
 
-    desc: 'All 50 skills, 22 rules, 56 component themes & 16 validation gates (~65 MB)',
+    desc: 'All 52 skills, 22 rules, 56 component themes & 17 validation gates (~65 MB)',
 
     skills: Object.keys(SKILLS_MANIFEST),
 
@@ -685,6 +685,9 @@ const PROFILES = {
       'ui-polish',
 
       'verify-prd',
+      'verify-last',
+      'verify-sprint',
+      'spec-reconciler',
 
       'fix-bug',
 
@@ -717,7 +720,11 @@ const PROFILES = {
 
       'always-read-skills.md',
 
+      'aviation-documentation-standard.md',
+
       'bug-diagnosis-enforcement.md',
+
+      'cognitive-counsel-framework.md',
 
       'design-skills-enforcement.md',
 
@@ -777,6 +784,12 @@ const PROFILES = {
 
       'myidea.template.md',
       'PROJECT_SUMMARY.template.md',
+      'PLAN.template.md',
+      'ACCEPTANCE_TEST_SPEC.template.md',
+      'DEPLOYMENT_PLAN.template.md',
+      'DEPLOYMENT_TARGET.template.yaml',
+      'KULLANICI_REHBERI.template.html',
+      'rehber_design.md',
 
     ],
 
@@ -824,6 +837,9 @@ const PROFILES = {
       'seo-growth',
 
       'verify-prd',
+      'verify-last',
+      'verify-sprint',
+      'spec-reconciler',
 
       'fix-bug',
 
@@ -850,7 +866,11 @@ const PROFILES = {
 
       'api-documentation-enforcement.md',
 
+      'aviation-documentation-standard.md',
+
       'bug-diagnosis-enforcement.md',
+
+      'cognitive-counsel-framework.md',
 
       'db-migration-enforcement.md',
 
@@ -902,6 +922,10 @@ const PROFILES = {
 
       'myidea.template.md',
       'PROJECT_SUMMARY.template.md',
+      'PLAN.template.md',
+      'ACCEPTANCE_TEST_SPEC.template.md',
+      'DEPLOYMENT_PLAN.template.md',
+      'DEPLOYMENT_TARGET.template.yaml',
 
     ],
 
@@ -1278,7 +1302,7 @@ async function promptProfileSelection() {
 
   console.log(`\n${c.bold}Please select a project profile to install:${c.reset}`);
 
-  console.log(`  ${c.green}1) Fullstack / All${c.reset}  - All 26 skills, 55 themes, 19 rules (~65 MB) [Default]`);
+  console.log(`  ${c.green}1) Fullstack / All${c.reset}  - All 52 skills, 56 themes, 22 rules (~65 MB) [Default]`);
 
   console.log(`  ${c.cyan}2) Frontend${c.reset}         - React, Next.js, Vite, Tailwind, UI/UX, Zanaat Anti-slop (~60 MB / ~5 MB minimal)`);
 
@@ -1442,6 +1466,8 @@ function filterAgentsMd(content, profileId) {
 
           line.includes('Java /') ||
 
+          line.includes('Dokümantasyon /') ||
+
           line.includes('Sprint /') ||
 
           line.includes('Proje Mimarisi /') ||
@@ -1461,6 +1487,8 @@ function filterAgentsMd(content, profileId) {
           line.includes('TypeScript /') ||
 
           line.includes('Skill sözleşmesi') ||
+
+          line.includes('Dokümantasyon /') ||
 
           line.includes('Sprint /') ||
 
@@ -1538,7 +1566,7 @@ function adaptRuleFile(ruleName, content, profileId) {
 
       return content
 
-        .replace(/  - yigin: "Java \/ Spring derleme"\r?\n    komut: "mvn clean compile -DskipTests"\r?\n/g, '')
+        .replace(/  - yigin: "Java \/ Spring derleme"\r?\n    komut: "mvn clean (?:compile -DskipTests|test-compile)"\r?\n/g, '')
 
         .replace(/  - yigin: "Java \/ kullanılmayan kod"\r?\n    komut: "pwsh -NoProfile -File \.agent\/skills\/musgoku\/scripts\/check-unused\.ps1"\r?\n/g, '');
 
@@ -1614,7 +1642,9 @@ function cmdList() {
 
 
 
-  console.log(`\n${c.bold}Component Theme Categories (55 Themes):${c.reset}`);
+  const totalThemesCount = Object.values(COMPONENT_THEMES).reduce((acc, list) => acc + list.length, 0);
+
+  console.log(`\n${c.bold}Component Theme Categories (${totalThemesCount} Themes):${c.reset}`);
 
   console.log(`${c.dim}${'─'.repeat(78)}${c.reset}`);
 
@@ -2040,7 +2070,9 @@ async function cmdInit(options) {
 
   const templatesSrcDir = path.join(LOCAL_AGENT_DIR, 'templates');
 
-  const availableTemplates = fs.existsSync(templatesSrcDir) ? fs.readdirSync(templatesSrcDir).filter(f => f.endsWith('.md')) : [];
+  const availableTemplates = fs.existsSync(templatesSrcDir)
+    ? fs.readdirSync(templatesSrcDir).filter((f) => fs.statSync(path.join(templatesSrcDir, f)).isFile())
+    : [];
 
   const templatesToCopy = profile.templates === '*' ? availableTemplates : profile.templates;
 
@@ -2250,7 +2282,7 @@ async function cmdInit(options) {
 
   if (options.minimal) {
 
-    console.log(`- Mode: ${c.yellow}Minimal (55 prebuilt component themes excluded)${c.reset}`);
+    console.log(`- Mode: ${c.yellow}Minimal (56 prebuilt component themes excluded)${c.reset}`);
 
   }
 
@@ -2537,7 +2569,7 @@ async function cmdUpdate(options) {
 
   const installedTemplates = fs.existsSync(templatesDir)
 
-    ? fs.readdirSync(templatesDir).filter((f) => f.endsWith('.md'))
+    ? fs.readdirSync(templatesDir).filter((f) => fs.statSync(path.join(templatesDir, f)).isFile())
 
     : [];
 
@@ -3322,7 +3354,7 @@ ${c.bold}Examples:${c.reset}
 
   npx goku-dev-skills init -p backend           # Ultra lightweight Java/.NET API setup (~2.5 MB)
 
-  npx goku-dev-skills init -p frontend -m       # Minimal React/Next.js setup without 55 themes (~5 MB)
+  npx goku-dev-skills init -p frontend -m       # Minimal React/Next.js setup without 56 themes (~5 MB)
 
   npx goku-dev-skills update                    # Surgically update only existing skills & rules
 

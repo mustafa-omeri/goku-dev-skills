@@ -215,12 +215,20 @@ def _run_playwright_ui_smoke(ui_url: str, routes: list[str]) -> tuple[list[dict[
                 page_errors: list[str] = []
                 network_failures: list[str] = []
 
-                page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
-                page.on("pageerror", lambda err: page_errors.append(str(err)))
-                page.on(
-                    "response",
-                    lambda resp: network_failures.append(f"{resp.status} {resp.url}") if resp.status >= 500 else None,
-                )
+                def on_console(msg, _errs=console_errors):
+                    if msg.type == "error":
+                        _errs.append(msg.text)
+
+                def on_pageerror(err, _errs=page_errors):
+                    _errs.append(str(err))
+
+                def on_response(resp, _fails=network_failures):
+                    if resp.status >= 500:
+                        _fails.append(f"{resp.status} {resp.url}")
+
+                page.on("console", on_console)
+                page.on("pageerror", on_pageerror)
+                page.on("response", on_response)
 
                 nav_status = 0
                 blank_screen = False
@@ -232,6 +240,11 @@ def _run_playwright_ui_smoke(ui_url: str, routes: list[str]) -> tuple[list[dict[
                     blank_screen = text_len == 0
                 except Exception as exc:
                     page_errors.append(str(exc))
+                finally:
+                    if hasattr(page, "remove_listener"):
+                        page.remove_listener("console", on_console)
+                        page.remove_listener("pageerror", on_pageerror)
+                        page.remove_listener("response", on_response)
 
                 checks.append({
                     "route": r,

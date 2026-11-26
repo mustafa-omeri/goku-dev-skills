@@ -117,6 +117,37 @@ class TestCliUpdate(unittest.TestCase):
         # 3. Verify component-themes was NOT re-introduced during update
         self.assertFalse((fe_dir / "component-themes").exists(), "Update must respect minimal mode and not fetch 55 themes")
 
+    def test_update_syncs_non_md_templates(self):
+        target_dir = self.temp_dir / "fe_tpl"
+        init_cmd = ["node", str(CLI_PATH), "init", "-p", "frontend", "-m", "--dest", str(target_dir)]
+        res = subprocess.run(init_cmd, cwd=str(ROOT), capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(res.returncode, 0, f"Init failed: {res.stderr}")
+
+        html_tpl = target_dir / ".agent" / "templates" / "KULLANICI_REHBERI.template.html"
+        yaml_tpl = target_dir / ".agent" / "templates" / "DEPLOYMENT_TARGET.template.yaml"
+        self.assertTrue(html_tpl.is_file(), "frontend profili KULLANICI_REHBERI.template.html icermeli")
+        self.assertTrue(yaml_tpl.is_file(), "frontend profili DEPLOYMENT_TARGET.template.yaml icermeli")
+
+        html_tpl.write_text("<!-- outdated -->", encoding="utf-8")
+        yaml_tpl.write_text("# outdated\n", encoding="utf-8")
+
+        up_res = subprocess.run(
+            ["node", str(CLI_PATH), "update", "--dest", str(target_dir)],
+            cwd=str(ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
+        self.assertEqual(up_res.returncode, 0, f"Update failed: {up_res.stderr}")
+        self.assertEqual(
+            html_tpl.read_text(encoding="utf-8"),
+            (ROOT / ".agent" / "templates" / "KULLANICI_REHBERI.template.html").read_text(encoding="utf-8"),
+        )
+        self.assertEqual(
+            yaml_tpl.read_text(encoding="utf-8"),
+            (ROOT / ".agent" / "templates" / "DEPLOYMENT_TARGET.template.yaml").read_text(encoding="utf-8"),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
