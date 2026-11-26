@@ -30,6 +30,8 @@
 
 const fs = require('fs');
 
+const os = require('os');
+
 const path = require('path');
 
 const readline = require('readline');
@@ -1194,37 +1196,65 @@ function getDirSizeBytes(dirPath) {
 
 
 
+// Helper: Expand leading ~ to user home directory (cross-platform)
+
+function resolveUserPath(p) {
+
+  if (!p) return p;
+
+  if (p === '~') return os.homedir();
+
+  if (p.startsWith('~/') || p.startsWith('~\\')) {
+
+    return path.join(os.homedir(), p.slice(2));
+
+  }
+
+  return p;
+
+}
+
+
+
 // Helper: Detect target agent directory format
 
 function detectTargetDir(targetAgent, customDest) {
 
-  if (customDest) return path.resolve(process.cwd(), customDest);
+  if (customDest) return path.resolve(process.cwd(), resolveUserPath(customDest));
 
 
 
   const cwd = process.cwd();
 
-  if (targetAgent === 'cursor') {
+  const agent = (targetAgent || 'antigravity').toLowerCase();
+
+  if (agent === 'cursor') {
 
     return path.join(cwd, '.cursor', 'rules');
 
   }
 
-  if (targetAgent === 'claude') {
+  if (agent === 'claude') {
 
     return path.join(cwd, '.claude', 'skills');
 
   }
 
-  if (targetAgent === 'windsurf') {
+  if (agent === 'windsurf') {
 
     return path.join(cwd, '.windsurf', 'rules');
 
   }
 
+  if (agent === 'opencode') {
+
+    return path.join(cwd, '.opencode', 'skills');
+
+  }
 
 
-  // Default: .agent/skills (Antigravity, OpenCode, Standard)
+
+  // Default: .agent/skills (Antigravity, Standard)
 
   return path.join(cwd, '.agent', 'skills');
 
@@ -1844,7 +1874,7 @@ async function cmdInit(options) {
 
   const cwd = process.cwd();
 
-  const targetDir = options.dest ? path.resolve(cwd, options.dest) : cwd;
+  const targetDir = options.dest ? path.resolve(cwd, resolveUserPath(options.dest)) : cwd;
 
   const destAgent = path.join(targetDir, '.agent');
 
@@ -2246,7 +2276,7 @@ function cmdSyncAgy(options) {
     process.exit(1);
   }
   const pyArgs = [scriptPath];
-  if (options.dest) pyArgs.push('--dest', path.resolve(process.cwd(), options.dest));
+  if (options.dest) pyArgs.push('--dest', path.resolve(process.cwd(), resolveUserPath(options.dest)));
   if (options.minimal) pyArgs.push('--minimal');
   if (options.check || options.dryRun) pyArgs.push('--check');
   const child = child_process.spawnSync('python', pyArgs, {
@@ -2258,6 +2288,137 @@ function cmdSyncAgy(options) {
     process.exit(1);
   }
   process.exit(child.status || 0);
+}
+
+function buildOpenCodeAgentsMd(baseDirPosix, ruleNames) {
+  const rulesList = ruleNames.sort().map((n) => `- \`${n}\` -> \`${baseDirPosix}/references/rules/${n}\``).join('\n');
+  return `# Goku Dev Skills — OpenCode Router
+
+> Compact entrypoint for \`goku-dev-skills\` inside **OpenCode** (\`< 24 KB\` budget safe).
+> Full rule specifications live on-demand under \`${baseDirPosix}/references/rules/\`.
+
+## 1. Scope Guard & Precedence
+
+1. **Workspace Precedence:** If the current repository already has \`.agent/\`, \`.opencode/skills/\`, or its own project \`AGENTS.md\` / \`CLAUDE.md\`, **local project rules win**.
+2. **Software-Scope Enforcement:** Heavy SDLC artifacts (\`HANDOFF.md\`, \`KANBAN.md\`, \`SPRINT_PLAN.md\`, \`DB_MIGRATIONS.md\`, \`docs/kullanici-rehberi.html\`) apply only to software projects or when planning/verification workflows are explicitly invoked.
+
+## 2. Path Bridge
+
+- Skills directory: \`${baseDirPosix}/skills/<skill>/SKILL.md\`
+- Resolve skill scripts referenced as \`.agent/skills/<skill>/scripts/...\` from \`${baseDirPosix}/skills/<skill>/scripts/...\`
+- Resolve templates referenced as \`.agent/templates/<file>\` from \`${baseDirPosix}/templates/<file>\`
+- Resolve full rules referenced as \`.agent/rules/<file>\` from \`${baseDirPosix}/references/rules/<file>\`
+
+## 3. Core Principles
+
+- **Plan Before Code:** Produce a clear plan before major edits; never guess when architecture has 2+ valid options.
+- **TDD & 5-Layer Vertical Slice:** Write failing seam tests first; verify DB/API/Client/UI/Loop-Closure end-to-end.
+- **UI Craft Floor:** Follow \`DESIGN.md\`, use Skeleton screens for loading states, avoid AI slop.
+- **Strict Git Approval:** Never run \`git commit\` or \`git push\` without explicit user approval.
+- **Concise Output:** Keep prose crisp; give copy-paste commands with expected output and warnings before destructive steps.
+
+## 4. On-Demand Rules (\`references/rules/\`)
+
+Read only the rule relevant to the current task before editing:
+${rulesList}
+`;
+}
+
+function cmdSyncOpenCode(options) {
+  if (!HAS_LOCAL_AGENT) {
+    console.error(`${c.red}Error:${c.reset} Source .agent directory not found at ${LOCAL_AGENT_DIR}`);
+    process.exit(1);
+  }
+
+  const cwd = process.cwd();
+  const isLocal = !!options.local;
+  const isMinimal = !!options.minimal;
+  const isDryRun = !!(options.check || options.dryRun);
+  const baseDir = options.dest
+    ? path.resolve(cwd, resolveUserPath(options.dest))
+    : isLocal
+      ? path.join(cwd, '.opencode')
+      : path.join(os.homedir(), '.config', 'opencode');
+
+  const srcSkills = path.join(LOCAL_AGENT_DIR, 'skills');
+  const srcRules = path.join(LOCAL_AGENT_DIR, 'rules');
+  const srcTemplates = path.join(LOCAL_AGENT_DIR, 'templates');
+
+  const skillDirs = fs.existsSync(srcSkills)
+    ? fs.readdirSync(srcSkills).filter((d) => fs.statSync(path.join(srcSkills, d)).isDirectory()).sort()
+    : [];
+  const ruleFiles = fs.existsSync(srcRules)
+    ? fs.readdirSync(srcRules).filter((f) => f.endsWith('.md')).sort()
+    : [];
+  const templateFiles = fs.existsSync(srcTemplates)
+    ? fs.readdirSync(srcTemplates).filter((f) => fs.statSync(path.join(srcTemplates, f)).isFile()).sort()
+    : [];
+
+  const basePosix = baseDir.replace(/\\/g, '/');
+  const agentsMdContent = buildOpenCodeAgentsMd(basePosix, ruleFiles);
+  const agentsTarget = isLocal
+    ? path.join(cwd, 'AGENTS.md')
+    : path.join(baseDir, 'AGENTS.md');
+
+  let agentsAction = 'write';
+  let actualAgentsTarget = agentsTarget;
+  if (fs.existsSync(agentsTarget)) {
+    const existing = fs.readFileSync(agentsTarget, 'utf8');
+    const isManaged = existing.includes('Goku Dev Skills — OpenCode Router');
+    if (!isManaged) {
+      actualAgentsTarget = path.join(baseDir, 'GOKU_AGENTS.md');
+      agentsAction = 'preserve-existing';
+    } else {
+      agentsAction = 'update';
+    }
+  }
+
+  if (!isDryRun) {
+    const dstSkills = path.join(baseDir, 'skills');
+    fs.mkdirSync(dstSkills, { recursive: true });
+    for (const skill of skillDirs) {
+      const copyOptions = {};
+      if (isMinimal && skill === 'frontend-design') {
+        copyOptions.ignoreDirs = ['component-themes'];
+      }
+      if (isMinimal && skill === 'ui-ux-pro-max') {
+        copyOptions.ignoreFiles = ['phosphor-icons-upstream.json', 'google-font-licenses.json'];
+      }
+      copyDirSync(path.join(srcSkills, skill), path.join(dstSkills, skill), copyOptions);
+    }
+
+    const dstRules = path.join(baseDir, 'references', 'rules');
+    fs.mkdirSync(dstRules, { recursive: true });
+    for (const rf of ruleFiles) {
+      fs.copyFileSync(path.join(srcRules, rf), path.join(dstRules, rf));
+    }
+
+    const dstTemplates = path.join(baseDir, 'templates');
+    fs.mkdirSync(dstTemplates, { recursive: true });
+    for (const tf of templateFiles) {
+      fs.copyFileSync(path.join(srcTemplates, tf), path.join(dstTemplates, tf));
+    }
+
+    fs.mkdirSync(path.dirname(actualAgentsTarget), { recursive: true });
+    fs.writeFileSync(actualAgentsTarget, agentsMdContent, 'utf8');
+  }
+
+  const mode = isDryRun ? 'DRY-RUN' : 'SYNCED';
+  const scopeLabel = isLocal ? 'per-project (.opencode)' : 'global (~/.config/opencode)';
+  console.log(
+    `\n${c.green}${c.bold}[${mode}] OpenCode ${scopeLabel}${c.reset} -> ${baseDir}`
+  );
+  console.log(
+    `- Skills: ${c.bold}${skillDirs.length}${c.reset} | On-demand rules: ${c.bold}${ruleFiles.length}${c.reset} | Templates: ${c.bold}${templateFiles.length}${c.reset} | Minimal: ${c.cyan}${isMinimal}${c.reset}`
+  );
+  if (agentsAction === 'preserve-existing') {
+    console.log(
+      `${c.yellow}- Preserved existing custom AGENTS.md at ${agentsTarget}; wrote Goku router to ${actualAgentsTarget}.${c.reset}`
+    );
+  } else {
+    console.log(`- OpenCode router (${agentsAction}): ${c.dim}${actualAgentsTarget}${c.reset}`);
+  }
+  console.log(`- Next in OpenCode: open TUI and run ${c.cyan}/skills${c.reset} to verify discovery.\n`);
 }
 
 // Command: update (Surgical updater for already-installed skills & rules)
@@ -3118,6 +3279,8 @@ ${c.bold}Commands:${c.reset}
 
   ${c.green}sync-agy [options]${c.reset}               Install/sync full skillset as Antigravity CLI global plugin
 
+  ${c.green}sync-opencode [options]${c.reset}          Install/sync full skillset for OpenCode (global or --local)
+
   ${c.green}list${c.reset}                             List all available skills, profiles & component categories
 
   ${c.green}add <skill-name...>${c.reset}             Install one or more individual skills
@@ -3143,9 +3306,11 @@ ${c.bold}Init & Update Options:${c.reset}
 
   -g, --global                    Global distribution mode: update all target projects via delivery.py
 
-  --dest <path>                   Custom destination directory (default: current directory)
+  -l, --local                     Per-project mode for sync-opencode (writes ./.opencode/skills & ./AGENTS.md)
 
-  --agent <name>                  Target AI agent: antigravity (default), cursor, claude, windsurf
+  --dest <path>                   Custom destination directory (supports ~/..., default: current directory)
+
+  --agent <name>                  Target AI agent: antigravity (default), opencode, cursor, claude, windsurf
 
   --with-rules                    Also copy .agent/rules/ quality validation gates
 
@@ -3209,6 +3374,8 @@ ${c.bold}Examples:${c.reset}
 
     remote: false,
 
+    local: false,
+
   };
 
 
@@ -3256,6 +3423,10 @@ ${c.bold}Examples:${c.reset}
     } else if (args[i] === '--global' || args[i] === '-g') {
 
       options.global = true;
+
+    } else if (args[i] === '--local' || args[i] === '-l') {
+
+      options.local = true;
 
     } else {
 
@@ -3362,6 +3533,11 @@ ${c.bold}Examples:${c.reset}
     case 'sync-agy':
     case 'agy-sync':
       cmdSyncAgy(options);
+      break;
+
+    case 'sync-opencode':
+    case 'opencode-sync':
+      cmdSyncOpenCode(options);
       break;
 
 
