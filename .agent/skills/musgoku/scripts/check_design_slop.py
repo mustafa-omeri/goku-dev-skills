@@ -229,6 +229,16 @@ def find_project_root() -> Path:
     return Path(__file__).resolve().parents[4]
 
 
+def _is_email_template(path: Path) -> bool:
+    """E-posta istemcileri CSS değişkenlerini desteklemediği için transactional mail HTML şablonlarını muaf tutar."""
+    if path.suffix.lower() != ".html":
+        return False
+    lower_parts = [pt.lower() for pt in path.parts]
+    return any(ep in lower_parts for ep in ("mail", "email", "emails")) and (
+        "templates" in lower_parts or "resources" in lower_parts
+    )
+
+
 def iter_source_files(root: Path, include_agent: bool = False):
     """Projedeki taranacak frontend kaynak dosyalarını listeler."""
     found_any = False
@@ -242,6 +252,8 @@ def iter_source_files(root: Path, include_agent: bool = False):
             if any(part in IGNORE_DIRS for part in path.parts):
                 continue
             if not include_agent and ".agent" in path.parts:
+                continue
+            if _is_email_template(path):
                 continue
             # Test dosyalarını tarama dışı bırak
             stem_lower = path.stem.lower()
@@ -267,6 +279,8 @@ def iter_source_files(root: Path, include_agent: bool = False):
 
 def check_file(path: Path) -> tuple[list[dict], list[dict]]:
     """Tek bir kaynak dosyayı anti-pattern'lere karşı tarar."""
+    if _is_email_template(path):
+        return [], []
     errors = []
     warnings = []
 

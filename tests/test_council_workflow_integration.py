@@ -132,6 +132,34 @@ class TestCouncilWorkflowIntegration(unittest.TestCase):
             codes = {e["code"] for e in payload.get("errors", [])}
             self.assertTrue({"E1", "E2"}.intersection(codes), f"Beklenen E1/E2 bulunamadı: {codes}")
 
+    def test_aviation_docs_excludes_api_docs_tasks_and_test_results_logs(self):
+        """check_aviation_docs.py docs/APIs/test-API-Docs.md, docs/tasks/*-tasks.md ve docs/tespitler/ dosyalarını rehber sanmamalı."""
+        import subprocess
+        import tempfile
+
+        gate_script = REPO_ROOT / ".agent" / "skills" / "musgoku" / "scripts" / "check_aviation_docs.py"
+        with tempfile.TemporaryDirectory() as tmp:
+            tmppath = Path(tmp)
+            (tmppath / "docs" / "APIs").mkdir(parents=True)
+            (tmppath / "docs" / "tasks").mkdir(parents=True)
+            (tmppath / "docs" / "tespitler").mkdir(parents=True)
+            (tmppath / "docs" / "APIs" / "test-API-Docs.md").write_text("# Test API\n", encoding="utf-8")
+            (tmppath / "docs" / "tasks" / "otel-setup-tasks.md").write_text("# Setup Tasks\n- [ ] adim 1\n", encoding="utf-8")
+            (tmppath / "docs" / "tespitler" / "tespitler-test-results.md").write_text("# Results\n", encoding="utf-8")
+            (tmppath / "docs" / "tespitler" / "tespitler-test-plan-v1.md").write_text("# Plan v1\n", encoding="utf-8")
+
+            env = dict(**__import__("os").environ, AGENTS_PROJECT_ROOT=str(tmppath))
+            res = subprocess.run(
+                [sys.executable, str(gate_script), "--json"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                env=env,
+            )
+            self.assertEqual(res.returncode, 0, f"API/task/tespit dosyalari false-positive vermemeli: {res.stdout}")
+            payload = __import__("json").loads(res.stdout)
+            self.assertEqual(payload.get("scanned_files"), [])
+
     def test_main_screen_caveman_faa_and_sprint_end_verify_sprint_prompt(self):
         """Ana ekrana /caveman + FAA AC 121-24C yanıtı ve sprint bitiminde otomatik /verify-sprint sorusu."""
         agents_txt = (REPO_ROOT / ".agent" / "AGENTS.md").read_text(encoding="utf-8")

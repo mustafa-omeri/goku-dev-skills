@@ -58,6 +58,14 @@ BROKEN_PLACEHOLDER_RE = re.compile(
 )
 
 
+EXCLUDED_DOC_DIRS = {"apis", "tasks", "tespitler", "archive", "specs", "adr", "rfc", "rfcs"}
+GUIDE_NAME_KEYWORDS = (
+    "test_rehber", "test-rehber", "test_guide", "test-guide",
+    "kullanici_test", "kullanici-test", "rehber", "guide",
+    "setup", "how-to", "runbook", "manual",
+)
+
+
 def find_doc_targets(root: Path) -> list[Path]:
     """Kural kapsamında denetlenecek doküman, plan ve şablonları toplar."""
     targets: list[Path] = []
@@ -67,9 +75,10 @@ def find_doc_targets(root: Path) -> list[Path]:
     if docs_dir.is_dir():
         for p in docs_dir.rglob("*.md"):
             lower = p.name.lower()
-            if any(k in lower for k in ("test", "rehber", "guide", "setup", "how-to", "runbook", "manual")):
-                targets.append(p)
-            elif "plans" in [part.lower() for part in p.parts]:
+            rel_parts = [part.lower() for part in p.relative_to(docs_dir).parts[:-1]]
+            if any(d in EXCLUDED_DOC_DIRS for d in rel_parts):
+                continue
+            if "plans" in rel_parts:
                 # 2026-11-22 tarihinden itibaren üretilen veya FAA AC 121-24C damgalı yeni planlar denetlenir
                 try:
                     head = p.read_text(encoding="utf-8", errors="ignore")[:600]
@@ -77,6 +86,10 @@ def find_doc_targets(root: Path) -> list[Path]:
                         targets.append(p)
                 except Exception:
                     pass
+            elif not lower.endswith(("-tasks.md", "-results.md", "-report.md")) and any(
+                k in lower for k in GUIDE_NAME_KEYWORDS
+            ):
+                targets.append(p)
 
     # Aktif .agent/plans taslak planları
     agent_plans_dir = root / ".agent" / "plans"

@@ -233,6 +233,19 @@ class TestCheckDesignSlop(unittest.TestCase):
         self.assertEqual(len(errors), 0, f"Temiz kodda beklenmeyen hatalar: {errors}")
         self.assertEqual(len(warnings), 0, f"Temiz kodda beklenmeyen uyarılar: {warnings}")
 
+    def test_exempts_transactional_email_html_templates(self):
+        mail_html = """
+        <!DOCTYPE html>
+        <html>
+        <head><style>body { color: #333333; background-color: #f4f4f4; }</style></head>
+        <body><div style="background: #ffffff; color: #555555;">Hatırlatma</div></body>
+        </html>
+        """
+        self._write_file("src/main/resources/templates/mail/assessment-reminder.html", mail_html)
+        res = run_checks(self.dir_path)
+        self.assertEqual(res["exit"], 0, f"E-posta şablonu muaf tutulmalıydı: {res}")
+        self.assertEqual(res["errors"], [])
+
 
 if __name__ == "__main__":
     unittest.main()
