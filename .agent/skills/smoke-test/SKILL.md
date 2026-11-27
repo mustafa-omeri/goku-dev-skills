@@ -29,7 +29,7 @@ python .agent/skills/smoke-test/scripts/impact_mapper.py --root . --scope sprint
 
 ### Aşama 2: TestSprite Kota Kontrolü & Çift Modlu Koşum (`smoke_runner.py`)
 1. **TestSprite Kota Kontrolü (Opsiyonel Bulut E2E):** Eğer projede TestSprite kullanılıyorsa önce `testsprite_check_account_info` çağrılır.
-   - Kredi/limit varsa ve TestSprite `test_plan` hazırsa `test_spec_tracker.py export-delta --include-smoke` hedefleri koşturulabilir.
+   - Gherkin kabul defterindeki (`SC-*`) senaryoların tam TestSprite koşumu ve `record` mühürlemesi `/test-spec-run` (`test-spec-generator` Aşama 6) kapsamındadır; `/smoke-test` yalnız değişen dosyaların etki yüzeyini doğrular.
    - **⛔ Kota/Limit/Paused Fallback Kilidi:** TestSprite kredisi bitmişse, hesap `Paused` ise veya kota/hata dönerse sistem **asla tıkanmaz**; `--testsprite-status exhausted` ile otomatik olarak **Seçenek B Yerel Canlı E2E** motoruna geçer (`testsprite_fallback_triggered = True`).
 2. **Seçenek A (Hibrit) + Seçenek B (Canlı E2E) Koşumu:**
    ```powershell

@@ -1,0 +1,33 @@
+# TestSprite AI Testing Report(MCP)
+
+---
+
+## 1️⃣ Document Metadata
+- **Project Name:** acmePortal
+- **Date:** 2026-11-27
+- **Prepared by:** TestSprite AI Team
+
+---
+
+## 2️⃣ Requirement Validation Summary
+
+#### Test TC001 SC-AUTH-01 Gecerli bilgilerle basarili giris
+- **Test Code:** [TC001_SC_AUTH_01.py](./TC001_SC_AUTH_01.py)
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard-v3/o/org/projects/mcp/proj/test/t1
+- **Status:** ✅ Passed
+- **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
+---
+
+#### Test TC002 SC-PROJ-01 Yonetici proje listeler ve yeni proje olusturur
+- **Test Code:** [TC002_SC_PROJ_01.py](./TC002_SC_PROJ_01.py)
+- **Test Error:** TEST FAILURE
+
+POST /api/v1/projects returned HTTP 500 Internal Server Error.
+
+Observations:
+- The project creation form opened cleanly.
+- Submitting the form triggered POST /api/v1/projects which failed with 500.
+- **Test Visualization and Result:** https://www.testsprite.com/dashboard-v3/o/org/projects/mcp/proj/test/t2
+- **Status:** ❌ Failed
+- **Analysis / Findings:** {{TODO:AI_ANALYSIS}}.
+---

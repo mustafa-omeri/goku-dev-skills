@@ -19,6 +19,7 @@ PYTEST_DIRS = [
     ROOT / ".agent" / "skills" / "brand" / "scripts" / "tests",
     ROOT / ".agent" / "skills" / "design-system" / "scripts" / "tests",
     ROOT / ".agent" / "skills" / "ui-styling" / "scripts" / "tests",
+    ROOT / ".agent" / "skills" / "test-spec-generator" / "scripts" / "tests",
 ]
 
 

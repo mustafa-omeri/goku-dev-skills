@@ -35,6 +35,7 @@ import test_spec_scanner as scanner  # noqa: E402
 
 STATE_SCHEMA_VERSION = "test-spec-state@1"
 SCENARIO_ID_RE = re.compile(r"\b(SC-([A-Z0-9]+)-(\d+))\b")
+TC_ID_RE = re.compile(r"\b(TC\d{2,4})\b", re.IGNORECASE)
 AC_ID_RE = re.compile(r"\bAC-[A-Z0-9]+(?:-[A-Z0-9]+)*\b")
 TAG_RE = re.compile(r"@[A-Za-z0-9_-]+")
 
@@ -636,21 +637,170 @@ def parse_cucumber_json(json_path: Path | str) -> dict[str, str]:
     return out
 
 
-def parse_testsprite_report(report_path: Path | str) -> dict[str, str]:
-    """TestSprite Markdown veya JSON test raporundan SC-XXX -> PASS/FAIL eşleşmelerini çıkarır."""
+def _load_tc_to_sc_map(report_path: Path, sc_map_path: Path | str | None = None) -> dict[str, str]:
+    """sc_map.json üzerinden TC### -> SC-* eşleme haritasını yükler."""
+    candidates: list[Path] = []
+    if sc_map_path:
+        candidates.append(Path(sc_map_path))
+    else:
+        candidates.append(report_path.parent / "sc_map.json")
+        candidates.append(report_path.parent.parent / "sc_map.json")
+    for cand in candidates:
+        if cand.is_file():
+            try:
+                data = _read_json(cand)
+                raw = data.get("tc_to_sc", data if isinstance(data, dict) else {})
+                return {str(k).upper(): str(v) for k, v in raw.items() if str(v).startswith("SC-")}
+            except Exception:
+                continue
+    return {}
+
+
+def _resolve_sc_id_from_text(text: str, tc_to_sc: dict[str, str]) -> str | None:
+    sm = SCENARIO_ID_RE.search(text)
+    if sm:
+        return sm.group(1)
+    tm = TC_ID_RE.search(text)
+    if tm:
+        return tc_to_sc.get(tm.group(1).upper())
+    return None
+
+
+def _split_testsprite_md_blocks(text: str) -> list[str]:
+    """Markdown TestSprite raporunu test başlıklarına / ayraçlara göre bloklara böler."""
+    lines = text.splitlines()
+    blocks: list[list[str]] = []
+    current: list[str] = []
+    for ln in lines:
+        s = ln.strip()
+        if re.match(r"^#{3,4}\s+.*(?:Test\s+TC\d+|SC-[A-Z0-9]+-\d+)", s, re.IGNORECASE):
+            if current:
+                blocks.append(current)
+            current = [ln]
+        elif s == "---" and current:
+            blocks.append(current)
+            current = []
+        else:
+            current.append(ln)
+    if current:
+        blocks.append(current)
+    return ["\n".join(b) for b in blocks if "\n".join(b).strip()]
+
+
+def parse_testsprite_report(
+    report_path: Path | str,
+    *,
+    sc_map_path: Path | str | None = None,
+) -> dict[str, str]:
+    """TestSprite Markdown (`raw_report.md` / `report.md`) veya JSON (`test_results.json`) çıktısından SC-XXX -> PASS/FAIL çıkarır."""
     p = Path(report_path)
+    tc_to_sc = _load_tc_to_sc_map(p, sc_map_path=sc_map_path)
     text = p.read_text(encoding="utf-8", errors="replace")
     out: dict[str, str] = {}
-    for line in text.splitlines():
-        m = SCENARIO_ID_RE.search(line)
-        if not m:
+
+    stripped = text.lstrip()
+    if p.suffix.lower() == ".json" or stripped.startswith("["):
+        try:
+            data = json.loads(text)
+        except json.JSONDecodeError:
+            data = []
+        if isinstance(data, list):
+            for item in data:
+                if not isinstance(item, dict):
+                    continue
+                sid = _resolve_sc_id_from_text(str(item.get("title", "")), tc_to_sc)
+                if not sid:
+                    continue
+                st = str(item.get("testStatus", "")).strip().upper()
+                if st in {"FAILED", "FAIL", "ERROR"}:
+                    out[sid] = "FAIL"
+                elif st in {"PASSED", "PASS", "SUCCESS"}:
+                    out[sid] = "PASS"
+            return out
+
+    fail_re = re.compile(r"\b(?:FAIL|FAILED|ERROR)\b|❌", re.IGNORECASE)
+    pass_re = re.compile(r"\b(?:PASS|PASSED|SUCCESS)\b|✅", re.IGNORECASE)
+    status_line_re = re.compile(r"^\s*[-*]?\s*\*{0,2}Status\*{0,2}\s*:\s*(.+)$", re.IGNORECASE)
+
+    for block in _split_testsprite_md_blocks(text):
+        lines = block.splitlines()
+        # Tek bir blokta birden fazla SC/TC ID'si olan düz liste varsa satır bazlı parse'a düş
+        line_ids = {
+            sid
+            for ln in lines
+            if (sid := _resolve_sc_id_from_text(ln, tc_to_sc)) is not None
+        }
+        has_heading = bool(re.match(r"^\s*#{2,4}\s+", lines[0])) if lines else False
+        if not has_heading and len(line_ids) > 1:
+            for ln in lines:
+                sid = _resolve_sc_id_from_text(ln, tc_to_sc)
+                if not sid:
+                    continue
+                if fail_re.search(ln):
+                    out[sid] = "FAIL"
+                elif pass_re.search(ln):
+                    out[sid] = "PASS"
             continue
-        sid = m.group(1)
-        if re.search(r"\b(?:FAIL|FAILED|ERROR)\b|❌", line, re.IGNORECASE):
-            out[sid] = "FAIL"
-        elif re.search(r"\b(?:PASS|PASSED|SUCCESS)\b|✅", line, re.IGNORECASE):
-            out[sid] = "PASS"
+
+        sid = _resolve_sc_id_from_text(lines[0] if lines else block, tc_to_sc) or _resolve_sc_id_from_text(block, tc_to_sc)
+        if not sid:
+            continue
+
+        matched_status: str | None = None
+        for ln in lines:
+            sm = status_line_re.match(ln)
+            if sm:
+                val = sm.group(1)
+                if fail_re.search(val):
+                    matched_status = "FAIL"
+                    break
+                if pass_re.search(val):
+                    matched_status = "PASS"
+                    break
+        if matched_status is None:
+            filtered = "\n".join(
+                ln for ln in lines if "AI_ANALYSIS" not in ln and not ln.strip().startswith("- **Test Visualization")
+            )
+            if fail_re.search(filtered):
+                matched_status = "FAIL"
+            elif pass_re.search(filtered):
+                matched_status = "PASS"
+        if matched_status:
+            out[sid] = matched_status
     return out
+
+
+def extract_testsprite_errors(
+    report_path: Path | str,
+    *,
+    sc_map_path: Path | str | None = None,
+) -> dict[str, str]:
+    """TestSprite JSON veya Markdown raporundan SC-* başına hata metnini çıkarır."""
+    p = Path(report_path)
+    tc_to_sc = _load_tc_to_sc_map(p, sc_map_path=sc_map_path)
+    text = p.read_text(encoding="utf-8", errors="replace")
+    errors: dict[str, str] = {}
+
+    if p.suffix.lower() == ".json" or text.lstrip().startswith("["):
+        try:
+            data = json.loads(text)
+        except json.JSONDecodeError:
+            return errors
+        if isinstance(data, list):
+            for item in data:
+                if not isinstance(item, dict):
+                    continue
+                sid = _resolve_sc_id_from_text(str(item.get("title", "")), tc_to_sc)
+                err = str(item.get("testError", "")).strip()
+                if sid and err:
+                    errors[sid] = err
+        return errors
+
+    for block in _split_testsprite_md_blocks(text):
+        sid = _resolve_sc_id_from_text(block, tc_to_sc)
+        if sid and ("TEST FAILURE" in block or "❌" in block or "Test Error" in block):
+            errors[sid] = block.strip()
+    return errors
 
 
 def export_delta_spec(
@@ -755,6 +905,7 @@ def main(argv: list[str] | None = None) -> int:
     p_rec.add_argument("--import-playwright", default="")
     p_rec.add_argument("--import-cucumber", default="")
     p_rec.add_argument("--import-testsprite", default="")
+    p_rec.add_argument("--sc-map", default="")
 
     p_delta = sub.add_parser("export-delta", help="Yalnızca NEW/STALE/FAIL senaryolarını dışa aktar")
     p_delta.add_argument("--spec", required=True)
@@ -813,8 +964,11 @@ def main(argv: list[str] | None = None) -> int:
         if args.import_cucumber:
             results.update(parse_cucumber_json(args.import_cucumber))
         if args.import_testsprite:
-            results.update(parse_testsprite_report(args.import_testsprite))
+            results.update(parse_testsprite_report(args.import_testsprite, sc_map_path=args.sc_map or None))
 
+        has_import = any(
+            [args.import_junit, args.import_playwright, args.import_cucumber, args.import_testsprite]
+        )
         res = record_execution_results(
             args.state,
             results,
@@ -823,6 +977,12 @@ def main(argv: list[str] | None = None) -> int:
             evidence_ref=args.evidence or None,
         )
         print(f"[OK] Recorded {res['updated_count']} results -> {res['state_path']}")
+        if has_import and res["updated_count"] == 0:
+            print(
+                "[WARN] Rapordan state defteriyle eşleşen SC-* senaryosu bulunamadı (0 sonuç).",
+                file=sys.stderr,
+            )
+            return 2
         return 0
 
     if args.cmd == "export-delta":

@@ -457,6 +457,39 @@ python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-del
         "category": "Teslimat & Kalite"
     },
     {
+        "command": "/test-spec-run",
+        "aliases": ["/test-spec-run", "testleri koş", "testsprite ile koş", "run test spec"],
+        "name": "TestSprite MCP Delta Koşumu, PASS Defteri Mühürleme & Hata Adresleme",
+        "badge": "TestSprite E2E",
+        "badge_class": "badge-info",
+        "skills": ["test-spec-generator", "smoke-test", "tdd"],
+        "goal": "Delta SC-* Senaryolarını TestSprite MCP ile Koş -> record İşle -> Endpoint Hatalarını İlgili Repoya Adresle",
+        "description": "/test-spec sonrası bekleyen (NEW + STALE + FAIL + FLAKY) senaryoları testsprite_bridge.py ile TestSprite planına çevirip koşar, sonuçları test-spec-state.json defterine mühürler ve endpoint takılmalarında kardeş backend/frontend dosya adreslemesi üretir.",
+        "sample_prompt": "/test-spec-run: Bekleyen delta senaryolarını TestSprite MCP ile koş, PASS/FAIL sonuçlarını state defterine işle ve kalan hataları ilgili repo/dosyaya adresle.",
+        "protocol": "1. status ile delta kontrolü & testsprite_check_account_info kota kapısı (limit yoksa /smoke-test live fallback) ➜ 2. export-delta + testsprite_bridge.py to-plan (SC-* -> TC### + sc_map.json) ➜ 3. testsprite_generate_code_and_execute (production veya 15'li parti) ➜ 4. test_spec_tracker.py record + FAIL varsa testsprite_bridge.py triage (kardeş backend vs frontend adresleme)",
+        "usage_snippet": """# 1. Delta senaryolarını TestSprite planına çevir (dev modda --batch 15 ekle):
+python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py to-plan --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --plan testsprite_tests/testsprite_frontend_test_plan.json --json
+
+# 2. TestSprite MCP koşumu sonrası sonuçları state defterine mühürle:
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py record --state docs/testing/test-spec-state.json --import-testsprite testsprite_tests/tmp/test_results.json --runner testsprite --evidence testsprite_tests/tmp/raw_report.md
+
+# 3. FAIL kalan senaryoları kardeş backend (peer) / frontend dosyasına adresle:
+python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py triage --state docs/testing/test-spec-state.json --inventory docs/testing/test-inventory.json --report testsprite_tests/tmp/test_results.json --json""",
+        "emergency": [
+            {
+                "symptom": "record komutu exit 2 (0 eşleşen sonuç) veriyor",
+                "cause": "TestSprite raporunda SC-* veya sc_map.json üzerinden eşleşen TC### başlığı bulunamadı.",
+                "action": "testsprite_tests/sc_map.json varlığını kontrol edin veya --sc-map ile yolu açık verin."
+            },
+            {
+                "symptom": "TestSprite kredisi tükendi veya Paused döndü",
+                "cause": "Hesap limiti dolmuş.",
+                "action": "Deftere dokunmadan smoke_runner.py --scope sprint --mode live --testsprite-status exhausted fallback'ini çalıştırın."
+            }
+        ],
+        "category": "Teslimat & Kalite"
+    },
+    {
         "command": "/verify-prd",
         "aliases": ["/verify-prd", "/prd-verify", "[VERIFY-PRD]"],
         "name": "Makro: PRD & Tüm Proje Kabul Kriterleri Doğrulama Motoru",
@@ -997,7 +1030,7 @@ DOMAINS_MAP = [
         "color_var": "var(--status-info)",
         "subtle_var": "var(--status-info-subtle)",
         "border_var": "var(--status-info-border)",
-        "commands": ["/verify-last", "/verify-sprint", "/verify-prd", "/spec-reconcile", "/test-spec", "/smoke-test"]
+        "commands": ["/verify-last", "/verify-sprint", "/verify-prd", "/spec-reconcile", "/test-spec", "/test-spec-run", "/smoke-test"]
     }
 ]
 
@@ -2229,25 +2262,24 @@ python .agent/skills/review-prd/scripts/prd_review_helper.py --root . --prd <prd
 
         "cli_cmd": "python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py plan --root . --state docs/testing/test-spec-state.json --json",
 
-        "features": ["Kademeli Major/Minor Çift-Hash Takip (UNCHANGED/MINOR=KEEP, MAJOR=UPDATE)", "PASS Referans Defteri (test-spec-state.json + STALE/FLAKY)", "Cerrahi Modül Yaması (patch-module) & Delta Export (--export-delta)", "Risk (@p0..@p3), Performans (@perf/@pagination/@idempotency) & Sınır Değer Kapısı"],
+        "features": ["Kademeli Major/Minor Çift-Hash Takip (UNCHANGED/MINOR=KEEP, MAJOR=UPDATE)", "PASS Referans Defteri (test-spec-state.json + STALE/FLAKY)", "TestSprite MCP Köprüsü (/test-spec-run & testsprite_bridge.py)", "Endpoint Hata Triajı (Kardeş Backend Peer vs Frontend Adresleme)"],
 
-        "detail": "Kod ve dokümanları artımlı tarayarak değişmeyen/Minor modülleri atlar, Major değişen modülleri cerrahi günceller, PASS referanslarını (commit + contract_hash) mühürler ve TestSprite/CI için delta çıktısı üretir.",
+        "detail": "Kod ve dokümanları artımlı tarayarak değişmeyen/Minor modülleri atlar, Major değişen modülleri cerrahi günceller; /test-spec-run ile delta senaryolarını TestSprite MCP üzerinden koşup record ile mühürler ve endpoint hatalarını ilgili kardeş/frontend repoya adresler.",
 
-        "sample_prompt": "/test-spec: Projedeki değişiklikleri artımlı analiz et; önceki PASS testlerini koruyarak yalnız Major değişen modüllerin Gherkin ve AC testlerini güncelle.",
+        "sample_prompt": "/test-spec-run: Bekleyen delta senaryolarını TestSprite MCP ile koş, sonuçları deftere işle ve kalan hataları ilgili repo/dosyaya adresle.",
 
         "config_snippet": """# 1. Artımlı Değişiklik Planı (Major vs Minor):
 python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py plan --root . --state docs/testing/test-spec-state.json --json
 
-# 2. Cerrahi Modül Yaması & State Senkronu:
-python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py patch-module --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --module <mod> --content-file <modul.md>
-python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py sync --root . --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json
+# 2. Delta Senaryolarını TestSprite Planına Çevir:
+python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py to-plan --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --plan testsprite_tests/testsprite_frontend_test_plan.json --json
 
-# 3. Kapsama & State Kapısı (E1..E10, W1..W2):
-python .agent/skills/test-spec-generator/scripts/check_test_spec.py --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --inventory docs/testing/test-inventory.json --state docs/testing/test-spec-state.json
+# 3. TestSprite Sonuçlarını Deftere Mühürle & Kalan FAIL'leri Adresle:
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py record --state docs/testing/test-spec-state.json --import-testsprite testsprite_tests/tmp/test_results.json --runner testsprite
+python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py triage --state docs/testing/test-spec-state.json --inventory docs/testing/test-inventory.json --report testsprite_tests/tmp/test_results.json --json
 
-# 4. PASS Kaydı & Delta Export (Yalnız NEW + STALE + FAIL + FLAKY):
-python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py record --state docs/testing/test-spec-state.json --import-testsprite testsprite_tests/report.md --runner testsprite
-python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-delta --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --out-feature docs/specs/<SLUG>_DELTA.feature"""
+# 4. Kapsama & State Kapısı (E1..E10, W1..W2):
+python .agent/skills/test-spec-generator/scripts/check_test_spec.py --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --inventory docs/testing/test-inventory.json --state docs/testing/test-spec-state.json"""
 
     },
 
@@ -7753,7 +7785,7 @@ def generate_catalog_html(skills: list[dict]) -> str:
               <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
                 <td style="padding:6px 8px; font-weight:600;">Proje Geneli Artımlı Gherkin &amp; AC Testleri</td>
                 <td style="padding:6px 8px; font-family:var(--font-mono); color:var(--accent-primary);">test-spec-generator (SKILL.md)</td>
-                <td style="padding:6px 8px;">test_spec_tracker.py, check_test_spec.py &amp; /test-spec</td>
+                <td style="padding:6px 8px;">test_spec_tracker.py, testsprite_bridge.py, check_test_spec.py &amp; /test-spec-run</td>
               </tr>
               <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
                 <td style="padding:6px 8px; font-weight:600;">Oturum Devri / Kardeş Repo Planı</td>

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "TC001",
+    "title": "Log in as admin and reach the main dashboard",
+    "description": "This verifies that an administrator can sign in successfully and is redirected to the main dashboard.",
+    "category": "Role-Based Login & Redirect",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the main dashboard is displayed for the signed-in user"
+      }
+    ],
+    "priority": "High"
+  }
+]

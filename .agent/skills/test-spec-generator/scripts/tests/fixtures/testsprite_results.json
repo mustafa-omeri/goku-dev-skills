@@ -1,0 +1,22 @@
+[
+  {
+    "projectId": "proj-001",
+    "testId": "t1",
+    "title": "TC001-SC-AUTH-01 Gecerli bilgilerle basarili giris",
+    "testType": "FRONTEND",
+    "testStatus": "PASSED",
+    "description": "Login succeeds",
+    "priority": "High",
+    "testError": ""
+  },
+  {
+    "projectId": "proj-001",
+    "testId": "t2",
+    "title": "TC002-SC-PROJ-01 Yonetici proje listeler ve yeni proje olusturur",
+    "testType": "FRONTEND",
+    "testStatus": "FAILED",
+    "description": "Project creation failed",
+    "priority": "High",
+    "testError": "TEST FAILURE\n\nPOST /api/v1/projects returned HTTP 500 Internal Server Error."
+  }
+]

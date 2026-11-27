@@ -1,7 +1,7 @@
 ---
 name: test-spec-generator
 description: >-
-  Tüm projeyi (kod, kardeş repo, dokümanlar) artımlı tarayıp tek dosyada Gherkin ve Acceptance Criteria üreten, Major/Minor ayrımıyla PASS referanslarını (test-spec-state.json) koruyan ve delta export sunan orkestratör. Tetikleyiciler: "/test-spec", "test spec", "gherkin testleri çıkar", "kabul kriterleri üret", "generate test spec", "gherkin acceptance tests". Tetiklenmez: sprint denetimi verify-sprint'e, PRD denetimi verify-prd'ye aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
+  Tüm projeyi (kod, kardeş repo, dokümanlar) artımlı tarayıp Gherkin/AC üreten, PASS defterini (test-spec-state.json) koruyan, TestSprite MCP (/test-spec-run) koşup endpoint hatalarını ilgili repoya adresleyen orkestratör. Tetikleyiciler: "/test-spec", "/test-spec-run", "test spec", "gherkin testleri çıkar", "testsprite ile koş", "generate test spec", "run test spec". Tetiklenmez: sprint denetimi verify-sprint'e, PRD denetimi verify-prd'ye aittir. Tam sözlük: .agent/rules/skill-trigger-routing.md
 ---
 
 # Test Spec Generator v2 (`/test-spec`)
@@ -91,10 +91,36 @@ python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --export-f
 
 ---
 
+### Aşama 6: TestSprite MCP ile Otomatik Koşum, Mühürleme & Hata Adresleme (`/test-spec-run`)
+
+Kullanıcı `/test-spec-run`, *"testleri koş"* veya *"testsprite ile koş"* dediğinde, `/test-spec` sonrası 3 adımı (TestSprite koş → `record` işle → sonraki delta'yı hazırla) otomatik yürütür:
+
+1. `[Adım 1].` **Delta Kontrolü:** `python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py status --state docs/testing/test-spec-state.json --json` çalıştır -> `NEW + STALE + FAIL + FLAKY == 0` ise dur (*"Koşulacak delta senaryo yok"*).
+2. `[Adım 2].` **Kota Kontrolü & Fallback:** TestSprite MCP `testsprite_check_account_info` çağır -> Kredi/limit yoksa veya `Paused` ise **deftere dokunma** ve `python .agent/skills/smoke-test/scripts/smoke_runner.py --root . --scope sprint --mode live --testsprite-status exhausted --json` koş (*"TestSprite ATLANDI — defter güncellenmedi"*).
+3. `[Adım 3].` **Sunucu & Delta Export:** Yerel UI portunu (`5173`/`4173`) kontrol et; kapalıysa `npm run build && npm run preview` (`serverMode: "production"`, 15 test limitinden kaçınmak için) başlat. Ardından `export-delta` çalıştır.
+4. `[Adım 4].` **TestSprite Başlatma & Plan Çevirme:** `testsprite_tests/tmp/config.json` yoksa `testsprite_bootstrap` (`type: "frontend"`, `testScope: "codebase"`), plan yoksa `testsprite_generate_frontend_test_plan` çağır. Sonra delta `SC-*` senaryolarını TestSprite planına yaz:
+   ```powershell
+   python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py to-plan --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --plan testsprite_tests/testsprite_frontend_test_plan.json --json
+   ```
+   *(Sunucu `development` modundaysa `--batch 15 --batch-index 0` ile partilere böl; orijinal plan `.bak` olarak korunur ve `sc_map.json` üretilir).*
+5. `[Adım 5].` **TestSprite Koşumu & Defter Mühürleme:** `testsprite_generate_code_and_execute` (`projectName`, `projectPath`, `testIds: batch_test_ids`, `serverMode`) çalıştır -> ardından `record` ile sonuçları işle:
+   ```powershell
+   python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py record --state docs/testing/test-spec-state.json --import-testsprite testsprite_tests/tmp/test_results.json --runner testsprite --evidence testsprite_tests/tmp/raw_report.md
+   ```
+   *(0 sonuç eşleşirse exit `2` döner; sessiz `PASS` kesinlikle yazılmaz).*
+6. `[Adım 6].` **Endpoint & Kardeş Repo Hata Adresleme (`triage`):** `FAIL` veya `FLAKY` senaryolar varsa çalıştır:
+   ```powershell
+   python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py triage --state docs/testing/test-spec-state.json --inventory docs/testing/test-inventory.json --report testsprite_tests/tmp/test_results.json --json
+   ```
+   - ⛔ **Zorunlu Kardeş Repo Adreslemesi:** Süreç bir API endpoint'inde takılıyor (`500`/`404`/`403`/timeout) ve endpoint `test-inventory.json` içinde kardeş backend reposunda (`peers`) tanımlıysa; bug bulgusunda sorunun **kardeş backend reposunda (`owner_repo` + controller dosya yolu + `METHOD /path`)** düzeltilmesi gerektiği detaylıca adreslenir. Otomatik kod düzeltmesi yapılmaz; kullanıcıya `/fix-bug` önerilir.
+7. `[Adım 7].` **Delta Yenileme:** `export-delta` tekrar koşturulur -> bir sonraki koşumda yalnız kalan `FAIL` senaryolar kalır.
+
+---
+
 ## Standart Çıktı Özeti
 
 İşlem bittiğinde kullanıcıya kısa ve net rapor verilir:
-- **Çalışma Modu:** `BOOTSTRAP` | `NO_OP` | `INCREMENTAL` (`X UNCHANGED · Y MINOR/KEEP · Z MAJOR/UPDATED`)
+- **Çalışma Modu:** `BOOTSTRAP` | `NO_OP` | `INCREMENTAL` | `RUN (TestSprite)`
 - **Tek Dosya & Defter:** `docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md` + `docs/testing/test-spec-state.json`
 - **Durum Dağılımı:** `PASS` (korunan) · `STALE` (re-test gereken) · `NEW` · `FAIL` · `FLAKY`
-- **Kapı Sonucu:** `check_test_spec.py` -> `[PASS]`
+- **Kapı & Triaj Sonucu:** `check_test_spec.py` -> `[PASS]` · `FAIL` varsa repo/dosya/endpoint adresleme listesi
