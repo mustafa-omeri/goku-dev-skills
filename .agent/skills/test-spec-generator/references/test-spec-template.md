@@ -91,7 +91,7 @@ Feature: Proje Yönetimi (/projects)
 ## 5. Otomasyon Çalıştırma Komutları & Artımlı Takip
 - **Artımlı Değişiklik Planı:** `python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py plan --root . --state docs/testing/test-spec-state.json --json`
 - **Kapsama & State Kapısı:** `python .agent/skills/test-spec-generator/scripts/check_test_spec.py --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --inventory docs/testing/test-inventory.json --state docs/testing/test-spec-state.json`
-- **Delta Export (Yalnız NEW + STALE + FAIL):** `python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-delta --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --out-md docs/testing/<SLUG>_DELTA_TEST_SPEC.md --out-feature specs/<SLUG>_DELTA.feature`
+- **Delta Export (Yalnız NEW + STALE + FAIL):** `python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-delta --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --out-md docs/testing/<SLUG>_DELTA_TEST_SPEC.md --out-feature docs/specs/<SLUG>_DELTA.feature`
 - **Sonuç İşleme (PASS Ref):** `python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py record --state docs/testing/test-spec-state.json --import-testsprite testsprite_tests/report.md --runner testsprite`
-- **Tam Saf `.feature` Çıktısı:** `python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --export-feature docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --out specs/<SLUG>_ALL.feature`
+- **Tam Saf `.feature` Çıktısı:** `python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --export-feature docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --out docs/specs/<SLUG>_ALL.feature`
 ```

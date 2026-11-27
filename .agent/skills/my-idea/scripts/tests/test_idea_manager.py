@@ -85,7 +85,7 @@ class TestIdeaManager(unittest.TestCase):
         self.assertIn("| durum | Bekliyor |", card)
         self.assertIn("| oncelik | P1 |", card)
         self.assertIn("| sprint | S3 |", card)
-        self.assertIn("| gherkin | specs/S3-101.feature#test-idea-one |", card)
+        self.assertIn("| gherkin | docs/specs/S3-101.feature#test-idea-one |", card)
         self.assertIn("| kapi | python tests/run_all.py |", card)
         self.assertIn("| test | (yazılacak) |", card)
         self.assertIn("| risk | orta |", card)

@@ -6,7 +6,7 @@
 kod tabanı + kardeş repo yüzeylerini (rotalar, API uç noktaları, DB varlıkları,
 roller, stub/kırık yapılar, çift-katmanlı `raw_hash`/`contract_hash` parmak izleri,
 KG `impact` haritası) ve proje dokümanlarını (`PRODUCT.md`, PRD, API docs,
-`specs/*.feature`, `HANDOFF.md`) tek bir deterministik test envanterine toplar.
+`docs/specs/*.feature`, `HANDOFF.md`) tek bir deterministik test envanterine toplar.
 
 Ayrıca üretilen tek dosya `ACCEPTANCE_TEST_SPEC.md` içindeki tüm (veya filtrelenmiş)
 Gherkin bloklarını saf bir `.feature` dosyasına ayıklar (`--export-feature`).
@@ -109,7 +109,7 @@ def _extract_project_slug(root: Path) -> str:
 
 
 def _collect_doc_files(root: Path) -> dict[str, Any]:
-    """Projedeki çekirdek dokümanları, PRD/API/RFC dosyalarını ve specs/*.feature dosyalarını tarar."""
+    """Projedeki çekirdek dokümanları, PRD/API/RFC dosyalarını ve docs/specs/*.feature dosyalarını tarar."""
     docs_presence: dict[str, bool] = {}
     doc_paths: list[Path] = []
 
@@ -178,9 +178,15 @@ def _collect_doc_files(root: Path) -> dict[str, Any]:
             }
 
     existing_features: list[dict[str, Any]] = []
-    specs_dir = root / "specs"
-    if specs_dir.is_dir():
+    seen_feature_paths: set[Path] = set()
+    for specs_dir in (root / "docs" / "specs", root / "specs"):
+        if not specs_dir.is_dir():
+            continue
         for fp in sorted(specs_dir.glob("*.feature")):
+            resolved_fp = fp.resolve()
+            if resolved_fp in seen_feature_paths:
+                continue
+            seen_feature_paths.add(resolved_fp)
             ftxt = _read_text(fp)
             scenarios = re.findall(r"^\s*Scenario(?: Outline)?\s*:\s*(.+)$", ftxt, re.MULTILINE)
             tags = sorted(set(re.findall(r"@[A-Za-z0-9_-]+", ftxt)))

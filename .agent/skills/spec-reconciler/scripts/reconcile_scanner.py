@@ -136,6 +136,8 @@ def discover_rfc_files(root: Path, explicit_path: Optional[Path] = None) -> List
         root / "docs" / "RFCs",
         root / "docs" / "rfcs",
         root / "docs" / "RFC",
+        root / "docs" / "specs" / "rfc",
+        root / "docs" / "specs",
         root / "specs" / "rfc",
         root / "specs",
     ]

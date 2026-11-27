@@ -6,7 +6,7 @@ description: >-
 
 # Test Spec Generator v2 (`/test-spec`)
 
-Bu yetenek; projenin **tüm kaynak kodunu** (rotalar, formlar, backend API uç noktaları, veritabanı modelleri, RBAC yetkileri, kardeş repo) ve **tüm dokümanlarını** (`PRODUCT.md`, `PROJECT_BRIEF.md`, `docs/*prd*`, `docs/APIs/`, `DB_MIGRATIONS.md`, `specs/*.feature`, `HANDOFF.md`) tarayarak **ölçülebilir Acceptance Criteria (`AC-XXX`)** ve **Gherkin (`Feature` / `Background` / `Scenario` / `Scenario Outline` / `Given-When-Then`)** senaryolarını **tek bir dosyada** (`docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md`) üretir.
+Bu yetenek; projenin **tüm kaynak kodunu** (rotalar, formlar, backend API uç noktaları, veritabanı modelleri, RBAC yetkileri, kardeş repo) ve **tüm dokümanlarını** (`PRODUCT.md`, `PROJECT_BRIEF.md`, `docs/*prd*`, `docs/APIs/`, `DB_MIGRATIONS.md`, `docs/specs/*.feature`, `HANDOFF.md`) tarayarak **ölçülebilir Acceptance Criteria (`AC-XXX`)** ve **Gherkin (`Feature` / `Background` / `Scenario` / `Scenario Outline` / `Given-When-Then`)** senaryolarını **tek bir dosyada** (`docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md`) üretir.
 
 v2 ile birlikte yetenek **kademeli / artımlı (incremental)** çalışır: daha önce üretilmiş ve `PASS` almış senaryoları gereksiz yere baştan üretmez; `raw_hash` vs `contract_hash` ayrımıyla yalnızca **Major** değişikliklerde ilgili modülü cerrahi olarak günceller, eski `PASS` referanslarını `STALE` durumuna çekerek korur ve **TestSprite / Playwright / Cucumber** için hedefli delta dışa aktarımı (`export-delta`) sunar.
 
@@ -83,10 +83,10 @@ TestSprite, Playwright, Cucumber, JUnit veya manuel doğrulama sonuçları state
 python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py record --state docs/testing/test-spec-state.json --result SC-AUTH-01=PASS --runner testsprite --evidence testsprite_tests/report.md
 
 # 2. Yalnızca çalıştırılması gereken Delta paketini çıkar (+ opsiyonel --include-smoke):
-python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-delta --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --out-md docs/testing/<SLUG>_DELTA_TEST_SPEC.md --out-feature specs/<SLUG>_DELTA.feature
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-delta --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --out-md docs/testing/<SLUG>_DELTA_TEST_SPEC.md --out-feature docs/specs/<SLUG>_DELTA.feature
 
 # 3. Tam paketi tek saf .feature dosyasına ayıkla:
-python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --export-feature docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --out specs/<SLUG>_ALL.feature
+python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --export-feature docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --out docs/specs/<SLUG>_ALL.feature
 ```
 
 ---

@@ -32,7 +32,7 @@ python .agent/skills/verify-sprint/scripts/sprint_auditor.py --smoke --smoke-mod
 ## 5 Aşamalı Sprint Denetim ve Bulgu İşleme Protokolü
 
 ### 1. Kart Kabul Kriterleri (Gherkin AC) Doğrulaması
-- `SPRINT_PLAN.md` ve `KANBAN.md` içindeki aktif kartların `specs/<kart-id>.feature` dosyalarını tara.
+- `SPRINT_PLAN.md` ve `KANBAN.md` içindeki aktif kartların `docs/specs/<kart-id>.feature` dosyalarını tara.
 - Her senaryonun (`Given / When / Then`) karşılığı olan entegrasyon/uçtan uca testin yeşil olduğunu doğrula.
 - Gherkin dosyası veya testi olmayan kartlar `Yapıldı` sütununa taşınamaz.
 

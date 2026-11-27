@@ -131,7 +131,7 @@ def format_kanban_card(idea: dict, sprint: str = "S2", card_id: str | None = Non
         f"| durum | Bekliyor |\n"
         f"| oncelik | {priority} |\n"
         f"| sprint | {sprint} |\n"
-        f"| gherkin | specs/{cid}.feature#{slug} |\n"
+        f"| gherkin | docs/specs/{cid}.feature#{slug} |\n"
         f"| kapi | python tests/run_all.py |\n"
         f"| test | (yazılacak) |\n"
         f"| risk | orta |\n"

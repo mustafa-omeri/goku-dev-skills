@@ -20,7 +20,7 @@
 | durum | Bekliyor |
 | oncelik | P1 |
 | sprint | S<n> |
-| gherkin | specs/S<n>-01.feature#senaryo-adi |
+| gherkin | docs/specs/S<n>-01.feature#senaryo-adi |
 | kapi | python .agent/skills/musgoku/scripts/check_sprint_board.py |
 | test | <yazılacak> |
 | risk | orta |
@@ -48,7 +48,7 @@
 | durum | Yapıldı |
 | oncelik | P1 |
 | sprint | S<n> |
-| gherkin | specs/S<n>-00.feature#ornek-senaryo |
+| gherkin | docs/specs/S<n>-00.feature#ornek-senaryo |
 | kapi | python .agent/skills/musgoku/scripts/check_sprint_board.py |
 | test | Kullanıcı `python .agent/skills/musgoku/scripts/check_sprint_board.py` çalıştırır, `SONUC: ... · [OK]` satırını görür |
 | risk | düşük |

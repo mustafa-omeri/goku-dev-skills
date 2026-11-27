@@ -67,7 +67,7 @@ GOOD_SPRINT = """# SPRINT_PLAN.md
 """
 
 
-def good_card(card_id="S1-01", column="Yapıldı", spec="specs/S1-01.feature",
+def good_card(card_id="S1-01", column="Yapıldı", spec="docs/specs/S1-01.feature",
               test="Kullanıcı kapıyı koşar, 9 kart görür ve SONUC: 1 kart · [OK] yazar"):
     return f"""### {card_id} · Örnek kart
 | alan | değer |
@@ -95,8 +95,8 @@ if TEMPLATE_PATH.is_file():
 
 def make_project(tmp: Path, cards: dict, sprint=GOOD_SPRINT, release=None,
                  write_sprint=True, write_board=True, write_guide=True, write_html_guide=True):
-    (tmp / "specs").mkdir(parents=True, exist_ok=True)
-    (tmp / "specs" / "S1-01.feature").write_text(GOOD_FEATURE, encoding="utf-8")
+    (tmp / "docs" / "specs").mkdir(parents=True, exist_ok=True)
+    (tmp / "docs" / "specs" / "S1-01.feature").write_text(GOOD_FEATURE, encoding="utf-8")
     if write_sprint:
         (tmp / "SPRINT_PLAN.md").write_text(sprint, encoding="utf-8")
     if write_board:
@@ -173,7 +173,7 @@ def test_invalid_is_caught():
 
     # E4 yinelenen kart id
     with tempfile.TemporaryDirectory() as d:
-        card = good_card(spec="specs/S1-01.feature", test="çıktı 3 kart görür")
+        card = good_card(spec="docs/specs/S1-01.feature", test="çıktı 3 kart görür")
         tmp = make_project(Path(d), {"Yapıldı": card, "Bekliyor": card})
         errors, _w, _s = run(tmp)
         check("E4 yinelenen kart id", "E4" in codes(errors), str(sorted(codes(errors))))
@@ -194,14 +194,14 @@ def test_invalid_is_caught():
 
     # E6 gherkin dosyasi yok
     with tempfile.TemporaryDirectory() as d:
-        tmp = make_project(Path(d), {"Yapıldı": good_card(spec="specs/olmayan.feature")})
+        tmp = make_project(Path(d), {"Yapıldı": good_card(spec="docs/specs/olmayan.feature")})
         errors, _w, _s = run(tmp)
         check("E6 gherkin dosyasi yok", "E6" in codes(errors), str(sorted(codes(errors))))
 
     # E7 gherkin icerigi eksik
     with tempfile.TemporaryDirectory() as d:
         tmp = make_project(Path(d), {"Yapıldı": good_card()})
-        (tmp / "specs" / "S1-01.feature").write_text(
+        (tmp / "docs" / "specs" / "S1-01.feature").write_text(
             "# language: tr\nFeature: Ornek\n\n  Yalniz metin, adim yok.\n", encoding="utf-8")
         errors, _w, _s = run(tmp)
         check("E7 gherkin icerigi eksik", "E7" in codes(errors), str(sorted(codes(errors))))
@@ -232,7 +232,7 @@ def test_invalid_is_caught():
     # E11 WIP limiti
     with tempfile.TemporaryDirectory() as d:
         tmp = make_project(Path(d), {"Yapılıyor": good_card("S1-01", "Yapılıyor",
-                                                             "specs/S1-01.feature",
+                                                             "docs/specs/S1-01.feature",
                                                              "ara çıktı 1 kart")})
         errors, _w, _s = run(tmp, wip=0)
         check("E11 WIP limiti", "E11" in codes(errors), str(sorted(codes(errors))))
@@ -265,7 +265,7 @@ def test_valid_is_accepted():
         tmp = make_project(
             Path(d),
             {"Yapıldı": good_card(),
-             "Bekliyor": good_card("S1-07", "Bekliyor", "specs/S1-01.feature",
+             "Bekliyor": good_card("S1-07", "Bekliyor", "docs/specs/S1-01.feature",
                                     "(yazılacak)")},
             release="# RELEASE_PLAN\n\n| S1-07 | neden | S2 | düşük |\n")
         errors, _w, _s = run(tmp)
@@ -276,7 +276,7 @@ def test_valid_is_accepted():
     with tempfile.TemporaryDirectory() as d:
         tmp = make_project(
             Path(d),
-            {"Yapıldı": good_card(spec="specs/S1-01.feature#kart-bittigi-zaman-kapi-yesil-olur")})
+            {"Yapıldı": good_card(spec="docs/specs/S1-01.feature#kart-bittigi-zaman-kapi-yesil-olur")})
         errors, _w, _s = run(tmp)
         check("TR senaryo basligi + ASCII baglanti", not errors,
               "; ".join(f"{c}: {m}" for c, _n, m in errors[:3]))
@@ -284,7 +284,7 @@ def test_valid_is_accepted():
     # WIP limiti tam sinirda -> kabul
     with tempfile.TemporaryDirectory() as d:
         tmp = make_project(Path(d), {"Yapılıyor": good_card("S1-01", "Yapılıyor",
-                                                             "specs/S1-01.feature",
+                                                             "docs/specs/S1-01.feature",
                                                              "ara çıktı 1 kart")},
                            release="# RELEASE_PLAN\n\n| S1-01 | neden | S2 | düşük |\n")
         errors, _w, stats = run(tmp, wip=1)
@@ -315,6 +315,15 @@ def test_warnings_do_not_fail():
                                   "**MVP Kapsam**\n- S1-01 — a\n\n**Kapsam Dışı**\n- S1-09 — b\n")
         _errors, warnings, _s = run(tmp)
         check("W3 MVP disi kart", "W3" in codes(warnings), str(sorted(codes(warnings))))
+
+    # Kok specs/ kullanimi -> W6 uyarisi, hata degil
+    with tempfile.TemporaryDirectory() as d:
+        tmp = make_project(Path(d), {"Yapıldı": good_card(spec="specs/S1-01.feature")})
+        (tmp / "specs").mkdir(parents=True, exist_ok=True)
+        (tmp / "specs" / "S1-01.feature").write_text(GOOD_FEATURE, encoding="utf-8")
+        errors, warnings, _s = run(tmp)
+        check("W6 kok specs uyarisi", "W6" in codes(warnings), str(sorted(codes(warnings))))
+        check("W6 hata degil", not errors, str(sorted(codes(errors))))
 
 
 def main():

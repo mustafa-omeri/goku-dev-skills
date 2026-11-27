@@ -36,7 +36,7 @@ ve kapı sağlar. Sözleşmeye uymayan ajan "yaptım" diyemez.
 | `SPRINT_PLAN.md` | proje kökü | **dağıtılmaz** — proje-özel durum |
 | `KANBAN.md` | proje kökü | **dağıtılmaz** |
 | `RELEASE_PLAN.md` | proje kökü | **dağıtılmaz** |
-| `specs/<kart-id>.feature` | proje kökü `specs/` | **dağıtılmaz** |
+| `docs/specs/<kart-id>.feature` | `docs/specs/` dizini | **dağıtılmaz** |
 | `KULLANICI_TEST_REHBERI.md` | `docs/KULLANICI_TEST_REHBERI.md` (Birincil) veya proje kökü (Geriye Dönük Uyumluluk) | **dağıtılmaz** — proje-özel durum (şablon: `templates/KULLANICI_TEST_REHBERI.template.md`) |
 | `docs/kullanici-rehberi.html` (veya `docs/user-guide.html`) | `docs/` dizini | **dağıtılmaz** — proje-özel interaktif özellik ve kullanım rehberi (şablon: `templates/KULLANICI_REHBERI.template.html`) |
 
@@ -138,7 +138,7 @@ Sprint devam ederken kullanıcı tarafından talep edilen ve yapılması onaylan
 2. **Sprint Planı Revizyonu (`SPRINT_PLAN.md` & `RELEASE_PLAN.md`):**
    Sprint hedefi ve `**MVP Kapsam**` listesi revize edilir. Yeni işin plana dahil edilmesiyle birlikte, WIP limitini (maksimum 3 kart) ve sprint gerçekçiliğini korumak adına ötelenmesi gereken mevcut kartlar belirlenerek `RELEASE_PLAN.md`'ye aktarılır (**Kapsam Takası / Scope Trade-off**). Kullanıcıya hangi işin neden ötelendiği şeffafça bildirilir.
 3. **Feature Dosyası ve Kanban Kartı Açılışı:**
-   PRD'ye işlenen Gherkin senaryosu referans alınarak `specs/<kart-id>.feature` dosyası oluşturulur. `KANBAN.md` üzerinde yeni kart açılır (`gherkin:`, `kapi:`, `test:` alanlarıyla) ve `Bekliyor` sütununa kaydedilir.
+   PRD'ye işlenen Gherkin senaryosu referans alınarak `docs/specs/<kart-id>.feature` dosyası oluşturulur. `KANBAN.md` üzerinde yeni kart açılır (`gherkin:`, `kapi:`, `test:` alanlarıyla) ve `Bekliyor` sütununa kaydedilir.
 4. **TDD Kırmızı → Yeşil Döngüsü:**
    Yeni talep koda dökülürken doğrudan üretim kodu yazılmaz; [`tdd`](../skills/tdd/SKILL.md) disiplini gereğince belirlenen dikiş noktasında (`seam`) önce kırmızı test yazılır, minimal kodla yeşile çevrilir ve doğrulanır.
 
@@ -192,7 +192,7 @@ Başka sütun (`Todo`, `Blocked`, `Done`) **yazılamaz** (E3). Kart geriye
 | durum | Yapıldı |
 | oncelik | P1 |
 | sprint | S1 |
-| gherkin | specs/S1-03.feature#rehber-nokta-basligi |
+| gherkin | docs/specs/S1-03.feature#rehber-nokta-basligi |
 | kapi | python .agent/skills/musgoku/scripts/check_sprint_board.py |
 | test | Kullanıcı KULLANICI_TEST_REHBERI.md açar, 3 numaralı adımı uygular, hangi çıktıyı neyle doğrulayacağını görür |
 | risk | düşük |
@@ -204,7 +204,7 @@ Başka sütun (`Todo`, `Blocked`, `Done`) **yazılamaz** (E3). Kart geriye
 | `durum` | bulunduğu sütunla **birebir aynı** olmalı |
 | `oncelik` | `P1` · `P2` · `P3` |
 | `sprint` | kartın ait olduğu sprint (`S2` = S2'ye taşındı) |
-| `gherkin` | `specs/<id>.feature[#SenaryoAdi]` — **başlamış kartta dosya gerçekten olmalı** |
+| `gherkin` | `docs/specs/<id>.feature[#SenaryoAdi]` — **başlamış kartta dosya gerçekten olmalı** |
 | `kapi` | çalıştırılabilir komut; boş bırakılmaz (E9) |
 | `test` | kullanıcının **gerçekten yapacağı** adım; `Yapıldı`'da boş/sablon olamaz (E8) |
 | `risk` | `yüksek` · `orta` · `düşük` |

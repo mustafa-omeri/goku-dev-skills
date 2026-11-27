@@ -357,7 +357,7 @@ def _sync_sibling_process_files(
             f"| durum | Bekliyor |\n"
             f"| oncelik | P1 |\n"
             f"| sprint | {sprint_tag} |\n"
-            f"| gherkin | specs/{card_id}.feature |\n"
+            f"| gherkin | docs/specs/{card_id}.feature |\n"
             f"| kapi | python .agent/skills/musgoku/scripts/check_handoff.py |\n"
             f"| test | (yazılacak) — {ref_note}{ui_tag} |\n"
             f"{ui_row}"

@@ -30,7 +30,7 @@ def _create_sample_fullstack_project(proj: Path) -> None:
     (proj / "src" / "api").mkdir(parents=True)
     (proj / "backend" / "src" / "main" / "java" / "com" / "acme").mkdir(parents=True)
     (proj / "docs" / "APIs").mkdir(parents=True)
-    (proj / "specs").mkdir(parents=True)
+    (proj / "docs" / "specs").mkdir(parents=True)
 
     (proj / "package.json").write_text(
         json.dumps({"name": "acmePortal", "dependencies": {"react": "^18.2.0", "react-router-dom": "^6.20.0"}}),
@@ -48,7 +48,7 @@ def _create_sample_fullstack_project(proj: Path) -> None:
         "# Projects API\n- `GET /api/v1/projects`\n- `POST /api/v1/projects`\n",
         encoding="utf-8",
     )
-    (proj / "specs" / "AUTH-01.feature").write_text(
+    (proj / "docs" / "specs" / "AUTH-01.feature").write_text(
         "# language: tr\nFeature: Kimlik Doğrulama\n  Scenario: Geçerli giriş\n    Given Kullanıcı login sayfasındadır\n    When Geçerli bilgilerle giriş yapar\n    Then Dashboard açılır\n",
         encoding="utf-8",
     )
@@ -146,7 +146,7 @@ Feature: Proje Yönetimi (/projects)
 - Tespit edilen kritik kod-doküman çelişkisi yoktur.
 
 ## 5. Otomasyon Çalıştırma Komutları & Dışa Aktarım
-- Saf `.feature` üretimi: `python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --export-feature docs/testing/ACMEPORTAL_ACCEPTANCE_TEST_SPEC.md --out specs/ACMEPORTAL_ALL.feature`
+- Saf `.feature` üretimi: `python .agent/skills/test-spec-generator/scripts/test_spec_scanner.py --export-feature docs/testing/ACMEPORTAL_ACCEPTANCE_TEST_SPEC.md --out docs/specs/ACMEPORTAL_ALL.feature`
 """
 
 
@@ -461,7 +461,7 @@ class TestSpecGeneratorTests(unittest.TestCase):
             )
             # SC-PROJ-02 henüz NEW, SC-PROJ-01 FAIL, SC-AUTH-01/02 PASS (SC-AUTH-01 @smoke)
             delta_md = proj / "docs" / "testing" / "DELTA.md"
-            delta_feat = proj / "specs" / "DELTA.feature"
+            delta_feat = proj / "docs" / "specs" / "DELTA.feature"
 
             res = tracker.export_delta_spec(
                 spec_path,

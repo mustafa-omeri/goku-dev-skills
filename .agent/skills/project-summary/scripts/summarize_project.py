@@ -176,7 +176,7 @@ def find_all_rfcs(root: Path) -> list[Path]:
     rfcs: list[Path] = []
     seen: set[str] = set()
 
-    candidate_subdirs = ["RFCs", "rfcs", "RFC", "docs/rfc", "docs/RFCs", "docs/rfcs", "specs/rfc", "specs"]
+    candidate_subdirs = ["RFCs", "rfcs", "RFC", "docs/rfc", "docs/RFCs", "docs/rfcs", "docs/specs/rfc", "docs/specs", "specs/rfc", "specs"]
     for subdir_name in candidate_subdirs:
         s_dir = root / subdir_name
         if s_dir.is_dir():

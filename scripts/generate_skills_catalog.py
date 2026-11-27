@@ -441,7 +441,7 @@ python .agent/skills/test-spec-generator/scripts/check_test_spec.py --spec docs/
 
 # 4. PASS Kaydı & Delta Export (Yalnız NEW + STALE + FAIL):
 python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py record --state docs/testing/test-spec-state.json --import-testsprite testsprite_tests/report.md --runner testsprite
-python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-delta --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --out-md docs/testing/<SLUG>_DELTA_TEST_SPEC.md --out-feature specs/<SLUG>_DELTA.feature""",
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-delta --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --out-md docs/testing/<SLUG>_DELTA_TEST_SPEC.md --out-feature docs/specs/<SLUG>_DELTA.feature""",
         "emergency": [
             {
                 "symptom": "E6_UNCOVERED_SURFACE kapı hatası",
@@ -2106,7 +2106,7 @@ python .agent/skills/seo-growth/scripts/seo_checker.py --strict"""
 
 # - Sprint Planı       : <repo-kök>/SPRINT_PLAN.md
 
-# - Gherkin Senaryoları: specs/S1-01-*.feature"""
+# - Gherkin Senaryoları: docs/specs/S1-01-*.feature"""
 
     },
 
@@ -2158,7 +2158,7 @@ python .agent/skills/seo-growth/scripts/seo_checker.py --strict"""
 
         "badge_class": "badge-warning",
 
-        "file": "SPRINT_PLAN.md / KANBAN.md / specs/*.feature",
+        "file": "SPRINT_PLAN.md / KANBAN.md / docs/specs/*.feature",
 
         "features": ["Aktif Sprint Kabul Denetimi", "Gherkin Senaryo Doğrulaması", "Kart Başına 5 Katman", "check_sprint_board.py + --smoke"],
 
@@ -2247,7 +2247,7 @@ python .agent/skills/test-spec-generator/scripts/check_test_spec.py --spec docs/
 
 # 4. PASS Kaydı & Delta Export (Yalnız NEW + STALE + FAIL + FLAKY):
 python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py record --state docs/testing/test-spec-state.json --import-testsprite testsprite_tests/report.md --runner testsprite
-python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-delta --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --out-feature specs/<SLUG>_DELTA.feature"""
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-delta --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --out-feature docs/specs/<SLUG>_DELTA.feature"""
 
     },
 

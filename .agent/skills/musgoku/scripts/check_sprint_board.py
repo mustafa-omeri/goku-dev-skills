@@ -343,6 +343,11 @@ def check(root: Path, wip_limit: int = 3):
             # E6 / E7 gherkin — yalniz baslamis kartlar icin
             if column in STARTED_COLUMNS:
                 spec = fields["gherkin"].split("#")[0].strip()
+                norm_spec = spec.replace("\\", "/")
+                if norm_spec.startswith("specs/"):
+                    warnings.append(("W6", "KANBAN.md",
+                                     f"satir {line}: {where} gherkin yolu kök `specs/` "
+                                     f"yerine `docs/specs/` altında olmalıdır -> `{spec}`"))
                 spec_path = root / spec
                 if not spec or spec in ("-", "yazılacak", "yazilacak"):
                     errors.append(("E6", "KANBAN.md",

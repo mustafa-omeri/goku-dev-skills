@@ -249,8 +249,8 @@ class TestSmokeRunner(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as tmp:
             repo = _build_temp_fullstack_repo(Path(tmp))
-            (repo / "specs").mkdir(exist_ok=True)
-            (repo / "specs" / "S1-01.feature").write_text(
+            (repo / "docs" / "specs").mkdir(parents=True, exist_ok=True)
+            (repo / "docs" / "specs" / "S1-01.feature").write_text(
                 "Feature: Projects\n  Scenario: List\n    Given user\n    When open\n    Then list\n",
                 encoding="utf-8",
             )
@@ -263,7 +263,7 @@ class TestSmokeRunner(unittest.TestCase):
             (repo / "KANBAN.md").write_text(
                 "## Yapıldı\n\n### S1-01 · Projects listesi\n| alan | değer |\n|---|---|\n"
                 "| durum | Yapıldı |\n| oncelik | P1 |\n| sprint | S1 |\n"
-                "| gherkin | specs/S1-01.feature |\n| kapi | python x.py |\n"
+                "| gherkin | docs/specs/S1-01.feature |\n| kapi | python x.py |\n"
                 "| test | Tarayıcıda /projects açılır |\n| risk | düşük |\n",
                 encoding="utf-8",
             )

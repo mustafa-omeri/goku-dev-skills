@@ -34,7 +34,7 @@ Bu araç boyut/karmaşıklık skorunu, i18n/test demetlerini (`bundles`), kapsam
 ### 2. Şartname Kaynağını Belirleyin
 1. Commit mesajlarındaki issue referansları (`#123`, `Closes #45`).
 2. Kullanıcının doğrudan parametre olarak verdiği yol.
-3. `docs/`, `specs/`, `.scratch/` veya PRD dosyaları.
+3. `docs/`, `docs/specs/`, `.scratch/` veya PRD dosyaları.
 4. Hiçbiri yoksa kullanıcıya spec kaynağını sorun. Spec yoksa Şartname alt ajanı "Şartname bulunamadı" raporlar.
 
 ### 3. Standartlar ve Fowler Kod Kokusu Tabanı (Smell Baseline)

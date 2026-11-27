@@ -50,7 +50,7 @@ class SprintAuditorSeamTests(unittest.TestCase):
                 "<aside class='app-sidebar'></aside><div id='features-container'></div>",
                 encoding="utf-8",
             )
-            # KANBAN has S12-28 in Yapıldı, but specs/S12-28.feature is missing, and test is placeholder
+            # KANBAN has S12-28 in Yapıldı, but docs/specs/S12-28.feature is missing, and test is placeholder
             (root / "KANBAN.md").write_text(
                 "## Bekliyor\n\n## Yapılıyor\n\n## Sınırdı\n\n## Yapıldı\n\n"
                 "### S12-28 · Bildirim Gönderimi\n"
@@ -59,7 +59,7 @@ class SprintAuditorSeamTests(unittest.TestCase):
                 "| durum | Yapıldı |\n"
                 "| oncelik | P1 |\n"
                 "| sprint | S12 |\n"
-                "| gherkin | specs/S12-28.feature#bildirim |\n"
+                "| gherkin | docs/specs/S12-28.feature#bildirim |\n"
                 "| kapi | pytest tests/test_notifications.py |\n"
                 "| test | todo |\n"
                 "| risk | orta |\n",
@@ -84,8 +84,8 @@ class SprintAuditorSeamTests(unittest.TestCase):
                 "## Sprint 12\n**Hedef**: Test Hedef\n**MVP Kapsam**: S12-28\n**Kapsam Dışı**: Yok\n",
                 encoding="utf-8",
             )
-            (root / "specs").mkdir(parents=True)
-            (root / "specs" / "S12-28.feature").write_text(
+            (root / "docs" / "specs").mkdir(parents=True)
+            (root / "docs" / "specs" / "S12-28.feature").write_text(
                 "# language: tr\n"
                 "Feature: Bildirim\n\n"
                 "  Scenario: Bildirim basarili\n"
@@ -94,7 +94,7 @@ class SprintAuditorSeamTests(unittest.TestCase):
                 "    Then bildirim basariyla iletilir\n",
                 encoding="utf-8",
             )
-            (root / "docs").mkdir(parents=True)
+            (root / "docs").mkdir(parents=True, exist_ok=True)
             (root / "docs" / "KULLANICI_TEST_REHBERI.md").write_text(
                 "# Test Rehberi\n## S12-28 Bildirim Testi\n1. Bildirim butonuna bas.\n2. Toast mesajını gözle doğrula.\n",
                 encoding="utf-8",
@@ -111,7 +111,7 @@ class SprintAuditorSeamTests(unittest.TestCase):
                 "| durum | Yapıldı |\n"
                 "| oncelik | P1 |\n"
                 "| sprint | S12 |\n"
-                "| gherkin | specs/S12-28.feature#bildirim-basarili |\n"
+                "| gherkin | docs/specs/S12-28.feature#bildirim-basarili |\n"
                 "| kapi | pytest tests/test_notifications.py |\n"
                 "| test | Kullanıcı bildirim butonuna basar ve toast mesajını görür |\n"
                 "| risk | orta |\n",
@@ -129,7 +129,7 @@ class SprintAuditorSeamTests(unittest.TestCase):
             title="Bildirim Gönderimi",
             sprint="12",
             initial_status="Geliştirme tamamlandı, ilk birim testleri yeşil (PASS)",
-            findings="specs/S12-28.feature eksik, kullanıcı test adımı placeholder idi",
+            findings="docs/specs/S12-28.feature eksik, kullanıcı test adımı placeholder idi",
             fix_applied="Gherkin senaryosu yazıldı ve kullanıcı test adımı somutlaştırıldı",
             tests_run="pytest tests/test_notifications.py",
             recheck_status="Sıfır bulgu (Zero Findings), kart Yapıldı sütununa taşındı ve sprint onaylandı",

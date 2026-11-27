@@ -22,7 +22,7 @@
 | 4 | İş alanı terimleri ve ortak dil sözlüğü (varsa) | `<repo-kök>\GLOSSARY.md` |
 | 5 | Tasarım dili ve token sözleşmesi (UI/UX işlerinde) | `<repo-kök>\DESIGN.md` |
 | Projenin kısa/uzun kapsamlı konsolide özeti | docs/<SLUG>_PROJECT_SUMMARY_SHORT.md veya docs/<SLUG>_PROJECT_SUMMARY_LONG.md |
-| Proje geneli tek dosya Gherkin & Acceptance Criteria spesifikasyonu | docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md (ve --export-feature ile specs/<SLUG>_ALL.feature) |
+| Proje geneli tek dosya Gherkin & Acceptance Criteria spesifikasyonu | docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md (ve --export-feature ile docs/specs/<SLUG>_ALL.feature) |
 | Özelliklerin adım adım yapılışını ve kullanımını anlatan HTML rehberi | docs/kullanici-rehberi.html (veya docs/user-guide.html) |
 | Kullanıcının bizzat gözüyle doğrulayacağı manuel test senaryoları | docs/KULLANICI_TEST_REHBERI.md |
 | Mimari geliştirme ve uygulama planı (/plan) | Taslak: `<artifact-dir>/<plan_name>.md` (veya `.agent/plans/`) · Onay sonrası kalıcı arşiv: `docs/plans/plan_<slug>_<timestamp>.md` (şablon: `templates/PLAN.template.md`) |
@@ -75,7 +75,7 @@ Ajan kod yazmaya, düzenlemeye veya refactoring yapmaya başlamadan önce *"Bu i
 | Mimari karar kaydı (ADR) | `docs/adr/` |
 | Tasarım dili, token'lar ve kurallar | `<repo-kök>\DESIGN.md` |
 | Projenin kısa/uzun kapsamlı konsolide özeti | docs/<SLUG>_PROJECT_SUMMARY_SHORT.md veya docs/<SLUG>_PROJECT_SUMMARY_LONG.md |
-| Proje geneli tek dosya Gherkin & Acceptance Criteria spesifikasyonu | docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md (ve --export-feature ile specs/<SLUG>_ALL.feature) |
+| Proje geneli tek dosya Gherkin & Acceptance Criteria spesifikasyonu | docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md (ve --export-feature ile docs/specs/<SLUG>_ALL.feature) |
 | Özelliklerin adım adım yapılışını ve kullanımını anlatan HTML rehberi | docs/kullanici-rehberi.html (veya docs/user-guide.html) |
 | Kullanıcının bizzat gözüyle doğrulayacağı manuel test senaryoları | docs/KULLANICI_TEST_REHBERI.md |
 | Mimari geliştirme ve uygulama planı (/plan) | Taslak: `<artifact-dir>/<plan_name>.md` (veya `.agent/plans/`) · Onay sonrası kalıcı arşiv: `docs/plans/plan_<slug>_<timestamp>.md` (şablon: `templates/PLAN.template.md`) |

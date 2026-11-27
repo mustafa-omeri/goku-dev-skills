@@ -283,7 +283,7 @@ export async function createOrder() {
             self.assertIn("W4", {c for c, _ in warns})
 
             # KANBAN W5: İki açık kart aynı başlık/yüzeyde semantik tekrar
-            _write(root / "specs" / "S1-01.feature", "Feature: F\n  Scenario: S\n    Given a\n    When b\n    Then c\n")
+            _write(root / "docs" / "specs" / "S1-01.feature", "Feature: F\n  Scenario: S\n    Given a\n    When b\n    Then c\n")
             _write(root / "docs" / "KULLANICI_TEST_REHBERI.md", "# Test\n")
             tpl = (REPO_ROOT / ".agent" / "templates" / "KULLANICI_REHBERI.template.html").read_text(encoding="utf-8")
             _write(
@@ -304,7 +304,7 @@ export async function createOrder() {
 | durum | Bekliyor |
 | oncelik | P1 |
 | sprint | S1 |
-| gherkin | specs/S1-01.feature |
+| gherkin | docs/specs/S1-01.feature |
 | kapi | python .agent/skills/musgoku/scripts/check_sprint_board.py |
 | test | (yazılacak) |
 | risk | düşük |
@@ -315,7 +315,7 @@ export async function createOrder() {
 | durum | Bekliyor |
 | oncelik | P2 |
 | sprint | S1 |
-| gherkin | specs/S1-01.feature |
+| gherkin | docs/specs/S1-01.feature |
 | kapi | python .agent/skills/musgoku/scripts/check_sprint_board.py |
 | test | (yazılacak) |
 | risk | düşük |

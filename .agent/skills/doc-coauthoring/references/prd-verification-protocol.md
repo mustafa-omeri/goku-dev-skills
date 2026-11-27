@@ -18,7 +18,7 @@ Yapay zeka kodlama asistanlarının en yaygın zaaflarından biri **Erken Tamaml
 ## 2. 4 Aşamalı Doğrulama Döngüsü
 
 ### Aşama 1: Şartname ve Kabul Kriteri Eşleştirmesi (Spec & AC Audit)
-- `docs/prd/`, `specs/`, `KANBAN.md` veya kullanıcının ilk prompt'undaki iş kuralları taranır.
+- `docs/prd/`, `docs/specs/`, `KANBAN.md` veya kullanıcının ilk prompt'undaki iş kuralları taranır.
 - Her kabul kriteri için şu soru sorulur: *"Bu kural kaynak kodda nerede uygulanıyor ve hangi otomatik testle kanıtlanıyor?"*
 - Karşılanmayan veya eksik bırakılan maddeler açıkça listelenir.
 

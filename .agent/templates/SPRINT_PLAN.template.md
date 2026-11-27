@@ -50,8 +50,8 @@ Uygulama içinde veya altyapıda kullanılacak harici bağımlılıklar:
 
 ## Kabul Kriterleri (Acceptance Criteria / Gherkin Referansları)
 
-- **S<n>-01:** `specs/S<n>-01.feature` (<Senaryo: Given/When/Then>)
-- **S<n>-02:** `specs/S<n>-02.feature` (<Senaryo: Given/When/Then>)
+- **S<n>-01:** `docs/specs/S<n>-01.feature` (<Senaryo: Given/When/Then>)
+- **S<n>-02:** `docs/specs/S<n>-02.feature` (<Senaryo: Given/When/Then>)
 
 ## Kullanıcı İnceleme ve Onay Durumu
 
