@@ -22,7 +22,8 @@ Commit ve sürüm etiketlemesine geçmeden önce çalışma ağacındaki tüm ka
 python .agent/skills/musgoku/scripts/run_all_gates.py
 ```
 - Uygulama kodu (`src/**`, `app/**`, `api/**`) değiştiyse ilgili derleme (`npm run build` / `mvn clean test-compile` + `pwsh -NoProfile -File .agent/skills/musgoku/scripts/check-unused.ps1`), tip kontrolü (`npx tsc --noEmit`) ve birim testlerini çalıştır.
-- ⛔ **Blokaj Kuralı:** Herhangi bir kapı `[FAIL]` dönerse (`E3`/`E4`/`E5`/`E6` `PROJECT_BRIEF.md` sapması, `check_handoff.py` `E3` sapması veya test hatası) commit işlemi **durdurulur**, önce eksik doküman/kod onarılır ve kapı yeşile döndürülür.
+- ⛔ **Blokaj ve Bahane Yasağı (Zero-Bypass Rule):** Herhangi bir kapı `[FAIL]` dönerse (`E3`/`E4`/`E5`/`E6` `PROJECT_BRIEF.md` sapması, `check_handoff.py`, `check_theme_contrast.py` veya test hatası) commit işlemi **derhal durdurulur**. Bulgunun *"önceden var olan (pre-existing)"*, *"dokunulan diff dışında kalan"* veya *"false-positive"* olduğu gerekçesiyle tek taraflı rasyonalizasyon yapılıp commit/tag/push **ASLA sürdürülemez**; önce kök neden (kod/CSS veya ilgili kapı scripti) onarılır ve kapı yeşile döndürülür.
+- ⚠️ **Açık Kullanıcı İstisnası Zorunluluğu:** Kullanıcı tüm `[FAIL]` çıktısını gördükten sonra o bulgu için **açıkça istisna onayı** verirse işlem sürdürülebilir; ancak bu durumda aşağıdaki temiz yayın başlığı (`OTONOM SÜRÜM YAYINI TAMAMLANDI` / `0 başarısız`) **kullanılamaz**, yerine `⚠️ COMMITX: İSTİSNALI SÜRÜM YAYINI (Onaylı Mevcut Bulgu)` başlığı basılır.
 
 ### 2. Oturum Devri ve Hafıza Senkronizasyonu
 Commit öncesi çalışma ağacında şu dosyaların güncel olduğundan emin ol:
@@ -57,3 +58,5 @@ git push origin HEAD --tags
 - **Sürüm Etiketi (Tag):** `vX.Y.Z`
 - **Uzak Depo (Remote):** `origin/<branch>` + `--tags` başarıyla gönderildi.
 ```
+
+*(Kullanıcının açık onayıyla bilinen bir `[FAIL]` istisnası geçildiyse başlık `### ⚠️ COMMITX: İSTİSNALI SÜRÜM YAYINI (Onaylı Mevcut Bulgu)` olur ve onaylanan bulgu açıkça yazılır.)*

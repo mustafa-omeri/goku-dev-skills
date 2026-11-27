@@ -29,6 +29,11 @@ sinif: SUREC
    koşturmak **YASAKTIR (ATLANIR)**. Kaynak kod değişmemiştir; test çalıştırmak
    gereksiz zaman ve token israfıdır. Yalnızca `src/`, `package.json`, `pom.xml` gibi
    uygulama kodu değiştiğinde derleme ve testler zorunludur.
+   ⚠️ **Kapsam-Duyarlılık ≠ Kapı Atlama:** Bu madde yalnızca ağır derleme/test
+   komutlarının gereksiz çalıştırılmasını önler; `run_all_gates.py` çalıştırıldığında
+   herhangi bir kapı (`[FAIL]`) kırmızı dönerse *"değişiklik diff dışında / önceden var /
+   false-positive"* gerekçesiyle tek taraflı commit/push **yapılamaz**. Önce kök neden
+   (kod/CSS veya kapı scripti) düzeltilir ya da kullanıcıdan açık istisna onayı alınır.
 
 ## Adım özeti
 

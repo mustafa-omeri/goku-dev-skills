@@ -40,7 +40,7 @@ const https = require('https');
 
 
 
-const VERSION = '1.50.0';
+const VERSION = '1.50.1';
 
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 

@@ -165,6 +165,184 @@ class TestCheckThemeContrast(unittest.TestCase):
         # Selection-bg normal text ile kıyaslanıp sahte hata vermemeli
         self.assertEqual(len(errors), 0)
 
+    def test_shadcn_tokens_no_false_positives(self):
+        """Standart shadcn/ui :root ve .dark token setinde sıfır false-positive üretmeli."""
+        styles_dir = self.tmp_dir / "src"
+        styles_dir.mkdir()
+        css = styles_dir / "index.css"
+        css.write_text(
+            """
+            @layer base {
+              :root {
+                --background: 0 0% 100%;
+                --foreground: 0 0% 3.9%;
+                --card: 0 0% 100%;
+                --card-foreground: 0 0% 3.9%;
+                --popover: 0 0% 100%;
+                --popover-foreground: 0 0% 3.9%;
+                --primary: 203 73% 38%;
+                --primary-foreground: 0 0% 98%;
+                --secondary: 0 0% 96.1%;
+                --secondary-foreground: 0 0% 9%;
+                --muted: 0 0% 96.1%;
+                --muted-foreground: 0 0% 45.1%;
+                --accent: 203 61% 56%;
+                --accent-foreground: 0 0% 9%;
+                --destructive: 0 72.2% 50.6%;
+                --destructive-foreground: 0 0% 98%;
+                --border: 0 0% 89.8%;
+                --input: 0 0% 89.8%;
+                --ring: 203 73% 38%;
+                --chart-1: 203 61% 56%;
+                --radius: 0.5rem;
+              }
+              .dark {
+                --background: 0 0% 3.9%;
+                --foreground: 0 0% 98%;
+                --card: 0 0% 3.9%;
+                --card-foreground: 0 0% 98%;
+                --popover: 0 0% 3.9%;
+                --popover-foreground: 0 0% 98%;
+                --primary: 203 61% 56%;
+                --primary-foreground: 0 0% 9%;
+                --secondary: 0 0% 14.9%;
+                --secondary-foreground: 0 0% 98%;
+                --muted: 0 0% 14.9%;
+                --muted-foreground: 0 0% 63.9%;
+                --accent: 203 73% 38%;
+                --accent-foreground: 0 0% 98%;
+                --destructive: 0 62.8% 30.6%;
+                --destructive-foreground: 0 0% 98%;
+              }
+            }
+            """,
+            encoding="utf-8",
+        )
+        errors, _, blocks, _ = check_theme_contrast.check(self.tmp_dir)
+        self.assertEqual(blocks, 2)
+        self.assertEqual(len(errors), 0, f"Beklenmeyen false-positive: {[e.message for e in errors]}")
+
+    def test_shadcn_paired_foreground_low_contrast_fails_e1(self):
+        """Eşleşen --primary ve --primary-foreground çifti < 4.5:1 olduğunda E1 vermeli."""
+        styles_dir = self.tmp_dir / "src"
+        styles_dir.mkdir()
+        css = styles_dir / "bad_primary.css"
+        css.write_text(
+            """
+            :root {
+                --background: 0 0% 100%;
+                --foreground: 0 0% 3.9%;
+                --primary: 200 90% 70%;
+                --primary-foreground: 0 0% 98%; /* Açık mavi üstüne beyaz metin -> düşük kontrast */
+            }
+            """,
+            encoding="utf-8",
+        )
+        errors, _, _, _ = check_theme_contrast.check(self.tmp_dir)
+        self.assertTrue(
+            any(e.code == "E1" and e.bg_name == "--primary" and e.text_name == "--primary-foreground" for e in errors),
+            f"--primary/--primary-foreground çifti yakalanmadı: {[e.message for e in errors]}",
+        )
+
+    def test_shadcn_accent_and_destructive_pairs_checked(self):
+        """--accent/--accent-foreground ve --destructive/--destructive-foreground çiftleri de denetlenmeli."""
+        styles_dir = self.tmp_dir / "src"
+        styles_dir.mkdir()
+        css = styles_dir / "bad_accent_destr.css"
+        css.write_text(
+            """
+            :root {
+                --background: 0 0% 100%;
+                --foreground: 0 0% 3.9%;
+                --accent: 210 100% 85%;
+                --accent-foreground: 0 0% 98%;
+                --destructive: 0 85% 75%;
+                --destructive-foreground: 0 0% 98%;
+            }
+            """,
+            encoding="utf-8",
+        )
+        errors, _, _, _ = check_theme_contrast.check(self.tmp_dir)
+        pair_hits = {(e.bg_name, e.text_name) for e in errors if e.code == "E1"}
+        self.assertIn(("--accent", "--accent-foreground"), pair_hits)
+        self.assertIn(("--destructive", "--destructive-foreground"), pair_hits)
+
+    def test_shadcn_v3_sidebar_background_pair_checked(self):
+        """shadcn v3 --sidebar-background ve --sidebar-foreground çifti doğru eşlenmeli."""
+        styles_dir = self.tmp_dir / "src"
+        styles_dir.mkdir()
+        css = styles_dir / "sidebar.css"
+        css.write_text(
+            """
+            :root {
+                --background: 0 0% 100%;
+                --foreground: 0 0% 3.9%;
+                --sidebar-background: 240 5.9% 10%;
+                --sidebar-foreground: 240 5.9% 15%; /* Koyu zemin üstünde koyu metin */
+            }
+            """,
+            encoding="utf-8",
+        )
+        errors, _, _, _ = check_theme_contrast.check(self.tmp_dir)
+        self.assertTrue(
+            any(e.code == "E1" and e.bg_name == "--sidebar-background" and e.text_name == "--sidebar-foreground" for e in errors),
+            f"sidebar çifti yakalanmadı: {[e.message for e in errors]}",
+        )
+
+    def test_partial_dark_override_inherits_pair_from_root(self):
+        """.dark yalnız --primary değiştirirse :root'tan miras alınan --primary-foreground ile test edilmeli."""
+        styles_dir = self.tmp_dir / "src"
+        styles_dir.mkdir()
+        css = styles_dir / "partial_dark.css"
+        css.write_text(
+            """
+            :root {
+                --background: 0 0% 100%;
+                --foreground: 0 0% 3.9%;
+                --primary: 222.2 47.4% 11.2%;
+                --primary-foreground: 0 0% 98%;
+            }
+            .dark {
+                --background: 0 0% 3.9%;
+                --foreground: 0 0% 98%;
+                --primary: 0 0% 95%; /* Açık zemin yapılıp --primary-foreground (#FAFAFA) override edilmemiş */
+            }
+            """,
+            encoding="utf-8",
+        )
+        errors, _, _, _ = check_theme_contrast.check(self.tmp_dir)
+        self.assertTrue(
+            any(
+                e.code == "E1"
+                and ".dark" in e.theme_selector
+                and e.bg_name == "--primary"
+                and e.text_name == "--primary-foreground"
+                for e in errors
+            ),
+            f"Kısmi .dark miras hatası yakalanmadı: {[e.message for e in errors]}",
+        )
+
+    def test_unpaired_muted_and_text_secondary_still_checked(self):
+        """Partneri olmayan tekil --muted ve --text-secondary klasik temalarda hala E2 ile yakalanmalı."""
+        styles_dir = self.tmp_dir / "src"
+        styles_dir.mkdir()
+        css = styles_dir / "legacy_muted.css"
+        css.write_text(
+            """
+            :root {
+                --bg: #ffffff;
+                --text: #111827;
+                --muted: #e5e7eb; /* --muted-foreground yok -> metin token'ı ve çok soluk */
+                --text-secondary: #f3f4f6;
+            }
+            """,
+            encoding="utf-8",
+        )
+        errors, _, _, _ = check_theme_contrast.check(self.tmp_dir)
+        hit_texts = {e.text_name for e in errors if e.code == "E2"}
+        self.assertIn("--muted", hit_texts)
+        self.assertIn("--text-secondary", hit_texts)
+
 
 if __name__ == "__main__":
     unittest.main()

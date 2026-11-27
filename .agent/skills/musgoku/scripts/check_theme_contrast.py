@@ -356,8 +356,86 @@ def extract_theme_blocks(css_path: Path) -> List[ThemeBlock]:
     return blocks
 
 
+GLOBAL_BASE_BG_STEMS = {
+    "background", "background-color", "bg", "bg-base", "bg-surface", "bg-elevated",
+    "canvas", "page", "app", "surface", "card", "popover", "panel",
+    "theme-surface", "color-base", "color-canvas-base",
+}
+
+EXCLUDED_SUBSTRINGS = (
+    "border", "line", "shadow", "glow", "radius", "font", "size",
+    "caret", "ring", "input", "chart-", "scrollbar", "scrim", "hairline",
+    "-hover", "-soft", "-dim", "inverse",
+)
+
+
+def _find_surface_partner(stem: str, all_vars: Dict[str, str]) -> Optional[str]:
+    """Bir foreground/text/on-* token gövdesi için zemin değişkenini bulur."""
+    if not stem:
+        return None
+    for candidate in (f"--{stem}", f"--{stem}-background", f"--{stem}-bg"):
+        if candidate in all_vars:
+            return candidate
+    return None
+
+
+def find_paired_tokens(
+    block_vars: Dict[str, str],
+    combined_store: Optional[Dict[str, str]] = None,
+) -> List[Tuple[str, str, float, str]]:
+    """Aynı tema bağlamındaki `--<stem>` <-> `--<stem>-foreground`/`-text`/`--on-<stem>` çiftlerini bulur.
+
+    Dönüş: [(bg_var, fg_var, min_ratio, code_if_fail), ...]
+    Yalnızca en az bir üyesi `block_vars` içinde tanımlı çiftler döndürülür (kısmi `.dark`
+    override'larını yakalarken `:root` çiftlerini tekrar raporlamamak için).
+    """
+    all_vars = combined_store if combined_store is not None else block_vars
+    pairs: List[Tuple[str, str, float, str]] = []
+    seen = set()
+
+    for name in all_vars.keys():
+        low = name.lower()
+        if "selection-bg" in low or "selection-text" in low:
+            continue
+        if any(ex in low for ex in EXCLUDED_SUBSTRINGS):
+            continue
+
+        stem: Optional[str] = None
+        if low.endswith("-foreground") and len(low) > len("--foreground"):
+            stem = name[2 : -len("-foreground")]
+        elif low.endswith("-text") and len(low) > len("--text"):
+            candidate_stem = name[2 : -len("-text")]
+            if candidate_stem.lower() not in ("primary", "secondary", "muted", "faint", "color", "theme", "selection"):
+                stem = candidate_stem
+        elif low.startswith("--on-") and len(low) > len("--on-"):
+            stem = name[len("--on-") :]
+
+        if not stem:
+            continue
+
+        bg_var = _find_surface_partner(stem, all_vars)
+        if not bg_var:
+            continue
+
+        if bg_var not in block_vars and name not in block_vars:
+            continue
+
+        key = (bg_var, name)
+        if key in seen:
+            continue
+        seen.add(key)
+
+        is_muted_fg = "muted" in low or "tertiary" in low
+        min_ratio = 3.0 if is_muted_fg else 4.5
+        code = "E2" if is_muted_fg else "E1"
+        pairs.append((bg_var, name, min_ratio, code))
+
+    return pairs
+
+
 def categorize_variables(
     vars_dict: Dict[str, str],
+    combined_store: Optional[Dict[str, str]] = None,
 ) -> Tuple[List[str], List[str], List[str], List[str], Optional[Tuple[str, str]]]:
     """CSS değişkenlerini zemin, birincil metin, ikincil/muted, faint ve selection olarak sınıflandırır."""
     bg_candidates: List[str] = []
@@ -366,11 +444,17 @@ def categorize_variables(
     faint_text: List[str] = []
     selection_pair: Optional[Tuple[str, str]] = None
 
+    all_vars = combined_store if combined_store is not None else vars_dict
+    paired = find_paired_tokens(vars_dict, all_vars)
+    paired_bgs = {bg for bg, _, _, _ in paired}
+    paired_fgs = {fg for _, fg, _, _ in paired}
+
     sel_bg = None
     sel_text = None
 
     for name in vars_dict.keys():
         low = name.lower()
+        stem_low = low[2:] if low.startswith("--") else low
 
         # Selection değişkenleri ayrıştırılır
         if "selection-bg" in low:
@@ -380,8 +464,24 @@ def categorize_variables(
             sel_text = name
             continue
 
-        # Hariç tutulanlar
-        if any(ex in low for ex in ("border", "line", "shadow", "glow", "radius", "font", "size", "caret", "accent", "on-", "inverse")):
+        # Eşleşen özel çiftlerin ön yüzleri (örn. --primary-foreground, --destructive-foreground)
+        # yalnızca kendi zeminleriyle kıyaslanır; istisna olarak --muted-foreground genel yüzeylerde de
+        # ikincil metin olarak denetlenir.
+        if name in paired_fgs:
+            if "muted" in low:
+                muted_text.append(name)
+            continue
+
+        # Eşleşen bileşen yüzeyleri (örn. --primary, --secondary, --muted, --destructive, --accent,
+        # --sidebar-background) metin olarak sınıflandırılmaz; genel sayfa yüzeyleri (--card, --popover)
+        # ise genel metinler için bg_candidates'ta kalır.
+        if name in paired_bgs:
+            if stem_low in GLOBAL_BASE_BG_STEMS:
+                bg_candidates.append(name)
+            continue
+
+        # Hariç tutulanlar (eşleşmiş --accent çifti yukarıda yakalandığı için tekil accent* burada elenir)
+        if any(ex in low for ex in EXCLUDED_SUBSTRINGS) or "accent" in low or "on-" in low:
             continue
 
         # Zemin adayları
@@ -395,7 +495,7 @@ def categorize_variables(
             faint_text.append(name)
             continue
 
-        # Muted / İkincil metin
+        # Muted / İkincil metin (yalnız partneri olmayan tekil --muted / --secondary veya --text-muted)
         if any(m in low for m in ("muted", "secondary", "tertiary")):
             muted_text.append(name)
             continue
@@ -429,7 +529,10 @@ def audit_theme_block(
 
     combined_store = {**root_store, **parent_theme_store, **block.variables}
 
-    bg_vars, primary_vars, muted_vars, faint_vars, selection_pair = categorize_variables(block.variables)
+    paired_checks = find_paired_tokens(block.variables, combined_store)
+    bg_vars, primary_vars, muted_vars, faint_vars, selection_pair = categorize_variables(
+        block.variables, combined_store=combined_store
+    )
 
     # Zemin adaylarını derle
     raw_bgs: List[Tuple[str, ColorRGBA]] = []
@@ -489,6 +592,51 @@ def audit_theme_block(
                     )
                 )
 
+    # 0.5 Eşleşen bileşen çiftleri (--<stem> <-> --<stem>-foreground / -text / --on-<stem>)
+    fallback_bg = resolved_bgs[0][1] if resolved_bgs else None
+    for p_bg_name, p_fg_name, min_ratio, fail_code in paired_checks:
+        p_bg_col = parse_color(combined_store[p_bg_name], combined_store)
+        p_fg_col = parse_color(combined_store[p_fg_name], combined_store)
+        if not p_bg_col or not p_fg_col:
+            continue
+        if p_bg_col.a < 1.0 and fallback_bg is not None:
+            p_bg_col = p_bg_col.composite_over(fallback_bg)
+        ratio = calculate_contrast_ratio(p_fg_col, p_bg_col)
+        if ratio < min_ratio:
+            findings.append(
+                Finding(
+                    code=fail_code,
+                    message=(
+                        f"Eşleşen çift '{p_fg_name}' ({p_fg_col.hex}), kendi zemini '{p_bg_name}' ({p_bg_col.hex}) "
+                        f"üzerinde WCAG sınırının altında ({ratio:.2f}:1 < {min_ratio:.1f}:1)."
+                    ),
+                    file_path=block.file_path,
+                    line_number=block.line_number,
+                    theme_selector=block.selector,
+                    bg_name=p_bg_name,
+                    text_name=p_fg_name,
+                    ratio=ratio,
+                    required_ratio=min_ratio,
+                )
+            )
+        elif fail_code == "E2" and ratio < 4.5:
+            findings.append(
+                Finding(
+                    code="W1",
+                    message=(
+                        f"Muted çift '{p_fg_name}' ({p_fg_col.hex}), '{p_bg_name}' ({p_bg_col.hex}) "
+                        f"üzerinde {ratio:.2f}:1 kontrastında (3.0:1 sınırını geçiyor ancak 4.5:1 altında)."
+                    ),
+                    file_path=block.file_path,
+                    line_number=block.line_number,
+                    theme_selector=block.selector,
+                    bg_name=p_bg_name,
+                    text_name=p_fg_name,
+                    ratio=ratio,
+                    required_ratio=min_ratio,
+                )
+            )
+
     if not resolved_bgs:
         return findings
 
@@ -520,7 +668,7 @@ def audit_theme_block(
     # 1. Birincil Metin Kontrolleri (Min 4.5:1)
     for bg_name, bg_color in resolved_bgs:
         for p_name in primary_vars:
-            t_color = parse_color(block.variables[p_name], combined_store)
+            t_color = parse_color(combined_store[p_name], combined_store)
             if not t_color:
                 continue
             ratio = calculate_contrast_ratio(t_color, bg_color)
@@ -546,7 +694,7 @@ def audit_theme_block(
     # 2. İkincil / Muted Metin Kontrolleri (Min 3.0:1)
     for bg_name, bg_color in resolved_bgs:
         for m_name in muted_vars:
-            t_color = parse_color(block.variables[m_name], combined_store)
+            t_color = parse_color(combined_store[m_name], combined_store)
             if not t_color:
                 continue
             ratio = calculate_contrast_ratio(t_color, bg_color)
@@ -590,7 +738,7 @@ def audit_theme_block(
     # 3. Faint / Disabled Metin Kontrolleri (Min 2.5:1)
     for bg_name, bg_color in resolved_bgs:
         for f_name in faint_vars:
-            t_color = parse_color(block.variables[f_name], combined_store)
+            t_color = parse_color(combined_store[f_name], combined_store)
             if not t_color:
                 continue
             ratio = calculate_contrast_ratio(t_color, bg_color)
@@ -706,8 +854,11 @@ def check(
                 errors.append(f)
             else:
                 warnings.append(f)
-        bg_vars, p_vars, m_vars, f_vars, _ = categorize_variables(b.variables)
-        checked_pairs += len(bg_vars) * (len(p_vars) + len(m_vars) + len(f_vars))
+        parent_vars = next((t_vars for t_name, t_vars in theme_hierarchy.items() if t_name in b.selector), {})
+        combined = {**root_store, **parent_vars, **b.variables}
+        paired = find_paired_tokens(b.variables, combined)
+        bg_vars, p_vars, m_vars, f_vars, _ = categorize_variables(b.variables, combined_store=combined)
+        checked_pairs += len(paired) + len(bg_vars) * (len(p_vars) + len(m_vars) + len(f_vars))
 
     return errors, warnings, len(all_blocks), checked_pairs
 
