@@ -246,6 +246,13 @@ class TestCheckDesignSlop(unittest.TestCase):
         self.assertEqual(res["exit"], 0, f"E-posta şablonu muaf tutulmalıydı: {res}")
         self.assertEqual(res["errors"], [])
 
+    def test_exempts_root_manual_test_harness_html_files(self):
+        harness = "<style>button { background: #007bff; }</style><button>Test</button>"
+        self._write_file("assign-section-test.html", harness)
+        res = run_checks(self.dir_path)
+        self.assertEqual(res["exit"], 0, f"Kök *-test.html test aracı muaf tutulmalıydı: {res}")
+        self.assertEqual(res["errors"], [])
+
 
 if __name__ == "__main__":
     unittest.main()

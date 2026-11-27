@@ -239,6 +239,16 @@ def _is_email_template(path: Path) -> bool:
     )
 
 
+def _is_test_file(path: Path) -> bool:
+    """Test ve manuel test aracı dosyalarını (-test.html, .test.tsx, __tests__) muaf tutar."""
+    stem_lower = path.stem.lower()
+    return (
+        stem_lower.endswith((".test", "-test", "_test", ".spec", "-spec", "_spec"))
+        or stem_lower.startswith(("test_", "test-"))
+        or "__tests__" in path.parts
+    )
+
+
 def iter_source_files(root: Path, include_agent: bool = False):
     """Projedeki taranacak frontend kaynak dosyalarını listeler."""
     found_any = False
@@ -256,8 +266,7 @@ def iter_source_files(root: Path, include_agent: bool = False):
             if _is_email_template(path):
                 continue
             # Test dosyalarını tarama dışı bırak
-            stem_lower = path.stem.lower()
-            if stem_lower.endswith(".test") or stem_lower.endswith(".spec") or "__tests__" in path.parts:
+            if _is_test_file(path):
                 continue
             found_any = True
             yield path
@@ -266,6 +275,8 @@ def iter_source_files(root: Path, include_agent: bool = False):
     if not found_any:
         for path in sorted(root.glob("*")):
             if path.is_file() and path.suffix.lower() in (".html", ".astro", ".svelte", ".vue"):
+                if _is_test_file(path) or _is_email_template(path):
+                    continue
                 yield path
 
     # Eğer include_agent bayrağı açıksa .agent altındaki HTML dosyalarını da tara
