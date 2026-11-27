@@ -40,7 +40,7 @@ const https = require('https');
 
 
 
-const VERSION = '1.51.0';
+const VERSION = '1.51.1';
 
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 
@@ -564,6 +564,11 @@ const SKILLS_MANIFEST = {
     desc: 'Scan full codebase, peer repos, and docs to generate a single-file Gherkin + Acceptance Criteria specification for automated testing tools.',
     triggers: '/test-spec, [TEST-SPEC], test spec, gherkin testleri çıkar, kabul kriterleri üret, generate test spec, gherkin acceptance tests',
   },
+  'test-spec-run': {
+    category: 'Session Commands / Ensemble',
+    desc: 'Run existing test-spec-generator delta scenarios via TestSprite MCP without re-scanning, record PASS/FAIL, and triage endpoint failures to peer repos.',
+    triggers: '/test-spec-run, testleri koş, testsprite ile koş, run test spec',
+  },
   'smoke-test': {
     category: 'Session Commands / Ensemble',
     desc: 'Impact-driven API & UI screen smoke test orchestrator (Hybrid + Live E2E with TestSprite quota fallback and autonomous remediation).',
@@ -712,6 +717,7 @@ const PROFILES = {
       'tr-app-compliance',
       'review-prd',
       'test-spec-generator',
+      'test-spec-run',
       'smoke-test',
 
     ],
@@ -856,6 +862,7 @@ const PROFILES = {
       'feature-architect',
       'review-prd',
       'test-spec-generator',
+      'test-spec-run',
       'smoke-test',
 
     ],

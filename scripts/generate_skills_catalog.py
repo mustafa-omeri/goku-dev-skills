@@ -117,7 +117,7 @@ CATEGORIES = {
 
         "council", "seal-plan", "seo-apply", "commitx", "gs-update",
 
-        "prelaunch", "prelaunch-update", "project-summary", "feature-architect", "spec-reconciler", "test-spec-generator", "smoke-test"
+        "prelaunch", "prelaunch-update", "project-summary", "feature-architect", "spec-reconciler", "test-spec-generator", "test-spec-run", "smoke-test"
 
     ]
 
@@ -462,7 +462,7 @@ python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-del
         "name": "TestSprite MCP Delta Koşumu, PASS Defteri Mühürleme & Hata Adresleme",
         "badge": "TestSprite E2E",
         "badge_class": "badge-info",
-        "skills": ["test-spec-generator", "smoke-test", "tdd"],
+        "skills": ["test-spec-run", "test-spec-generator", "smoke-test", "tdd"],
         "goal": "Delta SC-* Senaryolarını TestSprite MCP ile Koş -> record İşle -> Endpoint Hatalarını İlgili Repoya Adresle",
         "description": "/test-spec sonrası bekleyen (NEW + STALE + FAIL + FLAKY) senaryoları testsprite_bridge.py ile TestSprite planına çevirip koşar, sonuçları test-spec-state.json defterine mühürler ve endpoint takılmalarında kardeş backend/frontend dosya adreslemesi üretir.",
         "sample_prompt": "/test-spec-run: Bekleyen delta senaryolarını TestSprite MCP ile koş, PASS/FAIL sonuçlarını state defterine işle ve kalan hataları ilgili repo/dosyaya adresle.",
@@ -2461,6 +2461,31 @@ python .agent/skills/prelaunch-audit/scripts/prelaunch_checker.py --dir ."""
 
     },
 
+    "test-spec-run": {
+
+        "status": "TestSprite MCP Koşumu",
+
+        "badge_class": "badge-info",
+
+        "file": "testsprite_bridge.py + test_spec_tracker.py",
+
+        "cli_cmd": "python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py to-plan --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --plan testsprite_tests/testsprite_frontend_test_plan.json --json",
+
+        "features": ["Yeniden Tarama Yapmadan Mevcut 6 Dosyadan Başlatma", "TestSprite Plan JSON + sc_map.json Çevirici", "Çok-Satırlı/JSON record Mühürleme", "Endpoint Hata Triajı (Kardeş Backend Peer vs Frontend)"],
+
+        "detail": "Daha önce /test-spec-generator ile üretilmiş mevcut spesifikasyon ve state defterini kod tabanını tekrar taramadan TestSprite MCP ile koşar, sonuçları record ile mühürler ve endpoint takılmalarını ilgili repoya adresler.",
+
+        "sample_prompt": "/test-spec-run: Mevcut test-spec-generator çıktılarını tekrar taramadan TestSprite MCP ile koş ve defteri güncelle.",
+
+        "config_snippet": """# 1. Mevcut delta senaryolarını TestSprite planına çevir (tarama yok):
+python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py to-plan --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --plan testsprite_tests/testsprite_frontend_test_plan.json --json
+
+# 2. TestSprite koşumu sonrası state defterini mühürle & FAIL'leri adresle:
+python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py record --state docs/testing/test-spec-state.json --import-testsprite testsprite_tests/tmp/test_results.json --runner testsprite
+python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py triage --state docs/testing/test-spec-state.json --inventory docs/testing/test-inventory.json --report testsprite_tests/tmp/test_results.json --json"""
+
+    },
+
     "prelaunch-update": {
 
         "status": "Mevzuat Senkronu",
@@ -2570,6 +2595,7 @@ SAMPLE_PROMPTS = {
 
     "review-prd": "/review-prd: Elimdeki PRD'yi bu projeye göre 6 şapka, council Borda ve 5 katman fizibiliteyle tek raporda değerlendir.",
     "test-spec-generator": "/test-spec: Tüm projeyi (kod + doküman) inceleyip tek bir dosyada Gherkin senaryoları ve Acceptance Criteria çıkar.",
+    "test-spec-run": "/test-spec-run: Mevcut test-spec-generator çıktılarını tekrar taramadan TestSprite MCP ile koş ve defteri güncelle.",
     "verify-prd": "/verify-prd: Son tamamlanan özelliğin kabul kriterlerini, 5 katman dikey dilim bütünlüğünü ve regression risklerini bağımsız denetle.",
 
     "check-security": "/check-security: Sistem genelinde yetki aşımı, public form abuse riskleri ve env sızıntılarını derinlemesine tara.",
