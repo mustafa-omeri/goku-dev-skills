@@ -4,7 +4,7 @@ type: project-brief
 project: skillSetWorks
 status: active
 created: 2026-10-27
-updated: 2026-11-27
+updated: 2026-11-28
 primary_language: Python 3.11 / Node.js / Markdown
 frameworks: ["pytest", "unittest", "node-cli"]
 database: ["Yok / Kural ve Dağıtım Deposu"]
@@ -28,7 +28,7 @@ related_docs:
 
 ## 1. Teknoloji Yığını & Altyapı
 - **Proje Adı / Slug:** skillSetWorks (`skillSetWorks`)
-- **Paket / Sürüm:** `goku-dev-skills` v1.51.1 (`package.json`)
+- **Paket / Sürüm:** `goku-dev-skills` v1.52.0 (`package.json`)
 - **Birincil Dil:** Python 3.11 / Node.js 18+ / Markdown
 - **Frameworkler & Kütüphaneler:** Python `unittest`, `pytest`, `pytest-cov`, `argparse`, Node.js CLI runtime
 - **Veritabanı / Altyapı:** Yok (Uygulama kodu içermez; kural, skill ve dağıtım motorudur)
@@ -85,4 +85,4 @@ related_docs:
 
 ## 5. Yaşatma & Operasyonel Döngü
 - **Kapsam İçi Kapılar:** `rules_gates.py`, `check_handoff.py`, `check_project_brief.py`, `check_design_skills.py`, `check_test_spec.py`, `plan_conflict_guard.py`, `archive_plan.py`, `diff_triage.py`, `impact_mapper.py`, `smoke_runner.py`, `test_skills_catalog.py`, `test_project_summary.py`, `test_feature_architect.py`, `test_feature_architect_council.py`, `test_feature_architect_bench.py`, `test_council_workflow_integration.py`, `test_theme_skeleton_integration.py`, `test_prelaunch_security.py`, `test_clean_url_routing.py`, `test_cognitive_counsel.py`, `test_test_spec_generator.py`, `test_plan_conflict_guard.py`, `test_ui_predesign_gate.py`, `test_walkthrough_archive.py`, `test_smoke_runner.py`
-- **Son Başarılı Doğrulama:** 2026-11-27 · 40/40 test paketi (`tests/run_all.py`) · `test_check_theme_contrast.py` 14/14 PASS · Birleşik kapılar `[OK]` · Skill kataloğu (52 skill, 24 slash komutu) PASS
+- **Son Başarılı Doğrulama:** 2026-11-28 · 40/40 test paketi (`tests/run_all.py`) · `test_skill_contracts` 11/11 OK · `test_testsprite_bridge.py` 6/6 OK · Birleşik kapılar `[OK]` · Skill kataloğu (53 skill, 25 slash komutu) PASS

@@ -36,6 +36,37 @@ import test_spec_tracker as tracker  # noqa: E402
 DELTA_STATUSES = {"NEW", "STALE", "FAIL", "FLAKY"}
 API_PATH_IN_ERROR_RE = re.compile(r"(?:\b(GET|POST|PUT|PATCH|DELETE)\s+)?(/(?:api|v\d+)/[A-Za-z0-9_/\-{}:.]+)")
 STEP_LINE_RE = re.compile(r"^\s*(Given|When|Then|And|But)\s+(.+)$", re.IGNORECASE)
+ENV_AUTH_SEED_RE = re.compile(
+    r"(?:signed-in\s+administrator(?:\s+account)?\s+(?:is\s+denied|was\s+shown\s+an\s+authorization\s+warning)|"
+    r"(?:administrator-facing|signed\s+in\s+as\s+[^\n]*admin)[\s\S]{0,240}?(?:permission\s+warning|permission\s+was\s+missing|yetkiniz\s+bulunmuyor)|"
+    r"yetkiniz\s+bulunmuyor[^\n]*(?:admin|y[öo]netici)|"
+    r"(?:admin|y[öo]netici)[^\n]*yetkiniz\s+bulunmuyor|"
+    r"\bECONNREFUSED\b|\bERR_CONNECTION_REFUSED\b|\b502\s+Bad\s+Gateway\b|\b503\s+Service\s+Unavailable\b)",
+    re.IGNORECASE,
+)
+NON_UI_OBSERVABLE_RE = re.compile(
+    r"(?:\bTEST\s+BLOCKED\b|"
+    r"could\s+not\s+be\s+(?:exercised|verified|performed)\s+from\s+the\s+(?:page|browser)|"
+    r"visible\s+(?:UI|application|notification\s+panel)\s+(?:provides\s+no\s+way|does\s+not\s+provide)|"
+    r"no\s+response-time\s+indicator|"
+    r"aray[üu]zden\s+do[ğg]rulanamad[ıi]|"
+    r"does\s+not\s+(?:expose|show)\s+[^\n]*requested\s+(?:forbidden-access|protected\s+API)|"
+    r"^\s*(?:Test\s+Error:\s*)?PASS\b)",
+    re.IGNORECASE | re.MULTILINE,
+)
+
+
+def _classify_failure(err_txt: str, repo_role: str) -> tuple[str, str, str]:
+    """Hata metni ve repo rolüne göre (failure_class, verification_runner, remediation_route) döner."""
+    if ENV_AUTH_SEED_RE.search(err_txt):
+        return "ENV_AUTH_SEED", "testsprite", "fix-bug"
+    if NON_UI_OBSERVABLE_RE.search(err_txt):
+        return "NON_UI_OBSERVABLE", "local_api_or_unit", "tdd"
+    if repo_role == "backend-peer":
+        return "BE_PEER_DEFECT", "testsprite", "fix-bug"
+    if repo_role == "backend":
+        return "BE_DEFECT", "testsprite", "fix-bug"
+    return "FE_DEFECT", "testsprite", "fix-bug"
 
 
 def _priority_from_tags(tags: list[str]) -> str:
@@ -75,8 +106,9 @@ def export_testsprite_plan(
     batch_size: int = 0,
     batch_index: int = 0,
     include_smoke: bool = False,
+    only_scenarios: list[str] | set[str] | None = None,
 ) -> dict[str, Any]:
-    """Delta senaryolarını TestSprite plan JSON formatına çevirir ve sc_map.json üretir."""
+    """Delta senaryolarını (veya --scenarios alt kümesini) TestSprite plan JSON formatına çevirir."""
     spec_p = Path(spec_path).resolve()
     state_p = Path(state_path).resolve()
     plan_p = Path(plan_path).resolve()
@@ -90,6 +122,7 @@ def export_testsprite_plan(
     state = tracker._read_json(state_p)
     state_scenarios: dict[str, Any] = state.get("scenarios", {})
     parsed = tracker._parse_spec_scenarios(spec_p.read_text(encoding="utf-8"))
+    only_set = {s.strip().upper() for s in only_scenarios if str(s).strip()} if only_scenarios else set()
 
     all_items: list[dict[str, Any]] = []
     tc_to_sc: dict[str, str] = {}
@@ -101,9 +134,12 @@ def export_testsprite_plan(
         st_entry = state_scenarios.get(sid, {})
         status = st_entry.get("status", "NEW")
         tags = sc.get("tags") or st_entry.get("tags") or []
-        include = status in DELTA_STATUSES or (
-            include_smoke and status == "PASS" and "@smoke" in tags
-        )
+        if only_set:
+            include = sid.upper() in only_set
+        else:
+            include = status in DELTA_STATUSES or (
+                include_smoke and status == "PASS" and "@smoke" in tags
+            )
         if not include:
             continue
 
@@ -297,11 +333,15 @@ def triage_failed_scenarios(
                 f"{', '.join(fe_files[:3]) or sc.get('module', 'ilgili ekran')} bileşenini incele."
             )
 
+        failure_class, verification_runner, remediation_route = _classify_failure(err_txt, repo_role)
         items.append(
             {
                 "scenario_id": sid,
                 "module": sc.get("module", ""),
                 "status": sc.get("status", "FAIL"),
+                "failure_class": failure_class,
+                "verification_runner": verification_runner,
+                "remediation_route": remediation_route,
                 "repo_role": repo_role,
                 "owner_repo": owner_repo,
                 "endpoint_refs": ep_refs,
@@ -311,7 +351,24 @@ def triage_failed_scenarios(
             }
         )
 
-    return {"failed_count": len(items), "items": items}
+    summary_by_class: dict[str, int] = {}
+    rerun_eligible_scenarios: list[str] = []
+    local_verify_scenarios: list[str] = []
+    for it in items:
+        fc = it["failure_class"]
+        summary_by_class[fc] = summary_by_class.get(fc, 0) + 1
+        if it["verification_runner"] == "local_api_or_unit":
+            local_verify_scenarios.append(it["scenario_id"])
+        else:
+            rerun_eligible_scenarios.append(it["scenario_id"])
+
+    return {
+        "failed_count": len(items),
+        "summary_by_class": summary_by_class,
+        "rerun_eligible_scenarios": rerun_eligible_scenarios,
+        "local_verify_scenarios": local_verify_scenarios,
+        "items": items,
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -326,6 +383,7 @@ def main(argv: list[str] | None = None) -> int:
     p_plan.add_argument("--batch", type=int, default=0)
     p_plan.add_argument("--batch-index", type=int, default=0)
     p_plan.add_argument("--include-smoke", action="store_true")
+    p_plan.add_argument("--scenarios", action="append", default=[], help="Yalnızca seçili SC-* alt kümesini planla (virgüllü veya tekrarlı)")
     p_plan.add_argument("--json", action="store_true")
 
     p_tri = sub.add_parser("triage", help="FAIL senaryolarını frontend / kardeş backend reposuna adresle")
@@ -338,6 +396,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.cmd == "to-plan":
+        only_list = [tok.strip() for raw in args.scenarios for tok in raw.split(",") if tok.strip()]
         res = export_testsprite_plan(
             args.spec,
             args.state,
@@ -346,6 +405,7 @@ def main(argv: list[str] | None = None) -> int:
             batch_size=args.batch,
             batch_index=args.batch_index,
             include_smoke=args.include_smoke,
+            only_scenarios=only_list or None,
         )
         if args.json:
             print(json.dumps(res, ensure_ascii=False, indent=2))

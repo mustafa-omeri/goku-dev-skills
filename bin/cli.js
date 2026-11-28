@@ -40,7 +40,7 @@ const https = require('https');
 
 
 
-const VERSION = '1.51.1';
+const VERSION = '1.52.0';
 
 const GITHUB_REPO = 'mustafa-omeri/goku-dev-skills';
 
@@ -566,7 +566,7 @@ const SKILLS_MANIFEST = {
   },
   'test-spec-run': {
     category: 'Session Commands / Ensemble',
-    desc: 'Run existing test-spec-generator delta scenarios via TestSprite MCP without re-scanning, record PASS/FAIL, and triage endpoint failures to peer repos.',
+    desc: 'Run test-spec-generator deltas via TestSprite MCP, auto-classify failures, run autonomous fix-bug across primary/peer repos, and bounded re-run.',
     triggers: '/test-spec-run, testleri koş, testsprite ile koş, run test spec',
   },
   'smoke-test': {

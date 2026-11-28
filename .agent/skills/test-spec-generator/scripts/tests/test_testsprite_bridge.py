@@ -230,6 +230,82 @@ class TestSpriteBridgeTests(unittest.TestCase):
             self.assertTrue(any("ProjectController.java" in f for f in item["suspect_files"]))
             self.assertIn("POST /api/v1/projects", item["endpoint_refs"])
             self.assertIn("acme-backend", item["recommended_action"])
+            self.assertEqual(item["failure_class"], "BE_PEER_DEFECT")
+            self.assertEqual(item["verification_runner"], "testsprite")
+
+    def test_triage_classifies_env_auth_seed_non_ui_observable_and_fe_defect(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            fe, _, _, state_path, inv_path = _setup_workspace_with_peer(Path(tmp))
+            tracker.record_execution_results(
+                state_path,
+                {"SC-AUTH-01": "FAIL", "SC-PROJ-01": "FAIL", "SC-PROJ-02": "FAIL"},
+                runner="testsprite",
+            )
+            report_json = fe / "testsprite_tests" / "tmp" / "test_results.json"
+            report_json.parent.mkdir(parents=True)
+            report_json.write_text(
+                json.dumps(
+                    [
+                        {
+                            "title": "TC001 SC-AUTH-01 Login",
+                            "testStatus": "FAILED",
+                            "testError": "TEST FAILURE\nSubmitting blank login form did not display validation feedback.",
+                        },
+                        {
+                            "title": "TC002 SC-PROJ-01 Admin project flow",
+                            "testStatus": "FAILED",
+                            "testError": "TEST FAILURE\nThe current page displayed “Bu işlemi yapmak için yetkiniz bulunmuyor” while signed in as Goku Admin.",
+                        },
+                        {
+                            "title": "TC003 SC-PROJ-02 Unauthorized check",
+                            "testStatus": "FAILED",
+                            "testError": "TEST BLOCKED\nThe employee interface does not expose project creation, so the specified protected API behavior could not be exercised or verified from the page.",
+                        },
+                    ],
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            sc_map = fe / "testsprite_tests" / "sc_map.json"
+            sc_map.write_text(
+                json.dumps({"tc_to_sc": {"TC001": "SC-AUTH-01", "TC002": "SC-PROJ-01", "TC003": "SC-PROJ-02"}}),
+                encoding="utf-8",
+            )
+
+            res = bridge.triage_failed_scenarios(
+                state_path=state_path,
+                inventory_path=inv_path,
+                report_path=report_json,
+                sc_map_path=sc_map,
+            )
+            by_id = {it["scenario_id"]: it for it in res["items"]}
+            self.assertEqual(by_id["SC-AUTH-01"]["failure_class"], "FE_DEFECT")
+            self.assertEqual(by_id["SC-AUTH-01"]["verification_runner"], "testsprite")
+            self.assertEqual(by_id["SC-PROJ-01"]["failure_class"], "ENV_AUTH_SEED")
+            self.assertEqual(by_id["SC-PROJ-01"]["remediation_route"], "fix-bug")
+            self.assertEqual(by_id["SC-PROJ-02"]["failure_class"], "NON_UI_OBSERVABLE")
+            self.assertEqual(by_id["SC-PROJ-02"]["verification_runner"], "local_api_or_unit")
+            self.assertEqual(res["summary_by_class"]["ENV_AUTH_SEED"], 1)
+            self.assertEqual(res["summary_by_class"]["NON_UI_OBSERVABLE"], 1)
+            self.assertEqual(res["summary_by_class"]["FE_DEFECT"], 1)
+            self.assertEqual(set(res["rerun_eligible_scenarios"]), {"SC-AUTH-01", "SC-PROJ-01"})
+            self.assertEqual(res["local_verify_scenarios"], ["SC-PROJ-02"])
+
+    def test_to_plan_scenarios_subset_filters_only_requested_scenarios(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            fe, _, spec_path, state_path, _ = _setup_workspace_with_peer(Path(tmp))
+            plan_path = fe / "testsprite_tests" / "testsprite_frontend_test_plan.json"
+            res = bridge.export_testsprite_plan(
+                spec_path=spec_path,
+                state_path=state_path,
+                plan_path=plan_path,
+                only_scenarios=["SC-PROJ-01"],
+            )
+            self.assertEqual(res["total_delta"], 1)
+            self.assertEqual(res["batch_test_ids"], ["TC001"])
+            written = json.loads(plan_path.read_text(encoding="utf-8"))
+            self.assertEqual(len(written), 1)
+            self.assertTrue(written[0]["title"].startswith("SC-PROJ-01"))
 
 
 if __name__ == "__main__":

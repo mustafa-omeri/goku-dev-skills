@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Version](https://img.shields.io/badge/version-1.51.1-blue.svg?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/goku-dev-skills)
+[![Version](https://img.shields.io/badge/version-1.52.0-blue.svg?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/goku-dev-skills)
 [![Skills](https://img.shields.io/badge/skills-52%20production-8A2BE2.svg?style=for-the-badge&logo=expertsexchange)](./.agent/skills/)
 [![Rules](https://img.shields.io/badge/rules-22%20enforced-orange.svg?style=for-the-badge&logo=codereview)](./.agent/rules/)
 [![Gates](https://img.shields.io/badge/gates-16%2B%20deterministic-success.svg?style=for-the-badge&logo=checkmarx)](./.agent/skills/musgoku/scripts/)
@@ -25,7 +25,7 @@
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                              GOKU DEV SKILLS ECOSYSTEM v1.51.1                         │
+│                              GOKU DEV SKILLS ECOSYSTEM v1.52.0                         │
 ├──────────────────────────────┬─────────────────────────────┬───────────────────────────┤
 │    52 PRODUCTION SKILLS      │     22 ENFORCED RULES       │   56 COMPONENT THEMES     │
 │ 33 Core + 19 Slash Skills    │ 16+ Deterministic Gate Cmds │ Standalone HTML/CSS/JS    │

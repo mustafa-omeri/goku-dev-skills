@@ -459,22 +459,23 @@ python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py export-del
     {
         "command": "/test-spec-run",
         "aliases": ["/test-spec-run", "testleri koş", "testsprite ile koş", "run test spec"],
-        "name": "TestSprite MCP Delta Koşumu, PASS Defteri Mühürleme & Hata Adresleme",
+        "name": "TestSprite MCP Otonom Koşum, Triaj & Onarım Döngüsü",
         "badge": "TestSprite E2E",
         "badge_class": "badge-info",
-        "skills": ["test-spec-run", "test-spec-generator", "smoke-test", "tdd"],
-        "goal": "Delta SC-* Senaryolarını TestSprite MCP ile Koş -> record İşle -> Endpoint Hatalarını İlgili Repoya Adresle",
-        "description": "/test-spec sonrası bekleyen (NEW + STALE + FAIL + FLAKY) senaryoları testsprite_bridge.py ile TestSprite planına çevirip koşar, sonuçları test-spec-state.json defterine mühürler ve endpoint takılmalarında kardeş backend/frontend dosya adreslemesi üretir.",
-        "sample_prompt": "/test-spec-run: Bekleyen delta senaryolarını TestSprite MCP ile koş, PASS/FAIL sonuçlarını state defterine işle ve kalan hataları ilgili repo/dosyaya adresle.",
-        "protocol": "1. status ile delta kontrolü & testsprite_check_account_info kota kapısı (limit yoksa /smoke-test live fallback) ➜ 2. export-delta + testsprite_bridge.py to-plan (SC-* -> TC### + sc_map.json) ➜ 3. testsprite_generate_code_and_execute (production veya 15'li parti) ➜ 4. test_spec_tracker.py record + FAIL varsa testsprite_bridge.py triage (kardeş backend vs frontend adresleme)",
+        "skills": ["test-spec-run", "test-spec-generator", "fix-bug", "smoke-test", "tdd"],
+        "goal": "Delta Koş -> record İşle -> Kök Nedeni Otonom Onar -> Hedefli Re-Run (Maks 2 Tur)",
+        "description": "/test-spec sonrası bekleyen (NEW + STALE + FAIL + FLAKY) senaryoları TestSprite MCP ile koşar, FAIL bulgularını (ENV_AUTH_SEED / NON_UI_OBSERVABLE / FE_DEFECT / BE_PEER_DEFECT) otonom fix-bug/yerel test ile onarır ve yalnız onarılan senaryolarda kredi korumalı yeniden koşum yürütür (--no-fix opt-out).",
+        "sample_prompt": "/test-spec-run: Bekleyen delta senaryolarını TestSprite MCP ile koş, bulguları otonom onar ve onarılanları tekrar koşup defteri mühürle.",
+        "protocol": "1. status delta & testsprite_check_account_info kota kapısı (yoksa /smoke-test live fallback) ➜ 2. to-plan + MCP execute + record ➜ 3. triage (ENV_AUTH_SEED / NON_UI_OBSERVABLE / FE / BE_PEER) & otonom fix-bug / yerel API record ➜ 4. to-plan --scenarios ile hedefli re-run (maks 2 tur) & export-delta",
         "usage_snippet": """# 1. Delta senaryolarını TestSprite planına çevir (dev modda --batch 15 ekle):
 python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py to-plan --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --plan testsprite_tests/testsprite_frontend_test_plan.json --json
 
-# 2. TestSprite MCP koşumu sonrası sonuçları state defterine mühürle:
+# 2. TestSprite MCP koşumu sonrası sonuçları state defterine mühürle & triaj et:
 python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py record --state docs/testing/test-spec-state.json --import-testsprite testsprite_tests/tmp/test_results.json --runner testsprite --evidence testsprite_tests/tmp/raw_report.md
+python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py triage --state docs/testing/test-spec-state.json --inventory docs/testing/test-inventory.json --report testsprite_tests/tmp/test_results.json --json
 
-# 3. FAIL kalan senaryoları kardeş backend (peer) / frontend dosyasına adresle:
-python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py triage --state docs/testing/test-spec-state.json --inventory docs/testing/test-inventory.json --report testsprite_tests/tmp/test_results.json --json""",
+# 3. Otonom onarım sonrası yalnızca onarılan senaryoları hedefli yeniden planla:
+python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py to-plan --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --plan testsprite_tests/testsprite_frontend_test_plan.json --scenarios SC-ADM-02,SC-ADM-04 --json""",
         "emergency": [
             {
                 "symptom": "record komutu exit 2 (0 eşleşen sonuç) veriyor",
@@ -2463,7 +2464,7 @@ python .agent/skills/prelaunch-audit/scripts/prelaunch_checker.py --dir ."""
 
     "test-spec-run": {
 
-        "status": "TestSprite MCP Koşumu",
+        "status": "Otonom TestSprite Döngüsü",
 
         "badge_class": "badge-info",
 
@@ -2471,18 +2472,21 @@ python .agent/skills/prelaunch-audit/scripts/prelaunch_checker.py --dir ."""
 
         "cli_cmd": "python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py to-plan --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --plan testsprite_tests/testsprite_frontend_test_plan.json --json",
 
-        "features": ["Yeniden Tarama Yapmadan Mevcut 6 Dosyadan Başlatma", "TestSprite Plan JSON + sc_map.json Çevirici", "Çok-Satırlı/JSON record Mühürleme", "Endpoint Hata Triajı (Kardeş Backend Peer vs Frontend)"],
+        "features": ["Sıfır Tarama Delta Koşumu", "4 Sınıflı Kök Neden Triajı (ENV/NON_UI/FE/BE_PEER)", "Otonom fix-bug & Kardeş Repo Müdahalesi", "Kredi Korumalı --scenarios Re-Run (Maks 2 Tur)"],
 
-        "detail": "Daha önce /test-spec-generator ile üretilmiş mevcut spesifikasyon ve state defterini kod tabanını tekrar taramadan TestSprite MCP ile koşar, sonuçları record ile mühürler ve endpoint takılmalarını ilgili repoya adresler.",
+        "detail": "Mevcut test-spec-generator çıktılarını tekrar taramadan TestSprite MCP ile koşar, FAIL bulgularını sınıflandırıp frontend ve kardeş backend repoda otonom fix-bug yürütür, NON_UI_OBSERVABLE senaryoları yerel testle record eder ve onarılanları hedefli re-run yapar (--no-fix opt-out).",
 
-        "sample_prompt": "/test-spec-run: Mevcut test-spec-generator çıktılarını tekrar taramadan TestSprite MCP ile koş ve defteri güncelle.",
+        "sample_prompt": "/test-spec-run: Mevcut test-spec-generator çıktılarını TestSprite MCP ile koş, FAIL bulgularını otonom onar ve defteri güncelle.",
 
         "config_snippet": """# 1. Mevcut delta senaryolarını TestSprite planına çevir (tarama yok):
 python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py to-plan --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --plan testsprite_tests/testsprite_frontend_test_plan.json --json
 
-# 2. TestSprite koşumu sonrası state defterini mühürle & FAIL'leri adresle:
+# 2. TestSprite koşumu sonrası state defterini mühürle & kök neden sınıfına göre triaj et:
 python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py record --state docs/testing/test-spec-state.json --import-testsprite testsprite_tests/tmp/test_results.json --runner testsprite
-python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py triage --state docs/testing/test-spec-state.json --inventory docs/testing/test-inventory.json --report testsprite_tests/tmp/test_results.json --json"""
+python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py triage --state docs/testing/test-spec-state.json --inventory docs/testing/test-inventory.json --report testsprite_tests/tmp/test_results.json --json
+
+# 3. Otonom onarım sonrası yalnızca onarılan alt kümeyi hedefli yeniden planla:
+python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py to-plan --spec docs/testing/<SLUG>_ACCEPTANCE_TEST_SPEC.md --state docs/testing/test-spec-state.json --plan testsprite_tests/testsprite_frontend_test_plan.json --scenarios SC-ADM-02,SC-ADM-04 --json"""
 
     },
 
@@ -2595,7 +2599,7 @@ SAMPLE_PROMPTS = {
 
     "review-prd": "/review-prd: Elimdeki PRD'yi bu projeye göre 6 şapka, council Borda ve 5 katman fizibiliteyle tek raporda değerlendir.",
     "test-spec-generator": "/test-spec: Tüm projeyi (kod + doküman) inceleyip tek bir dosyada Gherkin senaryoları ve Acceptance Criteria çıkar.",
-    "test-spec-run": "/test-spec-run: Mevcut test-spec-generator çıktılarını tekrar taramadan TestSprite MCP ile koş ve defteri güncelle.",
+    "test-spec-run": "/test-spec-run: Mevcut test-spec-generator çıktılarını TestSprite MCP ile koş, FAIL bulgularını otonom onar ve hedefli re-run yap.",
     "verify-prd": "/verify-prd: Son tamamlanan özelliğin kabul kriterlerini, 5 katman dikey dilim bütünlüğünü ve regression risklerini bağımsız denetle.",
 
     "check-security": "/check-security: Sistem genelinde yetki aşımı, public form abuse riskleri ve env sızıntılarını derinlemesine tara.",

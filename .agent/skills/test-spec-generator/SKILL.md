@@ -108,12 +108,12 @@ Kullanıcı `/test-spec-run`, *"testleri koş"* veya *"testsprite ile koş"* ded
    python .agent/skills/test-spec-generator/scripts/test_spec_tracker.py record --state docs/testing/test-spec-state.json --import-testsprite testsprite_tests/tmp/test_results.json --runner testsprite --evidence testsprite_tests/tmp/raw_report.md
    ```
    *(0 sonuç eşleşirse exit `2` döner; sessiz `PASS` kesinlikle yazılmaz).*
-6. `[Adım 6].` **Endpoint & Kardeş Repo Hata Adresleme (`triage`):** `FAIL` veya `FLAKY` senaryolar varsa çalıştır:
+6. `[Adım 6].` **Kök Neden Triajı, Otonom Onarım & Kardeş Repo Müdahalesi (`triage` + `fix-bug`):** `FAIL` veya `FLAKY` senaryolar varsa çalıştır:
    ```powershell
    python .agent/skills/test-spec-generator/scripts/testsprite_bridge.py triage --state docs/testing/test-spec-state.json --inventory docs/testing/test-inventory.json --report testsprite_tests/tmp/test_results.json --json
    ```
-   - ⛔ **Zorunlu Kardeş Repo Adreslemesi:** Süreç bir API endpoint'inde takılıyor (`500`/`404`/`403`/timeout) ve endpoint `test-inventory.json` içinde kardeş backend reposunda (`peers`) tanımlıysa; bug bulgusunda sorunun **kardeş backend reposunda (`owner_repo` + controller dosya yolu + `METHOD /path`)** düzeltilmesi gerektiği detaylıca adreslenir. Otomatik kod düzeltmesi yapılmaz; kullanıcıya `/fix-bug` önerilir.
-7. `[Adım 7].` **Delta Yenileme:** `export-delta` tekrar koşturulur -> bir sonraki koşumda yalnız kalan `FAIL` senaryolar kalır.
+   - ⛔ **Otonom Kapalı Döngü (`--no-fix` yoksa):** Ajan bulguyu raporlayıp durmaz; `failure_class` sonucuna göre sırayla `ENV_AUTH_SEED` → `FE_DEFECT` → (erişilebilirse) `BE_PEER_DEFECT` için ara onay sormadan `fix-bug` işletir, her iki reponun `HANDOFF.md` / `knowledge-base.md` dosyasını günceller (sandbox engeli varsa `sync_sibling_handoff.py` ile devreder). `NON_UI_OBSERVABLE` senaryolar TestSprite'a geri yollanmaz; hedef API/birim testiyle doğrulanıp `record` edilir.
+7. `[Adım 7].` **Hedefli Re-Run (Maks 2 Tur) & Delta Yenileme:** Yalnız onarılan `rerun_eligible_scenarios` alt kümesi `to-plan --scenarios ...` ile TestSprite'ta tekrar koşulur (kota bitmişse `smoke_runner.py` fallback); sonda `export-delta` ile defter mühürlenir.
 
 ---
 
